@@ -1,0 +1,271 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE>Composite Symbols</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.3  (Linux)">
+	<META NAME="CREATED" CONTENT="0;0">
+	<META NAME="CHANGED" CONTENT="20080316;12521000">
+	<META NAME="ProgId" CONTENT="FrontPage.Editor.Document">
+	<META HTTP-EQUIV="Content-Language" CONTENT="en-gb">
+	<STYLE TYPE="text/css">
+	<!--
+		TD P { color: #000000 }
+		H1 { color: #000000 }
+		P { color: #000000 }
+		TH P { color: #000000 }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-GB" DIR="LTR">
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0 STYLE="page-break-before: always">
+	<TR>
+		<TH COLSPAN=3>
+			<P ALIGN=CENTER>Zint Barcode Generator</P>
+		</TH>
+	</TR>
+	<TR VALIGN=BOTTOM>
+		<TD WIDTH=10%>
+			<P ALIGN=LEFT><A HREF="stacked.html"><FONT COLOR="#0000ff">Prev</FONT></A></P>
+		</TD>
+		<TD WIDTH=80%></TD>
+		<TD WIDTH=10%>
+			<P ALIGN=RIGHT><A HREF="twotrack.html"><FONT COLOR="#0000ff">Next</FONT></A></P>
+		</TD>
+	</TR>
+</TABLE>
+<HR>
+<H1>5.3 Composite Symbols (ISO 24723)</H1>
+<P>Composite symbols employ a mixture of components to give more
+comprehensive information about a product. The permissible contents
+of a composite symbol is determined by the terms of the <A HREF="appxc.html">GS1
+General Specification</A>. Composite symbols consist of a linear
+component which can be an EAN, UPC, GS1-128 or GS1 DataBar symbol, a
+2D component which is based on PDF417 or MicroPDF417, and a separator
+pattern. The type of linear component to be used is determined using
+the <FONT FACE="Courier">-b</FONT> or <FONT FACE="Courier">--barcode=</FONT>
+switch or by adjusting <FONT FACE="Courier">symbol-&gt;symbology</FONT>
+as with other encoding methods. Valid values are shown below.</P>
+<CENTER>
+	<TABLE WIDTH=936 BORDER=1 CELLPADDING=4 CELLSPACING=3>
+		<COL WIDTH=105>
+		<COL WIDTH=254>
+		<COL WIDTH=540>
+		<TR VALIGN=TOP>
+			<TD WIDTH=105>
+				<P ALIGN=CENTER><B>Numeric Value</B></P>
+			</TD>
+			<TD WIDTH=254>
+				<P ALIGN=CENTER><B>Name</B></P>
+			</TD>
+			<TD WIDTH=540>
+				<P ALIGN=CENTER><B>Symbology</B></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=105>
+				<P ALIGN=CENTER>110</P>
+			</TD>
+			<TD WIDTH=254>
+				<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_EANX_CC</FONT></P>
+			</TD>
+			<TD WIDTH=540>
+				<P ALIGN=CENTER>Composite Symbol with EAN linear component</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=105>
+				<P ALIGN=CENTER>111</P>
+			</TD>
+			<TD WIDTH=254>
+				<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_EAN128_CC</FONT></P>
+			</TD>
+			<TD WIDTH=540>
+				<P ALIGN=CENTER>Composite Symbol with GS1-128 linear component</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=105>
+				<P ALIGN=CENTER>112</P>
+			</TD>
+			<TD WIDTH=254>
+				<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_RSS14_CC</FONT></P>
+			</TD>
+			<TD WIDTH=540>
+				<P ALIGN=CENTER>Composite Symbol with GS1 DataBar-14 linear
+				component</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=105>
+				<P ALIGN=CENTER>113</P>
+			</TD>
+			<TD WIDTH=254>
+				<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_RSS_LTD_CC</FONT></P>
+			</TD>
+			<TD WIDTH=540>
+				<P ALIGN=CENTER>Composite Symbol with GS1 DataBar Limited
+				component</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=105>
+				<P ALIGN=CENTER>114</P>
+			</TD>
+			<TD WIDTH=254>
+				<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_RSS_EXP_CC</FONT></P>
+			</TD>
+			<TD WIDTH=540>
+				<P ALIGN=CENTER>Composite Symbol with GS1 DataBar Extended
+				component</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=105>
+				<P ALIGN=CENTER>115</P>
+			</TD>
+			<TD WIDTH=254>
+				<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_UPCA_CC</FONT></P>
+			</TD>
+			<TD WIDTH=540>
+				<P ALIGN=CENTER>Composite Symbol with UPC A linear component</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=105>
+				<P ALIGN=CENTER>116</P>
+			</TD>
+			<TD WIDTH=254>
+				<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_UPCE_CC</FONT></P>
+			</TD>
+			<TD WIDTH=540>
+				<P ALIGN=CENTER>Composite Symbol with UPC E linear component</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=105>
+				<P ALIGN=CENTER>117</P>
+			</TD>
+			<TD WIDTH=254>
+				<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_RSS14STACK_CC</FONT></P>
+			</TD>
+			<TD WIDTH=540>
+				<P ALIGN=CENTER>Composite Symbol with GS1 DataBar-14 Stacked
+				component</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=105>
+				<P ALIGN=CENTER>118</P>
+			</TD>
+			<TD WIDTH=254>
+				<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_RSS14_OMNI_CC</FONT></P>
+			</TD>
+			<TD WIDTH=540>
+				<P ALIGN=CENTER>Composite Symbol with GS1 DataBar-14 Stacked
+				Omnidirectional component</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=105>
+				<P ALIGN=CENTER>119</P>
+			</TD>
+			<TD WIDTH=254>
+				<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_RSS_EXPSTACK_CC</FONT></P>
+			</TD>
+			<TD WIDTH=540>
+				<P ALIGN=CENTER>Composite Symbol with GS1 DataBar Expanded
+				Stacked component</P>
+			</TD>
+		</TR>
+	</TABLE>
+</CENTER>
+<P ALIGN=LEFT>The data to be encoded in the linear component of a
+composite symbol should be entered into a primary string with the
+data for the 2D component being entered in the normal way. To do this
+at the command prompt use the <FONT FACE="Courier">--primary=</FONT>
+command. For example:</P>
+<P ALIGN=LEFT><FONT FACE="Courier">zint -b 110 --mode=1
+--primary=331234567890 -d &quot;[99]1234-abcd&quot;</FONT></P>
+<P ALIGN=LEFT>This creates an EAN-13 linear component with the data
+&quot;331234567890&quot; and a 2D CC-A (see below) component with the
+data &quot;(99)1234-abcd&quot;. The same results can be achieved
+using the API as shown below:</P>
+<P ALIGN=LEFT>&nbsp;&nbsp;&nbsp;&nbsp;<FONT FACE="Courier, monospace"><FONT SIZE=2>my_symbol-&gt;symbology
+= 110;<BR>&nbsp;&nbsp;&nbsp;&nbsp;my_symbol-&gt;option_1 =
+1;<BR>&nbsp;&nbsp;&nbsp;&nbsp;strcpy(my_symbol-&gt;primary,
+&quot;331234567890&quot;);<BR>&nbsp;&nbsp;&nbsp;&nbsp;ZBarcode_Encode_and_Print(my_symbol,
+&quot;[99]1234-abcd&quot;);</FONT></FONT></P>
+<P ALIGN=LEFT>EAN-2 and EAN-5 add-on data can be used with EAN and
+UPC symbols using the + symbol as described in section 5.1.3 and
+5.1.4.</P>
+<P ALIGN=LEFT>The 2D component of a composite symbol can use one of
+three systems: CC-A, CC-B and CC-C as described below. The 2D
+component type can be selected automatically by Zint dependant on the
+length of the input string. Alternatively the three methods can be
+accessed using the <FONT FACE="Courier">--mode= </FONT>prompt
+followed by 1, 2 or 3 for CC-A, CC-B or CC-C respectively, or by
+using the <FONT FACE="Courier">option_1</FONT> variable as shown
+above.</P>
+<P ALIGN=LEFT><FONT COLOR="#ff0000"><B>NOTE</B></FONT>: <B>2D
+component data starting with a production (AI 11) or expiration (AI
+17) date must be followed by a batch number (AI 10).</B> In the
+absence of real data this value can be entered as &quot;0&quot;. This
+is due to a known problem concerning the way the encoding is
+optimised for date information. It is hoped this problem will be
+resolved in a later release of Zint.</P>
+<P ALIGN=LEFT>&nbsp;</P>
+<P ALIGN=LEFT><A NAME="CCA"></A><FONT SIZE=5><B>5.3.1 CC-A</B></FONT></P>
+<P ALIGN=LEFT>This system uses a variation of MicroPDF417 which
+optimised to fit into a small space. The size of the 2D component and
+the amount of error correction is determined by the amount of data to
+be encoded and the type of linear component which is being used. CC-A
+can encode up to 56 numeric digits or an alphanumeric string of
+shorter length. To select CC-A use <FONT FACE="Courier">--mode=1</FONT>.</P>
+<P ALIGN=LEFT><IMG SRC="cca.png" NAME="graphics1" ALIGN=LEFT WIDTH=223 HEIGHT=204 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P ALIGN=LEFT><A NAME="CCB"></A><FONT SIZE=5><B>5.3.2 CC-B</B></FONT></P>
+<P ALIGN=LEFT>This system uses MicroPDF417 to encode the 2D
+component. The size of the 2D component and the amount of error
+correction is determined by the amount of data to be encoded and the
+type of linear component which is being used. CC-B can encode up to
+338 numeric digits or an alphanumeric string of shorter length. To
+select CC-B use <FONT FACE="Courier">--mode=2</FONT>.</P>
+<P ALIGN=LEFT><IMG SRC="ccb.png" NAME="graphics2" ALIGN=LEFT WIDTH=218 HEIGHT=200 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P ALIGN=LEFT><A NAME="CCC"></A><FONT SIZE=5><B>5.3.3 CC-C</B></FONT></P>
+<P ALIGN=LEFT>This system uses PDF417 and can only be used in
+conjunction with a GS1-128 linear component. CC-C can encode up to
+2361 numeric digits or an alphanumeric string of shorter length. To
+select CC-C use <FONT FACE="Courier">--mode=3</FONT>.</P>
+<P ALIGN=LEFT><IMG SRC="ccc.png" NAME="graphics3" ALIGN=LEFT WIDTH=322 HEIGHT=202 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<HR>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0>
+	<TR VALIGN=TOP>
+		<TD WIDTH=33% HEIGHT=5>
+			<P ALIGN=LEFT><A HREF="stacked.html"><FONT COLOR="#0000ff">Prev</FONT></A></P>
+		</TD>
+		<TD WIDTH=34%>
+			<P ALIGN=CENTER><A HREF="index.html"><FONT COLOR="#0000ff">Home</FONT></A></P>
+		</TD>
+		<TD WIDTH=33%>
+			<P ALIGN=RIGHT><A HREF="twotrack.html"><FONT COLOR="#0000ff">Next</FONT></A></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=33%>
+			<P ALIGN=LEFT>Stacked Symbologies</P>
+		</TD>
+		<TD WIDTH=34%>
+			<P ALIGN=CENTER>&nbsp;</P>
+		</TD>
+		<TD WIDTH=33%>
+			<P ALIGN=RIGHT>Two-Track Symbols</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR><BR>
+</P>
+</BODY>
+</HTML>

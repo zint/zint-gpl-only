@@ -1,0 +1,413 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE>One-Dimensional Symbols</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.3  (Linux)">
+	<META NAME="CREATED" CONTENT="20070730;21081900">
+	<META NAME="CHANGED" CONTENT="20080316;11412400">
+	<STYLE TYPE="text/css">
+	<!--
+		TD P { color: #000000 }
+		H1 { color: #000000 }
+		P { color: #000000 }
+		TH P { color: #000000 }
+		A:link { color: #0000ff }
+		A:visited { color: #840084 }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-GB" TEXT="#000000" LINK="#0000ff" VLINK="#840084" BGCOLOR="#ffffff" DIR="LTR">
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0 STYLE="page-break-before: always">
+	<TR>
+		<TH COLSPAN=3>
+			<P ALIGN=CENTER>Zint Barcode Generator</P>
+		</TH>
+	</TR>
+	<TR VALIGN=BOTTOM>
+		<TD WIDTH=10%>
+			<P ALIGN=LEFT><A HREF="symbologies.html">Prev</A></P>
+		</TD>
+		<TD WIDTH=80%></TD>
+		<TD WIDTH=10%>
+			<P ALIGN=RIGHT><A HREF="stacked.html">Next</A></P>
+		</TD>
+	</TR>
+</TABLE>
+<HR>
+<H1>5.1 One-Dimensional Symbols</H1>
+<P>One-Dimensional Symbols are what most people associate with the
+term <I>barcode</I>. They consist of a number of bars and a number of
+spaces of differing widths.</P>
+<P><BR><BR>
+</P>
+<P><A NAME="CODE11"></A><FONT SIZE=5><B>5.1.1 Code 11</B></FONT></P>
+<P>Developed by Intermec in 1977, Code 11 is similar to Code 2 of 5
+Matrix and is primarily used in telecommunications. The symbol can
+encode any length string consisting of the digits 0-9 and the dash
+character (-). One modulo-11 check digit is calculated.</P>
+<P ALIGN=CENTER><IMG SRC="code11.png" NAME="graphics1" ALIGN=LEFT WIDTH=225 HEIGHT=140 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P><A NAME="CODE25"></A><FONT SIZE=5><B>5.1.2 Code 2 of 5</B></FONT></P>
+<P>Code 2 of 5 is a family of one-dimensional symbols, 8 of which are
+supported by Zint.</P>
+<P><A NAME="CODE25STAND"></A><FONT SIZE=4><B>5.1.2.1 Standard Code 2
+of 5</B></FONT></P>
+<P>Also known as Code 2 of 5 Matrix is a self-checking code used in
+industrial applications and photo development. Standard Code 2 of 5
+will encode any length numeric input (digits 0-9).</P>
+<P><A NAME="IATA"></A><FONT SIZE=4><B>5.1.2.2 IATA Code 2 of 5</B></FONT></P>
+<P>Used for baggage handling in the air-transport industry by the
+International Air Transport Agency, this self-checking code will
+encode any length numeric input (digits 0-9) and does not include a
+check digit.</P>
+<P><A NAME="IND25"></A><FONT SIZE=4><B>5.1.2.3 Industrial Code 2 of 5</B></FONT></P>
+<P>Industrial Code 2 of 5 can encode any length numeric input (digits
+0-9) and does not include a check digit.</P>
+<P><A NAME="INTER25"></A><FONT SIZE=4><B>5.1.2.4 Interleaved Code 2
+of 5</B></FONT></P>
+<P>This self-checking symbology encodes pairs of numbers, and so can
+only encode an even number of digits (0-9). If an odd number of
+digits is entered a leading zero is added by Zint. No check digit is
+added.</P>
+<P><A NAME="DLOGIC"></A><FONT SIZE=4><B>5.1.2.5 Code 2 of 5 Data
+Logic</B></FONT></P>
+<P>Data Logic is a proprietary variation of Standard Code 2 of 5.
+Data Logic does not include a check digit and can encode any length
+numeric input (digits 0-9).</P>
+<P><A NAME="ITF14"></A><FONT SIZE=4><B>5.1.2.6 ITF-14</B></FONT></P>
+<P>ITF-14, also known as UPC Shipping Container Symbol, Case Code and
+EAN-14, is based on Interleaved Code 2 of 5 and requires a 13 digit
+numeric input (digits 0-9). One modulo-10 check digit is calculated.</P>
+<P><A NAME="DPLEIT"></A><FONT SIZE=4><B>5.1.2.7 Deutche Post Leitcode</B></FONT></P>
+<P>Leitcode is based on Interleaved Code 2 of 5 and is used by
+Deutche Post for mailing purposes. Leitcode requires a 13-digit
+numerical input and includes a check digit.</P>
+<P><A NAME="DPIDENT"></A><FONT SIZE=4><B>5.1.2.8 Deutche Post
+Identcode</B></FONT></P>
+<P>Identcode is based on Interleaved Code 2 of 5 and is used by
+Deutche Post for mailing purposes. Identcode requires an 11-digit
+numerical input and includes a check digit.</P>
+<P ALIGN=CENTER><IMG SRC="itf14.png" NAME="graphics2" ALIGN=LEFT WIDTH=451 HEIGHT=177 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P><A NAME="UPC"></A><FONT SIZE=5><B>5.1.3 Universal Product Code (EN
+797)</B></FONT></P>
+<P><A NAME="UPCA"></A><FONT SIZE=4><B>5.1.3.1 UPC Version A</B></FONT></P>
+<P>UPC-A is used in the United States for retail applications. The
+symbol requires an 11 digit article number. The check digit is
+calculated by Zint. In addition EAN-2 and EAN-5 add-on symbols can be
+added using the + character. For example, to draw a UPC-A symbol with
+the data 72527270270 with an EAN-5 add-on showing the data 12345 use
+the command:</P>
+<P><FONT FACE="Courier, monospace"><FONT SIZE=2>zint --barcode=34 -d
+72527270270+12345</FONT></FONT></P>
+<P>or encode a data string with the + character included: 
+</P>
+<P><FONT FACE="Courier, monospace"><FONT SIZE=2>my_symbol-&gt;symbology
+= BARCODE_UPCA;<BR>error = ZBarcode_Encode_and_Print(my_symbol,
+&quot;72527270270+12345&quot;);</FONT></FONT></P>
+<P><A NAME="UPCE"></A><FONT SIZE=4><B>5.1.3.2 UPC Version E</B></FONT></P>
+<P>UPC-E is a zero-compressed version of UPC-A developed for smaller
+packages. The code requires a 6 digit article number (digits 0-9).
+The check digit is calculated by Zint. EAN-2 and EAN-5 add-on symbols
+can be added using the + character as with UPC-A. In addition Zint
+also supports Number System 1 encoding by entering a 7-digit article
+number stating with the digit 1. For example:</P>
+<P><FONT FACE="Courier, monospace"><FONT SIZE=2>zint --barcode=37 -d
+1123456</FONT></FONT></P>
+<P>or</P>
+<P><FONT FACE="Courier, monospace"><FONT SIZE=2>my_symbol-&gt;symbology
+= BARCODE_UPCE;<BR>error = ZBarcode_Encode_and_Print(my_symbol,
+&quot;1123456&quot;);</FONT></FONT></P>
+<P><IMG SRC="upca.png" NAME="graphics3" ALIGN=LEFT WIDTH=272 HEIGHT=140 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P><A NAME="EAN"></A><FONT SIZE=5><B>5.1.4 European Article Number
+(EN 797)</B></FONT></P>
+<P><A NAME="EANX"></A><FONT SIZE=4><B>5.1.5.1 EAN-2, EAN-5, EAN-8 and
+EAN-13</B></FONT></P>
+<P>The EAN system is used in retail across Europe and includes
+standards for EAN-2 and EAN-5 add-on codes, EAN-8 and EAN-13 which
+encode 2, 5, 7 or 12 digit numbers respectively. Zint will decide
+which symbology to use depending on the length of the input data. In
+addition EAN-2 and EAN-5 add-on symbols can be added using the +
+symbol as with UPC symbols. For example</P>
+<P><FONT FACE="Courier, monospace"><FONT SIZE=2>zint --barcode=13 -d
+54321</FONT></FONT></P>
+<P>will encode a stand-alone EAN-5, whereas</P>
+<P><FONT FACE="Courier, monospace"><FONT SIZE=2>zint --barcode=13 -d
+7432365+54321</FONT></FONT></P>
+<P>will encode an EAN-8 symbol with an EAN-5 add-on. As before these
+results can be achieved using the API:</P>
+<P><FONT FACE="Courier, monospace"><FONT SIZE=2>my_symbol-&gt;symbology
+= BARCODE_EANX<BR>error = ZBarcode_Encode_and_Print(my_symbol,
+&quot;54321&quot;);<BR>error = ZBarcode_Encode_and_Print(my_symbol,
+&quot;7432365+54321&quot;);</FONT></FONT></P>
+<P>All of the EAN symbols include check data which is added by Zint.</P>
+<P><A NAME="ISBN"></A><FONT SIZE=4><B>5.1.4.2 SBN, ISBN and ISBN-13</B></FONT></P>
+<P>EAN-13 symbols (also known as Bookland EAN-13) can also be
+produced from 9-digit SBN, 10-digit ISBN or 13-digit ISBN-13 data.
+The relevant check digit needs to be present in the input data and
+will be verified before the symbol is generated. In addition EAN-2
+and EAN-5 add-on symbols can be added using the + symbol as with UPC
+symbols.</P>
+<P><IMG SRC="ean13.png" NAME="graphics4" ALIGN=LEFT WIDTH=272 HEIGHT=140 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P><A NAME="PLESSEY"></A><FONT SIZE=5><B>5.1.5 Plessey</B></FONT></P>
+<P>Also known as Plessey Code, this symbology was developed by the
+Plessey Company Ltd. in the UK. The symbol can encode any length data
+consisting of digits (0-9) or letters A-F and includes a CRC check
+digit.</P>
+<P ALIGN=CENTER><IMG SRC="plessey.png" NAME="graphics5" ALIGN=LEFT WIDTH=461 HEIGHT=140 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P><A NAME="MSI"></A><FONT SIZE=5><B>5.1.6 MSI Plessey</B></FONT></P>
+<P>Based on Plessey and developed by MSE Data Corporation, MSI
+Plessey is available with a range of check digit options. Any length
+numeric (digits 0-9) input can be encoded. The table below shows the
+options available:</P>
+<CENTER>
+	<TABLE WIDTH=817 BORDER=1 CELLPADDING=4 CELLSPACING=3>
+		<COL WIDTH=139>
+		<COL WIDTH=263>
+		<COL WIDTH=377>
+		<THEAD>
+			<TR VALIGN=TOP>
+				<TH WIDTH=139>
+					<P>Symbology ID</P>
+				</TH>
+				<TH WIDTH=263>
+					<P>Symbology Name</P>
+				</TH>
+				<TH WIDTH=377>
+					<P>Check Digits</P>
+				</TH>
+			</TR>
+		</THEAD>
+		<TBODY>
+			<TR VALIGN=TOP>
+				<TD WIDTH=139>
+					<P ALIGN=CENTER>47</P>
+				</TD>
+				<TD WIDTH=263>
+					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_MSI_PLESSEY</FONT></P>
+				</TD>
+				<TD WIDTH=377>
+					<P ALIGN=CENTER>None</P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=139>
+					<P ALIGN=CENTER>101</P>
+				</TD>
+				<TD WIDTH=263>
+					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_MSI_10</FONT></P>
+				</TD>
+				<TD WIDTH=377>
+					<P ALIGN=CENTER>Modulo-10</P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=139>
+					<P ALIGN=CENTER>102</P>
+				</TD>
+				<TD WIDTH=263>
+					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_MSI_10_10</FONT></P>
+				</TD>
+				<TD WIDTH=377>
+					<P ALIGN=CENTER>Modulo-10 &amp; Modulo-10</P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=139>
+					<P ALIGN=CENTER>103</P>
+				</TD>
+				<TD WIDTH=263>
+					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_MSI_11</FONT></P>
+				</TD>
+				<TD WIDTH=377>
+					<P ALIGN=CENTER>Modulo-11</P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=139>
+					<P ALIGN=CENTER>104</P>
+				</TD>
+				<TD WIDTH=263>
+					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_MSI_11_10</FONT></P>
+				</TD>
+				<TD WIDTH=377>
+					<P ALIGN=CENTER>Modulo-11 &amp; Modulo-10</P>
+				</TD>
+			</TR>
+		</TBODY>
+	</TABLE>
+</CENTER>
+<P><BR><BR>
+</P>
+<P ALIGN=CENTER><IMG SRC="msi.png" NAME="graphics6" ALIGN=LEFT WIDTH=244 HEIGHT=140 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P><A NAME="TELEPEN"></A><FONT SIZE=5><B>5.1.7 Telepen</B></FONT></P>
+<P><A NAME="TELEPENASCII"></A><FONT SIZE=4><B>5.1.7.1 Telepen Alpha</B></FONT></P>
+<P>Telepen Alpha was developed by SB Electronic Systems Limited and
+can encode any length of ASCII text input. Telepen includes a
+modulo-127 check digit.</P>
+<P><A NAME="TELENUM"></A><FONT SIZE=4><B>5.1.7.2 Telepen Numeric</B></FONT></P>
+<P>Telepen Numeric allows compression of purely numeric data into a
+Telepen symbol and includes a modulo-127 check digit.</P>
+<P ALIGN=CENTER><IMG SRC="telepen.png" NAME="graphics7" ALIGN=LEFT WIDTH=378 HEIGHT=140 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P><A NAME="CODE39"></A><FONT SIZE=5><B>5.1.8 Code 39</B></FONT></P>
+<P><A NAME="CODE39STAND"></A><FONT SIZE=4><B>5.1.8.1 Standard Code 39
+(ISO 16388)</B></FONT></P>
+<P>Standard Code 39 was developed in 1974 by Intermec. Input data can
+be of any length and supports the characters 0-9, A-Z, dash (-), full
+stop (.), space, asterisk (*), dollar ($), slash (/), plus (+) and
+percent (%). The original standard (symbology 8) does not require a
+check digit but a modulo-43 check digit can be added if required
+(symbology 105).</P>
+<P><A NAME="EXCODE39"></A><FONT SIZE=4><B>5.1.8.2 Extended Code 39</B></FONT></P>
+<P>Also known as Code 39e and Code39+, this symbology expands on
+Standard Code 39 to provide support to the full ASCII character set.
+The original standard (symbology 9) does not require a check digit
+but a modulo-43 check digit can be added if required (symbology 106).</P>
+<P><A NAME="CODE93"></A><FONT SIZE=4><B>5.1.8.3 Code 93</B></FONT></P>
+<P>A variation of Extended Code 39, Code 93 also supports full ASCII
+text. Two check digits are added.</P>
+<P><A NAME="PZN"></A><FONT SIZE=4><B>5.1.8.4 PZN</B></FONT></P>
+<P>PZN is a Code 39 based symbology used by the pharmaceutical
+industry in Germany. PZN encodes a 6 digit number and includes a
+modulo-10 check digit.</P>
+<P><A NAME="LOGMARS"></A><FONT SIZE=4><B>5.1.8.5 LOGMARS</B></FONT></P>
+<P>LOGMARS (Logistics Applications of Automated Marking and Reading
+Symbols) is a variation of the Code 39 symbology used by the US
+Department of Defence. LOGMARS encodes the same character set as
+Standard Code 39 and adds a modulo-43 check digit.</P>
+<P ALIGN=CENTER><IMG SRC="code39.png" NAME="graphics8" ALIGN=LEFT WIDTH=244 HEIGHT=140 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P><A NAME="CODABAR"></A><FONT SIZE=5><B>5.1.9 Codabar (EN 798)</B></FONT></P>
+<P>Also known as NW-7, Monarch, ABC Codabar, USD-4, Ames Code and
+Code 27, this symbology was developed in 1972 by Monarch Marketing
+Systems for retail purposes. The American Blood Commission adopted
+Codabar in 1977 as the standard symbology for blood identification.
+Codabar can encode any length string starting and ending with the
+letters A-D and containing between these letters the numbers 0-9,
+dash (-), dollar ($), colon (:), slash (/), full stop (.) or plus
+(+). No check digit is generated.</P>
+<P ALIGN=CENTER><IMG SRC="codabar.png" NAME="graphics9" ALIGN=LEFT WIDTH=194 HEIGHT=140 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P><A NAME="PHARMA"></A><FONT SIZE=5><B>5.1.10 Pharmacode</B></FONT></P>
+<P>Developed by Laetus, Pharmacode One-Track is used for the
+identification of pharmaceuticals. The symbology is able to encode
+whole numbers between 3 and 131070.</P>
+<P ALIGN=LEFT><IMG SRC="pharma.png" NAME="graphics10" ALIGN=LEFT WIDTH=116 HEIGHT=100 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P><A NAME="CODE128"></A><FONT SIZE=5><B>5.1.11 Code 128</B></FONT></P>
+<P><A NAME="CODE128STAND"></A><FONT SIZE=4><B>5.1.11.1 Standard Code
+128 (ISO 15417)</B></FONT></P>
+<P>One of the most widely used one-dimensional barcode symbologies,
+Code 128 was developed in 1981 by Computer Identics. This symbology
+supports full ASCII text and uses a three-mode system to compress the
+data into a smaller symbol. Zint automatically switches between modes
+and adds a modulo-103 check digit. Code 128 is the default barcode
+symbology used by Zint. In addition Zint supports the encoding of
+Latin-1 (non-English) characters in Code 128 symbols. The Latin-1
+character set is shown in <A HREF="appxa.html">Appendix A</A>.</P>
+<P><A NAME="CODE128B"></A><FONT SIZE=4><B>5.1.11.2 Code 128 Subset B</B></FONT></P>
+<P>It is sometimes advantageous to stop Code 128 from using subset
+mode C which compresses numerical data. The <FONT FACE="Courier, monospace">BARCODE_CODE128B</FONT>
+option suppresses mode C in favour of mode B.</P>
+<P><A NAME="EAN128"></A><FONT SIZE=4><B>5.1.11.3 GS1-128</B></FONT></P>
+<P>A variation of Code 128 also known as UCC/EAN-128, this symbology
+is defined by the <A HREF="appxc.html">GS1 General Specification.</A>
+Application Identifiers (AIs) should be entered using [square
+brackets] notation. These will be converted to (round brackets) for
+the human readable text. This will allow (round brackets) to be used
+in the data strings to be encoded. Fixed length data should be
+entered at the appropriate length for correct encoding - this is not
+checked by Zint and incorrect length data will result in a symbol
+which does not read correctly (see <A HREF="appxc.html">Appendix C</A>).
+GS1-128 does not support extended ASCII characters. Check digits for
+GTIN data (AI 01) are not generated and need to be included in input
+data. The following is an example of a valid GS1-128 input:</P>
+<P ALIGN=LEFT STYLE="font-weight: medium"><FONT FACE="Courier, monospace"><FONT SIZE=2>zint
+--barcode=16 -d &quot;[01]98898765432106[3202]012345[15]991231&quot;</FONT></FONT></P>
+<P><A NAME="NVE18"></A><FONT SIZE=4><B>5.1.11.4 NVE-18</B></FONT></P>
+<P>A variation of Code 128 the Nummber der Versandeinheit standard
+includes both modulo-10 and modulo-103 check digits. NVE-18 requires
+a 17 digit numerical input.</P>
+<P ALIGN=CENTER><IMG SRC="code128.png" NAME="graphics11" ALIGN=LEFT WIDTH=291 HEIGHT=140 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P ALIGN=LEFT><A NAME="DATABAR"></A><FONT SIZE=5><B>5.1.12 GS1
+DataBar (ISO 24724)</B></FONT></P>
+<P ALIGN=LEFT>Also known as RSS (Reduced Spaced Symbology) these
+symbols are due to replace GS1-128 symbols starting in 2010 in
+accordance with the <A HREF="http://www.gs1uk.org/EANUCC/WORD_Files/word.html">GS1
+General Specification.</A> If a GS1 DataBar symbol is to be printed
+with a 2D component as specified in ISO 24723 set <FONT FACE="Courier, monospace">option_1
+= 2</FONT> or use the option <FONT FACE="Courier, monospace">--mode=2</FONT>
+at the command prompt. See the section <A HREF="composite.html">Composite
+Symbols</A> to generate DataBar symbols with 2D components.</P>
+<P ALIGN=LEFT><A NAME="RSS14"></A><FONT SIZE=4><B>5.1.12.1 DataBar-14
+and DataBar-14 Truncated</B></FONT></P>
+<P ALIGN=LEFT STYLE="font-weight: medium"><FONT SIZE=3>Also known as
+RSS-14 the DataBar-14 encodes a 13 digit item code. A check digit and
+application identifier of (01) are added by Zint. Note that for full
+standard compliance symbol height should be greater than or equal to
+33 modules. For DataBar-14 Truncated set the symbol height to a
+minimum of 13.</FONT></P>
+<P ALIGN=LEFT><A NAME="RSSLTD"></A><FONT SIZE=4><B>5.1.12.2 DataBar
+Limited</B></FONT></P>
+<P ALIGN=LEFT STYLE="font-weight: medium"><FONT SIZE=3>Also known as
+RSS Limited the DataBar Limited symbol also encodes 13 digit item
+codes and can be used in the same way as DataBar-14 above. DataBar
+Limited, however, is limited to data starting with digits 0 and 1
+(i.e. numbers in the range 0 to 1999999999999). As with DataBar-14 a
+check digit and application identifier of (01) are added by Zint.</FONT></P>
+<P ALIGN=LEFT><A NAME="RSSEXP"></A><FONT SIZE=4><B>5.1.12.3 DataBar
+Expanded</B></FONT></P>
+<P ALIGN=LEFT><FONT SIZE=3><SPAN STYLE="font-weight: medium">Also
+known as RSS Expanded this is a variable length symbology capable of
+encoding data from a number of AIs in a single symbol. AIs should be
+encased in [square brackets] in the input data. This will be
+converted to (rounded brackets) before it is included in the human
+readable text attached to the symbol. This method allows the
+inclusion of rounded brackets in the data to be encoded. GTIN data
+(AI 01) should also include the check digit data as this is not
+calculated by Zint when this symbology is encoded. </SPAN></FONT><SPAN STYLE="font-weight: medium">Fixed
+length data should be entered at the appropriate length for correct
+encoding - this is not checked by Zint and incorrect length data will
+result in a symbol which does not read correctly (see <A HREF="appxc.html">Appendix
+C</A>). </SPAN><FONT SIZE=3><SPAN STYLE="font-weight: medium">The
+following is an example of a valid DataBar Expanded input</SPAN></FONT></P>
+<P ALIGN=LEFT STYLE="font-weight: medium"><FONT FACE="Courier, monospace"><FONT SIZE=2>zint
+--barcode=31 -d &quot;[01]98898765432106[3202]012345[15]991231&quot;</FONT></FONT></P>
+<P ALIGN=CENTER><IMG SRC="databar.png" NAME="graphics12" ALIGN=LEFT WIDTH=357 HEIGHT=140 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<HR>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0>
+	<TR VALIGN=TOP>
+		<TD WIDTH=33% HEIGHT=5>
+			<P ALIGN=LEFT><A HREF="symbologies.html">Prev</A></P>
+		</TD>
+		<TD WIDTH=34%>
+			<P ALIGN=CENTER><A HREF="index.html">Home</A></P>
+		</TD>
+		<TD WIDTH=33%>
+			<P ALIGN=RIGHT><A HREF="stacked.html">Next</A></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=33%>
+			<P ALIGN=LEFT>Types of Symbol</P>
+		</TD>
+		<TD WIDTH=34%>
+			<P ALIGN=CENTER>&nbsp;</P>
+		</TD>
+		<TD WIDTH=33%>
+			<P ALIGN=RIGHT>Stacked Symbols</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR><BR>
+</P>
+</BODY>
+</HTML>
