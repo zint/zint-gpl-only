@@ -1,0 +1,265 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE>Legal and Version Information</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.3  (Linux)">
+	<META NAME="CREATED" CONTENT="20070730;21081900">
+	<META NAME="CHANGED" CONTENT="20080422;8453800">
+	<STYLE TYPE="text/css">
+	<!--
+		TD P { color: #000000 }
+		H1 { color: #000000 }
+		P { color: #000000 }
+		TH P { color: #000000 }
+		A:link { color: #0000ff }
+		A:visited { color: #840084 }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-GB" TEXT="#000000" LINK="#0000ff" VLINK="#840084" BGCOLOR="#ffffff" DIR="LTR">
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0 STYLE="page-break-before: always">
+	<TR>
+		<TH COLSPAN=3>
+			<P ALIGN=CENTER>Zint Barcode Generator</P>
+		</TH>
+	</TR>
+	<TR VALIGN=BOTTOM>
+		<TD WIDTH=10%>
+			<P ALIGN=LEFT><A HREF="markings.html">Prev</A></P>
+		</TD>
+		<TD WIDTH=80%></TD>
+		<TD WIDTH=10%>
+			<P ALIGN=RIGHT><A HREF="appxa.html">Next</A></P>
+		</TD>
+	</TR>
+</TABLE>
+<HR>
+<H1>6. Legal and Version Information</H1>
+<P><A NAME="LICENSE"></A><FONT SIZE=5><B>6.1 License</B></FONT></P>
+<P><IMG SRC="gplv3-127x51.png" NAME="graphics1" ALIGN=RIGHT WIDTH=127 HEIGHT=51 BORDER=0>Zint
+and <I>libzint</I> are Copyright &copy; 2008 Robin Stuart and are
+distributed under the terms of the <A HREF="http://www.gnu.org/copyleft/gpl.html">GNU
+General Public License</A> version 3 [1]. See the file <FONT FACE="Courier">COPYING</FONT>
+for more information. The following terms form part of the GPL:</P>
+<P><FONT FACE="Courier">This program is free software; you can
+redistribute it and/or modify it under the terms of the GNU General
+Public License as published by the Free Software Foundation; either
+version 3 of the License, or (at your option) any later version.</FONT></P>
+<P><FONT FACE="Courier">This program is distributed in the hope that
+it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+the GNU General Public License for more details.</FONT></P>
+<P>Data Matrix code is Copyright &copy; 2004 Adrian Kennard, Andrews
+&amp; Arnold Ltd and &copy; 2006 Stefan Schmidt, used under the terms
+of the GNU General Public Licence.</P>
+<P>Reed-Solomon code is Copyright &copy; 2004 Cliff Hones, used under
+the terms of the GNU General Public Licence.</P>
+<P>Portions of GS1 DataBar and Composite Symbology code are Copyright
+&copy; 2006 ISO/BSI Global and used with permission.</P>
+<P>Portions of OneCode code is &copy; 2006 United States Postal
+Service. This is indicated where appropriate in the source code and
+is used on the understanding that this code has been released to the
+public domain and that such use is intended by the copyright holder.</P>
+<P><I>libqrencode</I> is Copyright &copy; 2006, 2007, 2008 Kentaro
+Fukuchi and is released under the terms of the GNU General Public
+Licence.</P>
+<P>QR Code is a registered trademark of Denso Corp. of Kariya, Japan.</P>
+<P><A NAME="PATENT"></A><FONT SIZE=5><B>6.2 Patent Issues</B></FONT></P>
+<P>All of the code in Zint is developed using information in the
+public domain, usually freely available on the Internet. Some of the
+techniques used may be subject to patents and other intellectual
+property legislation. It is my belief that any patents involved in
+the technology underlying symbologies utilised by Zint are
+'unadopted', that is the holder does not object to their methods
+being used. If, however, you are a patent holder or hold any other
+intellectual property rights on the methods used by Zint or the
+symbologies which Zint generates, and do not want Zint to continue to
+support your symbology then please contact me and I will update the
+code to accommodate your wishes at the soonest opportunity.</P>
+<P>Any methods patented or owned by third parties or trademarks or
+registered trademarks used within Zint or in this document are and
+remain the property of their respective owners and do not indicate
+endorsement or affiliation with those owners, companies or
+organisations.</P>
+<P><A NAME="VERSION"></A><FONT SIZE=5><B>6.3 Version Information</B></FONT></P>
+<P>v0.1 - (as <I>Zebar</I>) Draws UPC-A. UPC-E, EAN-8, EAN-13,
+Interlaced 2 of 5, Codabar, Code 39, Extended Code 39 and Code 93
+barcodes and Add-on codes EAN-2 and EAN-5 without parity. 13/11/2006</P>
+<P>v0.2 - Added Code 128 (which is now the default), Code 11, Code 2
+of 5, Add-on codes EAN-2 and EAN-5 parity and MSI/Plessey without
+check digit. 12/12/2006</P>
+<P>v0.3 - Added MSI/Plessey Mod 10 check and 2 x Mod 10 check
+options, Telepen ASCII and Telepen numeric, Postnet, RM4SCC. Code has
+been tidied up quite a bit. Bind option added. 30/12/2006</P>
+<P>v0.4 - Added barcode stacking (now stacks up to 16 barcodes) and
+Code16k (stub). 15/1/2007</P>
+<P>v0.5 - Added Australia Post 4-State Barcodes and Pharmacode (1 and
+2 track). 4-state codes now draw with correct height/width ratio.
+28/2/2007</P>
+<P>v0.6 - Added Plessey and some derivative codes (EAN-128, Code 128
+subset B, Auspost Reply, Auspost Routing, Auspost Redirect, ITF-14).
+Tidied up code again: separated symbologies into more files and put
+all lookup tables into arrays (much reducing the amount of code,
+especially for Code 39e and Code 93). Errors now output to stderr.
+Added proper input verification. Distribution now packs with this
+HTML page instead of separate README. Outputs to PNG. Outputs colour.
+User variable whitespace and border width. Box option. Fixed EAN
+add-on bug. Added whitespace and height options. Project name changed
+to Zint to avoid conflict with extant trade name. Added escape
+character input. 1/4/2007</P>
+<P>v1.0 - Corrected problem with escape character codes. Supports
+PDF417. This completes the list of features I originally wanted (plus
+a few more), hence skip to version 1.0. 20/4/2007</P>
+<P>v1.1 - Added more derivatives (Code 2 of 5 Matrix, IATA and Data
+Logic, Truncated PDF417, Deutsche Post Leitcode and Identcode,
+Pharmazentralnummer, Planet) and Flattermarken. Tidied up 2 of 5
+code. 26/4/2007</P>
+<P>v1.2 - Supports Data Matrix (by absorption of IEC16022 code by
+Stefan Schmidt et al). Added reverse colours, FIM, MSI/Plessey Modulo
+11 and Modulo 11/10. Corrected Code 16k check digit calculation.
+28/5/2007</P>
+<P>v1.3 - Supports USPS OneCode and LOGMARS. Brought all usage
+information into one User Manual document. 13/6/2007</P>
+<P>v1.4 - Added NVE-18 support. Corrected some problems with
+compilation and input verification. Added zint.1 man page. Command
+line option handling now uses getopt(), and all the switches have
+changed. Added --font option. 20/6/2007</P>
+<P>v1.5 - Pulled everything together to make an API. Corrected errors
+with EAN-13, PDF417 and LOGMARS. Added EPS output. Added QR Code
+support using libqrencode. Corrected ISBN verification error.
+Re-compiled documentation in HTML form. Put in place proper error
+handling routines. --font option removed. Encoding is now done with a
+restructured zint_symbol structure. Added make install option and
+optional QR Code support to Makefile. Corrected minor problem with
+4-State Codes. Restructured code into fewer source code files. Added
+MicroPDF417 support. 12/8/2007</P>
+<P>v1.5.1 - Added formatting code to EPS output of EAN and UPC
+symbols according to EN 797:1996. Checked against and, where
+appropriate, altered or corrected to comply with ISO 16388 and ISO
+15417 including Latin-1 support. Altered default image settings,
+added automatic ITF border. Corrected error with USPS OneCode. Tidied
+up Code 39 quite a bit, added Mod 43 options. 3/9/2007</P>
+<P>v1.5.2 - Added extended ASCII support to Code 16k. Corrected Code
+128 error. Added Maxicode support by integrating code by John Lien.
+26/9/2007</P>
+<P>v1.5.3 - Made huge corrections to Maxicode support by removing and
+re-writing much of John's code. Maxicode now supports extended ASCII
+and modes 4, 5 and 6. 10/10/2007</P>
+<P>v1.5.4 - Added GS1 DataBar (Reduced Space Symbology) support.
+26/11/2007</P>
+<P>v1.5.5 - Added composite symbology support. Corrected errors with
+GS1-128 and PDF417/MicroPDF417 byte processing. Transferred licence
+to GPL version 3. 9/3/2008</P>
+<P>v1.6 – Data Matrix, Maxicode and Australia Post now use common
+Reed-Solomon functions – this also fixes a bug in Maxicode error
+correction and replaces the last of the Lien code. Added PNG output
+for Maxicode symbols. Removed some useless code. Updated QR support
+for <I>libqrencode</I> v2.0.0. 22/4/2008</P>
+<P><A NAME="CREDITS"></A><FONT SIZE=5><B>6.4 Sources of Information</B></FONT></P>
+<P>Below is a list of some of the sources used in rough chronological
+order:</P>
+<P><A HREF="http://www.spatula.net/proc/barcode/index.src">Nick
+Johnson's Barcode Specifications</A></P>
+<P><A HREF="http://www.barcode-1.net/pub/russadam/spec.html">Bar Code
+1 Specification Source Page</A></P>
+<P><A HREF="http://www.telepen-barcode.co.uk/">SB Electronic Systems
+Telepen website</A></P>
+<P>Pharmacode specifications from <A HREF="http://www.laetus.com/">Laetus</A></P>
+<P><A HREF="http://www.morovia.com/education/symbology/royalmail.asp">Morovia
+RM4SCC specification</A></P>
+<P><A HREF="http://www.auspost.com.au/">Austalia Post's</A> 'A Guide
+to Printing the 4-State Barcode' and bcsample source code</P>
+<P>Plessey algorithm from <A HREF="http://ar.linux.it/pub/barcode">GNU-Barcode
+v0.98</A> by Leonid A. Broukhis</P>
+<P><A HREF="http://www.gs1uk.org/EANUCC/WORD_Files/word.html">GS1
+General Specifications v 7.0</A></P>
+<P><A HREF="http://www.linpng.org/pub/png/book/">PNG: The Definitive
+Guide</A> and wpng source code by Greg Reolofs</P>
+<P>PDF417 specification and pdf417 source code by <A HREF="http://grandzebu.net/index.php">Grand
+Zebu</A></P>
+<P>Barcode Reference, TBarCode/X User Documentation and TBarCode/X
+demonstration program from <A HREF="http://www.tec-it.com/">Tec-It</A></P>
+<P><A HREF="http://www.datenfreihafen.org/projects/iec16022.html">IEC16022
+source code by Stefan Schmidt et al</A></P>
+<P><A HREF="http://ribbs.usps.gov/onecodesolution/">United States
+Postal Service Specification USPS-B-3200</A></P>
+<P>Adobe Systems Incorporated Encapsulated PostScript File Format
+Specification</P>
+<P><A HREF="http://www.bsi-global.com/">BSI Online</A> Library</P>
+<P><A NAME="STANDARD"></A><FONT SIZE=5><B>6.5 Standard Compliance</B></FONT></P>
+<P>Zint was developed to provide compliance with the following
+British and international standards: 
+</P>
+<P>BS EN 797:1996 Bar coding – Symbology specifications - 'EAN/UPC'</P>
+<P>BS EN 798:1996 Bar coding – Symbology specifications - “Codabar”</P>
+<P>BS ISO/IEC 12323:2005 AIDC technologies – Symbology
+specifications – Code 16K</P>
+<P>BS ISO/IEC 15417:2007 Information technology – Automatic
+identification and data capture techniques – Code 128 bar code
+symbology specification</P>
+<P>BS ISO/IEC 15438:2006 Information technology – Automatic
+identification and data capture techniques – PDF417 bar code
+symbology specification</P>
+<P>BS ISO/IEC 16022:2006 Information technology – Automatic
+identification and data capture techniques – Data Matrix bar code
+symbology specification</P>
+<P>BS ISO/IEC 16023:2000 Information technology – International
+symbology specification - Maxicode</P>
+<P>BS ISO/IEC 16388:2007 Information technology – Automatic
+identification and data capture techniques – Code 39 bar code
+symbology specification</P>
+<P>BS ISO/IEC 18004:2006 Information technology – Automatic
+identification and data capture techniques – QR Code 2005 bar code
+symbology specification</P>
+<P>BS ISO/IEC 24723:2006 Information technology – Automatic
+identification and data capture techniques – EAN.UCC Composite bar
+code symbology specification</P>
+<P>BS ISO/IEC 24724:2006 Information technology – Automatic
+identification and data capture techniques – Reduced Space
+Symbology (RSS) bar code symbology specification</P>
+<P>BS ISO/IEC 24728:2006 Information technology – Automatic
+identification and data capture techniques – MicroPDF417 bar code
+symbology specification</P>
+<P ALIGN=LEFT><BR><BR>
+</P>
+<P ALIGN=LEFT>[1] Some of the third party code in this library was
+distributed under the terms of <A HREF="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html">version
+2 of the GNU Public Licence</A> with the option of using a later
+version. For the purpose of Zint as a whole package I have chosen to
+take this option and redistribute the code under version 3 of the
+licence. This decision takes effect from version 1.5.5 of the code
+and does not affect the licence of previously released versions of
+the code. Some third party source code files, however, are included
+in Zint as verbatim (unaltered) copies and therefore the right to
+change the license terms remains exclusively with the original
+copyright holder. R. Stuart 9/3/2008</P>
+<HR>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0>
+	<TR VALIGN=TOP>
+		<TD WIDTH=33% HEIGHT=5>
+			<P ALIGN=LEFT><A HREF="markings.html">Prev</A></P>
+		</TD>
+		<TD WIDTH=34%>
+			<P ALIGN=CENTER><A HREF="index.html">Home</A></P>
+		</TD>
+		<TD WIDTH=33%>
+			<P ALIGN=RIGHT><A HREF="appxa.html">Next</A></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=33%>
+			<P ALIGN=LEFT>Other Markings</P>
+		</TD>
+		<TD WIDTH=34%>
+			<P ALIGN=CENTER>&nbsp;</P>
+		</TD>
+		<TD WIDTH=33%>
+			<P ALIGN=RIGHT>Appendix A</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR><BR>
+</P>
+</BODY>
+</HTML>

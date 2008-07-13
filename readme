@@ -1,0 +1,39 @@
+Zint and libzint 1.6.0
+----------------------
+
+Zint is a front end program and library which provides support for over 30 barcode symbologies
+in an open source package released under the GNU General Public License. Currently supported
+symbologies include:
+
+Code 11, Standard Code 2 of 5, IATA Code 2 of 5, Industrial Code 2 of 5, Interleaved Code 2 of 5,
+Code 2 of 5 Data Logic, ITF-14, Deutche Post Leitcode, Deutche Post Identcode, UPC-A, UPC-E, EAN-2,
+EAN-5, EAN-8, EAN-13, UK Plessey, MSI Plessey, Telepen Alpha, Telepen Numeric, Code 39,
+Extended Code 39, Code 93, PZN, LOGMARS, Codabar, Pharmacode, Code 128, EAN-128, NVE-18, Code 16k,
+PDF417, MicroPDF417, Two-Track Pharmacode, PostNet, PLANET, Australia Post 4-State Symbols, RM4SCC,
+USPS OneCode, GS1 DataBar, DataBar-14, DataBar Limited, DataBar Extended, DataBar Stacked,
+Composite Symbology, Data Matrix, QR Code, Maxicode, FIM and Flattermarken.
+
+Full documentation is included in the 'docs' directory. The libzint back end code is included
+in the 'backend' directory, and the front end command line program 'zint' is included in the
+'frontend' directory. See the HTML documentation for full installation instructions. The file
+DEVELOPERS in the backend folder gives a brief guide to which symbologies are handled by which
+source code files.
+
+
+CONTACT ME
+----------
+
+The home of libzint is
+
+http://www.sourceforge.net/projects/zint
+
+and a new home for information about Zint is under construction at:
+
+http://www.zint.org.uk
+
+I am keen to hear your ideas / recieve bug reports at zint@hotmail.co.uk
+
+Thanks for your interest in libzint.
+Happy encoding.
+
+Robin.

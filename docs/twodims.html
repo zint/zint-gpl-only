@@ -1,0 +1,375 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE>Two-Dimensional Symbols</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.3  (Linux)">
+	<META NAME="CREATED" CONTENT="20070730;21081900">
+	<META NAME="CHANGED" CONTENT="20080422;8283700">
+	<STYLE TYPE="text/css">
+	<!--
+		TD P { color: #000000 }
+		H1 { color: #000000 }
+		P { color: #000000 }
+		TH P { color: #000000 }
+		A:link { color: #0000ff }
+		A:visited { color: #840084 }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-GB" TEXT="#000000" LINK="#0000ff" VLINK="#840084" BGCOLOR="#ffffff" DIR="LTR">
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0 STYLE="page-break-before: always">
+	<TR>
+		<TH COLSPAN=3>
+			<P ALIGN=CENTER>Zint Barcode Generator</P>
+		</TH>
+	</TR>
+	<TR VALIGN=BOTTOM>
+		<TD WIDTH=10%>
+			<P ALIGN=LEFT><A HREF="fourstate.html">Prev</A></P>
+		</TD>
+		<TD WIDTH=80%></TD>
+		<TD WIDTH=10%>
+			<P ALIGN=RIGHT><A HREF="markings.html">Next</A></P>
+		</TD>
+	</TR>
+</TABLE>
+<HR>
+<H1>5.6 Two-Dimensional Symbols</H1>
+<P><A NAME="DMATRIX"></A><FONT SIZE=5><B>5.6.1 Data Matrix (ISO
+16022)</B></FONT></P>
+<P>Also known as Semacode this symbology can encode a large amount of
+data in a small area. Any length ASCII string can be encoded up to
+780 characters. Symbol size is determined by the length of the input
+data and Reed-Solomon error correction is added.</P>
+<P ALIGN=CENTER><IMG SRC="matrix.png" NAME="graphics1" ALIGN=LEFT WIDTH=44 HEIGHT=44 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P><A NAME="QRCODE"></A><FONT SIZE=5><B>5.6.2 QR Code (ISO 18004)</B></FONT></P>
+<P>Also known as Quick Response Code this symbology was developed by
+Denso. QR Code support in Zint relies on <I>libqrencode</I> (version
+2.0.0) which is available from
+<A HREF="http://megaui.net/fukuchi/works/qrencode/index.en.html">http://megaui.net/fukuchi/works/qrencode/index.en.html</A>.
+Support for QR Code through <I>libzint</I> means that developers only
+need to write handlers for one API which covers QR Code as well as
+all of the other code symbologies provided by <I>libzint</I>. Four
+levels of error correction are available using the <FONT FACE="Courier, monospace">security=</FONT>
+option or setting <FONT FACE="Courier, monospace">option_1</FONT> as
+shown in the following table.</P>
+<DL>
+	<DL>
+		<DL>
+			<DL>
+				<DL>
+					<DL>
+						<DL>
+							<DD>
+							<TABLE WIDTH=715 BORDER=1 CELLPADDING=4 CELLSPACING=3>
+								<COL WIDTH=74>
+								<COL WIDTH=113>
+								<COL WIDTH=261>
+								<COL WIDTH=218>
+								<TR VALIGN=TOP>
+									<TD WIDTH=74>
+										<P ALIGN=CENTER><B>Input</B></P>
+									</TD>
+									<TD WIDTH=113>
+										<P ALIGN=CENTER><B>ECC Level</B></P>
+									</TD>
+									<TD WIDTH=261>
+										<P ALIGN=CENTER><B>Error Correction Capacity</B></P>
+									</TD>
+									<TD WIDTH=218>
+										<P ALIGN=CENTER><B>Recovery Capacity</B></P>
+									</TD>
+								</TR>
+								<TR VALIGN=TOP>
+									<TD WIDTH=74>
+										<P ALIGN=CENTER>1</P>
+									</TD>
+									<TD WIDTH=113>
+										<P ALIGN=CENTER>L (default)</P>
+									</TD>
+									<TD WIDTH=261>
+										<P ALIGN=CENTER>Approx 20% of symbol</P>
+									</TD>
+									<TD WIDTH=218>
+										<P ALIGN=CENTER>Approx 7%</P>
+									</TD>
+								</TR>
+								<TR VALIGN=TOP>
+									<TD WIDTH=74>
+										<P ALIGN=CENTER>2</P>
+									</TD>
+									<TD WIDTH=113>
+										<P ALIGN=CENTER>M</P>
+									</TD>
+									<TD WIDTH=261>
+										<P ALIGN=CENTER>Approx 37% of symbol</P>
+									</TD>
+									<TD WIDTH=218>
+										<P ALIGN=CENTER>Approx 15%</P>
+									</TD>
+								</TR>
+								<TR VALIGN=TOP>
+									<TD WIDTH=74>
+										<P ALIGN=CENTER>3</P>
+									</TD>
+									<TD WIDTH=113>
+										<P ALIGN=CENTER>Q</P>
+									</TD>
+									<TD WIDTH=261>
+										<P ALIGN=CENTER>Approx 55% of symbol</P>
+									</TD>
+									<TD WIDTH=218>
+										<P ALIGN=CENTER>Approx 25%</P>
+									</TD>
+								</TR>
+								<TR VALIGN=TOP>
+									<TD WIDTH=74>
+										<P ALIGN=CENTER>4</P>
+									</TD>
+									<TD WIDTH=113>
+										<P ALIGN=CENTER>H</P>
+									</TD>
+									<TD WIDTH=261>
+										<P ALIGN=CENTER>Approx 65% of symbol</P>
+									</TD>
+									<TD WIDTH=218>
+										<P ALIGN=CENTER>Approx 30%</P>
+									</TD>
+								</TR>
+							</TABLE>
+						</DL>
+					</DL>
+				</DL>
+			</DL>
+		</DL>
+	</DL>
+</DL>
+<P><BR><BR>
+</P>
+<P>The size of the symbol can be set by using the <FONT FACE="Courier, monospace">vers=</FONT>
+option or setting <FONT FACE="Courier, monospace">option_2</FONT> to
+the QR Code version required (1-40). The maximum capacity of a
+(version 40) QR Code symbol is 7089 numeric digits, 4296 alphanumeric
+characters or 2953 bytes of data.</P>
+<P ALIGN=CENTER><IMG SRC="qr.png" NAME="graphics2" ALIGN=LEFT WIDTH=50 HEIGHT=50 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P><A NAME="MAXI"></A><FONT SIZE=5><B>5.6.3 Maxicode (ISO 16023)</B></FONT></P>
+<P ALIGN=LEFT>Developed by UPS the Maxicode symbology employs a grid
+of hexagons surrounding a 'bulls-eye' finder pattern. This symbology
+is designed for the identification of parcels. Zint encodes Maxicode
+symbols in Mode 2 or Mode 3 depending on the postcode data entered.
+In these modes Maxicode symbols are composed of two parts named the
+primary and secondary messages. The primary message consists of a
+structured data field which includes various data about the package
+being sent, the secondary message usually consists of address data in
+a data structure. The format of the primary message is given in the
+following table: 
+</P>
+<CENTER>
+	<TABLE WIDTH=810 BORDER=1 CELLPADDING=4 CELLSPACING=3>
+		<COL WIDTH=270>
+		<COL WIDTH=513>
+		<THEAD>
+			<TR VALIGN=TOP>
+				<TH WIDTH=270>
+					<P>Characters</P>
+				</TH>
+				<TH WIDTH=513>
+					<P>Meaning</P>
+				</TH>
+			</TR>
+		</THEAD>
+		<TBODY>
+			<TR VALIGN=TOP>
+				<TD WIDTH=270>
+					<P ALIGN=CENTER>1-9</P>
+				</TD>
+				<TD WIDTH=513>
+					<P ALIGN=CENTER>Postcode data which can consist of up to 9
+					digits (for mode 2) or up to 6 alphanumeric characters (for mode
+					3). Remaining unused characters should be filled with the SPACE
+					character (ASCII 32).</P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=270>
+					<P ALIGN=CENTER>10-12</P>
+				</TD>
+				<TD WIDTH=513>
+					<P ALIGN=CENTER>Three digit country code according to ISO 3166
+					(see <A HREF="appxb.html">Appendix B</A>).</P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=270>
+					<P ALIGN=CENTER>13-15</P>
+				</TD>
+				<TD WIDTH=513>
+					<P ALIGN=CENTER>Three digit service code. This depends on your
+					parcel courier.</P>
+				</TD>
+			</TR>
+		</TBODY>
+	</TABLE>
+</CENTER>
+<P ALIGN=LEFT><BR><BR>
+</P>
+<P ALIGN=LEFT>The primary message can be designated at the command
+prompt using the <FONT FACE="Courier, monospace">--primary=</FONT>
+switch. The secondary message uses the normal data entry method. For
+example:</P>
+<P ALIGN=LEFT><FONT FACE="Courier, monospace">zint -o test.eps -b 57
+--primary='999999999840012' -d 'Secondary Message Here'</FONT></P>
+<P ALIGN=LEFT>When using the API the primary message must be placed
+in the <FONT FACE="Courier, monospace">symbol-&gt;primary</FONT>
+string. The secondary is entered in the same way as described in
+section 4.2.</P>
+<P ALIGN=LEFT>Modes 4 to 6 can be encoded using the <FONT FACE="Courier, monospace">--mode=</FONT>
+switch or by setting <FONT FACE="Courier, monospace">option_1</FONT>.
+Modes 4 to 6 do not require a primary message. For example:</P>
+<P ALIGN=LEFT><FONT FACE="Courier, monospace">zint -o test.eps -b 57
+--mode=4 -d 'A MaxiCode Message in Mode 4'</FONT></P>
+<P ALIGN=LEFT>Mode 6 is reserved for the maintenance of scanner
+hardware and should not be used to encode user data. All modes
+support extended ASCII characters and number compression. The maximum
+length of text which can be placed in a Maxicode symbol depends on
+the type of characters used in the text. Example maximum data lengths
+are given in the table below:</P>
+<CENTER>
+	<TABLE WIDTH=664 BORDER=1 CELLPADDING=4 CELLSPACING=3>
+		<COL WIDTH=138>
+		<COL WIDTH=160>
+		<COL WIDTH=164>
+		<COL WIDTH=153>
+		<THEAD>
+			<TR VALIGN=TOP>
+				<TH WIDTH=138>
+					<P>Mode</P>
+				</TH>
+				<TH WIDTH=160>
+					<P>Maximum Data Length for Capital Letters</P>
+				</TH>
+				<TH WIDTH=164>
+					<P>Maximum Data Length for Numeric Digits</P>
+				</TH>
+				<TH WIDTH=153>
+					<P>Number of Error Correction Codewords</P>
+				</TH>
+			</TR>
+		</THEAD>
+		<TBODY>
+			<TR VALIGN=TOP>
+				<TD WIDTH=138>
+					<P ALIGN=CENTER>2 (secondary only)</P>
+				</TD>
+				<TD WIDTH=160>
+					<P ALIGN=CENTER>84</P>
+				</TD>
+				<TD WIDTH=164>
+					<P ALIGN=CENTER>126</P>
+				</TD>
+				<TD WIDTH=153>
+					<P ALIGN=CENTER>50</P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=138>
+					<P ALIGN=CENTER>3 (secondary only)</P>
+				</TD>
+				<TD WIDTH=160>
+					<P ALIGN=CENTER>84</P>
+				</TD>
+				<TD WIDTH=164>
+					<P ALIGN=CENTER>126</P>
+				</TD>
+				<TD WIDTH=153>
+					<P ALIGN=CENTER>50</P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=138>
+					<P ALIGN=CENTER>4</P>
+				</TD>
+				<TD WIDTH=160>
+					<P ALIGN=CENTER>93</P>
+				</TD>
+				<TD WIDTH=164>
+					<P ALIGN=CENTER>135</P>
+				</TD>
+				<TD WIDTH=153>
+					<P ALIGN=CENTER>50</P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=138>
+					<P ALIGN=CENTER>5</P>
+				</TD>
+				<TD WIDTH=160>
+					<P ALIGN=CENTER>77</P>
+				</TD>
+				<TD WIDTH=164>
+					<P ALIGN=CENTER>110</P>
+				</TD>
+				<TD WIDTH=153>
+					<P ALIGN=CENTER>66</P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=138>
+					<P ALIGN=CENTER>6</P>
+				</TD>
+				<TD WIDTH=160>
+					<P ALIGN=CENTER>93</P>
+				</TD>
+				<TD WIDTH=164>
+					<P ALIGN=CENTER>135</P>
+				</TD>
+				<TD WIDTH=153>
+					<P ALIGN=CENTER>50</P>
+				</TD>
+			</TR>
+		</TBODY>
+	</TABLE>
+</CENTER>
+<P ALIGN=LEFT><BR><BR>
+</P>
+<P ALIGN=LEFT><B>PLEASE NOTE</B> that due to the unique style of the
+Maxicode symbol not all of the options available for other
+symbologies are available. Settings for height, whitespace width,
+border width and output options will be ignored. Colour options are
+available as with other symbologies. PNG output is set at a
+resolution of 12 pixels per millimetre (approx 300 dpi) and uses the
+methods set out in Annex J of the ISO/IEC standard.</P>
+<P ALIGN=LEFT><IMG SRC="maxicode.png" NAME="graphics3" ALIGN=LEFT WIDTH=150 HEIGHT=150 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<HR>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0>
+	<TR VALIGN=TOP>
+		<TD WIDTH=33% HEIGHT=5>
+			<P ALIGN=LEFT><A HREF="fourstate.html">Prev</A></P>
+		</TD>
+		<TD WIDTH=34%>
+			<P ALIGN=CENTER><A HREF="index.html">Home</A></P>
+		</TD>
+		<TD WIDTH=33%>
+			<P ALIGN=RIGHT><A HREF="markings.html">Next</A></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=33%>
+			<P ALIGN=LEFT>4-State Codes</P>
+		</TD>
+		<TD WIDTH=34%>
+			<P ALIGN=CENTER>&nbsp;</P>
+		</TD>
+		<TD WIDTH=33%>
+			<P ALIGN=RIGHT>Markings</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR><BR>
+</P>
+</BODY>
+</HTML>

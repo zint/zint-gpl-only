@@ -1,0 +1,172 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE>Stacked Symbols</TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.3  (Linux)">
+	<META NAME="CREATED" CONTENT="20070730;21081900">
+	<META NAME="CHANGED" CONTENT="20080316;12224200">
+	<STYLE TYPE="text/css">
+	<!--
+		TD P { color: #000000 }
+		H1 { color: #000000 }
+		P { color: #000000 }
+		TH P { color: #000000 }
+		A:link { color: #0000ff }
+		A:visited { color: #840084 }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-GB" TEXT="#000000" LINK="#0000ff" VLINK="#840084" BGCOLOR="#ffffff" DIR="LTR">
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0 STYLE="page-break-before: always">
+	<TR>
+		<TH COLSPAN=3>
+			<P ALIGN=CENTER>Zint Barcode Generator</P>
+		</TH>
+	</TR>
+	<TR VALIGN=BOTTOM>
+		<TD WIDTH=10%>
+			<P ALIGN=LEFT><A HREF="onedim.html">Prev</A></P>
+		</TD>
+		<TD WIDTH=80%></TD>
+		<TD WIDTH=10%>
+			<P ALIGN=RIGHT><A HREF="composite.html">Next</A></P>
+		</TD>
+	</TR>
+</TABLE>
+<HR>
+<H1 ALIGN=LEFT>5.2 Stacked Symbologies</H1>
+<P ALIGN=LEFT><A NAME="BASIC"></A><FONT SIZE=5><B>5.2.1 Basic Symbol
+Stacking</B></FONT></P>
+<P ALIGN=LEFT>An early innovation to get more information into a
+symbol, used primarily in the vehicle industry, is to simply stack
+one-dimensional codes on top of each other. This can be achieved at
+the command prompt by giving more than one set of input data. For
+example</P>
+<P ALIGN=LEFT><FONT FACE="Courier, monospace"><FONT SIZE=2>zint -d
+'This' -d 'That'</FONT></FONT></P>
+<P ALIGN=LEFT>will draw two Code 128 symbols, one on top of the
+other. The same result can be achieved using the API by executing the
+<FONT FACE="Courier, monospace">ZBarcode_Encode() </FONT>function
+more than once on a symbol. For example:</P>
+<P ALIGN=LEFT><FONT FACE="Courier, monospace"><FONT SIZE=2>my_symbol-&gt;symbology
+= BARCODE_CODE128;<BR>error = ZBarcode_Encode(my_symbol,
+&quot;This&quot;);<BR>error = ZBarcode_Encode(my_symbol,
+&quot;That&quot;);<BR>error = ZBarcode_Print(my_symbol);</FONT></FONT></P>
+<P ALIGN=LEFT>The example below shows 5 EAN-13 symbols stacked in
+this way.</P>
+<P ALIGN=LEFT><IMG SRC="stacked.png" NAME="graphics1" ALIGN=LEFT WIDTH=190 HEIGHT=100 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P ALIGN=LEFT><A NAME="CODE16K"></A><FONT SIZE=5><B>5.2.2 Code 16k
+(EN 12323)</B></FONT></P>
+<P ALIGN=LEFT>A more sophisticated method is to use some type of line
+indexing which indicates to the barcode reader which order the
+symbols should be read. This is demonstrated by Code 16k which uses a
+Code128 based system which can stack up to 16 rows in a block. This
+gives a maximum data capacity of 77 characters or 154 numerical
+digits and includes two modulo-107 check digits. Code 16k also
+supports extended ASCII character encoding in the same manner as Code
+128.</P>
+<P ALIGN=LEFT><IMG SRC="code16k.png" NAME="graphics2" ALIGN=LEFT WIDTH=212 HEIGHT=120 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P ALIGN=LEFT><A NAME="PDF417"></A><FONT SIZE=5><B>5.2.3 PDF417 (ISO
+15438)</B></FONT></P>
+<P ALIGN=LEFT>Heavily used in the parcel industry, the PDF417
+symbology can encode a vast amount of data into a small space. Zint
+supports encoding up to the ISO standard maximum symbol size of 925
+codewords which (at error correction level 0) allows a maximum data
+size of 1850 text characters, or 2710 digits. The width of the
+generated PDF417 symbol can be specified at the command line using
+the --cols switch followed by a number between 1 and 30, and the
+amount of check digit information can be specified by using the
+--security switch followed by a number between 0 and 8 where the
+number of codewords used for check information is determined by
+2<SUP>(value + 1)</SUP>. If using the API these values are assigned
+to <FONT FACE="Courier, monospace">option_2</FONT> and <FONT FACE="Courier, monospace">option_1</FONT>
+respectively. The default level of check information is determined by
+the amount of data being encoded. International text support is
+provided using the Latin-1 character set as described in <A HREF="appxa.html">Appendix
+A</A>.</P>
+<P ALIGN=LEFT><IMG SRC="pdf417.png" NAME="graphics3" ALIGN=LEFT WIDTH=240 HEIGHT=54 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P ALIGN=LEFT><A NAME="PDF417T"></A><FONT SIZE=5><B>5.2.4 Compact
+PDF417</B></FONT></P>
+<P ALIGN=LEFT>Also known as truncated PDF417. Options are as for
+PDF417 above.</P>
+<P ALIGN=LEFT><IMG SRC="compact417.png" NAME="graphics4" ALIGN=LEFT WIDTH=172 HEIGHT=54 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P ALIGN=LEFT><A NAME="MICROPDF"></A><FONT SIZE=5><B>5.2.5
+MicroPDF417 (ISO 24728)</B></FONT></P>
+<P ALIGN=LEFT>A variation of the PDF417 standard, MicroPDF417 is
+intended for applications where symbol size needs to be kept to a
+minimum. 34 pre-defined symbol sizes are available with 1 - 4 columns
+and 4 - 44 rows. The maximum size MicroPDF417 symbol can hold 250
+alphanumeric characters or 366 digits. The amount of error correction
+used is dependant on symbol size. The number of columns used can be
+determined using the <FONT FACE="Courier, monospace">--cols</FONT>
+switch or <FONT FACE="Courier, monospace">option_2</FONT> as with
+PDF417.</P>
+<P ALIGN=LEFT><IMG SRC="micropdf.png" NAME="graphics5" ALIGN=LEFT WIDTH=110 HEIGHT=80 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P ALIGN=LEFT><A NAME="RSS14STACK"></A><FONT SIZE=5><B>5.2.6 GS1
+DataBar-14 Stacked (ISO 24724)</B></FONT></P>
+<P ALIGN=LEFT>A stacked variation of the GS1 DataBar-14 symbol
+requiring the same input (see section <A HREF="onedim.html#RSS14">5.1.12.1</A>).
+The height of this symbol is fixed. The data is encoded in two rows
+of bars with a central finder pattern. This symbol can be generated
+with a two-dimensional component to make a <A HREF="composite.html">composite
+symbol</A>.</P>
+<P ALIGN=LEFT><IMG SRC="dbstack.png" NAME="graphics6" ALIGN=LEFT WIDTH=100 HEIGHT=26 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P ALIGN=LEFT><A NAME="RSS14OMNI"></A><FONT SIZE=5><B>5.2.7 GS1
+DataBar-14 Stacked Omnidirectional (ISO 24724)</B></FONT></P>
+<P ALIGN=LEFT>Another variation of the GS1 DataBar-14 symbol
+requiring the same input (see section <A HREF="onedim.html#RSS14">5.1.12.1</A>).
+The data is encoded in two rows of bars with a central finder
+pattern. This symbol can be generated with a two-dimensional
+component to make a <A HREF="composite.html">composite symbol</A>.</P>
+<P ALIGN=LEFT><IMG SRC="dbomni.png" NAME="graphics7" ALIGN=LEFT WIDTH=100 HEIGHT=138 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P ALIGN=LEFT><A NAME="RSSEXPSTACK"></A><FONT SIZE=5><B>5.2.8 GS1
+DataBar Expanded Stacked (ISO 24724)</B></FONT></P>
+<P ALIGN=LEFT>A stacked variation of the GS1 DataBar Expanded symbol
+for smaller packages. Input is the same as for GS1 DataBar Expanded
+(see section <A HREF="onedim.html#RSSEXP">5.1.12.3</A>). In addition
+the width of the symbol can be altered using the <FONT FACE="Courier, monospace">--cols</FONT>
+switch or <FONT FACE="Courier, monospace">option_2</FONT>. In this
+case the number of columns relates to the number of character pairs
+on each row of the symbol. For symbols with a 2D component the number
+of columns must be at least 2. This symbol can be generated with a
+two-dimensional component to make a <A HREF="composite.html">composite
+symbol</A>.</P>
+<P ALIGN=LEFT><IMG SRC="dbexpand.png" NAME="graphics8" ALIGN=LEFT WIDTH=204 HEIGHT=100 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<HR>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0>
+	<TR VALIGN=TOP>
+		<TD WIDTH=33% HEIGHT=5>
+			<P ALIGN=LEFT><A HREF="onedim.html">Prev</A></P>
+		</TD>
+		<TD WIDTH=34%>
+			<P ALIGN=CENTER><A HREF="index.html">Home</A></P>
+		</TD>
+		<TD WIDTH=33%>
+			<P ALIGN=RIGHT><A HREF="composite.html">Next</A></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=33%>
+			<P ALIGN=LEFT>One-Dimensional Symbols</P>
+		</TD>
+		<TD WIDTH=34%>
+			<P ALIGN=CENTER>&nbsp;</P>
+		</TD>
+		<TD WIDTH=33%>
+			<P ALIGN=RIGHT>Composite Symbols</P>
+		</TD>
+	</TR>
+</TABLE>
+<P><BR><BR>
+</P>
+</BODY>
+</HTML>
