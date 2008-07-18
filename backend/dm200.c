@@ -27,7 +27,6 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include <malloc.h>
 #include "reedsol.h"
 #include "dm200.h"
 
