@@ -545,7 +545,7 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 	only 2 check digits, so I have abandoned it! - Zint now insists on a proportional
 	amount of check data unless overruled by the user */
 	
-	if(longueur + k > PDF_MAX) {
+	if(longueur + k > symbol->option_3) {
 		return 2;
 	}
 	if(((longueur + k) / symbol->option_2) > 90) {

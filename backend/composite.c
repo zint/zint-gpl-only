@@ -1435,7 +1435,7 @@ int cc_binary_string(struct zint_symbol *symbol, unsigned char source[], char bi
 		codewords_used += ecc_codewords;
 		codewords_used += 3;
 		
-		if(codewords_used > PDF_MAX) {
+		if(codewords_used > symbol->option_3) {
 			return ERROR_TOO_LONG;
 		}
 		/* *(cc_width) = 0.5 + sqrt((codewords_used) / 3); */
@@ -1608,7 +1608,7 @@ int cc_binary_string(struct zint_symbol *symbol, unsigned char source[], char bi
 		codewords_used += ecc_codewords;
 		codewords_used += 3;
 		
-		if(codewords_used > PDF_MAX) {
+		if(codewords_used > symbol->option_3) {
 			return ERROR_TOO_LONG;
 		}
 		/* *(cc_width) = 0.5 + sqrt((codewords_used) / 3); */
