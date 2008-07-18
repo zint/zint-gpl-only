@@ -141,7 +141,7 @@ void getRSSwidths(int val, int n, int elements, int maxWidth, int noNarrow)
 
 int rss14(struct zint_symbol *symbol, unsigned char source[])
 { /* GS1 DataBar-14 */
-	int errno = 0, i, j, read, mask;
+	int _errno_ = 0, i, j, read, mask;
 	short int accum[112], left_reg[112], right_reg[112], x_reg[112], y_reg[112];
 	int data_character[4], data_group[4], v_odd[4], v_even[4];
 	int data_widths[8][4], checksum, c_left, c_right, total_widths[46], writer;
@@ -154,10 +154,10 @@ int rss14(struct zint_symbol *symbol, unsigned char source[])
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
-	errno = is_sane(NESET, source);
-	if(errno == ERROR_INVALID_DATA) {
+	_errno_ = is_sane(NESET, source);
+	if(_errno_ == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "error: invalid characters in data");
-		return errno;
+		return _errno_;
 	}
 	
 	/* make some room for a separator row for composite symbols */
@@ -632,12 +632,12 @@ int rss14(struct zint_symbol *symbol, unsigned char source[])
 	}
 
 	
-	return errno;
+	return _errno_;
 }
 
 int rsslimited(struct zint_symbol *symbol, unsigned char source[])
 { /* GS1 DataBar Limited */
-	int errno = 0, i, mask;
+	int _errno_ = 0, i, mask;
 	short int accum[112], left_reg[112], right_reg[112], x_reg[112], y_reg[112];
 	int left_group, right_group, left_odd, left_even, right_odd, right_even;
 	int left_character, right_character, left_widths[14], right_widths[14];
@@ -651,10 +651,10 @@ int rsslimited(struct zint_symbol *symbol, unsigned char source[])
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
-	errno = is_sane(NESET, source);
-	if(errno == ERROR_INVALID_DATA) {
+	_errno_ = is_sane(NESET, source);
+	if(_errno_ == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "error: invalid characters in data");
-		return errno;
+		return _errno_;
 	}
 	
 	/* make some room for a separator row for composite symbols */
@@ -898,7 +898,7 @@ int rsslimited(struct zint_symbol *symbol, unsigned char source[])
 	
 	concat(symbol->text, hrt);
 	
-	return errno;
+	return _errno_;
 }
 
 int general_rules(char field[], char type[])
