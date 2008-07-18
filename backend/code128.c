@@ -3,6 +3,7 @@
 /*
     libzint - the open source barcode library
     Copyright (C) 2008 Robin Stuart <zint@hotmail.co.uk>
+    Bugfixes thanks to Christian Sakowski and BogDan Vatra
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -99,34 +100,34 @@ void grwp(int *indexliste)
 
 void dxsmooth(int *indexliste)
 { /* Implements rules from ISO 15417 Annex E */
-	int i, this, last, next, length;
+	int i, current, last, next, length;
 	
 	for(i = 0; i < *(indexliste); i++) {
-		this = list[1][i];
+		current = list[1][i];
 		length = list[0][i];
 		if(i != 0) { last = list[1][i - 1]; } else { last = FALSE; }
 		if(i != *(indexliste) - 1) { next = list[1][i + 1]; } else { next = FALSE; }
 		
 		if(i == 0) { /* first block */
-			if((*(indexliste) == 1) && ((length == 2) && (this == ABORC))) { /* Rule 1a */ list[1][i] = LATCHC; }
-			if(this == ABORC) { 
-				if(length >= 4) {/* Rule 1b */ list[1][i] = LATCHC; } else { list[1][i] = AORB; this = AORB; }
+			if((*(indexliste) == 1) && ((length == 2) && (current == ABORC))) { /* Rule 1a */ list[1][i] = LATCHC; }
+			if(current == ABORC) { 
+				if(length >= 4) {/* Rule 1b */ list[1][i] = LATCHC; } else { list[1][i] = AORB; current = AORB; }
 			}
-			if(this == SHIFTA) { /* Rule 1c */ list[1][i] = LATCHA; }
-			if((this == AORB) && (next == SHIFTA)) { /* Rule 1c */ list[1][i] = LATCHA; this = LATCHA; }
-			if(this == AORB) { /* Rule 1d */ list[1][i] = LATCHB; }
+			if(current == SHIFTA) { /* Rule 1c */ list[1][i] = LATCHA; }
+			if((current == AORB) && (next == SHIFTA)) { /* Rule 1c */ list[1][i] = LATCHA; current = LATCHA; }
+			if(current == AORB) { /* Rule 1d */ list[1][i] = LATCHB; }
 		} else {
-			if((this == ABORC) && (length >= 4)) { /* Rule 3 */ list[1][i] = LATCHC; this = LATCHC; }
-			if(this == ABORC) { list[1][i] = AORB; this = AORB; }
-			if((this == AORB) && (last == LATCHA)) { list[1][i] = LATCHA; this = LATCHA; }
-			if((this == AORB) && (last == LATCHB)) { list[1][i] = LATCHB; this = LATCHB; }
-			if((this == AORB) && (next == SHIFTA)) { list[1][i] = LATCHA; this = LATCHA; }
-			if((this == AORB) && (next == SHIFTB)) { list[1][i] = LATCHB; this = LATCHB; }
-			if(this == AORB) { list[1][i] = LATCHB; this = LATCHB; }
-			if((this == SHIFTA) && (length > 1)) { /* Rule 4 */ list[1][i] = LATCHA; this = LATCHA; }
-			if((this == SHIFTB) && (length > 1)) { /* Rule 5 */ list[1][i] = LATCHB; this = LATCHB; }
-			if((this == SHIFTA) && (last == LATCHA)) { list[1][i] = LATCHA; this = LATCHA; }
-			if((this == SHIFTB) && (last == LATCHB)) { list[1][i] = LATCHB; this = LATCHB; }
+			if((current == ABORC) && (length >= 4)) { /* Rule 3 */ list[1][i] = LATCHC; current = LATCHC; }
+			if(current == ABORC) { list[1][i] = AORB; current = AORB; }
+			if((current == AORB) && (last == LATCHA)) { list[1][i] = LATCHA; current = LATCHA; }
+			if((current == AORB) && (last == LATCHB)) { list[1][i] = LATCHB; current = LATCHB; }
+			if((current == AORB) && (next == SHIFTA)) { list[1][i] = LATCHA; current = LATCHA; }
+			if((current == AORB) && (next == SHIFTB)) { list[1][i] = LATCHB; current = LATCHB; }
+			if(current == AORB) { list[1][i] = LATCHB; current = LATCHB; }
+			if((current == SHIFTA) && (length > 1)) { /* Rule 4 */ list[1][i] = LATCHA; current = LATCHA; }
+			if((current == SHIFTB) && (length > 1)) { /* Rule 5 */ list[1][i] = LATCHB; current = LATCHB; }
+			if((current == SHIFTA) && (last == LATCHA)) { list[1][i] = LATCHA; current = LATCHA; }
+			if((current == SHIFTB) && (last == LATCHB)) { list[1][i] = LATCHB; current = LATCHB; }
 		} /* Rule 2 is implimented elsewhere, Rule 6 is implied */
 	}
 	grwp(indexliste);
@@ -176,13 +177,14 @@ void c128_set_c(unsigned char source_a, unsigned char source_b, char dest[], int
 int code_128(struct zint_symbol *symbol, unsigned char source[])
 { /* Handle Code 128 and NVE-18 */
 	int i, j, k, e_count, values[170], bar_characters, read, total_sum, nve_check;
-	int errornum, indexchaine, indexliste;
+	int errornum, indexchaine, indexliste, sourcelen;
 	char set[170], fset[170], mode, last_set, last_fset;
 	float glyph_count;
 	char dest[1000];
 
 	errornum = 0;
 	strcpy(dest, "");
+	sourcelen = strlen(source);
 
 	j = 0;
 	e_count = 0;
@@ -195,13 +197,13 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 		fset[i] = ' ';
 	}
 	
-	if(strlen(source) > 160) {
+	if(sourcelen > 160) {
 		/* This only blocks rediculously long input - the actual length of the
 		   resulting barcode depends on the type of data, so this is trapped later */
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
-	
+
 	/* Add check digit if encoding an NVE18 symbol */
 	if(symbol->symbology == BARCODE_NVE18) {
 		errornum = is_sane(NESET, source);
@@ -209,11 +211,11 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 			strcpy(symbol->errtxt, "error: invalid characters in data");
 			return errornum;
 		}
-		if(strlen(source) != 17) {
+		if(sourcelen != 17) {
 			strcpy(symbol->errtxt, "error: input wrong length");
 			return ERROR_TOO_LONG;
 		}
-		for(i = strlen(source) + 2; i > 1; i--) {
+		for(i = sourcelen + 2; i > 1; i--) {
 			source[i] = source[i - 2];
 		}
 		source[0] = '0';
@@ -229,12 +231,12 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 
 		}
 		nve_check = 10 - total_sum%10;
-		source[strlen(source) + 1] = '\0';
-		source[strlen(source)] = itoc(nve_check);
+		source[sourcelen + 1] = '\0';
+		source[sourcelen] = itoc(nve_check);
 	}
-
+	
 	/* Detect extended ASCII characters */
-	for(i = 0; i <  strlen(source); i++) {
+	for(i = 0; i <  sourcelen; i++) {
 		if(source[i] >=128) {
 			fset[i] = 'f';
 		}
@@ -242,20 +244,20 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 	fset[i] = '\0';
 	
 	/* Decide when to latch to extended mode - Annex E note 3 */
-	for(i = 0; i < strlen(source); i++) {
+	for(i = 0; i < sourcelen; i++) {
 		j = 0;
 		if(fset[i] == 'f') {
 			do {
 				j++;
 			} while(source[i + j] == 'f');
-			if((j >= 5) || ((j >= 3) && ((i + j) == strlen(source)))) {
+			if((j >= 5) || ((j >= 3) && ((i + j) == sourcelen))) {
 				for(k = 0; k <= j; k++) {
 					source[i + k] = 'F';
 				}
 			}
 		}
 	}
-	
+
 	/* Decide on mode using same system as PDF417 and rules of ISO 15417 Annex E */
 	indexliste = 0;
 	indexchaine = 0;
@@ -268,10 +270,10 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 	for(i = 0; i < 170; i++) {
 		list[0][i] = 0;
 	}
-	
+
 	do {
 		list[1][indexliste] = mode;
-		while ((list[1][indexliste] == mode) && (indexchaine < strlen(source))) {
+		while ((list[1][indexliste] == mode) && (indexchaine < sourcelen)) {
 			list[0][indexliste]++;
 			indexchaine++;
 			mode = parunmodd(source[indexchaine]);
@@ -280,15 +282,20 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 			}
 		}
 		indexliste++;
-	} while (indexchaine < strlen(source));
+	} while (indexchaine < sourcelen);
 	
 	dxsmooth(&indexliste);
-	
+
 	/* Resolve odd length LATCHC blocks */
 	if((list[1][0] == LATCHC) && ((list[0][0] % 2) == 1)) {
 		/* Rule 2 */
 		list[0][1]++;
 		list[0][0]--;
+		if(indexliste == 1) {
+			list[0][1] = 1;
+			list[1][1] = LATCHB;
+			indexliste = 2;
+		}
 	}	
 	if(indexliste > 1) {
 		for(i = 1; i < indexliste; i++) {
@@ -299,7 +306,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 			}
 		}
 	}
-	
+
 	/* Put set data into set[] */
 	
 	read = 0;
@@ -316,12 +323,29 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 		}
 	}
 
+	/* Adjust for strings which start with shift characters - make them latch instead */
+	if(set[0] == 'a') {
+		i = 0;
+		do {
+			set[i] = 'A';
+			i++;
+		} while (set[i] == 'a');
+	}
+	
+	if(set[0] == 'b') {
+		i = 0;
+		do {
+			set[i] = 'B';
+			i++;
+		} while (set[i] == 'b');
+	}
+	
 	/* Now we can calculate how long the barcode is going to be - and stop it from
 	   being too long */
 	last_set = ' ';
 	last_fset = ' ';
 	glyph_count = 0.0;
-	for(i = 0; i < strlen(source); i++) {
+	for(i = 0; i < sourcelen; i++) {
 		if((set[i] == 'a') || (set[i] == 'b')) {
 			glyph_count = glyph_count + 1.0;
 		}
@@ -384,7 +408,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 		values[1] = 102;
 		bar_characters++;
 	}
-	
+
 	if(fset[0] == 'F') {
 		switch(set[0]) {
 			case 'A':
@@ -464,7 +488,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 				bar_characters += 2;
 			}
 		}
-		
+
 		if(fset[i] == 'f') {
 			/* Shift extended mode */
 			switch(set[i]) {
@@ -487,12 +511,13 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 			bar_characters++;
 		}
 
-		
 		switch(set[read])
 		{ /* Encode data characters */
+			case 'a':
 			case 'A': c128_set_a(source[read], dest, values, &bar_characters);
 				read++;
 				break;
+			case 'b':
 			case 'B': c128_set_b(source[read], dest, values, &bar_characters);
 				read++;
 				break;
@@ -500,8 +525,15 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 				read += 2;
 				break;
 		}
-	} while (read < strlen(source));
-	
+		
+		/* printf("vals: ");
+		for(i = 0; i < bar_characters; i++) {
+			printf("%d, ", values[i]);
+		}
+		printf("\n"); */
+		
+	} while (read < sourcelen);
+
 	/* check digit calculation */
 	total_sum = 0;
 	for(i = 0; i < bar_characters; i++)
@@ -524,8 +556,8 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 
 int ean_128(struct zint_symbol *symbol, unsigned char source[])
 { /* Handle EAN-128 (Now known as GS1-128) */
-	int i, j, k, e_count, values[170], bar_characters, read, total_sum;
-	int errornum, indexchaine, indexliste, ai_latch;
+	int i, j, e_count, values[170], bar_characters, read, total_sum;
+	int errornum, indexchaine, indexliste, ai_latch, sourcelen;
 	char set[170], mode, last_set, reduced[170], ai_string[4];
 	float glyph_count;
 	char dest[1000];
@@ -534,6 +566,7 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 	errornum = 0;
 	strcpy(dest, "");
 	linkage_flag = 0;
+	sourcelen = strlen(source);
 
 	j = 0;
 	e_count = 0;
@@ -545,7 +578,7 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 		set[i] = ' ';
 	}
 	
-	if(strlen(source) > 160) {
+	if(sourcelen > 160) {
 		/* This only blocks rediculously long input - the actual length of the
 		resulting barcode depends on the type of data, so this is trapped later */
 		strcpy(symbol->errtxt, "error: input too long");
@@ -553,7 +586,7 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 	}
 
 	/* Detect extended ASCII characters */
-	for(i = 0; i <  strlen(source); i++) {
+	for(i = 0; i <  sourcelen; i++) {
 		if(source[i] >=128) {
 			strcpy(symbol->errtxt, "error: extended ASCII characters not supported by GS1-128");
 			return ERROR_INVALID_DATA;
@@ -576,7 +609,7 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 	j = 0;
 	last_ai = 0;
 	ai_latch = 1;
-	for(i = 0; i < strlen(source); i++) {
+	for(i = 0; i < sourcelen; i++) {
 		if((source[i] != '[') && (source[i] != ']')) {
 			reduced[j] = source[i];
 			j++;
@@ -830,7 +863,7 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 		}
 	}
 
-	for(i = 0; i <= strlen(source); i++) {
+	for(i = 0; i <= sourcelen; i++) {
 		if((source[i] != '[') && (source[i] != ']')) {
 			symbol->text[i] = source[i];
 		}
