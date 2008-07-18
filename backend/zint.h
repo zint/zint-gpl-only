@@ -17,8 +17,14 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+#ifndef ZINT_H
+#define ZINT_H
 
-#define VERSION "1.6.0"
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+#define VERSION "1.6.1"
 
 struct zint_symbol {
 	int symbology;
@@ -31,6 +37,7 @@ struct zint_symbol {
 	char outfile[256];
 	int option_1;
 	int option_2;
+	int option_3;
 	char text[100];
 	int rows;
 	int width;
@@ -131,3 +138,9 @@ extern int ZBarcode_Delete(struct zint_symbol *symbol);
 extern int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input);
 extern int ZBarcode_Print(struct zint_symbol *symbol);
 extern int ZBarcode_Encode_and_Print(struct zint_symbol *symbol, unsigned char *input);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif
