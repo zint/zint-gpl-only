@@ -28,7 +28,6 @@
 #define TEX 900
 #define BYT 901
 #define NUM 902
-#define PDF_MAX 928
 
 #define BRSET "ABCDEFabcdefghijklmnopqrstuvwxyz*+-"
 
