@@ -2,6 +2,7 @@
 
 /*  Zint - A barcode generating program using libpng
     Copyright (C) 2008 Robin Stuart <zint@hotmail.co.uk>
+    Including bug fixes by Bryan Hatton
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -74,7 +75,7 @@ int postnet(struct zint_symbol *symbol, unsigned char source[], char dest[])
 		sum += ctoi(source[i]);
 	}
 
-	check_digit = 10 - (sum%10);
+	check_digit = (10 - (sum%10))%10;
 	concat(dest, PNTable[check_digit]);
 
 	/* stop character */
@@ -112,7 +113,7 @@ int post_plot(struct zint_symbol *symbol, unsigned char source[])
 			symbol->encoded_data[0][writer] = '1';
 		}
 		symbol->encoded_data[1][writer] = '1';
-		writer += 2;
+		writer += 3;
 	}
 	symbol->row_height[0] = 6;
 	symbol->row_height[1] = 6;
@@ -150,7 +151,7 @@ int planet(struct zint_symbol *symbol, unsigned char source[], char dest[])
 		sum += ctoi(source[i]);
 	}
 
-	check_digit = 10 - (sum%10);
+	check_digit = (10 - (sum%10))%10;
 	concat(dest, PLTable[check_digit]);
 
 	/* stop character */
@@ -188,7 +189,7 @@ int planet_plot(struct zint_symbol *symbol, unsigned char source[])
 			symbol->encoded_data[0][writer] = '1';
 		}
 		symbol->encoded_data[1][writer] = '1';
-		writer += 2;
+		writer += 3;
 	}
 	symbol->row_height[0] = 6;
 	symbol->row_height[1] = 6;
