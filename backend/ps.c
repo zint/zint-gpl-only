@@ -37,7 +37,7 @@ int ps_plot(struct zint_symbol *symbol)
 	FILE *feps;
 	int fgred, fggrn, fgblu, bgred, bggrn, bgblu;
 	float red_ink, green_ink, blue_ink, red_paper, green_paper, blue_paper;
-	int errno = 0;
+	int _errno_ = 0;
 	int textoffset, xoffset, yoffset, textdone, main_width;
 	char textpart[10], addon[6];
 	int large_bar_count, comp_offset;
@@ -67,13 +67,13 @@ int ps_plot(struct zint_symbol *symbol)
 		strcpy(symbol->errtxt, "error: malformed background colour target");
 		return ERROR_INVALID_OPTION;
 	}
-	errno = is_sane(SSET, symbol->fgcolour);
-	if (errno == ERROR_INVALID_DATA) {
+	_errno_ = is_sane(SSET, symbol->fgcolour);
+	if (_errno_ == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "error: malformed foreground colour target");
 		return ERROR_INVALID_OPTION;
 	}
-	errno = is_sane(SSET, symbol->bgcolour);
-	if (errno == ERROR_INVALID_DATA) {
+	_errno_ = is_sane(SSET, symbol->bgcolour);
+	if (_errno_ == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "error: malformed background colour target");
 		return ERROR_INVALID_OPTION;
 	}
@@ -785,6 +785,6 @@ int ps_plot(struct zint_symbol *symbol)
 	
 	fclose(feps);
 	
-	return errno;
+	return _errno_;
 }
 

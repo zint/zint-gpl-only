@@ -48,20 +48,20 @@ int pharma_one(struct zint_symbol *symbol, unsigned char source[])
 	unsigned long int tester;
 	int counter;
 	char inter[17];
-	int errno;
+	int _errno_;
 	char dest[1000];
 	
-	errno = 0;
+	_errno_ = 0;
 	strcpy(dest, "");
 
 	if(strlen(source) > 6) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
-	errno = is_sane(NESET, source);
-	if(errno == ERROR_INVALID_DATA) {
+	_errno_ = is_sane(NESET, source);
+	if(_errno_ == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "error: invalid characters in data");
-		return errno;
+		return _errno_;
 	}
 
 	strcpy(inter, "");
@@ -94,7 +94,7 @@ int pharma_one(struct zint_symbol *symbol, unsigned char source[])
 	
 	expand(symbol, dest);
 	strcpy(symbol->text, "");
-	return errno;
+	return _errno_;
 }
 
 int pharma_two_calc(struct zint_symbol *symbol, unsigned char source[], char dest[])
@@ -107,9 +107,9 @@ int pharma_two_calc(struct zint_symbol *symbol, unsigned char source[], char des
 	unsigned long int tester;
 	int counter;
 	char inter[17];
-	int errno;
+	int _errno_;
 	
-	errno = 0;
+	_errno_ = 0;
 	strcpy(dest, "");
 	
 	strcpy(inter, "");
@@ -145,7 +145,7 @@ int pharma_two_calc(struct zint_symbol *symbol, unsigned char source[], char des
 	}
 	dest[strlen(inter)] = '\0';
 	
-	return errno;
+	return _errno_;
 }
 
 int pharma_two(struct zint_symbol *symbol, unsigned char source[])
@@ -154,21 +154,21 @@ int pharma_two(struct zint_symbol *symbol, unsigned char source[])
 	char height_pattern[200];
 	unsigned int loopey;
 	int writer;
-	int errno = 0;
+	int _errno_ = 0;
 	strcpy(height_pattern, "");
 
 	if(strlen(source) > 8) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
-	errno = is_sane(NESET, source);
-	if(errno == ERROR_INVALID_DATA) {
+	_errno_ = is_sane(NESET, source);
+	if(_errno_ == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "error: invalid characters in data");
-		return errno;
+		return _errno_;
 	}
-	errno = pharma_two_calc(symbol, source, height_pattern);
-	if(errno != 0) {
-		return errno;
+	_errno_ = pharma_two_calc(symbol, source, height_pattern);
+	if(_errno_ != 0) {
+		return _errno_;
 	}
 
 	writer = 0;
@@ -188,16 +188,16 @@ int pharma_two(struct zint_symbol *symbol, unsigned char source[])
 	symbol->width = writer - 1;
 	
 	strcpy(symbol->text, "");
-	return errno;
+	return _errno_;
 }
 
 int codabar(struct zint_symbol *symbol, unsigned char source[])
 { /* The Codabar system consisting of simple substitution */
 
-	int i, errno;
+	int i, _errno_;
 	char dest[1000];
 	
-	errno = 0;
+	_errno_ = 0;
 	strcpy(dest, "");
 
 	if(strlen(source) > 60) { /* No stack smashing please */
@@ -205,10 +205,10 @@ int codabar(struct zint_symbol *symbol, unsigned char source[])
 		return ERROR_TOO_LONG;
 	}
 	to_upper(source);
-	errno = is_sane(CASET, source);
-	if(errno == ERROR_INVALID_DATA) {
+	_errno_ = is_sane(CASET, source);
+	if(_errno_ == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "error: invalid characters in data");
-		return errno;
+		return _errno_;
 	}
 
 	/* Codabar must begin and end with the characters A, B, C or D */
@@ -233,5 +233,5 @@ int codabar(struct zint_symbol *symbol, unsigned char source[])
 	
 	expand(symbol, dest);
 	strcpy(symbol->text, source);
-	return errno;
+	return _errno_;
 }
