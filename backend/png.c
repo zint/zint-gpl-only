@@ -55,6 +55,7 @@ static void writepng_error_handler(png_structp png_ptr, png_const_charp msg)
 
 int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, char *pixelbuf)
 {
+#ifndef NO_PNG
 	struct mainprog_info_type wpng_info;
 	struct mainprog_info_type *graphic;
 	unsigned char outdata[image_width * 3];
@@ -181,7 +182,7 @@ int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, c
 	/* make sure we have disengaged */
 	if (png_ptr && info_ptr) png_destroy_write_struct(&png_ptr, &info_ptr);
 	fclose(wpng_info.outfile);
-
+#endif
 	return 0;
 }
 
