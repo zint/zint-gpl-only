@@ -14,7 +14,6 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 #include <QPainter>
-#include <QDebug>
 
 #include "barcoderender.h"
 
@@ -205,10 +204,8 @@ void BareCode::render(QPainter & painter, const QRectF & paintRect, AspectRatioM
 			break;
 
 		case CenterBarCode:
-				qDebug()<<xtr<<ytr;
 				xtr+=((qreal)paintRect.width()-gwidth*xsf)/2;
 				ytr+=((qreal)paintRect.height()-gheight*ysf)/2;
-				qDebug()<<xtr<<ytr;
 			break;
 	}
 
