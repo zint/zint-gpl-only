@@ -44,6 +44,7 @@ void usage(void)
 		"  -r, --reverse         Reverse colours (white on black).\n"
 		"  --fg=COLOUR           Specify a foreground colour.\n"
 		"  --bg=COLOUR           Specify a background colour.\n"
+		"  --rotate=NUMBER       Rotate symbol (PNG output only).\n"
 		"  --cols=NUMBER         (PDF417) Number of columns.\n"
 		"  --vers=NUMBER         (QR Code) Version\n"
 		"  --secure=NUMBER       (PDF417 and QR Code) Error correction level.\n"
@@ -58,8 +59,10 @@ int main(int argc, char **argv)
 	int i, mode, stack_row;
 	int c;
 	int errornum;
+	int rotate_angle;
 	
 	errornum = 0;
+	rotate_angle = 0;
 	my_symbol = ZBarcode_Create();
 
 	if(argc == 1) {
@@ -83,6 +86,7 @@ int main(int argc, char **argv)
 			{"bg=", 1, 0, 0},
 			{"cols=", 1, 0, 0},
 			{"vers=", 1, 0, 0},
+			{"rotate=", 1, 0, 0},
 			{"secure=", 1, 0, 0},
 			{"reverse", 1, 0, 'r'},
 			{"case", 0, 0, 'c'},
@@ -169,6 +173,20 @@ int main(int argc, char **argv)
 						fprintf(stderr, "Invalid mode\n");
 					}
 				}
+				if(!strcmp(long_options[option_index].name, "rotate=")) {
+					/* Only certain inputs allowed */
+					errornum = is_sane(NESET, optarg);
+					if(errornum == ERROR_INVALID_DATA) {
+						fprintf(stderr, "Invalid rotation parameter\n");
+						exit(1);
+					}
+					switch(atoi(optarg)) {
+						case 90: rotate_angle = 90; break;
+						case 180: rotate_angle = 180; break;
+						case 270: rotate_angle = 270; break;
+						default: rotate_angle = 0; break;
+					}
+				}
 				break;
 				
 			case 'h':
@@ -198,9 +216,16 @@ int main(int argc, char **argv)
 				break;
 				
 			case 'd': /* we have some data! */
-				if(ZBarcode_Encode_and_Print(my_symbol, optarg) != 0) {
-					printf("%s\n", my_symbol->errtxt);
-					return 1;
+				if(rotate_angle == 0) {
+					if(ZBarcode_Encode_and_Print(my_symbol, optarg) != 0) {
+						printf("%s\n", my_symbol->errtxt);
+						return 1;
+					}
+				} else {
+					if(ZBarcode_Encode_and_Print_Rotated(my_symbol, optarg, rotate_angle) != 0) {
+						printf("%s\n", my_symbol->errtxt);
+						return 1;
+					}
 				}
 				break;
 				
