@@ -1,4 +1,4 @@
-Zint and libzint 1.6.0
+Zint and libzint 1.6.3
 ----------------------
 
 Zint is a front end program and library which provides support for over 30 barcode symbologies
@@ -8,16 +8,29 @@ symbologies include:
 Code 11, Standard Code 2 of 5, IATA Code 2 of 5, Industrial Code 2 of 5, Interleaved Code 2 of 5,
 Code 2 of 5 Data Logic, ITF-14, Deutche Post Leitcode, Deutche Post Identcode, UPC-A, UPC-E, EAN-2,
 EAN-5, EAN-8, EAN-13, UK Plessey, MSI Plessey, Telepen Alpha, Telepen Numeric, Code 39,
-Extended Code 39, Code 93, PZN, LOGMARS, Codabar, Pharmacode, Code 128, EAN-128, NVE-18, Code 16k,
-PDF417, MicroPDF417, Two-Track Pharmacode, PostNet, PLANET, Australia Post 4-State Symbols, RM4SCC,
-USPS OneCode, GS1 DataBar, DataBar-14, DataBar Limited, DataBar Extended, DataBar Stacked,
-Composite Symbology, Data Matrix, QR Code, Maxicode, FIM and Flattermarken.
+Extended Code 39, Code 93, PZN, Code 23, LOGMARS, Codabar, Pharmacode, Code 128, EAN-128, NVE-18,
+Code 16k, PDF417, MicroPDF417, Two-Track Pharmacode, PostNet, PLANET, Australia Post 4-State Symbols,
+RM4SCC, USPS OneCode, GS1 DataBar, DataBar-14, DataBar Limited, DataBar Extended, DataBar Stacked,
+Composite Symbology, Data Matrix, QR Code, Maxicode, Aztec Code, FIM and Flattermarken.
 
 Full documentation is included in the 'docs' directory. The libzint back end code is included
 in the 'backend' directory, and the front end command line program 'zint' is included in the
 'frontend' directory. See the HTML documentation for full installation instructions. The file
 DEVELOPERS in the backend folder gives a brief guide to which symbologies are handled by which
 source code files.
+
+SUPPORT ZINT
+------------
+
+The Zint project is committed to providing the open source community with encoding software for
+all public domain barcode standards. For this we need access to the standard documentation and,
+unfortunately, this is not free. Your donation will contribute towards the purchase of standard documents
+from ANSI. Standards which we hope to add to Zint in this way include Codablock-F, Aztec Mesas,
+Code 49, Supercode, Code One. If you have a preference regarding
+which standard you would like your donation to go towards then please let us know and we will reserve your
+donation for that standard.
+
+To donate to this project go to: http://sourceforge.net/project/project_donations.php?group_id=199350
 
 
 CONTACT ME
