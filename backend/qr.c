@@ -21,8 +21,10 @@
 */
 
 #include <string.h>
-#include <qrencode.h> /* The assumption is that this is already installed */
 #include "common.h"
+
+#ifdef WITH_QR
+#include <qrencode.h>
 
 static int kanji = 0;
 static QRecLevel level = QR_ECLEVEL_L;
@@ -92,3 +94,13 @@ int qr_code(struct zint_symbol *symbol, unsigned char source[])
 	
 	return errno;
 }
+
+#else
+/* Handler if no QR Encode library is available */
+int qr_code(struct zint_symbol *symbol, unsigned char source[])
+{
+	strcpy(symbol->errtxt, "error: QR Code library <qrencode> not available");
+	return ERROR_INVALID_OPTION;
+}
+#endif
+
