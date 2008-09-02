@@ -256,3 +256,16 @@ zint -o bar111.png -b 111 --height=100 --mode=1 --primary="[01]03212345678906" -
 echo testing UCC/EAN-128 Composite with CC-C
 zint -o bar111a.eps -b 111 --height=100 --mode=3 --primary="[00]030123456789012340" -d "[02]130123456789093724[10]1234567ABCDEFG"
 zint -o bar111a.png -b 111 --height=100 --mode=3 --primary="[00]030123456789012340" -d "[02]130123456789093724[10]1234567ABCDEFG"
+echo testing KIX Code
+zint -o bar120.eps -b 120 -d '1231FZ13Xhs'
+zint -o bar120.png -b 120 -d '1231FZ13Xhs'
+echo testing Code23
+zint -o bar121.eps -b 121 -d "12345678"
+zint -o bar121.png -b 121 -d "12345678"
+echo testing PNG rotation
+zint -o barrot0.png -b 110 --height=50 --mode=1 --rotate=0 --primary=331234567890+01234 -d "[99]1234-abcd"
+zint -o barrot90.png -b 110 --height=50 --mode=1 --rotate=90 --primary=331234567890+01234 -d "[99]1234-abcd"
+zint -o barrot180.png -b 110 --height=50 --mode=1 --rotate=180 --primary=331234567890+01234 -d "[99]1234-abcd"
+zint -o barrot270.png -b 110 --height=50 --mode=1 --rotate=270 --primary=331234567890+01234 -d "[99]1234-abcd"
+echo testing Extended ASCII support
+zint -o barext.png --height=50 -d "größer"
