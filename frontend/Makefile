@@ -8,9 +8,14 @@
 
 CC := gcc
 INCLUDE := -I/usr/local/include
+CFLAGS := -g
+
+prefix := /usr/local
+bindir := $(prefix)/bin
+DESTDIR :=
 
 zint: main.c
-	$(CC) $(INCLUDE) -g main.c -o zint -lzint
+	$(CC) $(INCLUDE) $(CFLAGS) -I../backend -L../backend main.c -o zint -lzint
 
 .PHONY: install uninstall clean dist
 
@@ -18,7 +23,7 @@ clean:
 	rm -f zint *.o *.a *~ *.png *.eps
 
 install:
-	mv zint /usr/local/bin
+	install -D -p  zint $(DESTDIR)$(bindir)/zint
 
 uninstall:
-	rm /usr/local/bin/zint
+	rm $(DESTDIR)$(bindir)/zint
