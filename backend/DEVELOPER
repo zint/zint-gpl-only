@@ -22,7 +22,8 @@ auspost.c:
 	Australia Post Redirect Barcode
 
 aztec.c:
-	Aztec Mesa
+	Aztec Code
+	Compact Aztec Code
 
 code128.c:
 	Code 128
@@ -59,6 +60,7 @@ medical.c:
 	Pharma Code
 	Two Track Pharma Code
 	Codabar
+	Code 32
 
 pdf417.c:
 	PDF417
@@ -78,7 +80,7 @@ postal.c:
 	PLANET
 	Facing Identification Mark (FIM)
 	Royal Mail 4-State Country Code (RM4SCC)
-	Korean Postal Authority Code (Disabled)
+	KIX Code
 	Flattermarken
 
 qr.c:
