@@ -53,7 +53,7 @@ static void writepng_error_handler(png_structp png_ptr, png_const_charp msg)
     longjmp(graphic->jmpbuf, 1);
 }
 
-int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, char *pixelbuf)
+int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, char *pixelbuf, int rotate_angle)
 {
 #ifndef NO_PNG
 	struct mainprog_info_type wpng_info;
@@ -68,8 +68,18 @@ int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, c
 	int i, k, offset, row, column, errno;
 	int fgred, fggrn, fgblu, bgred, bggrn, bgblu;
 	
-	graphic->width = image_width;
-	graphic->height = image_height;
+	switch(rotate_angle) {
+		case 0:
+		case 180:
+			graphic->width = image_width;
+			graphic->height = image_height;
+			break;
+		case 90:
+		case 270:
+			graphic->width = image_height;
+			graphic->height = image_width;
+			break;
+	}
 	
 	/* sort out colour options */
 	to_upper(symbol->fgcolour);
@@ -152,28 +162,107 @@ int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, c
 
 	/* Pixel Plotting */
 
-	for(row = 0; row < image_height; row++) {
-		for(column = 0; column < image_width; column++) {
-			i = column * 3;
-			switch(*(pixelbuf + (image_width * row) + column))
-			{
-				case '1':
-					outdata[i] = fgred;
-					outdata[i + 1] = fggrn;
-					outdata[i + 2] = fgblu;
-					break;
-				default:
-					outdata[i] = bgred;
-					outdata[i + 1] = bggrn;
-					outdata[i + 2] = bgblu;
-					break;
-		
+	switch(rotate_angle) {
+		case 0: /* Plot the right way up */
+			for(row = 0; row < image_height; row++) {
+				for(column = 0; column < image_width; column++) {
+					i = column * 3;
+					switch(*(pixelbuf + (image_width * row) + column))
+					{
+						case '1':
+							outdata[i] = fgred;
+							outdata[i + 1] = fggrn;
+							outdata[i + 2] = fgblu;
+							break;
+						default:
+							outdata[i] = bgred;
+							outdata[i + 1] = bggrn;
+							outdata[i + 2] = bgblu;
+							break;
+				
+					}
+				}
+#endif
+				/* write row contents to file */
+				image_data = outdata;
+				png_write_row(png_ptr, image_data);
 			}
-		}
+			break;
+		case 90: /* Plot 90 degrees clockwise */
+			for(row = 0; row < image_width; row++) {
+				for(column = 0; column < image_height; column++) {
+					i = column * 3;
+					switch(*(pixelbuf + (image_width * (image_height - column - 1)) + row))
+					{
+						case '1':
+							outdata[i] = fgred;
+							outdata[i + 1] = fggrn;
+							outdata[i + 2] = fgblu;
+							break;
+						default:
+							outdata[i] = bgred;
+							outdata[i + 1] = bggrn;
+							outdata[i + 2] = bgblu;
+							break;
+			
+					}
+				}
+		
+				/* write row contents to file */
+				image_data = outdata;
+				png_write_row(png_ptr, image_data);
+			}
+			break;
+		case 180: /* Plot upside down */
+			for(row = 0; row < image_height; row++) {
+				for(column = 0; column < image_width; column++) {
+					i = column * 3;
+					switch(*(pixelbuf + (image_width * (image_height - row - 1)) + (image_width - column - 1)))
+					{
+						case '1':
+							outdata[i] = fgred;
+							outdata[i + 1] = fggrn;
+							outdata[i + 2] = fgblu;
+							break;
+						default:
+							outdata[i] = bgred;
+							outdata[i + 1] = bggrn;
+							outdata[i + 2] = bgblu;
+							break;
+			
+					}
+				}
+		
+				/* write row contents to file */
+				image_data = outdata;
+				png_write_row(png_ptr, image_data);
+			}
+			break;
+		case 270: /* Plot 90 degrees anti-clockwise */
+			for(row = 0; row < image_width; row++) {
+				for(column = 0; column < image_height; column++) {
+					i = column * 3;
+					switch(*(pixelbuf + (image_width * column) + (image_width - row - 1)))
+					{
+						case '1':
+							outdata[i] = fgred;
+							outdata[i + 1] = fggrn;
+							outdata[i + 2] = fgblu;
+							break;
+						default:
+							outdata[i] = bgred;
+							outdata[i + 1] = bggrn;
+							outdata[i + 2] = bgblu;
+							break;
 	
-		/* write row contents to file */
-		image_data = outdata;
-		png_write_row(png_ptr, image_data);
+					}
+				}
+
+				/* write row contents to file */
+				image_data = outdata;
+				png_write_row(png_ptr, image_data);
+			}
+			break;
 	}
 
 	/* End the file */
@@ -182,7 +271,7 @@ int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, c
 	/* make sure we have disengaged */
 	if (png_ptr && info_ptr) png_destroy_write_struct(&png_ptr, &info_ptr);
 	fclose(wpng_info.outfile);
-#endif
+
 	return 0;
 }
 
@@ -230,7 +319,7 @@ void draw_hexagon(char *pixelbuf, int xposn, int yposn)
 	}
 }
 
-void draw_letter(char *pixelbuf, char letter, int xposn, int yposn, int image_width, int image_height)
+void draw_letter(char *pixelbuf, unsigned char letter, int xposn, int yposn, int image_width, int image_height)
 {
 	/* Put a letter into a position */
 	int skip, i, j, glyph_no, alphabet;
@@ -249,7 +338,7 @@ void draw_letter(char *pixelbuf, char letter, int xposn, int yposn, int image_wi
 			glyph_no = letter - 33;
 		}
 		
-		for(i = 0; i < 13; i++) {
+		for(i = 0; i <= 13; i++) {
 			for(j = 0; j < 7; j++) {
 				if(alphabet == 0) {
 					if(ascii_font[(glyph_no * 7) + (i * 665) + j - 1] == 1) {
@@ -265,7 +354,7 @@ void draw_letter(char *pixelbuf, char letter, int xposn, int yposn, int image_wi
 	}
 }
 
-void draw_string(char *pixbuf, char input_string[], int xposn, int yposn, int image_width, int image_height)
+void draw_string(char *pixbuf, unsigned char input_string[], int xposn, int yposn, int image_width, int image_height)
 {
 	/* Plot a string into the pixel buffer */
 	int i, string_length, string_left_hand;
@@ -276,9 +365,10 @@ void draw_string(char *pixbuf, char input_string[], int xposn, int yposn, int im
 	for(i = 0; i < string_length; i++) {
 		draw_letter(pixbuf, input_string[i], string_left_hand + (i * 7), yposn, image_width, image_height);
 	}
+	
 }
 
-int maxi_png_plot(struct zint_symbol *symbol)
+int maxi_png_plot(struct zint_symbol *symbol, int rotate_angle)
 {
 	int i, row, column, xposn, yposn;
 	int image_height, image_width;
@@ -315,10 +405,10 @@ int maxi_png_plot(struct zint_symbol *symbol)
 		}
 	}
 
-	png_to_file(symbol, image_height, image_width, pixelbuf);
+	png_to_file(symbol, image_height, image_width, pixelbuf, rotate_angle);
 }
 
-int png_plot(struct zint_symbol *symbol)
+int png_plot(struct zint_symbol *symbol, int rotate_angle)
 {
 	int textdone, main_width, comp_offset, large_bar_count;
 	char textpart[10], addon[6];
@@ -565,7 +655,6 @@ int png_plot(struct zint_symbol *symbol)
 			if(latch == 1) {
 				/* a bar */
 				draw_bar(pixelbuf, (i + xoffset - comp_offset), block_width, (4 + (int)yoffset), 5, image_width, image_height);
-				/*fprintf(feps, "TB %d.00 %d.00 TR\n", i + xoffset - comp_offset, block_width);*/
 				latch = 0;
 			} else {
 				/* a space */
@@ -689,5 +778,18 @@ int png_plot(struct zint_symbol *symbol)
 		draw_string(pixelbuf, symbol->text, textpos, (image_height - 17), image_width, image_height);
 	}
 	
-	png_to_file(symbol, image_height, image_width, pixelbuf);
+	png_to_file(symbol, image_height, image_width, pixelbuf, rotate_angle);
+}
+
+int png_handle(struct zint_symbol *symbol, int rotate_angle)
+{
+	int error;
+	
+	if(symbol->symbology == BARCODE_MAXICODE) {
+		error = maxi_png_plot(symbol, rotate_angle);
+	} else {
+		error = png_plot(symbol, rotate_angle);
+	}
+	
+	return error;
 }
