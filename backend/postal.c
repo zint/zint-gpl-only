@@ -43,7 +43,7 @@ static char *RoyalTable[36] = {"3300", "3210", "3201", "2310", "2301", "2211", "
 	"2130", "2121", "2031", "3102", "3012", "3003", "2112", "2103", "2013", "1320", "1230",
 	"1221", "0330", "0321", "0231", "1302", "1212", "1203", "0312", "0303", "0213", "1122",
 	"1032", "1023", "0132", "0123", "0033"};
-
+	
 static char *FlatTable[10] = {"0504", "18", "0117", "0216", "0315", "0414", "0513", "0612", "0711",
 	"0810"};
 
@@ -308,6 +308,59 @@ int royal_plot(struct zint_symbol *symbol, unsigned char source[])
 	h = strlen(source);
 	source[h] = check;
 	source[h + 1] = '\0';
+	strcpy(symbol->text, "");
+	
+	return errno;
+}
+
+int kix_code(struct zint_symbol *symbol, unsigned char source[])
+{
+	/* Handles Dutch Post TNT KIX symbols */
+	/* The same as RM4SCC but without check digit */
+	/* Specification at http://www.tntpost.nl/zakelijk/klantenservice/downloads/kIX_code/download.aspx */
+	char height_pattern[50];
+	unsigned int loopey;
+	int writer, i;
+	int errno;
+	strcpy(height_pattern, "");
+
+	errno = 0;
+	
+	to_upper(source);
+	if(strlen(source) != 11) {
+		strcpy(symbol->errtxt, "error: input too long");
+		return ERROR_TOO_LONG;
+	}
+	errno = is_sane(KRSET, source);
+	if(errno == ERROR_INVALID_DATA) {
+		strcpy(symbol->errtxt, "error: invalid characters in data");
+		return errno;
+	}
+	for (i = 0; i < strlen(source); i++) {
+		lookup(KRSET, RoyalTable, source[i], height_pattern);
+	}
+	
+	writer = 0;
+	for(loopey = 0; loopey < strlen(height_pattern); loopey++)
+	{
+		if((height_pattern[loopey] == '1') || (height_pattern[loopey] == '0'))
+		{
+			symbol->encoded_data[0][writer] = '1';
+		}
+		symbol->encoded_data[1][writer] = '1';
+		if((height_pattern[loopey] == '2') || (height_pattern[loopey] == '0'))
+		{
+			symbol->encoded_data[2][writer] = '1';
+		}
+		writer += 2;
+	}
+
+	symbol->row_height[0] = 4;
+	symbol->row_height[1] = 2;
+	symbol->row_height[2] = 4;
+	symbol->rows = 3;
+	symbol->width = writer - 1;
+	
 	strcpy(symbol->text, "");
 	
 	return errno;
