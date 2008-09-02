@@ -17,14 +17,14 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 #ifndef ZINT_H
 #define ZINT_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#define VERSION "1.6.1"
+#define VERSION "1.6.3"
 
 struct zint_symbol {
 	int symbology;
@@ -119,6 +119,8 @@ struct zint_symbol {
 #define BARCODE_RSS14STACK_CC	117
 #define BARCODE_RSS14_OMNI_CC	118
 #define BARCODE_RSS_EXPSTACK_CC	119
+#define BARCODE_KIX		120
+#define BARCODE_CODE32		121
 
 #define BARCODE_NO_ASCII	1
 #define BARCODE_BIND		2
