@@ -27,7 +27,7 @@ struct zint_symbol *ZBarcode_Create()
 {
 	struct zint_symbol *symbol;
 	int i, j;
-
+	
 	symbol = malloc(sizeof(*symbol));
 	if (!symbol) return NULL;
 
@@ -37,7 +37,6 @@ struct zint_symbol *ZBarcode_Create()
 	symbol->whitespace_width = 0;
 	symbol->border_width = 0;
 	symbol->output_options = 0;
-	symbol->option_3 = 928; //PDF_MAX
 	symbol->rows = 0;
 	symbol->width = 0;
 	strcpy(symbol->fgcolour, "000000");
@@ -45,6 +44,7 @@ struct zint_symbol *ZBarcode_Create()
 	strcpy(symbol->outfile, "out.png");
 	symbol->option_1 = -1;
 	symbol->option_2 = 0;
+	symbol->option_3 = 928; // PDF_MAX
 	strcpy(symbol->primary, "");
 	for(i = 0; i < 90; i++) {
 		for(j = 0; j < 1000; j++) {
@@ -107,8 +107,9 @@ extern int rss14(struct zint_symbol *symbol, unsigned char source[]); /* RSS-14 
 extern int rsslimited(struct zint_symbol *symbol, unsigned char source[]); /* RSS Limited */
 extern int rssexpanded(struct zint_symbol *symbol, unsigned char source[]); /* RSS Expanded */
 extern int composite(struct zint_symbol *symbol, unsigned char source[]); /* Composite Symbology */
-/* extern int aztec_mesa(struct zint_symbol *symbol, unsigned char source[]); */
-/* extern int ultra_sample(struct zint_symbol *symbol, unsigned char source[]); */
+extern int kix_code(struct zint_symbol *symbol, unsigned char source[]); /* TNT KIX Code */
+extern int aztec(struct zint_symbol *symbol, unsigned char source[]); /* Aztec Code */
+extern int code32(struct zint_symbol *symbol, unsigned char source[]); /* Italian Pharmacode */
 
 extern int png_plot(struct zint_symbol *symbol);
 extern int ps_plot(struct zint_symbol *symbol);
@@ -119,6 +120,7 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input)
 	errno = 0;
 
 	/* First check the symbology field */
+	
 	if(symbol->symbology < 1) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128"); symbol->symbology = BARCODE_CODE128; errno = WARN_INVALID_OPTION; }
 
 	/* symbol->symbologys 1 to 86 are defined by tbarcode */
@@ -149,27 +151,26 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input)
 	/* leave a gap for future expansion of tbarcode */
 	if((symbol->symbology >= 87) && (symbol->symbology <= 99)) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128\n"); symbol->symbology = BARCODE_CODE128; errno = WARN_INVALID_OPTION; }
 	/* Everything from 100 up is Zint-specific */
-	if(symbol->symbology == 107) { strcpy(symbol->errtxt, "Aztec Code not yet supported"); errno = ERROR_INVALID_OPTION; }
 	if(symbol->symbology == 108) { strcpy(symbol->errtxt, "Supercode not yet supported"); errno = ERROR_INVALID_OPTION; }
 	if(symbol->symbology == 109) { strcpy(symbol->errtxt, "Ultracode not yet supported"); errno = ERROR_INVALID_OPTION; }
-	if(symbol->symbology >= 120) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128"); symbol->symbology = BARCODE_CODE128; errno = WARN_INVALID_OPTION; }
-
+	if(symbol->symbology >= 122) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128"); symbol->symbology = BARCODE_CODE128; errno = WARN_INVALID_OPTION; }
+	
 	if(errno > 4) {
 		return errno;
 	}
-
+	
 	if(symbol->symbology == BARCODE_CODE16K) {
 		symbol->whitespace_width = 16;
 		symbol->border_width = 2;
 		symbol->output_options = BARCODE_BIND;
 	}
-
+	
 	if(symbol->symbology == BARCODE_ITF14) {
 		symbol->whitespace_width = 20;
 		symbol->border_width = 8;
 		symbol->output_options = BARCODE_BOX;
 	}
-
+	
 	switch(symbol->symbology) {
 		case BARCODE_C25MATRIX: errno = matrix_two_of_five(symbol, input); break;
 		case BARCODE_C25IND: errno = industrial_two_of_five(symbol, input); break;
@@ -240,10 +241,11 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input)
 		case BARCODE_RSS14STACK_CC: errno = composite(symbol, input); break;
 		case BARCODE_RSS14_OMNI_CC: errno = composite(symbol, input); break;
 		case BARCODE_RSS_EXPSTACK_CC: errno = composite(symbol, input); break;
-		/* case BARCODE_AZTEC: errno = aztec_mesa(symbol, input); break; */
-		/* case BARCODE_ULTRA: errno = ultra(symbol, input); break; */
+		case BARCODE_AZTEC: errno = aztec(symbol, input); break;
+		case BARCODE_KIX: errno = kix_code(symbol, input); break;
+		case BARCODE_CODE32: errno = code32(symbol, input); break;
 	}
-
+	
 	return errno;
 }
 
@@ -251,7 +253,7 @@ int ZBarcode_Print(struct zint_symbol *symbol)
 {
 	int errno;
 	char output[4];
-
+	
 	if(strlen(symbol->outfile) > 3) {
 		output[0] = symbol->outfile[strlen(symbol->outfile) - 3];
 		output[1] = symbol->outfile[strlen(symbol->outfile) - 2];
@@ -260,11 +262,7 @@ int ZBarcode_Print(struct zint_symbol *symbol)
 		to_upper(output);
 #ifndef NO_PNG
 		if(!(strcmp(output, "PNG"))) {
-			if(symbol->symbology == BARCODE_MAXICODE) {
-				errno = maxi_png_plot(symbol);
-			} else {
-				errno = png_plot(symbol);
-			}
+			errno = png_handle(symbol, 0);
 		} else {
 #endif
 			if(!(strcmp(output, "EPS"))) {
@@ -284,17 +282,61 @@ int ZBarcode_Print(struct zint_symbol *symbol)
 	return errno;
 }
 
+int ZBarcode_Print_Rotated(struct zint_symbol *symbol, int rotate_angle)
+{
+	int errno;
+	char output[4];
+	
+	if(strlen(symbol->outfile) > 3) {
+		output[0] = symbol->outfile[strlen(symbol->outfile) - 3];
+		output[1] = symbol->outfile[strlen(symbol->outfile) - 2];
+		output[2] = symbol->outfile[strlen(symbol->outfile) - 1];
+		output[3] = '\0';
+		to_upper(output);
+		if(!(strcmp(output, "PNG"))) {
+			errno = png_handle(symbol, rotate_angle);
+		} else {
+			if(!(strcmp(output, "EPS"))) {
+				errno = ps_plot(symbol);
+			} else {
+				strcpy(symbol->errtxt, "error: unknown output format");
+				return ERROR_INVALID_OPTION;
+			}
+		}
+	} else {
+		strcpy(symbol->errtxt, "error: unknown output format");
+		return ERROR_INVALID_OPTION;
+	}
+
+	return errno;
+}
+
 int ZBarcode_Encode_and_Print(struct zint_symbol *symbol, unsigned char *input)
 {
 	int errno;
-
+	
 	errno = 0;
-
+	
 	errno = ZBarcode_Encode(symbol, input);
 	if(errno != 0) {
 		return errno;
 	}
 
 	errno = ZBarcode_Print(symbol);
+	return errno;
+}
+
+int ZBarcode_Encode_and_Print_Rotated(struct zint_symbol *symbol, unsigned char *input, int rotate_angle)
+{
+	int errno;
+	
+	errno = 0;
+	
+	errno = ZBarcode_Encode(symbol, input);
+	if(errno != 0) {
+		return errno;
+	}
+
+	errno = ZBarcode_Print_Rotated(symbol, rotate_angle);
 	return errno;
 }
