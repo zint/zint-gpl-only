@@ -318,7 +318,7 @@ char ecc200encode(unsigned char *t, int tl, unsigned char *s, int sl,
 							}
 						}
 					}
-					if (p == 2 && tp + 2 == tl && sp == sl)
+					if (p == 2 && tp + 2 <= tl && sp == sl)
 						out[p++] = 0;	// shift 1 pad at end
 					while (p >= 3) {
 						int v =
