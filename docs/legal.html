@@ -3,9 +3,9 @@
 <HEAD>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
 	<TITLE>Legal and Version Information</TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.3  (Linux)">
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Unix)">
 	<META NAME="CREATED" CONTENT="20070730;21081900">
-	<META NAME="CHANGED" CONTENT="20080422;8453800">
+	<META NAME="CHANGED" CONTENT="20080728;14235700">
 	<STYLE TYPE="text/css">
 	<!--
 		TD P { color: #000000 }
@@ -38,7 +38,7 @@
 <H1>6. Legal and Version Information</H1>
 <P><A NAME="LICENSE"></A><FONT SIZE=5><B>6.1 License</B></FONT></P>
 <P><IMG SRC="gplv3-127x51.png" NAME="graphics1" ALIGN=RIGHT WIDTH=127 HEIGHT=51 BORDER=0>Zint
-and <I>libzint</I> are Copyright &copy; 2008 Robin Stuart and are
+and <I>libzint</I> are Copyright © 2008 Robin Stuart and are
 distributed under the terms of the <A HREF="http://www.gnu.org/copyleft/gpl.html">GNU
 General Public License</A> version 3 [1]. See the file <FONT FACE="Courier">COPYING</FONT>
 for more information. The following terms form part of the GPL:</P>
@@ -50,21 +50,24 @@ version 3 of the License, or (at your option) any later version.</FONT></P>
 it will be useful, but WITHOUT ANY WARRANTY; without even the implied
 warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
 the GNU General Public License for more details.</FONT></P>
-<P>Data Matrix code is Copyright &copy; 2004 Adrian Kennard, Andrews
-&amp; Arnold Ltd and &copy; 2006 Stefan Schmidt, used under the terms
-of the GNU General Public Licence.</P>
-<P>Reed-Solomon code is Copyright &copy; 2004 Cliff Hones, used under
-the terms of the GNU General Public Licence.</P>
+<P>Data Matrix code is Copyright © 2004 Adrian Kennard, Andrews &amp;
+Arnold Ltd and © 2006 Stefan Schmidt, used under the terms of the
+GNU General Public Licence.</P>
+<P>Reed-Solomon code is Copyright © 2004 Cliff Hones, used under the
+terms of the GNU General Public Licence.</P>
 <P>Portions of GS1 DataBar and Composite Symbology code are Copyright
-&copy; 2006 ISO/BSI Global and used with permission.</P>
-<P>Portions of OneCode code is &copy; 2006 United States Postal
-Service. This is indicated where appropriate in the source code and
-is used on the understanding that this code has been released to the
-public domain and that such use is intended by the copyright holder.</P>
-<P><I>libqrencode</I> is Copyright &copy; 2006, 2007, 2008 Kentaro
+© 2006 ISO/BSI Global and used with permission.</P>
+<P>Portions of OneCode code is © 2006 United States Postal Service.
+This is indicated where appropriate in the source code and is used on
+the understanding that this code has been released to the public
+domain and that such use is intended by the copyright holder.</P>
+<P><I>libqrencode</I> is Copyright © 2006, 2007, 2008 Kentaro
 Fukuchi and is released under the terms of the GNU General Public
 Licence.</P>
 <P>QR Code is a registered trademark of Denso Corp. of Kariya, Japan.</P>
+<P><IMG SRC="rse_logo.png" NAME="graphics2" ALIGN=RIGHT WIDTH=120 HEIGHT=64 BORDER=0>Zint.org.uk
+website design and hosting provided by <A HREF="http://www.rsewebsolutions.co.uk/">RSE
+Web Solutions.</A></P>
 <P><A NAME="PATENT"></A><FONT SIZE=5><B>6.2 Patent Issues</B></FONT></P>
 <P>All of the code in Zint is developed using information in the
 public domain, usually freely available on the Internet. Some of the
@@ -156,6 +159,14 @@ Reed-Solomon functions – this also fixes a bug in Maxicode error
 correction and replaces the last of the Lien code. Added PNG output
 for Maxicode symbols. Removed some useless code. Updated QR support
 for <I>libqrencode</I> v2.0.0. 22/4/2008</P>
+<P>v1.6.1 – Major restructuring of PNG generating code: Now draws
+UPCA and EAN symbols properly and puts human readable text into the
+image. Also corrected some nasty 'never ending loop' bugs in Code 128
+and check digit bugs in PostNet and Planet. 8/7/2008</P>
+<P>v1.6.2 – Added KIX Code support and PNG image rotation.
+Corrected a bug affecting extended ASCII support in Code 128 and Code
+16k. 28/7/2008.</P>
+<P>v1.6.3 – Added Aztec Code and Code 32 support.</P>
 <P><A NAME="CREDITS"></A><FONT SIZE=5><B>6.4 Sources of Information</B></FONT></P>
 <P>Below is a list of some of the sources used in rough chronological
 order:</P>
@@ -220,6 +231,9 @@ identification and data capture techniques – Reduced Space
 Symbology (RSS) bar code symbology specification</P>
 <P>BS ISO/IEC 24728:2006 Information technology – Automatic
 identification and data capture techniques – MicroPDF417 bar code
+symbology specification</P>
+<P>ISO/IEC 24778:2008 Information technology – Automatic
+identification and data capture techniques – Aztec Code bar code
 symbology specification</P>
 <P ALIGN=LEFT><BR><BR>
 </P>

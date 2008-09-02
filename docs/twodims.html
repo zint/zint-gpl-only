@@ -3,9 +3,9 @@
 <HEAD>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
 	<TITLE>Two-Dimensional Symbols</TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.3  (Linux)">
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Unix)">
 	<META NAME="CREATED" CONTENT="20070730;21081900">
-	<META NAME="CHANGED" CONTENT="20080422;8283700">
+	<META NAME="CHANGED" CONTENT="20080708;13271600">
 	<STYLE TYPE="text/css">
 	<!--
 		TD P { color: #000000 }
@@ -47,7 +47,7 @@ data and Reed-Solomon error correction is added.</P>
 <P><A NAME="QRCODE"></A><FONT SIZE=5><B>5.6.2 QR Code (ISO 18004)</B></FONT></P>
 <P>Also known as Quick Response Code this symbology was developed by
 Denso. QR Code support in Zint relies on <I>libqrencode</I> (version
-2.0.0) which is available from
+2.0.0 or later) which is available from
 <A HREF="http://megaui.net/fukuchi/works/qrencode/index.en.html">http://megaui.net/fukuchi/works/qrencode/index.en.html</A>.
 Support for QR Code through <I>libzint</I> means that developers only
 need to write handlers for one API which covers QR Code as well as
@@ -342,8 +342,143 @@ border width and output options will be ignored. Colour options are
 available as with other symbologies. PNG output is set at a
 resolution of 12 pixels per millimetre (approx 300 dpi) and uses the
 methods set out in Annex J of the ISO/IEC standard.</P>
-<P ALIGN=LEFT><IMG SRC="maxicode.png" NAME="graphics3" ALIGN=LEFT WIDTH=150 HEIGHT=150 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P ALIGN=LEFT><IMG SRC="maxicode.png" NAME="graphics3" ALIGN=LEFT WIDTH=200 HEIGHT=200 BORDER=0><BR CLEAR=LEFT><BR><BR>
 </P>
+<P><A NAME="AZTEC"></A><FONT SIZE=5><B>5.6.4 Aztec Code (ISO 24778)</B></FONT></P>
+<P ALIGN=LEFT>Invented by Andrew Longacre at Welch Allyn Inc in 1995
+the Aztec Code symbol is a matrix symbol with a distinctive bulls-eye
+finder pattern. Zint can generate Compact Aztec Code (sometimes
+called Small Aztec Code) as well as “full-range” Aztec Code
+symbols and by default will automatically select symbol type and size
+dependent on the length of the data to be encoded. Error correction
+codewords will normally be generated to fill at least 23% of the
+symbol. Two options are available to change this behaviour:</P>
+<P ALIGN=LEFT>The size of the symbol can be specified using the
+<FONT FACE="Courier, monospace">--ver=</FONT> switch followed by (or
+setting <FONT FACE="Courier, monospace">option_2</FONT> to) a value
+between 1 and 36 according to the following table:</P>
+<DL>
+	<DL>
+		<DL>
+			<DL>
+				<DL>
+					<DL>
+						<DL>
+							<DD>
+							<TABLE WIDTH=684 BORDER=1 CELLPADDING=4 CELLSPACING=3>
+								<COL WIDTH=184>
+								<COL WIDTH=473>
+								<TR VALIGN=TOP>
+									<TH WIDTH=184>
+										<P>Value Entered</P>
+									</TH>
+									<TH WIDTH=473>
+										<P>Symbol Generated</P>
+									</TH>
+								</TR>
+								<TR VALIGN=TOP>
+									<TD WIDTH=184>
+										<P ALIGN=CENTER>1-4</P>
+									</TD>
+									<TD WIDTH=473>
+										<P ALIGN=CENTER>Compact Aztec Code with [value] layers</P>
+									</TD>
+								</TR>
+								<TR VALIGN=TOP>
+									<TD WIDTH=184>
+										<P ALIGN=CENTER>5-36</P>
+									</TD>
+									<TD WIDTH=473>
+										<P ALIGN=CENTER>“Full-Range” Aztec Code with [value –
+										4] layers</P>
+									</TD>
+								</TR>
+							</TABLE>
+						</DL>
+					</DL>
+				</DL>
+			</DL>
+		</DL>
+	</DL>
+</DL>
+<P ALIGN=LEFT><BR><BR>
+</P>
+<P ALIGN=LEFT>Note that in symbols which have a specified size the
+amount of error correction is dependent on the length of the data
+input and Zint will allow error correction capacities as low as 3
+codewords.</P>
+<P ALIGN=LEFT>Alternatively the amount of error correction data can
+be specified by use of the <FONT FACE="Courier, monospace">--mode=</FONT>
+switch followed by (or setting <FONT FACE="Courier, monospace">option_1</FONT>
+to) a value from the following table:</P>
+<DL>
+	<DL>
+		<DL>
+			<DL>
+				<DL>
+					<DL>
+						<DL>
+							<DD>
+							<TABLE WIDTH=681 BORDER=1 CELLPADDING=4 CELLSPACING=3>
+								<COL WIDTH=220>
+								<COL WIDTH=434>
+								<TR VALIGN=TOP>
+									<TH WIDTH=220>
+										<P ALIGN=CENTER>Mode</P>
+									</TH>
+									<TH WIDTH=434>
+										<P ALIGN=CENTER>Error Correction Capacity</P>
+									</TH>
+								</TR>
+								<TR VALIGN=TOP>
+									<TD WIDTH=220>
+										<P ALIGN=CENTER>1</P>
+									</TD>
+									<TD WIDTH=434>
+										<P ALIGN=CENTER>&gt;10% + 3 codewords</P>
+									</TD>
+								</TR>
+								<TR VALIGN=TOP>
+									<TD WIDTH=220>
+										<P ALIGN=CENTER>2</P>
+									</TD>
+									<TD WIDTH=434>
+										<P ALIGN=CENTER>&gt;23% + 3 codewords</P>
+									</TD>
+								</TR>
+								<TR VALIGN=TOP>
+									<TD WIDTH=220>
+										<P ALIGN=CENTER>3</P>
+									</TD>
+									<TD WIDTH=434>
+										<P ALIGN=CENTER>&gt;36% + 3 codewords</P>
+									</TD>
+								</TR>
+								<TR VALIGN=TOP>
+									<TD WIDTH=220>
+										<P ALIGN=CENTER>4</P>
+									</TD>
+									<TD WIDTH=434>
+										<P ALIGN=CENTER>&gt;50% + 3 codewords</P>
+									</TD>
+								</TR>
+							</TABLE>
+						</DL>
+					</DL>
+				</DL>
+			</DL>
+		</DL>
+	</DL>
+</DL>
+<P ALIGN=LEFT><BR><BR>
+</P>
+<P ALIGN=LEFT>It is not possible to select both symbol size and error
+correction capacity for the same symbol. If both options are selected
+then the error correction capacity selection will be ignored.</P>
+<P ALIGN=LEFT>Aztec Code is able to encode any extended ASCII
+character data up to a maximum length of approximately 3823 numeric
+or 3067 alphabetic characters or 1914 bytes of data.</P>
+<P ALIGN=LEFT><IMG SRC="aztec.png" NAME="graphics4" ALIGN=BOTTOM WIDTH=114 HEIGHT=114 BORDER=0></P>
 <HR>
 <TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0>
 	<TR VALIGN=TOP>

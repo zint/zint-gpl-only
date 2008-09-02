@@ -3,9 +3,9 @@
 <HEAD>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
 	<TITLE>Using the Front End</TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.3  (Linux)">
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Unix)">
 	<META NAME="CREATED" CONTENT="20070730;21081900">
-	<META NAME="CHANGED" CONTENT="20080309;20090400">
+	<META NAME="CHANGED" CONTENT="20080828;8094200">
 	<STYLE TYPE="text/css">
 	<!--
 		TD P { color: #000000 }
@@ -555,6 +555,14 @@ appropriate integer value in the following table.</P>
 			</TR>
 			<TR VALIGN=TOP>
 				<TD WIDTH=139>
+					<P ALIGN=CENTER>107</P>
+				</TD>
+				<TD WIDTH=643>
+					<P ALIGN=CENTER>Aztec Code</P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=139>
 					<P ALIGN=CENTER>110</P>
 				</TD>
 				<TD WIDTH=643>
@@ -639,6 +647,22 @@ appropriate integer value in the following table.</P>
 					Stacked component</P>
 				</TD>
 			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=139>
+					<P ALIGN=CENTER>120</P>
+				</TD>
+				<TD WIDTH=643>
+					<P ALIGN=CENTER>Dutch Post KIX Code</P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=139>
+					<P ALIGN=CENTER>121</P>
+				</TD>
+				<TD WIDTH=643>
+					<P ALIGN=CENTER>Code 32</P>
+				</TD>
+			</TR>
 		</TBODY>
 	</TABLE>
 </CENTER>
@@ -683,10 +707,10 @@ specified using the --border switch. For example:</P>
 	<COL WIDTH=128*>
 	<TR VALIGN=TOP>
 		<TD WIDTH=50%>
-			<P ALIGN=CENTER><IMG SRC="border.png" NAME="graphics2" ALT="bound symbol" ALIGN=MIDDLE WIDTH=238 HEIGHT=120 BORDER=0></P>
+			<P ALIGN=CENTER><IMG SRC="border.png" NAME="graphics2" ALT="bound symbol" ALIGN=MIDDLE WIDTH=238 HEIGHT=138 BORDER=0></P>
 		</TD>
 		<TD WIDTH=50%>
-			<P ALIGN=CENTER><IMG SRC="box.png" NAME="graphics1" ALT="boxed symbol" ALIGN=MIDDLE WIDTH=238 HEIGHT=120 BORDER=0></P>
+			<P ALIGN=CENTER><IMG SRC="box.png" NAME="graphics1" ALT="boxed symbol" ALIGN=MIDDLE WIDTH=238 HEIGHT=138 BORDER=0></P>
 		</TD>
 	</TR>
 </TABLE>
@@ -702,11 +726,12 @@ white symbol is shown on a black background. For example the command</P>
 -r -d 'This'</FONT></FONT></P>
 <P STYLE="font-style: normal">gives an inverted Code 128 symbol. This
 is not practical for most symbologies but white-on-black is allowed
-by the Data Matrix symbology specification.</P>
+by the Data Matrix and Aztec Code symbology specifications.</P>
 <P STYLE="font-style: normal">For more specific needs the foreground
-and background colours can be specified using the --fg= and --bg=
-options followed by a number in RGB hexadecimal notation (the same
-system used in HTML). For example the command 
+and background colours can be specified using the <FONT FACE="Courier, monospace">--fg=</FONT>
+and <FONT FACE="Courier, monospace">--bg=</FONT> options followed by
+a number in RGB hexadecimal notation (the same system used in HTML).
+For example the command 
 </P>
 <P STYLE="font-style: normal"><FONT FACE="Courier, monospace"><FONT SIZE=2>zint
 --fg=004700 -d 'This'</FONT></FONT></P>
@@ -717,16 +742,62 @@ shown below.</P>
 	<COL WIDTH=128*>
 	<TR VALIGN=TOP>
 		<TD WIDTH=50%>
-			<P ALIGN=CENTER><IMG SRC="green.png" NAME="graphics3" ALT="symbol with green ink" ALIGN=BOTTOM WIDTH=238 HEIGHT=120 BORDER=0></P>
+			<P ALIGN=CENTER><IMG SRC="green.png" NAME="graphics3" ALT="symbol with green ink" ALIGN=BOTTOM WIDTH=238 HEIGHT=138 BORDER=0></P>
 		</TD>
 		<TD WIDTH=50%>
-			<P ALIGN=CENTER><IMG SRC="pink.png" NAME="graphics4" ALT="symbol with pink paper" ALIGN=BOTTOM WIDTH=238 HEIGHT=120 BORDER=0></P>
+			<P ALIGN=CENTER><IMG SRC="pink.png" NAME="graphics4" ALT="symbol with pink paper" ALIGN=BOTTOM WIDTH=238 HEIGHT=138 BORDER=0></P>
 		</TD>
 	</TR>
 </TABLE>
 <P><BR><BR>
 </P>
-<P STYLE="font-style: normal"><A NAME="OTHER"></A><FONT SIZE=5><B>3.8
+<P STYLE="font-style: normal"><A NAME="ROTATE"></A><FONT SIZE=5><B>3.8
+Rotating the Symbol</B></FONT></P>
+<P STYLE="font-style: normal; font-weight: medium"><FONT SIZE=3>The
+symbol can be rotated through four orientations using the <FONT FACE="Courier, monospace">--rotate=</FONT>
+option followed by the angle of rotation as shown below. This option
+is only available with PNG output.</FONT></P>
+<DL>
+	<DL>
+		<DL>
+			<DD>
+			<TABLE WIDTH=1008 BORDER=1 CELLPADDING=4 CELLSPACING=3>
+				<COL WIDTH=501>
+				<COL WIDTH=480>
+				<TR VALIGN=TOP>
+					<TD WIDTH=501>
+						<P ALIGN=CENTER><IMG SRC="bar38n.png" NAME="graphics5" ALIGN=BOTTOM WIDTH=200 HEIGHT=118 BORDER=0><BR><BR><BR>
+						</P>
+						<P ALIGN=CENTER><FONT SIZE=3><FONT FACE="Courier, monospace">--rotate=0</FONT>
+						(default)</FONT></P>
+					</TD>
+					<TD WIDTH=480>
+						<P ALIGN=CENTER><IMG SRC="bar38u.png" NAME="graphics6" ALIGN=BOTTOM WIDTH=200 HEIGHT=118 BORDER=0><BR><BR><BR>
+						</P>
+						<P ALIGN=CENTER><FONT FACE="Courier, monospace"><FONT SIZE=3>--rotate=180</FONT></FONT></P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=501>
+						<P ALIGN=CENTER><IMG SRC="bar38l.png" NAME="graphics7" ALIGN=BOTTOM WIDTH=118 HEIGHT=200 BORDER=0><BR><BR><BR>
+						</P>
+						<P ALIGN=CENTER><FONT FACE="Courier, monospace"><FONT SIZE=3>--rotate=270</FONT></FONT></P>
+					</TD>
+					<TD WIDTH=480>
+						<P ALIGN=CENTER><IMG SRC="bar38r.png" NAME="graphics8" ALIGN=BOTTOM WIDTH=118 HEIGHT=200 BORDER=0><BR><BR><BR>
+						</P>
+						<P ALIGN=CENTER><FONT FACE="Courier, monospace"><FONT SIZE=3>--rotate=90</FONT></FONT></P>
+					</TD>
+				</TR>
+			</TABLE>
+		</DL>
+	</DL>
+</DL>
+<P><BR><BR>
+</P>
+<P><BR><BR>
+</P>
+<P STYLE="font-style: normal"><A NAME="OTHER"></A><FONT SIZE=5><B>3.9
 Other options</B></FONT></P>
 <P STYLE="font-style: normal">Additional options are available which
 are specific to certain symbologies. These may, for example, control

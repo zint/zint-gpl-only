@@ -3,9 +3,9 @@
 <HEAD>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
 	<TITLE>Using the API</TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.3  (Linux)">
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Unix)">
 	<META NAME="CREATED" CONTENT="20070730;21081900">
-	<META NAME="CHANGED" CONTENT="20080309;20075400">
+	<META NAME="CHANGED" CONTENT="20080828;8103400">
 	<STYLE TYPE="text/css">
 	<!--
 		TD P { color: #000000 }
@@ -1182,6 +1182,17 @@ following table. For example</P>
 			</TR>
 			<TR VALIGN=TOP>
 				<TD WIDTH=150>
+					<P ALIGN=CENTER>107</P>
+				</TD>
+				<TD WIDTH=382>
+					<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_AZTEC</FONT></P>
+				</TD>
+				<TD WIDTH=366>
+					<P ALIGN=CENTER>Aztec Code</P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=150>
 					<P ALIGN=CENTER>110</P>
 				</TD>
 				<TD WIDTH=382>
@@ -1296,6 +1307,28 @@ following table. For example</P>
 					Stacked component</P>
 				</TD>
 			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=150>
+					<P ALIGN=CENTER>120</P>
+				</TD>
+				<TD WIDTH=382>
+					<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_KIX</FONT></P>
+				</TD>
+				<TD WIDTH=366>
+					<P ALIGN=CENTER>Dutch Post KIX Code</P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=150>
+					<P ALIGN=CENTER>121</P>
+				</TD>
+				<TD WIDTH=382>
+					<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_CODE32</FONT></P>
+				</TD>
+				<TD WIDTH=366>
+					<P ALIGN=CENTER>Code 32</P>
+				</TD>
+			</TR>
 		</TBODY>
 	</TABLE>
 </CENTER>
@@ -1352,6 +1385,16 @@ variable from the following table [2].</P>
 </CENTER>
 <P><BR><BR>
 </P>
+<P><A NAME="ROTATE"></A><FONT SIZE=5><B>4.7 Rotating the Symbol</B></FONT></P>
+<P>Rotating the output is done using the
+<FONT FACE="Courier, monospace">ZBarcode_Encode_and_Print_Rotated()</FONT>
+and <FONT FACE="Courier, monospace">ZBarcode_Print_Rotated()</FONT>
+functions. These take an extra integer argument giving the angle of
+rotation. Valid values are 0, 90, 180 and 270 degrees measured
+clockwise. For example the following code generates a symbol rotated
+by 90 degrees. Only PNG output can be rotated in this way.</P>
+<P>&nbsp;&nbsp;&nbsp;&nbsp;<FONT FACE="Courier, monospace"><FONT SIZE=2>error
+= ZBarcode_Encode_and_Print_Rotated(my_symbol, argv[1], 90);</FONT></FONT></P>
 <P><BR><BR>
 </P>
 <P>[1] This value is ignored for Australia Post 4-State Barcodes,
