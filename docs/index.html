@@ -3,9 +3,9 @@
 <HEAD>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
 	<TITLE>Zint Barcode Generator</TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.3  (Linux)">
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Unix)">
 	<META NAME="CREATED" CONTENT="20070802;10154800">
-	<META NAME="CHANGED" CONTENT="20080422;8300800">
+	<META NAME="CHANGED" CONTENT="20080708;13393200">
 	<STYLE TYPE="text/css">
 	<!--
 		TD P { color: #000000 }
@@ -13,7 +13,6 @@
 		H1 { color: #000000 }
 		P { color: #000000 }
 		DT { color: #000000 }
-		DD { color: #000000 }
 		A:link { color: #0000ff }
 		A:visited { color: #840084 }
 	-->
@@ -22,7 +21,7 @@
 <BODY LANG="en-GB" TEXT="#000000" LINK="#0000ff" VLINK="#840084" BGCOLOR="#ffffff" DIR="LTR">
 <H1>Zint Barcode Generator</H1>
 <H3>by Robin Stuart</H3>
-<P>version 1.6, 22nd April 2008</P>
+<P>Version 1.6.3, 27th August 2008</P>
 <P>This document is a guide to Zint, the <I>libzint</I> library and
 the barcode symbologies supported by them.</P>
 <HR>
@@ -58,7 +57,9 @@ the barcode symbologies supported by them.</P>
 				</DT><DT>
 		3.7 <A HREF="frontend.html#COLOUR">Using Colour</A> 
 		</DT><DT>
-		3.8 <A HREF="frontend.html#OTHER">Other Options</A> 
+		3.8 <A HREF="frontend.html#ROTATE">Rotating the Symbol</A> 
+		</DT><DT>
+		3.9 <A HREF="frontend.html#OTHER">Other Options</A> 
 		</DT></DL>
 	<DT>
 	4. <A HREF="backend.html">Using the API</A> 
@@ -75,7 +76,9 @@ the barcode symbologies supported by them.</P>
 		4.5 <A HREF="backend.html#SYMBOL">Specifying a Symbology</A> 
 		</DT><DT>
 		4.6 <A HREF="backend.html#BOXES">Adding Boxes and Boundary Bars</A>
-				</DT></DL>
+				</DT><DT>
+		4.7 <A HREF="backend.html#ROTATE">Rotating the Symbol</A> 
+		</DT></DL>
 	<DT>
 	5. <A HREF="symbologies.html">Types of Symbol</A> 
 	</DT><DL>
@@ -100,9 +103,9 @@ the barcode symbologies supported by them.</P>
 				</DT><DT>
 				5.1.2.6 <A HREF="onedim.html#ITF14">ITF-14</A> 
 				</DT><DT>
-				5.1.2.7 <A HREF="onedim.html#DPLEIT">Deutche Post Leitcode</A> 
+				5.1.2.7 <A HREF="onedim.html#DPLEIT">Deutsche Post Leitcode</A> 
 				</DT><DT>
-				5.1.2.8 <A HREF="onedim.html#DPIDENT">Deutche Post Identcode</A> 
+				5.1.2.8 <A HREF="onedim.html#DPIDENT">Deutsche Post Identcode</A> 
 				</DT></DL>
 			<DT>
 			5.1.3 <A HREF="onedim.html#UPC">Universal Product Code (EN 797)</A>
@@ -146,6 +149,8 @@ the barcode symbologies supported by them.</P>
 				5.1.8.4 <A HREF="onedim.html#PZN">PZN</A> 
 				</DT><DT>
 				5.1.8.5 <A HREF="onedim.html#LOGMARS">LOGMARS</A> 
+				</DT></DT>
+				5.1.8.6 <A HREF="onedim.html#CODE32">Code 32</A>
 				</DT></DL>
 			<DT>
 			5.1.9 <A HREF="onedim.html#CODABAR">Codabar (EN 798)</A> 
@@ -244,16 +249,18 @@ the barcode symbologies supported by them.</P>
 			</DT><DT>
 			5.6.2 <A HREF="twodims.html#QRCODE">QR Code (ISO 18004)</A> 
 			</DT><DT>
-			5.6.3 <A HREF="twodims.html#MAXI">Maxicode (ISO 16023)</A></DT></DL>
+			5.6.3 <A HREF="twodims.html#MAXI">Maxicode (ISO 16023)</A> 
+			</DT><DT>
+			5.6.4 <A HREF="twodims.html#AZTEC">Aztec Code (ISO 24778)</A> 
+			</DT></DL>
 		<DT>
-		5.7 <A HREF="markings.html">Other Barcode-Like Markings</A> 
-		</DT><DL>
+		5.7 <A HREF="markings.html">Other Barcode-Like Markings</A></DT><DL>
 			<DT>
 			5.7.1 <A HREF="markings.html#FIM">Facing Identification Mark (FIM)</A>
-			</DT><DT>
+						</DT><DT>
 			5.7.2 <A HREF="markings.html#FLAT">Flattermarken</A> 
 			</DT></DL>
-		</DT></DL>
+	</DL>
 	<DT>
 	6 <A HREF="legal.html">Legal and Version Information</A> 
 	</DT><DL>
@@ -266,7 +273,7 @@ the barcode symbologies supported by them.</P>
 		</DT><DT>
 		6.4 <A HREF="legal.html#CREDITS">Sources of Information</A> 
 		</DT><DT>
-		6.5 <A HREF="legal.html#STANDARD">Standard Compliance</A>
+		6.5 <A HREF="legal.html#STANDARD">Standard Compliance</A> 
 		</DT></DL>
 	<DT>
 	A <A HREF="appxa.html">Appendix A: Character Encoding</A> 
@@ -275,20 +282,23 @@ the barcode symbologies supported by them.</P>
 		A.1 <A HREF="appxa.html#ASCII">ASCII Standard</A> 
 		</DT><DT>
 		A.2 <A HREF="appxa.html#LATIN1">Latin Alphabet No 1 (ISO 8859-1)</A>
-		</DT></DL>
+				</DT></DL>
 	<DT>
 	B <A HREF="appxb.html">Appendix B: Three Digit Country Codes (ISO
 	3166)</A> 
 	</DT><DT>
-	C <A HREF="appxc.html">Appendix C: GS1 General Specification</A>
+	C <A HREF="appxc.html">Appendix C: GS1 General Specification</A> 
 	</DT><DL>
 		<DT>
 		C.1 <A HREF="appxc.html#AI">Application Identifiers</A> 
-		</DT><DT>
-		C.2 <A HREF="appxc.html#FIELDS">Fixed Length Fields</A>
+		</DT><DT STYLE="margin-bottom: 0.5cm">
+		C.2 <A HREF="appxc.html#FIELDS">Fixed Length Fields</A> 
 		</DT></DL>
 </DL>
+<P>
+&nbsp;</P>
 <HR>
+<P>&nbsp;</P>
 <TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0>
 	<TR VALIGN=TOP>
 		<TD WIDTH=33%>
@@ -313,5 +323,7 @@ the barcode symbologies supported by them.</P>
 		</TD>
 	</TR>
 </TABLE>
+<P><BR><BR>
+</P>
 </BODY>
 </HTML>
