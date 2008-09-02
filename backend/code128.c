@@ -134,17 +134,26 @@ void dxsmooth(int *indexliste)
 
 }
 
-
 void c128_set_a(unsigned char source, char dest[], int values[], int *bar_chars)
 { /* Translate Code 128 Set A characters into barcodes */
   /* This set handles all control characters NULL to US */
-
+	
 	if(source > 127) {
-		concat(dest, C128Table[source + 64 - 128]);
-		values[(*bar_chars)] = source + 64 - 128;
+		if(source < 160) {
+			concat(dest, C128Table[(source - 128) + 64]);
+			values[(*bar_chars)] = (source - 128) + 64;
+		} else {
+			concat(dest, C128Table[(source - 128) - 32]);
+			values[(*bar_chars)] = (source - 128) - 32;
+		}
 	} else {
-		concat(dest, C128Table[source + 64]);
-		values[(*bar_chars)] = source + 64;
+		if(source < 32) {
+			concat(dest, C128Table[source + 64]);
+			values[(*bar_chars)] = source + 64;
+		} else {
+			concat(dest, C128Table[source - 32]);
+			values[(*bar_chars)] = source - 32;
+		}
 	}
 	(*bar_chars)++;
 }
@@ -181,11 +190,12 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 	char set[170], fset[170], mode, last_set, last_fset;
 	float glyph_count;
 	char dest[1000];
-
+	
 	errornum = 0;
 	strcpy(dest, "");
+	
 	sourcelen = strlen(source);
-
+	
 	j = 0;
 	e_count = 0;
 	bar_characters = 0;
@@ -236,24 +246,33 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	/* Detect extended ASCII characters */
-	for(i = 0; i <  sourcelen; i++) {
-		if(source[i] >=128) {
+	for(i = 0; i < sourcelen; i++) {
+		if(source[i] >= 128) {
 			fset[i] = 'f';
+		} else {
+			fset[i] = ' ';
 		}
 	}
 	fset[i] = '\0';
 	
 	/* Decide when to latch to extended mode - Annex E note 3 */
+	j = 0;
 	for(i = 0; i < sourcelen; i++) {
-		j = 0;
 		if(fset[i] == 'f') {
-			do {
-				j++;
-			} while(source[i + j] == 'f');
-			if((j >= 5) || ((j >= 3) && ((i + j) == sourcelen))) {
-				for(k = 0; k <= j; k++) {
-					source[i + k] = 'F';
-				}
+			j++;
+		} else {
+			j = 0;
+		}
+		
+		if(j >= 5) {
+			for(k = i; k > (i - 5); k--) {
+				fset[k] = 'F';
+			}
+		}
+		
+		if((j >= 3) && (i == (sourcelen - 1))) {
+			for(k = i; k > (i - 3); k--) {
+				fset[k] = 'F';
 			}
 		}
 	}
@@ -385,6 +404,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 		return ERROR_TOO_LONG;
 	}
 	
+	
 	/* So now we know what start character to use - we can get on with it! */
 	switch(set[0])
 	{
@@ -489,13 +509,15 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 			}
 		}
 
-		if(fset[i] == 'f') {
+		if(fset[read] == 'f') {
 			/* Shift extended mode */
-			switch(set[i]) {
+			switch(set[read]) {
+				case 'a':
 				case 'A':
 					concat(dest, C128Table[101]);
 					values[bar_characters] = 101;
 					break;
+				case 'b':
 				case 'B':
 					concat(dest, C128Table[100]);
 					values[bar_characters] = 100;
@@ -503,8 +525,8 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 			}
 			bar_characters++;
 		}
-		
-		if((set[i] == 'a') || (set[i] == 'b')) {
+
+		if((set[read] == 'a') || (set[read] == 'b')) {
 			/* Insert shift character */
 			concat(dest, C128Table[98]);
 			values[bar_characters] = 98;
@@ -525,12 +547,6 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 				read += 2;
 				break;
 		}
-		
-		/* printf("vals: ");
-		for(i = 0; i < bar_characters; i++) {
-			printf("%d, ", values[i]);
-		}
-		printf("\n"); */
 		
 	} while (read < sourcelen);
 

@@ -107,9 +107,17 @@ void reysmooth(int *indexliste)
 void c16k_set_a(unsigned char source, int values[], int *bar_chars)
 {
 	if(source > 127) {
-		values[(*bar_chars)] = source + 64 - 128;
+		if(source < 160) {
+			values[(*bar_chars)] = source + 64 - 128;
+		} else {
+			values[(*bar_chars)] = source - 32 - 128;
+		}
 	} else {
-		values[(*bar_chars)] = source + 64;
+		if(source < 32) {
+			values[(*bar_chars)] = source + 64;
+		} else {
+			values[(*bar_chars)] = source - 32;
+		}
 	}
 	(*bar_chars)++;
 }
