@@ -41,19 +41,19 @@ int plessey(struct zint_symbol *symbol, unsigned char source[])
 	unsigned char *checkptr;
 	static char grid[9] = {1,1,1,1,0,1,0,0,1};
 	char dest[1000];
-	int errno;
+	int error_number;
 	
-	errno = 0;
+	error_number = 0;
 	strcpy(dest, "");
 	
 	if(strlen(source) > 65) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
-	errno = is_sane(SSET, source);
-	if(errno == ERROR_INVALID_DATA) {
+	error_number = is_sane(SSET, source);
+	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "error: invalid characters in data");
-		return errno;
+		return error_number;
 	}
 	checkptr = calloc (1, strlen(source) * 4 + 8);
 
@@ -94,27 +94,27 @@ int plessey(struct zint_symbol *symbol, unsigned char source[])
 	
 	expand(symbol, dest);
 	strcpy(symbol->text, source);
-	return errno;
+	return error_number;
 }
 
 int msi_plessey(struct zint_symbol *symbol, unsigned char source[])
 { /* Plain MSI Plessey - does not calculate any check character */
 
 	unsigned int i;
-	int errno;
+	int error_number;
 	char dest[1000];
 	
-	errno = 0;
+	error_number = 0;
 	strcpy(dest, "");
 
 	if(strlen(source) > 55) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
-	errno = is_sane(NESET, source);
-	if(errno == ERROR_INVALID_DATA) {
+	error_number = is_sane(NESET, source);
+	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "error: invalid characters in data");
-		return errno;
+		return error_number;
 	}
 
 	/* start character */
@@ -130,7 +130,7 @@ int msi_plessey(struct zint_symbol *symbol, unsigned char source[])
 	
 	expand(symbol, dest);
 	strcpy(symbol->text, source);
-	return errno;
+	return error_number;
 }
 
 int msi_plessey_mod10(struct zint_symbol *symbol, unsigned char source[])
@@ -139,20 +139,20 @@ int msi_plessey_mod10(struct zint_symbol *symbol, unsigned char source[])
 
 	unsigned int i, wright, dau, pedwar, pump;
 	char un[200], tri[200];
-	int errno, h;
+	int error_number, h;
 	char dest[1000];
 	
-	errno = 0;
+	error_number = 0;
 	strcpy(dest, "");
 
 	if(strlen(source) > 55) { 
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
-	errno = is_sane(NESET, source);
-	if(errno == ERROR_INVALID_DATA) {
+	error_number = is_sane(NESET, source);
+	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "error: invalid characters in data");
-		return errno;
+		return error_number;
 	}
 
 	/* start character */
@@ -228,7 +228,7 @@ int msi_plessey_mod10(struct zint_symbol *symbol, unsigned char source[])
 	source[h + 1] = '\0';
 	expand(symbol, dest);
 	strcpy(symbol->text, source);
-	return errno;
+	return error_number;
 }
 
 int msi_plessey_mod1010(struct zint_symbol *symbol, unsigned char source[])
@@ -237,20 +237,20 @@ int msi_plessey_mod1010(struct zint_symbol *symbol, unsigned char source[])
 
 	unsigned int i, wright, dau, pedwar, pump, chwech;
 	char un[200], tri[200];
-	int errno, h;
+	int error_number, h;
 	char dest[1000];
 	
-	errno = 0;
+	error_number = 0;
 	strcpy(dest, "");
 	
 	if(strlen(source) > 55) { /* No Entry Stack Smashers! */
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
-	errno = is_sane(NESET, source);
-	if (errno == ERROR_INVALID_DATA) {
+	error_number = is_sane(NESET, source);
+	if (error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "error: invalid characters in data");
-		return errno;
+		return error_number;
 	}
 
 	/* start character */
@@ -383,7 +383,7 @@ int msi_plessey_mod1010(struct zint_symbol *symbol, unsigned char source[])
 	source[h + 2] = '\0';
 	expand(symbol, dest);
 	strcpy(symbol->text, source);
-	return errno;
+	return error_number;
 }
 
 
@@ -394,20 +394,20 @@ int msi_plessey_mod11(struct zint_symbol *symbol, unsigned char source[])
 	/* uses the IBM weight system */
 	
 	int i, weight, x, check, h;
-	int errno;
+	int error_number;
 	char dest[1000];
 	
-	errno = 0;
+	error_number = 0;
 	strcpy(dest, "");
 
 	if(strlen(source) > 55) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
-	errno = is_sane(NESET, source);
-	if(errno == ERROR_INVALID_DATA) {
+	error_number = is_sane(NESET, source);
+	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "error: invalid characters in data");
-		return errno;
+		return error_number;
 	}
 	
 	/* start character */
@@ -453,7 +453,7 @@ int msi_plessey_mod11(struct zint_symbol *symbol, unsigned char source[])
 	
 	expand(symbol, dest);
 	strcpy(symbol->text, source);
-	return errno;
+	return error_number;
 }
 
 int msi_plessey_mod1110(struct zint_symbol *symbol, unsigned char source[])
@@ -464,20 +464,20 @@ int msi_plessey_mod1110(struct zint_symbol *symbol, unsigned char source[])
 	
 	int i, weight, x, check, wright, dau, pedwar, pump, h;
 	char un[200], tri[200];
-	int errno;
+	int error_number;
 	char dest[1000];
 	
-	errno = 0;
+	error_number = 0;
 	strcpy(dest, "");
 
 	if(strlen(source) > 55) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
-	errno = is_sane(NESET, source);
-	if (errno == ERROR_INVALID_DATA) {
+	error_number = is_sane(NESET, source);
+	if (error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "error: invalid characters in data");
-		return errno;
+		return error_number;
 	}
 	
 	/* start character */
@@ -579,5 +579,23 @@ int msi_plessey_mod1110(struct zint_symbol *symbol, unsigned char source[])
 
 	expand(symbol, dest);
 	strcpy(symbol->text, source);
-	return errno;
+	return error_number;
+}
+
+int msi_handle(struct zint_symbol *symbol, unsigned char source[]) {
+	int error_number;
+	
+	if((symbol->option_2 < 0) || (symbol->option_2 > 4)) {
+		symbol->option_2 = 0;
+	}
+
+	switch(symbol->option_2) {
+		case 0: error_number = msi_plessey(symbol, source); break;
+		case 1: error_number = msi_plessey_mod10(symbol, source); break;
+		case 2: error_number = msi_plessey_mod1010(symbol, source); break;
+		case 3: error_number = msi_plessey_mod11(symbol, source); break;
+		case 4: error_number = msi_plessey_mod1110(symbol, source); break;
+	}
+	
+	return error_number;
 }
