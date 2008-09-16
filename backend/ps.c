@@ -233,81 +233,9 @@ int ps_plot(struct zint_symbol *symbol)
 				}
 			}
 		}
-	}
+	}	
 	
-	if(symbol->symbology == BARCODE_ULTRA) {
-		/* Ultracode uses a colour scheme all of its own! */
-		int addon_latch = 0;
-		
-		for(r = 0; r < symbol->rows; r++) {
-			this_row = symbol->rows - r - 1; /* invert r otherwise plots upside down */
-			if(symbol->row_height[this_row] == 0) {
-				row_height = large_bar_height;
-			} else {
-				row_height = symbol->row_height[this_row];
-			}
-			row_posn = 0;
-			for(i = 0; i < r; i++) {
-				if(symbol->row_height[symbol->rows - i - 1] == 0) {
-					row_posn += large_bar_height;
-				} else {
-					row_posn += symbol->row_height[symbol->rows - i - 1];
-				}
-			}
-			row_posn += (textoffset + yoffset);
-			
-			for(i = 0; i < symbol->width; i++) {
-				switch(symbol->encoded_data[this_row][i]) {
-					case '1':
-						fprintf(feps, "TE\n");
-						fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-						fprintf(feps, "%.2f %.2f ", row_height, row_posn);
-						fprintf(feps, "TB %d.00 %d.00 TR\n", i + xoffset, 1);
-						break;
-					case 'R':
-						fprintf(feps, "TE\n");
-						fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", 1.00, 0.00, 0.00);
-						fprintf(feps, "%.2f %.2f ", row_height, row_posn);
-						fprintf(feps, "TB %d.00 %d.00 TR\n", i + xoffset, 1);
-						break;
-					case 'G':
-						fprintf(feps, "TE\n");
-						fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", 0.00, 1.00, 0.00);
-						fprintf(feps, "%.2f %.2f ", row_height, row_posn);
-						fprintf(feps, "TB %d.00 %d.00 TR\n", i + xoffset, 1);
-						break;
-					case 'B':
-						fprintf(feps, "TE\n");
-						fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", 0.00, 0.00, 1.00);
-						fprintf(feps, "%.2f %.2f ", row_height, row_posn);
-						fprintf(feps, "TB %d.00 %d.00 TR\n", i + xoffset, 1);
-						break;
-					case 'C':
-						fprintf(feps, "TE\n");
-						fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", 0.00, 1.00, 1.00);
-						fprintf(feps, "%.2f %.2f ", row_height, row_posn);
-						fprintf(feps, "TB %d.00 %d.00 TR\n", i + xoffset, 1);
-						break;
-					case 'M':
-						fprintf(feps, "TE\n");
-						fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", 1.00, 0.00, 1.00);
-						fprintf(feps, "%.2f %.2f ", row_height, row_posn);
-						fprintf(feps, "TB %d.00 %d.00 TR\n", i + xoffset, 1);
-						break;
-					case 'Y':
-						fprintf(feps, "TE\n");
-						fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", 1.00, 1.00, 0.00);
-						fprintf(feps, "%.2f %.2f ", row_height, row_posn);
-						fprintf(feps, "TB %d.00 %d.00 TR\n", i + xoffset, 1);
-						break;
-				}
-			}
-			
-		}
-	}
-		
-	
-	if((symbol->symbology != BARCODE_MAXICODE) && (symbol->symbology != BARCODE_ULTRA)) {
+	if(symbol->symbology != BARCODE_MAXICODE) {
 		/* everything else uses rectangles (or squares) */
 		/* Works from the bottom of the symbol up */
 		int addon_latch = 0;
@@ -739,19 +667,37 @@ int ps_plot(struct zint_symbol *symbol)
 
 	/* Put boundary bars or box around symbol */
 	if ((symbol->output_options == BARCODE_BOX) || (symbol->output_options == BARCODE_BIND)) {
-		/* boundary bars */
-		fprintf(feps, "TE\n");
-		fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-		fprintf(feps, "%d.00 %d.00 TB %d.00 %d.00 TR\n", symbol->border_width, textoffset, 0, (symbol->width + xoffset + xoffset));
-		fprintf(feps, "TE\n");
-		fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-		fprintf(feps, "%d.00 %d.00 TB %d.00 %d.00 TR\n", symbol->border_width, textoffset + symbol->height + symbol->border_width, 0, (symbol->width + xoffset + xoffset));
-		if(symbol->rows > 1) {
-			/* row binding */
-			for(r = 1; r < symbol->rows; r++) {
-				fprintf(feps, "TE\n");
-				fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-				fprintf(feps, "%d.00 %.2f TB %d.00 %d.00 TR\n", 2, ((r * row_height) + textoffset + yoffset - 1), xoffset, symbol->width);
+		if(symbol->symbology != BARCODE_CODABLOCKF) {
+			/* boundary bars */
+			fprintf(feps, "TE\n");
+			fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
+			fprintf(feps, "%d.00 %d.00 TB %d.00 %d.00 TR\n", symbol->border_width, textoffset, 0, (symbol->width + xoffset + xoffset));
+			fprintf(feps, "TE\n");
+			fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
+			fprintf(feps, "%d.00 %d.00 TB %d.00 %d.00 TR\n", symbol->border_width, textoffset + symbol->height + symbol->border_width, 0, (symbol->width + xoffset + xoffset));
+			if(symbol->rows > 1) {
+				/* row binding */
+				for(r = 1; r < symbol->rows; r++) {
+					fprintf(feps, "TE\n");
+					fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
+					fprintf(feps, "%d.00 %.2f TB %d.00 %d.00 TR\n", 2, ((r * row_height) + textoffset + yoffset - 1), xoffset, symbol->width);
+				}
+			}
+		} else {
+			/* boundary bars */
+			fprintf(feps, "TE\n");
+			fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
+			fprintf(feps, "%d.00 %d.00 TB %d.00 %d.00 TR\n", symbol->border_width, textoffset, xoffset, symbol->width);
+			fprintf(feps, "TE\n");
+			fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
+			fprintf(feps, "%d.00 %d.00 TB %d.00 %d.00 TR\n", symbol->border_width, textoffset + symbol->height + symbol->border_width, xoffset, symbol->width);
+			if(symbol->rows > 1) {
+				/* row binding */
+				for(r = 1; r < symbol->rows; r++) {
+					fprintf(feps, "TE\n");
+					fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
+					fprintf(feps, "%d.00 %.2f TB %d.00 %d.00 TR\n", 2, ((r * row_height) + textoffset + yoffset - 1), (xoffset + 11), (symbol->width - 24));
+				}
 			}
 		}
 	}
