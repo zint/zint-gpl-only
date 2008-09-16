@@ -67,42 +67,7 @@ static int C16KStopValues[16] = {0, 1, 2, 3, 4, 5, 6, 7, 4, 5, 6, 7, 0, 1, 2, 3}
 
 int parunmodd(unsigned char llyth);
 void grwp(int *indexliste);
-
-void reysmooth(int *indexliste)
-{ /* Implements rules from EN 12323 */
-	int i, this, last, next, length;
-	
-	for(i = 0; i < *(indexliste); i++) {
-		this = list[1][i];
-		length = list[0][i];
-		if(i != 0) { last = list[1][i - 1]; } else { last = FALSE; }
-		if(i != *(indexliste) - 1) { next = list[1][i + 1]; } else { next = FALSE; }
-		
-		if(i == 0) { /* first block */
-			if((*(indexliste) == 1) && ((length == 2) && (this == ABORC))) { /* Rule 1a */ list[1][i] = LATCHC; }
-			if(this == ABORC) { 
-				if(length >= 4) {/* Rule 1b */ list[1][i] = LATCHC; } else { list[1][i] = AORB; this = AORB; }
-			}
-			if(this == SHIFTA) { /* Rule 1c */ list[1][i] = LATCHA; }
-			if((this == AORB) && (next == SHIFTA)) { /* Rule 1c */ list[1][i] = LATCHA; this = LATCHA; }
-			if(this == AORB) { /* Rule 1d */ list[1][i] = LATCHB; }
-		} else {
-			if((this == ABORC) && (length >= 4)) { /* Rule 3 */ list[1][i] = LATCHC; this = LATCHC; }
-			if(this == ABORC) { list[1][i] = AORB; this = AORB; }
-			if((this == AORB) && (last == LATCHA)) { list[1][i] = LATCHA; this = LATCHA; }
-			if((this == AORB) && (last == LATCHB)) { list[1][i] = LATCHB; this = LATCHB; }
-			if((this == AORB) && (next == SHIFTA)) { list[1][i] = LATCHA; this = LATCHA; }
-			if((this == AORB) && (next == SHIFTB)) { list[1][i] = LATCHB; this = LATCHB; }
-			if(this == AORB) { list[1][i] = LATCHB; this = LATCHB; }
-			if((this == SHIFTA) && (length > 1)) { /* Rule 4 */ list[1][i] = LATCHA; this = LATCHA; }
-			if((this == SHIFTB) && (length > 1)) { /* Rule 5 */ list[1][i] = LATCHB; this = LATCHB; }
-			if((this == SHIFTA) && (last == LATCHA)) { list[1][i] = LATCHA; this = LATCHA; }
-			if((this == SHIFTB) && (last == LATCHB)) { list[1][i] = LATCHB; this = LATCHB; }
-		} /* Rule 2 is implimented elsewhere, Rule 6 is implied */
-	}
-	grwp(indexliste);
-
-}
+void dxsmooth(int *indexliste);
 
 void c16k_set_a(unsigned char source, int values[], int *bar_chars)
 {
@@ -153,12 +118,14 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	strcpy(width_pattern, "");
 	float glyph_count;
 	int errornum, first_sum, second_sum;
+	int input_length;
 
 	errornum = 0;
+	input_length = strlen(source);
 	
-	if(strlen(source) > 157) {
+	if(input_length > 157) {
 		strcpy(symbol->errtxt, "error: input too long");
-		return 6;
+		return ERROR_TOO_LONG;
 	}
 
 	e_count = 0;
@@ -171,7 +138,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	/* Detect extended ASCII characters */
-	for(i = 0; i <  strlen(source); i++) {
+	for(i = 0; i <  input_length; i++) {
 		if(source[i] >=128) {
 			fset[i] = 'f';
 		}
@@ -179,15 +146,15 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	fset[i] = '\0';
 	
 	/* Decide when to latch to extended mode */
-	for(i = 0; i < strlen(source); i++) {
+	for(i = 0; i < input_length; i++) {
 		j = 0;
 		if(fset[i] == 'f') {
 			do {
 				j++;
-			} while(source[i + j] == 'f');
-			if((j >= 5) || ((j >= 3) && ((i + j) == strlen(source)))) {
+			} while(fset[i + j] == 'f');
+			if((j >= 5) || ((j >= 3) && ((i + j) == input_length))) {
 				for(k = 0; k <= j; k++) {
-					source[i + k] = 'F';
+					fset[i + k] = 'F';
 				}
 			}
 		}
@@ -205,15 +172,15 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	
 	do {
 		list[1][indexliste] = mode;
-		while ((list[1][indexliste] == mode) && (indexchaine < strlen(source))) {
+		while ((list[1][indexliste] == mode) && (indexchaine < input_length)) {
 			list[0][indexliste]++;
 			indexchaine++;
 			mode = parunmodd(source[indexchaine]);
 		}
 		indexliste++;
-	} while (indexchaine < strlen(source));
+	} while (indexchaine < input_length);
 	
-	reysmooth(&indexliste);
+	dxsmooth(&indexliste);
 
 	/* Resolve odd length LATCHC blocks */
 	if((list[1][0] == LATCHC) && ((list[0][0] % 2) == 1)) {
@@ -236,7 +203,6 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	/* Put set data into set[] */
-	
 	read = 0;
 	for(i = 0; i < indexliste; i++) {
 		for(j = 0; j < list[0][i]; j++) {
@@ -255,7 +221,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	last_set = ' ';
 	last_fset = ' ';
 	glyph_count = 0.0;
-	for(i = 0; i < strlen(source); i++) {
+	for(i = 0; i < input_length; i++) {
 		if((set[i] == 'a') || (set[i] == 'b')) {
 			glyph_count = glyph_count + 1.0;
 		}
@@ -413,7 +379,6 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 			bar_characters++;
 		}
 
-		
 		switch(set[read])
 		{ /* Encode data characters */
 			case 'A': c16k_set_a(source[read], values, &bar_characters);
@@ -476,10 +441,12 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 			}
 			if(flip_flop == 0) { flip_flop = 1; } else { flip_flop = 0; }
 		}
-		symbol->row_height[current_row] = 8;
+		symbol->row_height[current_row] = 10;
 	}
 
 	symbol->rows = rows_needed;
 	symbol->width = 70;
 	return errornum;
 }
+
+
