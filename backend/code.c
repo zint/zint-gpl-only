@@ -231,7 +231,7 @@ int c39(struct zint_symbol *symbol, unsigned char source[])
 	
 	expand(symbol, dest);
 	
-	if((symbol->symbology == BARCODE_CODE39) || (symbol->symbology == BARCODE_CODE39_43)) {
+	if(symbol->symbology == BARCODE_CODE39) {
 		strcpy(symbol->text, "*");
 		concat(symbol->text, source);
 		concat(symbol->text, "*");
