@@ -24,7 +24,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-#define VERSION "1.6.3"
+#define VERSION "2.0.A"
 
 struct zint_symbol {
 	int symbology;
@@ -47,6 +47,7 @@ struct zint_symbol {
 	char errtxt[100];
 };
 
+/* Tbarcode 7 codes */
 #define BARCODE_CODE11		1
 #define BARCODE_C25MATRIX	2
 #define BARCODE_C25INTER	3
@@ -90,6 +91,7 @@ struct zint_symbol {
 #define BARCODE_RM4SCC		70
 #define BARCODE_DATAMATRIX	71
 #define BARCODE_ITF14		72
+#define BARCODE_CODABLOCKF	74
 #define BARCODE_NVE18		75
 #define BARCODE_KOREAPOST	77
 #define BARCODE_RSS14STACK	79
@@ -99,28 +101,28 @@ struct zint_symbol {
 #define BARCODE_MICROPDF417	84
 #define BARCODE_ONECODE		85
 #define BARCODE_PLESSEY		86
-#define BARCODE_TELEPEN_NUM	100
-#define BARCODE_MSI_10		101
-#define BARCODE_MSI_10_10	102
-#define BARCODE_MSI_11		103
-#define BARCODE_MSI_11_10	104
-#define BARCODE_CODE39_43	105
-#define BARCODE_EXCODE39_43	106
-#define BARCODE_AZTEC		107
-#define BARCODE_SUPER		108
-#define BARCODE_ULTRA		109
-#define BARCODE_EANX_CC		110
-#define BARCODE_EAN128_CC	111
-#define BARCODE_RSS14_CC	112
-#define BARCODE_RSS_LTD_CC	113
-#define BARCODE_RSS_EXP_CC	114
-#define BARCODE_UPCA_CC		115
-#define BARCODE_UPCE_CC		116
-#define BARCODE_RSS14STACK_CC	117
-#define BARCODE_RSS14_OMNI_CC	118
-#define BARCODE_RSS_EXPSTACK_CC	119
-#define BARCODE_KIX		120
-#define BARCODE_CODE32		121
+
+/* Tbarcode 8 codes */
+#define BARCODE_KIX		90
+#define BARCODE_AZTEC		92
+#define BARCODE_DAFT		93
+#define BARCODE_ITALYPOST	94
+#define BARCODE_DPD		96
+#define BARCODE_MICROQR		97
+
+/* Zint specific */
+#define BARCODE_TELEPEN_NUM	128
+#define BARCODE_CODE32		129
+#define BARCODE_EANX_CC		130
+#define BARCODE_EAN128_CC	131
+#define BARCODE_RSS14_CC	132
+#define BARCODE_RSS_LTD_CC	133
+#define BARCODE_RSS_EXP_CC	134
+#define BARCODE_UPCA_CC		135
+#define BARCODE_UPCE_CC		136
+#define BARCODE_RSS14STACK_CC	137
+#define BARCODE_RSS14_OMNI_CC	138
+#define BARCODE_RSS_EXPSTACK_CC	139
 
 #define BARCODE_NO_ASCII	1
 #define BARCODE_BIND		2
