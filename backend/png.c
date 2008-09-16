@@ -182,7 +182,6 @@ int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, c
 				
 					}
 				}
-#endif
 				/* write row contents to file */
 				image_data = outdata;
 				png_write_row(png_ptr, image_data);
@@ -271,7 +270,7 @@ int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, c
 	/* make sure we have disengaged */
 	if (png_ptr && info_ptr) png_destroy_write_struct(&png_ptr, &info_ptr);
 	fclose(wpng_info.outfile);
-
+#endif
 	return 0;
 }
 
@@ -755,13 +754,25 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 	
 	/* Put boundary bars or box around symbol */
 	if ((symbol->output_options == BARCODE_BOX) || (symbol->output_options == BARCODE_BIND)) {
-		/* boundary bars */
-		draw_bar(pixelbuf, 0, (symbol->width + xoffset + xoffset), textoffset, symbol->border_width, image_width, image_height);
-		draw_bar(pixelbuf, 0, (symbol->width + xoffset + xoffset), (textoffset + symbol->height + symbol->border_width), symbol->border_width, image_width, image_height);
-		if(symbol->rows > 1) {
-			/* row binding */
-			for(r = 1; r < symbol->rows; r++) {
-				draw_bar(pixelbuf, xoffset, symbol->width, ((r * row_height) + textoffset + yoffset - 1), 2, image_width, image_height);
+		if(symbol->symbology != BARCODE_CODABLOCKF) {
+			/* boundary bars */
+			draw_bar(pixelbuf, 0, (symbol->width + xoffset + xoffset), textoffset, symbol->border_width, image_width, image_height);
+			draw_bar(pixelbuf, 0, (symbol->width + xoffset + xoffset), (textoffset + symbol->height + symbol->border_width), symbol->border_width, image_width, image_height);
+			if(symbol->rows > 1) {
+				/* row binding */
+				for(r = 1; r < symbol->rows; r++) {
+					draw_bar(pixelbuf, xoffset, symbol->width, ((r * row_height) + textoffset + yoffset - 1), 2, image_width, image_height);
+				}
+			}
+		} else {
+			/* boundary bars */
+			draw_bar(pixelbuf, xoffset, symbol->width, textoffset, symbol->border_width, image_width, image_height);
+			draw_bar(pixelbuf, xoffset, symbol->width, (textoffset + symbol->height + symbol->border_width), symbol->border_width, image_width, image_height);
+			if(symbol->rows > 1) {
+				/* row binding */
+				for(r = 1; r < symbol->rows; r++) {
+					draw_bar(pixelbuf, (xoffset + 11), (symbol->width - 24), ((r * row_height) + textoffset + yoffset - 1), 2, image_width, image_height);
+				}
 			}
 		}
 	}
