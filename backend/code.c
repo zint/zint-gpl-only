@@ -162,6 +162,10 @@ int c39(struct zint_symbol *symbol, unsigned char source[])
 	counter = 0;
 	strcpy(dest, "");
 
+	if((symbol->option_2 < 0) || (symbol->option_2 > 1)) {
+		symbol->option_2 = 0;
+	}
+	
 	to_upper(source);
 	if(strlen(source) > 45) {
 		strcpy(symbol->errtxt, "error: input too long");
@@ -181,7 +185,7 @@ int c39(struct zint_symbol *symbol, unsigned char source[])
 		counter += posn(TCSET, source[i]);
 	}
 	
-	if(((symbol->symbology == BARCODE_LOGMARS) || (symbol->symbology == BARCODE_CODE39_43)) || (symbol->symbology == BARCODE_EXCODE39_43)) {
+	if((symbol->symbology == BARCODE_LOGMARS) || (symbol->option_2 == 1)) {
 		
 		counter = counter % 43;
 		if(counter < 10) {
