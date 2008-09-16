@@ -25,6 +25,9 @@ aztec.c:
 	Aztec Code
 	Compact Aztec Code
 
+blockf.c:
+	Codablock-F
+
 code128.c:
 	Code 128
 	Code 128 Subset B
@@ -69,11 +72,7 @@ pdf417.c:
 
 plessey.c:
 	UK Plessey Code (bidirectional)
-	MSI Plessey (no check)
-	MSI Plessey (Mod 10 check)
-	MSI Plessey (Mod 11 check)
-	MSI Plessey (Mod 10 Mod 10 check)
-	MSI Plessey (Mod 10 Mod 11 check)
+	MSI Plessey
 
 postal.c:
 	PostNet
@@ -81,6 +80,7 @@ postal.c:
 	Facing Identification Mark (FIM)
 	Royal Mail 4-State Country Code (RM4SCC)
 	KIX Code
+	DAFT Code
 	Flattermarken
 
 qr.c:
