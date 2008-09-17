@@ -59,6 +59,8 @@ HEADERS += ../backend/common.h \
 
 SOURCES += ../backend/2of5.c \
            ../backend/auspost.c \
+           ../backend/aztec.c \
+           ../backend/blockf.c \
            ../backend/code.c \
            ../backend/code128.c \
            ../backend/code16k.c \
