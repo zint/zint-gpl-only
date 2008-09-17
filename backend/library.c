@@ -286,16 +286,20 @@ int ZBarcode_Print_Rotated(struct zint_symbol *symbol, int rotate_angle)
 		output[2] = symbol->outfile[strlen(symbol->outfile) - 1];
 		output[3] = '\0';
 		to_upper(output);
+#ifndef NO_PNG
 		if(!(strcmp(output, "PNG"))) {
 			error_number = png_handle(symbol, rotate_angle);
 		} else {
+#endif
 			if(!(strcmp(output, "EPS"))) {
 				error_number = ps_plot(symbol);
 			} else {
 				strcpy(symbol->errtxt, "error: unknown output format");
 				return ERROR_INVALID_OPTION;
 			}
+#ifndef NO_PNG
 		}
+#endif
 	} else {
 		strcpy(symbol->errtxt, "error: unknown output format");
 		return ERROR_INVALID_OPTION;
