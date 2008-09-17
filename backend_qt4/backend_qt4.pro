@@ -19,14 +19,11 @@ DEFINES += NO_PNG NO_QR
     LIBS += -lpng
 }
 
-contains(DEFINES, NO_QR){
-    SOURCES += ../backend/no_qr.c
-}else{
-    SOURCES += ../backend/qr.c
-
 contains(DEFINES, QR_SYSTEM){
     LIBS += -lqrencode
-}else{
+}
+
+contains(DEFINES, QR){
 
 INCLUDEPATH += qrencode
 
@@ -46,8 +43,6 @@ SOURCES += qrencode/bitstream.c \
            qrencode/qrspec.c \
            qrencode/rscode.c \
            qrencode/split.c 
-}
-
 }
 
 HEADERS += ../backend/common.h \
@@ -84,6 +79,7 @@ SOURCES += ../backend/2of5.c \
            ../backend/rss.c \
            ../backend/telepen.c \
            ../backend/upcean.c \
+           ../backend/qr.c \
            barcoderender.cpp
 
 VERSION = 1.6.0

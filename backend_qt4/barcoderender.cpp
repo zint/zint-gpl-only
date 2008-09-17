@@ -13,7 +13,6 @@
  *   You should have received a copy of the GNU General Public License     *
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
-#include <QPainter>
 
 #include "barcoderender.h"
 
@@ -26,12 +25,13 @@ BareCode::BareCode()
 	m_height=50;
 	m_border=NO_BORDER;
 	m_boderWidth=0;
-	m_width=0;
 	m_securityLevel=-1;
 	m_pdf417CodeWords=928;
 	m_fgColor=Qt::black;
 	m_bgColor=Qt::white;
 	m_zintSymbol=0;
+	m_excode39SymbologyNumber=m_code39SymbologyNumber=m_msiSymbologyNumber=0;
+	m_error=0;
 }
 
 BareCode::~BareCode()
@@ -53,7 +53,24 @@ void BareCode::encode()
 	m_zintSymbol->whitespace_width=0;
 	m_zintSymbol->border_width=0;
 	m_zintSymbol->option_1=m_securityLevel;
-	m_zintSymbol->option_2=m_width;
+	switch (m_symbol)
+	{
+		case BARCODE_MSI_PLESSEY:
+			m_zintSymbol->option_2=m_msiSymbologyNumber;
+			break;
+
+		case BARCODE_CODE39:
+			m_zintSymbol->option_2=m_code39SymbologyNumber;
+			break;
+		
+		case BARCODE_EXCODE39:
+			m_zintSymbol->option_2=m_excode39SymbologyNumber;
+			break;
+
+		default:
+			m_zintSymbol->option_2=m_width;
+			break;
+	}
 	m_zintSymbol->option_3=m_pdf417CodeWords;
 	QByteArray bstr=m_text.toAscii();
 	QByteArray pstr=m_primaryMessage.left(99).toAscii();
@@ -78,24 +95,31 @@ void BareCode::encode()
 	}
 }
 
+int  BareCode::symbol()
+{
+	return m_symbol;
+}
 void BareCode::setSymbol(int symbol)
 {
 	m_symbol=symbol;
 }
 
+QString BareCode::text()
+{
+	return m_text;
+}
 void BareCode::setText(const QString & text)
 {
 	m_text=text;
 }
 
+QString BareCode::primaryMessage()
+{
+	return m_primaryMessage;
+}
 void BareCode::setPrimaryMessage(const QString & primaryMessage)
 {
 	m_primaryMessage=primaryMessage;
-}
-
-void BareCode::setHeight(int height)
-{
-	m_height=height;
 }
 
 int BareCode::height()
@@ -104,14 +128,9 @@ int BareCode::height()
 	return m_zintSymbol->height+(m_border==BOX)?m_boderWidth*2:0;
 }
 
-void BareCode::setBorder(BorderType border)
+void BareCode::setHeight(int height)
 {
-	m_border=border;
-}
-
-void BareCode::setBorderWidth(int boderWidth)
-{
-	m_boderWidth=boderWidth;
+	m_height=height;
 }
 
 void BareCode::setWidth(int width)
@@ -125,34 +144,85 @@ int BareCode::width()
 	return m_zintSymbol->width+(m_border!=NO_BORDER)?m_boderWidth*2:0;
 }
 
-void BareCode::setSecurityLevel(int securityLevel)
+QColor BareCode::fgColor()
 {
-	m_securityLevel=securityLevel;
+	return m_fgColor;
 }
-
-void BareCode::setPdf417CodeWords(int pdf417CodeWords)
-{
-	m_pdf417CodeWords=pdf417CodeWords;
-}
-
 void BareCode::setFgColor(const QColor & fgColor)
 {
 	m_fgColor=fgColor;
 }
 
+QColor BareCode::bgColor()
+{
+	return m_bgColor;
+}
 void BareCode::setBgColor(const QColor & bgColor)
 {
 	m_bgColor=bgColor;
 }
 
-const QString & BareCode::lastError()
+BareCode::BorderType BareCode::borderType()
 {
-	return m_lastError;
+	return m_border;
+}
+void BareCode::setBorderType(BorderType border)
+{
+	m_border=border;
 }
 
-bool BareCode::hasErrors()
+int BareCode::borderWidth()
 {
-	return m_lastError.length();
+	return m_boderWidth;
+}
+void BareCode::setBorderWidth(int boderWidth)
+{
+	m_boderWidth=boderWidth;
+}
+
+int BareCode::pdf417CodeWords()
+{
+	return m_pdf417CodeWords;
+}
+void BareCode::setPdf417CodeWords(int pdf417CodeWords)
+{
+	m_pdf417CodeWords=pdf417CodeWords;
+}
+
+int BareCode::securityLevel()
+{
+	return m_securityLevel;
+}
+void BareCode::setSecurityLevel(int securityLevel)
+{
+	m_securityLevel=securityLevel;
+}
+
+int BareCode::msiExtraSymbology()
+{
+	return m_msiSymbologyNumber;
+}
+void BareCode::setMsiExtraSymbology(int msiSymbologyNumber)
+{
+	m_msiSymbologyNumber=msiSymbologyNumber;
+}
+
+int  BareCode::code39ExtraSymbology()
+{
+	return m_code39SymbologyNumber;
+}
+void BareCode::setCode39ExtraSymbology(int m_code39SymbologyNumber)
+{
+	m_code39SymbologyNumber=m_code39SymbologyNumber;
+}
+
+int BareCode::excode39ExtraSymbology()
+{
+	return m_excode39SymbologyNumber;
+}
+void BareCode::setExcode39ExtraSymbology(int excode39SymbologyNumber)
+{
+	m_excode39SymbologyNumber=excode39SymbologyNumber;
 }
 
 void BareCode::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode mode, qreal scaleFactor)
@@ -325,6 +395,16 @@ void BareCode::render(QPainter & painter, const QRectF & paintRect, AspectRatioM
 		}
 	}
 	painter.restore();
+}
+
+const QString & BareCode::lastError()
+{
+	return m_lastError;
+}
+
+bool BareCode::hasErrors()
+{
+	return m_lastError.length();
 }
 
 }
