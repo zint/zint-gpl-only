@@ -79,7 +79,7 @@ void MainWindow::on_generate_clicked()
 	m_bc.bc.setPrimaryMessage(primary->text());
 	m_bc.bc.setSymbol(metaObject()->enumerator(0).value(stype->currentIndex()));
 
-	m_bc.bc.setBorder((Zint::BareCode::BorderType)btype->currentIndex());
+	m_bc.bc.setBorderType((Zint::BareCode::BorderType)btype->currentIndex());
 	m_bc.bc.setBorderWidth(bwidth->value());
 	m_bc.bc.setHeight(heightb->value());
 	m_bc.bc.setWidth(widthb->value());
