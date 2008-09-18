@@ -6,6 +6,8 @@
 # make clean		cleans up a previous compilation and any object or editor files
 #
 
+ZINT_VERSION:=-DZINT_VERSION=\"1.80.0\"
+
 CC := gcc
 INCLUDE := -I/usr/local/include
 CFLAGS := -g
@@ -15,7 +17,7 @@ bindir := $(prefix)/bin
 DESTDIR :=
 
 zint: main.c
-	$(CC) $(INCLUDE) $(CFLAGS) -I../backend -L../backend main.c -o zint -lzint
+	$(CC) $(INCLUDE) $(CFLAGS) $(ZINT_VERSION) -I../backend -L../backend main.c -o zint_frontend -lzint
 
 .PHONY: install uninstall clean dist
 
