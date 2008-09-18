@@ -37,7 +37,7 @@ QRectF BarcodeItem::boundingRect() const
 
 void BarcodeItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * /*option*/, QWidget * /*widget*/)
 {
-	bc.render(*painter,boundingRect(),Zint::BareCode::IgnoreAspectRatio,scaleFactor);
+	bc.render(*painter,boundingRect(),Zint::QZint::IgnoreAspectRatio,scaleFactor);
 }
 
 

@@ -18,7 +18,7 @@
 #define BARCODEITEM_H
 
 #include <QGraphicsItem>
-#include <barcoderender.h>
+#include <qzint.h>
 
 /**
  @author BogDan Vatra <taipan@licentia.eu>
@@ -33,7 +33,7 @@ public:
 	void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
 
 public:
-	mutable Zint::BareCode bc;
+	mutable Zint::QZint bc;
 	int scaleFactor;
 	int w,h;
 };
