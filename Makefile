@@ -8,7 +8,7 @@ zint:
 	$(MAKE) -C frontend/
 
 zint_noqr:
-	$(MAKE) WITHOUT_QR=true -C backend/
+	$(MAKE) NO_QR=true -C backend/
 	$(MAKE) -C frontend/
 
 install:
