@@ -1,0 +1,15 @@
+# (c) 2008 by BogDan Vatra < bogdan@licentia.eu >
+
+project(zint_frontend)
+
+set(zint_frontend_SRCS main.c )
+
+include_directories(BEFORE ../backend)
+
+add_executable(zint_frontend ${zint_frontend_SRCS})
+
+add_dependencies(zint_frontend zint)
+
+link_directories( "../backend" )
+
+target_link_libraries(zint_frontend zint)
