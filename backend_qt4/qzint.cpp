@@ -14,12 +14,12 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ***************************************************************************/
 
-#include "barcoderender.h"
+#include "qzint.h"
 
 namespace Zint
 {
 
-BareCode::BareCode()
+QZint::QZint()
 {
 	m_symbol=BARCODE_CODE128;
 	m_height=50;
@@ -34,13 +34,13 @@ BareCode::BareCode()
 	m_error=0;
 }
 
-BareCode::~BareCode()
+QZint::~QZint()
 {
 	if (m_zintSymbol)
 		ZBarcode_Delete(m_zintSymbol);
 }
 
-void BareCode::encode()
+void QZint::encode()
 {
 	if (m_zintSymbol)
 		ZBarcode_Delete(m_zintSymbol);
@@ -95,137 +95,137 @@ void BareCode::encode()
 	}
 }
 
-int  BareCode::symbol()
+int  QZint::symbol()
 {
 	return m_symbol;
 }
-void BareCode::setSymbol(int symbol)
+void QZint::setSymbol(int symbol)
 {
 	m_symbol=symbol;
 }
 
-QString BareCode::text()
+QString QZint::text()
 {
 	return m_text;
 }
-void BareCode::setText(const QString & text)
+void QZint::setText(const QString & text)
 {
 	m_text=text;
 }
 
-QString BareCode::primaryMessage()
+QString QZint::primaryMessage()
 {
 	return m_primaryMessage;
 }
-void BareCode::setPrimaryMessage(const QString & primaryMessage)
+void QZint::setPrimaryMessage(const QString & primaryMessage)
 {
 	m_primaryMessage=primaryMessage;
 }
 
-int BareCode::height()
+int QZint::height()
 {
 	encode();
 	return m_zintSymbol->height+(m_border==BOX)?m_boderWidth*2:0;
 }
 
-void BareCode::setHeight(int height)
+void QZint::setHeight(int height)
 {
 	m_height=height;
 }
 
-void BareCode::setWidth(int width)
+void QZint::setWidth(int width)
 {
 	m_width=width;
 }
 
-int BareCode::width()
+int QZint::width()
 {
 	encode();
 	return m_zintSymbol->width+(m_border!=NO_BORDER)?m_boderWidth*2:0;
 }
 
-QColor BareCode::fgColor()
+QColor QZint::fgColor()
 {
 	return m_fgColor;
 }
-void BareCode::setFgColor(const QColor & fgColor)
+void QZint::setFgColor(const QColor & fgColor)
 {
 	m_fgColor=fgColor;
 }
 
-QColor BareCode::bgColor()
+QColor QZint::bgColor()
 {
 	return m_bgColor;
 }
-void BareCode::setBgColor(const QColor & bgColor)
+void QZint::setBgColor(const QColor & bgColor)
 {
 	m_bgColor=bgColor;
 }
 
-BareCode::BorderType BareCode::borderType()
+QZint::BorderType QZint::borderType()
 {
 	return m_border;
 }
-void BareCode::setBorderType(BorderType border)
+void QZint::setBorderType(BorderType border)
 {
 	m_border=border;
 }
 
-int BareCode::borderWidth()
+int QZint::borderWidth()
 {
 	return m_boderWidth;
 }
-void BareCode::setBorderWidth(int boderWidth)
+void QZint::setBorderWidth(int boderWidth)
 {
 	m_boderWidth=boderWidth;
 }
 
-int BareCode::pdf417CodeWords()
+int QZint::pdf417CodeWords()
 {
 	return m_pdf417CodeWords;
 }
-void BareCode::setPdf417CodeWords(int pdf417CodeWords)
+void QZint::setPdf417CodeWords(int pdf417CodeWords)
 {
 	m_pdf417CodeWords=pdf417CodeWords;
 }
 
-int BareCode::securityLevel()
+int QZint::securityLevel()
 {
 	return m_securityLevel;
 }
-void BareCode::setSecurityLevel(int securityLevel)
+void QZint::setSecurityLevel(int securityLevel)
 {
 	m_securityLevel=securityLevel;
 }
 
-int BareCode::msiExtraSymbology()
+int QZint::msiExtraSymbology()
 {
 	return m_msiSymbologyNumber;
 }
-void BareCode::setMsiExtraSymbology(int msiSymbologyNumber)
+void QZint::setMsiExtraSymbology(int msiSymbologyNumber)
 {
 	m_msiSymbologyNumber=msiSymbologyNumber;
 }
 
-int  BareCode::code39ExtraSymbology()
+int  QZint::code39ExtraSymbology()
 {
 	return m_code39SymbologyNumber;
 }
-void BareCode::setCode39ExtraSymbology(int m_code39SymbologyNumber)
+void QZint::setCode39ExtraSymbology(int m_code39SymbologyNumber)
 {
 	m_code39SymbologyNumber=m_code39SymbologyNumber;
 }
 
-int BareCode::excode39ExtraSymbology()
+int QZint::excode39ExtraSymbology()
 {
 	return m_excode39SymbologyNumber;
 }
-void BareCode::setExcode39ExtraSymbology(int excode39SymbologyNumber)
+void QZint::setExcode39ExtraSymbology(int excode39SymbologyNumber)
 {
 	m_excode39SymbologyNumber=excode39SymbologyNumber;
 }
 
-void BareCode::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode mode, qreal scaleFactor)
+void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode mode, qreal scaleFactor)
 {
 	encode();
 	if (m_lastError.length())
@@ -397,12 +397,12 @@ void BareCode::render(QPainter & painter, const QRectF & paintRect, AspectRatioM
 	painter.restore();
 }
 
-const QString & BareCode::lastError()
+const QString & QZint::lastError()
 {
 	return m_lastError;
 }
 
-bool BareCode::hasErrors()
+bool QZint::hasErrors()
 {
 	return m_lastError.length();
 }
