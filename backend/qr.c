@@ -23,7 +23,7 @@
 #include <string.h>
 #include "common.h"
 
-#ifdef WITH_QR
+#ifndef NO_QR
 #include <qrencode.h>
 
 static int kanji = 0;
