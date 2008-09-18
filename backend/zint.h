@@ -24,7 +24,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-#define VERSION "2.0.A"
+//#define ZINT_VERSION "2.0.A"
 
 struct zint_symbol {
 	int symbology;
