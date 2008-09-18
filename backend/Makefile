@@ -7,6 +7,9 @@
 # make clean		cleans up a previous compilation and any object or editor files
 #
 
+ZINT_VERSION:=-DZINT_VERSION=\"1.80.0\"
+
+
 CC := gcc
 INCLUDE := -I/usr/local/include
 CFLAGS := -g
@@ -26,19 +29,19 @@ TWODIM:= code16k.c blockf.c dmatrix.c dm200.c pdf417.c qr.c maxicode.c composite
 TWODIM_OBJ:= code16k.o blockf.o dmatrix.o dm200.o pdf417.o qr.o maxicode.o composite.o aztec.o
 LIBS:= `libpng12-config --I_opts --L_opts --ldflags` -lz -lm
 
-ifeq ($(WITHOUT_QR),true)
-DEFINES:=
+ifeq ($(NO_QR),true)
+DEFINES:= -DNO_QR 
 else
-DEFINES:= -DWITH_QR
+DEFINES:=
 LIBS+= -lqrencode
 endif
  
 libzint: code.c code128.c 2of5.c upcean.c medical.c telepen.c plessey.c postal.c auspost.c imail.c code16k.c dmatrix.c dm200.c reedsol.c pdf417.c maxicode.c rss.c common.c png.c library.c ps.c qr.c large.c composite.c aztec.c blockf.c
-	$(CC) -fPIC $(CFLAGS) -c $(ONEDIM)
-	$(CC) -fPIC $(CFLAGS) -c $(POSTAL)
-	$(CC) -fPIC $(DEFINES) $(CFLAGS) -c $(TWODIM)
-	$(CC) -fPIC $(CFLAGS) -c $(COMMON)
-	$(CC) $(CFLAGS) -shared -Wl,-soname,libzint.so -o libzint.so.1.6.3 $(INCLUDE) $(COMMON_OBJ) $(ONEDIM_OBJ) $(TWODIM_OBJ) $(POSTAL_OBJ) $(LIBS)
+	$(CC) -fPIC $(CFLAGS) $(ZINT_VERSION) -c $(ONEDIM)
+	$(CC) -fPIC $(CFLAGS) $(ZINT_VERSION) -c $(POSTAL)
+	$(CC) -fPIC $(DEFINES) $(CFLAGS) $(ZINT_VERSION) -c $(TWODIM)
+	$(CC) -fPIC $(CFLAGS) $(ZINT_VERSION) -c $(COMMON)
+	$(CC) $(CFLAGS) $(ZINT_VERSION) -shared -Wl,-soname,libzint.so -o libzint.so.1.6.3 $(INCLUDE) $(COMMON_OBJ) $(ONEDIM_OBJ) $(TWODIM_OBJ) $(POSTAL_OBJ) $(LIBS)
 	ln -s libzint.so.* libzint.so
 
 .PHONY: install uninstall clean dist
