@@ -24,7 +24,7 @@
 namespace Zint
 {
 
-class BareCode
+class QZint
 #ifndef NO_QT_KEYWORDS
  : public QObject
 #endif
@@ -54,8 +54,8 @@ enum BorderType{NO_BORDER=0, BIND=1, BOX=2};
 enum AspectRatioMode{IgnoreAspectRatio=0, KeepAspectRatio=1, CenterBarCode=2};
 
 public:
-	BareCode();
-	~BareCode();
+	QZint();
+	~QZint();
 
 	int  symbol();
 	void setSymbol(int symbol);

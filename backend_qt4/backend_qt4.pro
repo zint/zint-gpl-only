@@ -55,7 +55,7 @@ HEADERS += ../backend/common.h \
             ../backend/reedsol.h \
             ../backend/rss.h \
             ../backend/zint.h \
-            barcoderender.h
+            qzint.h
 
 SOURCES += ../backend/2of5.c \
            ../backend/auspost.c \
@@ -82,14 +82,14 @@ SOURCES += ../backend/2of5.c \
            ../backend/telepen.c \
            ../backend/upcean.c \
            ../backend/qr.c \
-           barcoderender.cpp
+           qzint.cpp
 
 VERSION = 1.6.0
 
 #DESTDIR = .
 
 include.path = $$[ZINT_INSTALL_HEADERS]
-include.files = ../backend/zint.h barcoderender.h
+include.files = ../backend/zint.h qzint.h
 
 target.path = $$[ZINT_INSTALL_LIBS]
 
