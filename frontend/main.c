@@ -50,7 +50,7 @@ void usage(void)
 		"  --secure=NUMBER       (PDF417 and QR Code) Error correction level.\n"
 		"  --primary=STRING      (Maxicode and Composite) Structured primary message.\n"
 		"  --mode=NUMBER         (Maxicode and Composite) Set encoding mode.\n"
-	, VERSION);
+	, ZINT_VERSION);
 }
 
 int main(int argc, char **argv)
