@@ -19,6 +19,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#define NASET	"0123456789X"
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -46,15 +48,15 @@ static char *TeleTable[128] = {	"1111111111111111", "1131313111", "33313111", "1
 	"11113111111111", "3111131113", "113311111111", "131311111111", "111111131113", "3113111113",
 	"11311111111111", "331111111111", "111113111113", "31111111111111", "111311111113",
 	"131111111113"};
-
+	
 int telepen(struct zint_symbol *symbol, unsigned char source[])
 {
 	unsigned int i, count, check_digit;
 	int ascii_value;
-	int errno;
+	int error_number;
 	char dest[1000];
 	
-	errno = 0;
+	error_number = 0;
 	strcpy(dest, "");
 
 	count = 0;
@@ -90,56 +92,68 @@ int telepen(struct zint_symbol *symbol, unsigned char source[])
 	
 	expand(symbol, dest);
 	strcpy(symbol->text, source);
-	return errno;
+	return error_number;
 }
 
 int telepen_num(struct zint_symbol *symbol, unsigned char source[])
 {
 	unsigned int i, count, check_digit, glyph;
-	int errno;
+	int error_number, input_length;
 	char dest[1000];
+	char local_source[100];
 	
-	errno = 0;
+	error_number = 0;
 	strcpy(dest, "");
+	strcpy(local_source, source);
+	input_length = strlen(source);
 
 	count = 0;
 
-	if(strlen(source) > 60) {
+	if(input_length > 60) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
-	errno = is_sane(NESET, source);
-	if(errno == ERROR_INVALID_DATA) {
+	to_upper(local_source);
+	error_number = is_sane(NASET, local_source);
+	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "error: invalid characters in data");
-		return errno;
+		return error_number;
 	}
 	
 	/* Add a leading zero if required */
-	if ((strlen(source)%2) != 0)
+	if ((input_length % 2) != 0)
 	{
-		unsigned int length;
 		char temp[200];
 
-		length = strlen(source);
+		strcpy(temp, local_source);
+		local_source[0] = '0';
 
-		strcpy(temp, source);
-		source[0] = '0';
-
-		for(i = 0; i <= length; i++)
+		for(i = 0; i <= input_length; i++)
 		{
-			source[i + 1] = temp[i];
+			local_source[i + 1] = temp[i];
 		}
+		input_length++;
 	}
 
 	/* Start character */
 	concat(dest, TeleTable['_']);
 
-	for (i=0; i < strlen(source); i+=2)
+	for (i=0; i < input_length; i+=2)
 	{
-		glyph = (10 * ctoi(source[i])) + ctoi(source[i + 1]);
-		glyph += 27;
+		if(local_source[i] == 'X') {
+			strcpy(symbol->errtxt, "Invalid position of X in Telepen data");
+			return ERROR_INVALID_DATA;
+		}
+		
+		if(local_source[i + 1] == 'X') {
+			glyph = ctoi(local_source[i]) + 17;
+			count += glyph;
+		} else {
+			glyph = (10 * ctoi(local_source[i])) + ctoi(local_source[i + 1]);
+			glyph += 27;
+			count += glyph;
+		}
 		concat(dest, TeleTable[glyph]);
-		count += glyph;
 	}
 
 	check_digit = 127 - (count % 127);
@@ -149,7 +163,7 @@ int telepen_num(struct zint_symbol *symbol, unsigned char source[])
 	concat(dest, TeleTable['z']);
 	
 	expand(symbol, dest);
-	strcpy(symbol->text, source);
-	return errno;
+	strcpy(symbol->text, local_source);
+	return error_number;
 }
 
