@@ -63,6 +63,7 @@ struct zint_symbol {
 #define BARCODE_DPLEIT		21
 #define BARCODE_DPIDENT		22
 #define BARCODE_CODE16K		23
+#define BARCODE_CODE49		24
 #define BARCODE_CODE93		25
 #define BARCODE_FLAT		28
 #define BARCODE_RSS14		29
@@ -90,7 +91,7 @@ struct zint_symbol {
 #define BARCODE_ISBNX		69
 #define BARCODE_RM4SCC		70
 #define BARCODE_DATAMATRIX	71
-#define BARCODE_ITF14		72
+#define BARCODE_EAN14		72
 #define BARCODE_CODABLOCKF	74
 #define BARCODE_NVE18		75
 #define BARCODE_KOREAPOST	77
@@ -103,15 +104,14 @@ struct zint_symbol {
 #define BARCODE_PLESSEY		86
 
 /* Tbarcode 8 codes */
+#define BARCODE_TELEPEN_NUM	87
+#define BARCODE_ITF14		89
 #define BARCODE_KIX		90
 #define BARCODE_AZTEC		92
 #define BARCODE_DAFT		93
-#define BARCODE_ITALYPOST	94
-#define BARCODE_DPD		96
 #define BARCODE_MICROQR		97
 
 /* Zint specific */
-#define BARCODE_TELEPEN_NUM	128
 #define BARCODE_CODE32		129
 #define BARCODE_EANX_CC		130
 #define BARCODE_EAN128_CC	131
