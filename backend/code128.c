@@ -696,6 +696,11 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 		/* Rule 2 */
 		list[0][1]++;
 		list[0][0]--;
+		if(indexliste == 1) {
+			list[0][1] = 1;
+			list[1][1] = LATCHB;
+			indexliste = 2;
+		}
 	}	
 	if(indexliste > 1) {
 		for(i = 1; i < indexliste; i++) {
@@ -893,3 +898,47 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 	
 	return errornum;
 }
+
+int ean_14(struct zint_symbol *symbol, unsigned char source[])
+{
+	/* EAN-14 - A version of EAN-128 */
+	int input_length, i, count, check_digit;
+	int error_number;
+	char ean128_equiv[20];
+	
+	strcpy(ean128_equiv, "");
+	input_length = strlen(source);
+	
+	if(input_length != 13) {
+		strcpy(symbol->errtxt, "error: input wrong length");
+		return ERROR_TOO_LONG;
+	}
+	
+	error_number = is_sane(NESET, source);
+	if(error_number == ERROR_INVALID_DATA) {
+		strcpy(symbol->errtxt, "error: invalid character in data");
+		return error_number;
+	}
+	concat(ean128_equiv, "[01]");
+	concat(ean128_equiv, source);
+	
+	count = 0;
+	for (i = input_length - 1; i >= 0; i--)
+	{
+		count += ctoi(source[i]);
+
+		if (!((i%2) == 1))
+		{
+			count += 2 * ctoi(source[i]);
+		}
+	}
+	check_digit = 10 - (count%10);
+	if (check_digit == 10) { check_digit = 0; }
+	ean128_equiv[17] = itoc(check_digit);
+	ean128_equiv[18] = '\0';
+	
+	error_number = ean_128(symbol, ean128_equiv);
+	
+	return error_number;
+}
+
