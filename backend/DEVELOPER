@@ -33,6 +33,7 @@ code128.c:
 	Code 128 Subset B
 	NVE-18
 	GS1-128 (UCC/EAN-128)
+	EAN-14
 
 code16k.c:
 	Code 16k
