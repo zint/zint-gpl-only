@@ -80,20 +80,20 @@ int code_11(struct zint_symbol *symbol, unsigned char source[])
 
 	unsigned int i;
 	int h, c_digit, c_weight, c_count, k_digit, k_weight, k_count;
-	int weight[1000], errno;
+	int weight[1000], error_number;
 	char dest[1000];
 	
-	errno = 0;
+	error_number = 0;
 	strcpy(dest, "");
 
 	if(strlen(source) > 80) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
-	errno = is_sane(NASET, source);
-	if(errno == ERROR_INVALID_DATA) {
+	error_number = is_sane(NASET, source);
+	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "error: invalid characters in data");
-		return errno;
+		return error_number;
 	}
 	c_weight = 1;
 	c_count = 0;
@@ -147,7 +147,7 @@ int code_11(struct zint_symbol *symbol, unsigned char source[])
 	source[h + 2] = '\0';
 	expand(symbol, dest);
 	strcpy(symbol->text, source);
-	return errno;
+	return error_number;
 }
 
 int c39(struct zint_symbol *symbol, unsigned char source[])
@@ -155,10 +155,10 @@ int c39(struct zint_symbol *symbol, unsigned char source[])
 	unsigned int i;
 	unsigned int counter;
 	char check_digit;
-	int h, errno;
+	int h, error_number;
 	char dest[1000];
 	
-	errno = 0;
+	error_number = 0;
 	counter = 0;
 	strcpy(dest, "");
 
@@ -171,10 +171,10 @@ int c39(struct zint_symbol *symbol, unsigned char source[])
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
-	errno = is_sane(TCSET , source);
-	if(errno == ERROR_INVALID_DATA) {
+	error_number = is_sane(TCSET , source);
+	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "error: invalid characters in data");
-		return errno;
+		return error_number;
 	}
 
 	/* Start character */
@@ -238,16 +238,16 @@ int c39(struct zint_symbol *symbol, unsigned char source[])
 	} else {
 		strcpy(symbol->text, source);
 	}
-	return errno;
+	return error_number;
 }
 
 int pharmazentral(struct zint_symbol *symbol, unsigned char source[])
 { /* Pharmazentral Nummer (PZN) */
 	
-	int i, errno;
+	int i, error_number;
 	unsigned int h, count, check_digit;
 	
-	errno = 0;
+	error_number = 0;
 
 	count = 0;
 	h = strlen(source);
@@ -255,10 +255,10 @@ int pharmazentral(struct zint_symbol *symbol, unsigned char source[])
 		strcpy(symbol->errtxt, "error: input wrong length");
 		return ERROR_TOO_LONG;
 	}
-	errno = is_sane(NESET, source);
-	if(errno == ERROR_INVALID_DATA) {
+	error_number = is_sane(NESET, source);
+	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "error: invalid characters in data");
-		return errno;
+		return error_number;
 	}
 	
 	for (i = 0; i < h; i++)
@@ -276,9 +276,9 @@ int pharmazentral(struct zint_symbol *symbol, unsigned char source[])
 	if (check_digit == 11) { check_digit = 0; }
 	source[h + 1] = itoc(check_digit);
 	source[h + 2] = '\0';
-	errno = c39(symbol, source);
+	error_number = c39(symbol, source);
 	strcpy(symbol->text, source);
-	return errno;
+	return error_number;
 }
 
 
@@ -291,9 +291,9 @@ int ec39(struct zint_symbol *symbol, unsigned char source[])
 	unsigned int i;
 	strcpy(buffer, "");
 	int ascii_value;
-	int errno;
+	int error_number;
 	
-	errno = 0;
+	error_number = 0;
 
 	if(strlen(source) > 45) {
 		/* only stops strings which are far too long - actual length of the barcode
@@ -319,10 +319,10 @@ int ec39(struct zint_symbol *symbol, unsigned char source[])
 	}
 
 	/* Then sends the buffer to the C39 function */
-	errno = c39(symbol, buffer);
+	error_number = c39(symbol, buffer);
 	
 	strcpy(symbol->text, source);
-	return errno;
+	return error_number;
 }
 
 /* ******************** CODE 93 ******************* */
@@ -335,14 +335,14 @@ int c93(struct zint_symbol *symbol, unsigned char source[])
      c39() and ec39() */
 
 	unsigned int i;
-	int h, weight, c, k, values[100], errno;
+	int h, weight, c, k, values[100], error_number;
 	char buffer[100], temp[2];
 	char set_copy[] = TCSET;
 	strcpy(buffer, "");
 	int ascii_value;
 	char dest[1000];
 	
-	errno = 0;
+	error_number = 0;
 	strcpy(dest, "");
 
 	if(strlen(source) > 45) {
@@ -435,5 +435,5 @@ int c93(struct zint_symbol *symbol, unsigned char source[])
 	source[h + 2] = '\0';
 	expand(symbol, dest);
 	strcpy(symbol->text, source);
-	return errno;
+	return error_number;
 }
