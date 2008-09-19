@@ -107,6 +107,7 @@ extern int aztec(struct zint_symbol *symbol, unsigned char source[]); /* Aztec C
 extern int code32(struct zint_symbol *symbol, unsigned char source[]); /* Italian Pharmacode */
 extern int codablock(struct zint_symbol *symbol, unsigned char source[]); /* Codablock F */
 extern int daft_code(struct zint_symbol *symbol, unsigned char source[]); /* DAFT Code */
+extern int ean_14(struct zint_symbol *symbol, unsigned char source[]); /* EAN-14 */
 
 extern int png_plot(struct zint_symbol *symbol);
 extern int ps_plot(struct zint_symbol *symbol);
@@ -145,11 +146,10 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input)
 	if(symbol->symbology == 78) { symbol->symbology = BARCODE_RSS14; }
 	if(symbol->symbology == 83) { symbol->symbology = BARCODE_PLANET; }
 	/* NOTE: Tbarcode v8 needs sorting out */
-	if((symbol->symbology >= 87) && (symbol->symbology <= 89)) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128\n"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
+	if(symbol->symbology == 88) { symbol->symbology = BARCODE_EAN128; }
 	if(symbol->symbology == 91) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128\n"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
-	if(symbol->symbology == 95) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128\n"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
 	/* leave a gap for future expansion of tbarcode */
-	if((symbol->symbology >= 97) && (symbol->symbology <= 127)) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128\n"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
+	if((symbol->symbology >= 94) && (symbol->symbology <= 128)) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128\n"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
 	/* Everything from 100 up is Zint-specific */
 	if(symbol->symbology >= 140) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
 	
@@ -237,6 +237,7 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input)
 		case BARCODE_CODE32: error_number = code32(symbol, input); break;
 		case BARCODE_CODABLOCKF: error_number = codablock(symbol, input); break;
 		case BARCODE_DAFT: error_number = daft_code(symbol, input); break;
+		case BARCODE_EAN14: error_number = ean_14(symbol, input); break;
 	}
 	
 	return error_number;
