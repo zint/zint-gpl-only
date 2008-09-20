@@ -5,7 +5,7 @@
 	<TITLE>Zint Barcode Generator</TITLE>
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Unix)">
 	<META NAME="CREATED" CONTENT="20070802;10154800">
-	<META NAME="CHANGED" CONTENT="20080708;13393200">
+	<META NAME="CHANGED" CONTENT="20080919;22151900">
 	<STYLE TYPE="text/css">
 	<!--
 		TD P { color: #000000 }
@@ -21,7 +21,7 @@
 <BODY LANG="en-GB" TEXT="#000000" LINK="#0000ff" VLINK="#840084" BGCOLOR="#ffffff" DIR="LTR">
 <H1>Zint Barcode Generator</H1>
 <H3>by Robin Stuart</H3>
-<P>Version 1.6.3, 27th August 2008</P>
+<P>Version 2.0, TBC 2008</P>
 <P>This document is a guide to Zint, the <I>libzint</I> library and
 the barcode symbologies supported by them.</P>
 <HR>
@@ -105,8 +105,8 @@ the barcode symbologies supported by them.</P>
 				</DT><DT>
 				5.1.2.7 <A HREF="onedim.html#DPLEIT">Deutsche Post Leitcode</A> 
 				</DT><DT>
-				5.1.2.8 <A HREF="onedim.html#DPIDENT">Deutsche Post Identcode</A> 
-				</DT></DL>
+				5.1.2.8 <A HREF="onedim.html#DPIDENT">Deutsche Post Identcode</A>
+								</DT></DL>
 			<DT>
 			5.1.3 <A HREF="onedim.html#UPC">Universal Product Code (EN 797)</A>
 						</DT><DL>
@@ -148,9 +148,9 @@ the barcode symbologies supported by them.</P>
 				</DT><DT>
 				5.1.8.4 <A HREF="onedim.html#PZN">PZN</A> 
 				</DT><DT>
-				5.1.8.5 <A HREF="onedim.html#LOGMARS">LOGMARS</A> 
-				</DT></DT>
-				5.1.8.6 <A HREF="onedim.html#CODE32">Code 32</A>
+				5.1.8.5 <A HREF="onedim.html#LOGMARS">LOGMARS</A>
+				</DT><DT>
+				5.1.8.6 <A HREF="onedim.html#CODE32">Code 32</A> 
 				</DT></DL>
 			<DT>
 			5.1.9 <A HREF="onedim.html#CODABAR">Codabar (EN 798)</A> 
@@ -167,7 +167,9 @@ the barcode symbologies supported by them.</P>
 				</DT><DT>
 				5.1.11.3 <A HREF="onedim.html#EAN128">EAN-128</A> 
 				</DT><DT>
-				5.1.11.4 <A HREF="onedim.html#NVE18">NVE-18</A> 
+				5.1.11.4 <A HREF="onedim.html#EAN14">EAN-14</A>
+				</DT><DT>
+				5.1.11.5 <A HREF="onedim.html#NVE18">NVE-18</A> 
 				</DT></DL>
 			<DT>
 			5.1.12 <A HREF="onedim.html#DATABAR">GS1 DataBar (ISO 24724)</A> 
@@ -193,11 +195,15 @@ the barcode symbologies supported by them.</P>
 			5.2.5 <A HREF="stacked.html#MICROPDF">MicroPDF417 (ISO 24728)</A> 
 			</DT><DT>
 			5.2.6 <A HREF="stacked.html#RSS14STACK">GS1 DataBar-14 Stacked
-			(ISO 24724)</A></DT><DT>
+			(ISO 24724)</A>
+			</DT><DT>
 			5.2.7 <A HREF="stacked.html#RSS14OMNI">GS1 DataBar-14 Stacked
-			Omnidirectional (ISO 24724)</A></DT><DT>
+			Omnidirectional (ISO 24724)</A>
+			</DT><DT>
 			5.2.8 <A HREF="stacked.html#RSSEXPSTACK">GS1 DataBar Expanded
-			Stacked (ISO 24724)</A> 
+			Stacked (ISO 24724)</A>
+			</DT><DT>
+			5.2.9 <A HREF="stacked.html#CODABLOCK">Codablock-F</A>
 			</DT></DL>
 		<DT>
 		5.3 <A HREF="composite.html">Composite Symbols (ISO 24723)</A> 
@@ -234,7 +240,7 @@ the barcode symbologies supported by them.</P>
 				5.5.1.3 <A HREF="fourstate.html#AUSROUTE">Routing Barcode</A> 
 				</DT><DT>
 				5.5.1.4 <A HREF="fourstate.html#AUSREDIRECT">Redirect Barcode</A>
-								</DT></DL>
+				</DT></DL>
 			<DT>
 			5.5.2 <A HREF="fourstate.html#RM4SCC">Royal Mail 4-State Country
 			Code (RM4SCC)</A> 
@@ -257,8 +263,10 @@ the barcode symbologies supported by them.</P>
 		5.7 <A HREF="markings.html">Other Barcode-Like Markings</A></DT><DL>
 			<DT>
 			5.7.1 <A HREF="markings.html#FIM">Facing Identification Mark (FIM)</A>
-						</DT><DT>
+			</DT><DT>
 			5.7.2 <A HREF="markings.html#FLAT">Flattermarken</A> 
+			</DT><DT>
+			5.7.3 <A HREF="markings.html#DAFT">DAFT Code</A>
 			</DT></DL>
 	</DL>
 	<DT>
@@ -282,7 +290,7 @@ the barcode symbologies supported by them.</P>
 		A.1 <A HREF="appxa.html#ASCII">ASCII Standard</A> 
 		</DT><DT>
 		A.2 <A HREF="appxa.html#LATIN1">Latin Alphabet No 1 (ISO 8859-1)</A>
-				</DT></DL>
+		</DT></DL>
 	<DT>
 	B <A HREF="appxb.html">Appendix B: Three Digit Country Codes (ISO
 	3166)</A> 
@@ -291,7 +299,7 @@ the barcode symbologies supported by them.</P>
 	</DT><DL>
 		<DT>
 		C.1 <A HREF="appxc.html#AI">Application Identifiers</A> 
-		</DT><DT STYLE="margin-bottom: 0.5cm">
+		</DT><DT>
 		C.2 <A HREF="appxc.html#FIELDS">Fixed Length Fields</A> 
 		</DT></DL>
 </DL>
