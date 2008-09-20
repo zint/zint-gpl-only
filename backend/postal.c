@@ -372,23 +372,24 @@ int daft_code(struct zint_symbol *symbol, unsigned char source[])
 	/* Handles DAFT Code symbols */
 	/* Presumably 'daft' doesn't mean the same thing in Germany as it does in the UK! */
 	int input_length;
-	char height_pattern[100];
+	char height_pattern[100], local_source[55];
 	unsigned int loopey;
 	int writer, i;
 	strcpy(height_pattern, "");
 	
 	input_length = strlen(source);
-	if(strlen(source) > 100) {
+	strcpy(local_source, source);
+	if(input_length > 50) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	to_upper(source);
+	to_upper(local_source);
 	
 	for (i = 0; i < input_length; i++) {
-		if(source[i] == 'D') { concat(height_pattern, "2"); }
-		if(source[i] == 'A') { concat(height_pattern, "1"); }
-		if(source[i] == 'F') { concat(height_pattern, "0"); }
-		if(source[i] == 'T') { concat(height_pattern, "3"); }
+		if(local_source[i] == 'D') { concat(height_pattern, "2"); }
+		if(local_source[i] == 'A') { concat(height_pattern, "1"); }
+		if(local_source[i] == 'F') { concat(height_pattern, "0"); }
+		if(local_source[i] == 'T') { concat(height_pattern, "3"); }
 	}
 	
 	writer = 0;
@@ -405,7 +406,7 @@ int daft_code(struct zint_symbol *symbol, unsigned char source[])
 		}
 		writer += 2;
 	}
-
+	
 	symbol->row_height[0] = 4;
 	symbol->row_height[1] = 2;
 	symbol->row_height[2] = 4;
