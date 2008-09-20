@@ -200,6 +200,12 @@ echo testing USPS OneCode 4-State Customer Barcode
 echo testing Plessey Code with bidirectional reading support
 ./zint_frontend -o bar86.png -b 86 --height=50 -d 87654321
 ./zint_frontend -o bar86.eps -b 86 --height=50 -d 87654321
+echo testing Telepen Numeric
+./zint_frontend -o bar87.png -b 87 --height=50 -d 87654321
+./zint_frontend -o bar87.eps -b 87 --height=50 -d 87654321
+echo testing ITF-14
+./zint_frontend -o bar89.png -b 89 --height=50 -d 3210987654321
+./zint_frontend -o bar89.eps -b 89 --height=50 -d 3210987654321
 echo testing KIX Code
 ./zint_frontend -o bar90.eps -b 90 -d '1231FZ13Xhs'
 ./zint_frontend -o bar90.png -b 90 -d '1231FZ13Xhs'
@@ -209,9 +215,6 @@ echo testing Aztec Code
 echo testing DAFT Code
 ./zint_frontend -o bar93.eps -b 93 -d "daftdaftdaftdaftdaftdaftdaftdaftdaft"
 ./zint_frontend -o bar93.png -b 93 -d "daftdaftdaftdaftdaftdaftdaftdaftdaft"
-echo testing Telepen Numeric
-./zint_frontend -o bar128.png -b 128 --height=50 -d 87654321
-./zint_frontend -o bar128.eps -b 128 --height=50 -d 87654321
 echo testing Code 23
 ./zint_frontend -o bar129.eps -b 129 -d "12345678"
 ./zint_frontend -o bar129.png -b 129 -d "12345678"
