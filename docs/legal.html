@@ -5,7 +5,7 @@
 	<TITLE>Legal and Version Information</TITLE>
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Unix)">
 	<META NAME="CREATED" CONTENT="20070730;21081900">
-	<META NAME="CHANGED" CONTENT="20080728;14235700">
+	<META NAME="CHANGED" CONTENT="20080919;22141300">
 	<STYLE TYPE="text/css">
 	<!--
 		TD P { color: #000000 }
@@ -38,8 +38,8 @@
 <H1>6. Legal and Version Information</H1>
 <P><A NAME="LICENSE"></A><FONT SIZE=5><B>6.1 License</B></FONT></P>
 <P><IMG SRC="gplv3-127x51.png" NAME="graphics1" ALIGN=RIGHT WIDTH=127 HEIGHT=51 BORDER=0>Zint
-and <I>libzint</I> are Copyright © 2008 Robin Stuart and are
-distributed under the terms of the <A HREF="http://www.gnu.org/copyleft/gpl.html">GNU
+and <I>libzint</I> are Copyright © 2008 Robin Stuart &amp; BogDan
+Vatra and are distributed under the terms of the <A HREF="http://www.gnu.org/copyleft/gpl.html">GNU
 General Public License</A> version 3 [1]. See the file <FONT FACE="Courier">COPYING</FONT>
 for more information. The following terms form part of the GPL:</P>
 <P><FONT FACE="Courier">This program is free software; you can
@@ -105,8 +105,8 @@ subset B, Auspost Reply, Auspost Routing, Auspost Redirect, ITF-14).
 Tidied up code again: separated symbologies into more files and put
 all lookup tables into arrays (much reducing the amount of code,
 especially for Code 39e and Code 93). Errors now output to stderr.
-Added proper input verification. Distribution now packs with this
-HTML page instead of separate README. Outputs to PNG. Outputs colour.
+Added proper input verification. Distribution now packs with HTML
+pages instead of separate README. Outputs to PNG. Outputs colour.
 User variable whitespace and border width. Box option. Fixed EAN
 add-on bug. Added whitespace and height options. Project name changed
 to Zint to avoid conflict with extant trade name. Added escape
@@ -125,9 +125,9 @@ Stefan Schmidt et al). Added reverse colours, FIM, MSI/Plessey Modulo
 <P>v1.3 - Supports USPS OneCode and LOGMARS. Brought all usage
 information into one User Manual document. 13/6/2007</P>
 <P>v1.4 - Added NVE-18 support. Corrected some problems with
-compilation and input verification. Added zint.1 man page. Command
-line option handling now uses getopt(), and all the switches have
-changed. Added --font option. 20/6/2007</P>
+compilation and input verification. Command line option handling now
+uses getopt(), and all the switches have changed. Added --font
+option. 20/6/2007</P>
 <P>v1.5 - Pulled everything together to make an API. Corrected errors
 with EAN-13, PDF417 and LOGMARS. Added EPS output. Added QR Code
 support using libqrencode. Corrected ISBN verification error.
@@ -166,7 +166,9 @@ and check digit bugs in PostNet and Planet. 8/7/2008</P>
 <P>v1.6.2 – Added KIX Code support and PNG image rotation.
 Corrected a bug affecting extended ASCII support in Code 128 and Code
 16k. 28/7/2008.</P>
-<P>v1.6.3 – Added Aztec Code and Code 32 support.</P>
+<P>v2.0 – Added support for Aztec Code, Codablock-F, Code 32,
+EAN-14 and DAFT Code. Re-arranged symbology numbers to match Tbarcode
+v8. Corrected a never ending loop bug in EAN-128.</P>
 <P><A NAME="CREDITS"></A><FONT SIZE=5><B>6.4 Sources of Information</B></FONT></P>
 <P>Below is a list of some of the sources used in rough chronological
 order:</P>
@@ -235,6 +237,7 @@ symbology specification</P>
 <P>ISO/IEC 24778:2008 Information technology – Automatic
 identification and data capture techniques – Aztec Code bar code
 symbology specification</P>
+<P>Uniform Symbology Specification – Codablock F</P>
 <P ALIGN=LEFT><BR><BR>
 </P>
 <P ALIGN=LEFT>[1] Some of the third party code in this library was
