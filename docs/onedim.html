@@ -5,7 +5,7 @@
 	<TITLE>One-Dimensional Symbols</TITLE>
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Unix)">
 	<META NAME="CREATED" CONTENT="20070730;21081900">
-	<META NAME="CHANGED" CONTENT="20080719;21533300">
+	<META NAME="CHANGED" CONTENT="20080919;21075300">
 	<STYLE TYPE="text/css">
 	<!--
 		TD P { color: #000000 }
@@ -79,7 +79,8 @@ numeric input (digits 0-9).</P>
 <P>ITF-14, also known as UPC Shipping Container Symbol, Case Code and
 EAN-14, is based on Interleaved Code 2 of 5 and requires a 13 digit
 numeric input (digits 0-9). One modulo-10 check digit is calculated.</P>
-<P><A NAME="DPLEIT"></A><FONT SIZE=4><B>5.1.2.7 Deutsche Post Leitcode</B></FONT></P>
+<P><A NAME="DPLEIT"></A><FONT SIZE=4><B>5.1.2.7 Deutsche Post
+Leitcode</B></FONT></P>
 <P>Leitcode is based on Interleaved Code 2 of 5 and is used by
 Deutsche Post for mailing purposes. Leitcode requires a 13-digit
 numerical input and includes a check digit.</P>
@@ -161,80 +162,63 @@ digit.</P>
 </P>
 <P><A NAME="MSI"></A><FONT SIZE=5><B>5.1.6 MSI Plessey</B></FONT></P>
 <P>Based on Plessey and developed by MSE Data Corporation, MSI
-Plessey is available with a range of check digit options. Any length
+Plessey is available with a range of check digit options available by
+setting <FONT FACE="Courier, monospace">option_2</FONT> or by using
+the <FONT FACE="Courier, monospace">–ver=</FONT> switch. Any length
 numeric (digits 0-9) input can be encoded. The table below shows the
 options available:</P>
 <CENTER>
 	<TABLE WIDTH=817 BORDER=1 CELLPADDING=4 CELLSPACING=3>
-		<COL WIDTH=139>
-		<COL WIDTH=263>
-		<COL WIDTH=377>
+		<COL WIDTH=276>
+		<COL WIDTH=514>
 		<THEAD>
 			<TR VALIGN=TOP>
-				<TH WIDTH=139>
-					<P>Symbology ID</P>
+				<TH WIDTH=276>
+					<P>Value of <FONT FACE="Courier, monospace">option_2</FONT></P>
 				</TH>
-				<TH WIDTH=263>
-					<P>Symbology Name</P>
-				</TH>
-				<TH WIDTH=377>
+				<TH WIDTH=514>
 					<P>Check Digits</P>
 				</TH>
 			</TR>
 		</THEAD>
 		<TBODY>
 			<TR VALIGN=TOP>
-				<TD WIDTH=139>
-					<P ALIGN=CENTER>47</P>
+				<TD WIDTH=276>
+					<P ALIGN=CENTER>0</P>
 				</TD>
-				<TD WIDTH=263>
-					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_MSI_PLESSEY</FONT></P>
-				</TD>
-				<TD WIDTH=377>
+				<TD WIDTH=514>
 					<P ALIGN=CENTER>None</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=139>
-					<P ALIGN=CENTER>101</P>
+				<TD WIDTH=276>
+					<P ALIGN=CENTER>1</P>
 				</TD>
-				<TD WIDTH=263>
-					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_MSI_10</FONT></P>
-				</TD>
-				<TD WIDTH=377>
+				<TD WIDTH=514>
 					<P ALIGN=CENTER>Modulo-10</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=139>
-					<P ALIGN=CENTER>102</P>
+				<TD WIDTH=276>
+					<P ALIGN=CENTER>2</P>
 				</TD>
-				<TD WIDTH=263>
-					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_MSI_10_10</FONT></P>
-				</TD>
-				<TD WIDTH=377>
+				<TD WIDTH=514>
 					<P ALIGN=CENTER>Modulo-10 &amp; Modulo-10</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=139>
-					<P ALIGN=CENTER>103</P>
+				<TD WIDTH=276>
+					<P ALIGN=CENTER>3</P>
 				</TD>
-				<TD WIDTH=263>
-					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_MSI_11</FONT></P>
-				</TD>
-				<TD WIDTH=377>
+				<TD WIDTH=514>
 					<P ALIGN=CENTER>Modulo-11</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=139>
-					<P ALIGN=CENTER>104</P>
+				<TD WIDTH=276>
+					<P ALIGN=CENTER>4</P>
 				</TD>
-				<TD WIDTH=263>
-					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_MSI_11_10</FONT></P>
-				</TD>
-				<TD WIDTH=377>
+				<TD WIDTH=514>
 					<P ALIGN=CENTER>Modulo-11 &amp; Modulo-10</P>
 				</TD>
 			</TR>
@@ -251,8 +235,11 @@ options available:</P>
 can encode any length of ASCII text input. Telepen includes a
 modulo-127 check digit.</P>
 <P><A NAME="TELENUM"></A><FONT SIZE=4><B>5.1.7.2 Telepen Numeric</B></FONT></P>
-<P>Telepen Numeric allows compression of purely numeric data into a
-Telepen symbol and includes a modulo-127 check digit.</P>
+<P>Telepen Numeric allows compression of numeric data into a Telepen
+symbol. Data can consist of pairs of numbers or pairs consisting of a
+numerical digit followed an X character. For example: 466333 and
+466X33 are valid codes whereas 46X333 is not (the digit pair “X3”
+is not valid). Includes a modulo-127 check digit.</P>
 <P ALIGN=CENTER><IMG SRC="telepen.png" NAME="graphics7" ALIGN=LEFT WIDTH=320 HEIGHT=118 BORDER=0><BR CLEAR=LEFT><BR><BR>
 </P>
 <P><A NAME="CODE39"></A><FONT SIZE=5><B>5.1.8 Code 39</B></FONT></P>
@@ -262,13 +249,15 @@ Telepen symbol and includes a modulo-127 check digit.</P>
 be of any length and supports the characters 0-9, A-Z, dash (-), full
 stop (.), space, asterisk (*), dollar ($), slash (/), plus (+) and
 percent (%). The original standard (symbology 8) does not require a
-check digit but a modulo-43 check digit can be added if required
-(symbology 105).</P>
+check digit but a modulo-43 check digit can be added if required by
+setting <FONT FACE="Courier, monospace">option_2 = 1</FONT> or using
+<FONT FACE="Courier, monospace">--ver=1.</FONT></P>
 <P><A NAME="EXCODE39"></A><FONT SIZE=4><B>5.1.8.2 Extended Code 39</B></FONT></P>
 <P>Also known as Code 39e and Code39+, this symbology expands on
 Standard Code 39 to provide support to the full ASCII character set.
 The original standard (symbology 9) does not require a check digit
-but a modulo-43 check digit can be added if required (symbology 106).</P>
+but a modulo-43 check digit can be added if required by setting
+<FONT FACE="Courier, monospace">option_2 = 1</FONT> or using <FONT FACE="Courier, monospace">--ver=1.</FONT></P>
 <P><A NAME="CODE93"></A><FONT SIZE=4><B>5.1.8.3 Code 93</B></FONT></P>
 <P>A variation of Extended Code 39, Code 93 also supports full ASCII
 text. Two check digits are added.</P>
@@ -284,8 +273,8 @@ Standard Code 39 and adds a modulo-43 check digit.</P>
 <P><A NAME="CODE32"></A><FONT SIZE=4><B>5.1.8.6 Code 32</B></FONT></P>
 <P>A variation of Code 39 used by the Italian Ministry of Health
 (Ministero della Sanità) for encoding pharmacode data on
-pharmaceutical products. Requires a numeric input up to 8 digits
-in length. Check digit is added by Zint.</P>
+pharmaceutical products. Requires a numeric input up to 8 digits in
+length. Check digit is added by Zint.</P>
 <P ALIGN=CENTER><IMG SRC="code39.png" NAME="graphics8" ALIGN=LEFT WIDTH=206 HEIGHT=118 BORDER=0><BR CLEAR=LEFT><BR><BR>
 </P>
 <P><A NAME="CODABAR"></A><FONT SIZE=5><B>5.1.9 Codabar (EN 798)</B></FONT></P>
@@ -335,7 +324,11 @@ GTIN data (AI 01) are not generated and need to be included in input
 data. The following is an example of a valid GS1-128 input:</P>
 <P ALIGN=LEFT STYLE="font-weight: medium"><FONT FACE="Courier, monospace"><FONT SIZE=2>zint
 --barcode=16 -d &quot;[01]98898765432106[3202]012345[15]991231&quot;</FONT></FONT></P>
-<P><A NAME="NVE18"></A><FONT SIZE=4><B>5.1.11.4 NVE-18</B></FONT></P>
+<P><A NAME="EAN14"></A><FONT SIZE=4><B>5.1.11.4 EAN-14</B></FONT></P>
+<P STYLE="font-weight: medium"><FONT SIZE=3>A shorter version of
+GS1-128 which encodes GTIN data only. A 13 digit number is required.
+GTIN check digit and AI (01) are added by Zint.</FONT></P>
+<P><A NAME="NVE18"></A><FONT SIZE=4><B>5.1.11.5 NVE-18</B></FONT></P>
 <P>A variation of Code 128 the Nummber der Versandeinheit standard
 includes both modulo-10 and modulo-103 check digits. NVE-18 requires
 a 17 digit numerical input.</P>
