@@ -17,7 +17,7 @@ bindir := $(prefix)/bin
 DESTDIR :=
 
 zint: main.c
-	$(CC) $(INCLUDE) $(CFLAGS) $(ZINT_VERSION) -I../backend -L../backend main.c -o zint_frontend -lzint
+	$(CC) $(INCLUDE) $(CFLAGS) $(ZINT_VERSION) -I../backend -L../backend main.c -o zint -lzint
 
 .PHONY: install uninstall clean dist
 
