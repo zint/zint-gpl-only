@@ -16,7 +16,7 @@
    <item row="0" column="0" colspan="2" >
     <widget class="QGraphicsView" name="view" />
    </item>
-   <item rowspan="2" row="1" column="0" >
+   <item row="1" column="0" >
     <layout class="QHBoxLayout" name="horizontalLayout_2" >
      <item>
       <widget class="QLabel" name="label" >
@@ -29,7 +29,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="stype" />
+      <widget class="QComboBox" name="bstyle" />
      </item>
     </layout>
    </item>
@@ -63,7 +63,31 @@
      </item>
     </layout>
    </item>
-   <item rowspan="2" row="2" column="1" >
+   <item row="2" column="0" >
+    <layout class="QHBoxLayout" name="horizontalLayout_3" >
+     <item>
+      <widget class="QLabel" name="label_3" >
+       <property name="text" >
+        <string>Height:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="heightb" >
+       <property name="maximum" >
+        <number>300</number>
+       </property>
+       <property name="value" >
+        <number>50</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="2" column="1" >
     <layout class="QHBoxLayout" name="horizontalLayout_13" >
      <item>
       <widget class="QLabel" name="label_12" >
@@ -93,48 +117,7 @@
      </item>
     </layout>
    </item>
-   <item rowspan="2" row="3" column="0" >
-    <layout class="QHBoxLayout" name="horizontalLayout_3" >
-     <item>
-      <widget class="QLabel" name="label_3" >
-       <property name="text" >
-        <string>Height:</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="heightb" >
-       <property name="maximum" >
-        <number>300</number>
-       </property>
-       <property name="value" >
-        <number>50</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item rowspan="2" row="4" column="1" >
-    <layout class="QHBoxLayout" name="horizontalLayout_4" >
-     <item>
-      <widget class="QLabel" name="label_4" >
-       <property name="text" >
-        <string>Primary</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="primary" />
-     </item>
-    </layout>
-   </item>
-   <item rowspan="2" row="5" column="0" >
+   <item row="3" column="0" >
     <layout class="QHBoxLayout" name="horizontalLayout_5" >
      <item>
       <widget class="QLabel" name="label_5" >
@@ -158,32 +141,24 @@
      </item>
     </layout>
    </item>
-   <item rowspan="7" row="6" column="1" >
-    <layout class="QVBoxLayout" name="verticalLayout" >
+   <item row="3" column="1" >
+    <layout class="QHBoxLayout" name="horizontalLayout_4" >
      <item>
-      <widget class="QLabel" name="label_2" >
+      <widget class="QLabel" name="label_4" >
        <property name="text" >
-        <string>Data</string>
+        <string>Primary</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QTextEdit" name="text" >
-       <property name="html" >
-        <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
-&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:10pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">123456&lt;/p>&lt;/body>&lt;/html></string>
-       </property>
-       <property name="acceptRichText" >
-        <bool>false</bool>
-       </property>
-      </widget>
+      <widget class="QLineEdit" name="primary" />
      </item>
     </layout>
    </item>
-   <item row="7" column="0" >
+   <item row="4" column="0" >
     <layout class="QHBoxLayout" name="horizontalLayout_6" >
      <item>
       <widget class="QLabel" name="label_6" >
@@ -210,7 +185,32 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item row="8" column="0" >
+   <item rowspan="8" row="4" column="1" >
+    <layout class="QVBoxLayout" name="verticalLayout" >
+     <item>
+      <widget class="QLabel" name="label_2" >
+       <property name="text" >
+        <string>Data</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QTextEdit" name="text" >
+       <property name="html" >
+        <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'DejaVu Sans'; font-size:9pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif'; font-size:10pt;">123456&lt;/p>&lt;/body>&lt;/html></string>
+       </property>
+       <property name="acceptRichText" >
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="5" column="0" >
     <layout class="QHBoxLayout" name="horizontalLayout_7" >
      <item>
       <widget class="QLabel" name="label_7" >
@@ -237,7 +237,7 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item row="9" column="0" >
+   <item row="6" column="0" >
     <layout class="QHBoxLayout" name="horizontalLayout_8" >
      <item>
       <widget class="QLabel" name="label_8" >
@@ -264,7 +264,7 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item row="10" column="0" >
+   <item row="7" column="0" >
     <layout class="QHBoxLayout" name="horizontalLayout_10" >
      <item>
       <widget class="QLabel" name="label_9" >
@@ -297,7 +297,7 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item row="11" column="0" >
+   <item row="8" column="0" >
     <layout class="QHBoxLayout" name="horizontalLayout_11" >
      <item>
       <widget class="QLabel" name="label_10" >
@@ -324,7 +324,78 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item row="12" column="0" >
+   <item row="9" column="0" >
+    <layout class="QHBoxLayout" name="horizontalLayout_14" >
+     <item>
+      <widget class="QLabel" name="label_13" >
+       <property name="text" >
+        <string>MSI PLESSEY:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="msiPlessey" >
+       <item>
+        <property name="text" >
+         <string>MSI_PLESSEY</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>MSI_10</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>MSI_10_10</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>MSI_11</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>MSI_11_10</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="10" column="0" >
+    <layout class="QHBoxLayout" name="horizontalLayout_15" >
+     <item>
+      <widget class="QLabel" name="label_14" >
+       <property name="text" >
+        <string>(Ex)CODE39:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="code39" >
+       <item>
+        <property name="text" >
+         <string>(EX)CODE39</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>(EX)CODE39_43</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="11" column="0" >
     <layout class="QHBoxLayout" name="horizontalLayout_9" >
      <item>
       <widget class="QPushButton" name="fgcolor" >
@@ -342,7 +413,7 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item row="13" column="0" colspan="2" >
+   <item row="12" column="0" colspan="2" >
     <layout class="QHBoxLayout" name="horizontalLayout" >
      <item>
       <spacer name="horizontalSpacer" >
