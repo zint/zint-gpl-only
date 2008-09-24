@@ -7,7 +7,7 @@
 # make clean		cleans up a previous compilation and any object or editor files
 #
 
-ZINT_VERSION:=-DZINT_VERSION=\"1.80.0\"
+ZINT_VERSION:=-DZINT_VERSION=\"1.99.1\"
 
 
 CC := gcc
