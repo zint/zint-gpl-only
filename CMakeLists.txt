@@ -17,6 +17,8 @@ add_definitions (-DZINT_VERSION=\"${ZINT_VERSION}\")
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules" )
 
+include (SetPaths.cmake)
+
 add_subdirectory(backend)
 add_subdirectory(frontend)
 

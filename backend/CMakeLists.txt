@@ -30,5 +30,5 @@ set_target_properties(zint PROPERTIES 	VERSION ${ZINT_VERSION}
 
 target_link_libraries(zint ${PNG_LIBRARIES} ${QR_LIBRARIES} )
 
-install(TARGETS zint LIBRARY DESTINATION lib)
-install(FILES zint.h DESTINATION include COMPONENT Devel)
+install(TARGETS zint  ${INSTALL_TARGETS_DEFAULT_ARGS} )
+install(FILES zint.h DESTINATION ${INCLUDE_INSTALL_DIR} COMPONENT Devel)
