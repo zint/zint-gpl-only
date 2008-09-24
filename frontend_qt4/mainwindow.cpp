@@ -31,10 +31,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 	m_fgcolor=qRgb(0,0,0);
 	m_bgcolor=qRgb(0xff,0xff,0xff);
 	for (int i=0;i<metaObject()->enumerator(0).keyCount();i++)
-		stype->addItem(metaObject()->enumerator(0).key(i));
+		bstyle->addItem(metaObject()->enumerator(0).key(i));
 	on_generate_clicked();
 	view->scene()->addItem(&m_bc);
-	connect(stype, SIGNAL(currentIndexChanged( int )), SLOT(on_generate_clicked()));
+	connect(bstyle, SIGNAL(currentIndexChanged( int )), SLOT(on_generate_clicked()));
 	connect(heightb, SIGNAL(valueChanged( int )), SLOT(on_generate_clicked()));
 	connect(widthb,  SIGNAL(valueChanged( int )), SLOT(on_generate_clicked()));
 	connect(security,  SIGNAL(valueChanged( int )), SLOT(on_generate_clicked()));
@@ -73,8 +73,19 @@ void MainWindow::on_generate_clicked()
 	m_bc.h=iheight->value();
 	m_bc.bc.setText(text->toPlainText());
 	m_bc.bc.setPrimaryMessage(primary->text());
-	m_bc.bc.setSymbol(metaObject()->enumerator(0).value(stype->currentIndex()));
-
+	m_bc.bc.setSymbol(metaObject()->enumerator(0).value(bstyle->currentIndex()));
+	switch(m_bc.bc.symbol())
+	{
+		case  BARCODE_MSI_PLESSEY:
+			m_bc.bc.setMsiExtraSymbology(msiPlessey->currentIndex());
+			break;
+		case  BARCODE_CODE39:
+			m_bc.bc.setCode39ExtraSymbology(code39->currentIndex());
+			break;
+		case  BARCODE_EXCODE39:
+			m_bc.bc.setExcode39ExtraSymbology(code39->currentIndex());
+			break;
+	}
 	m_bc.bc.setBorderType((Zint::QZint::BorderType)btype->currentIndex());
 	m_bc.bc.setBorderWidth(bwidth->value());
 	m_bc.bc.setHeight(heightb->value());
