@@ -24,5 +24,5 @@ link_directories( "../backend" )
 target_link_libraries(QZint zint ${QT_QTGUI_LIBRARY} 
         ${QT_QTCORE_LIBRARY} )
 
-install(TARGETS QZint LIBRARY DESTINATION lib)
-install(FILES qzint.h DESTINATION include COMPONENT Devel)
+install(TARGETS QZint  ${INSTALL_TARGETS_DEFAULT_ARGS} )
+install(FILES qzint.h DESTINATION ${INCLUDE_INSTALL_DIR} COMPONENT Devel)
