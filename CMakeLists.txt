@@ -5,7 +5,7 @@ project(zint-package)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(CMAKE_VERBOSE_MAKEFILE ON)
+#set(CMAKE_VERBOSE_MAKEFILE ON)
 #comment or remove the above line before release
 
 set (ZINT_VERSION_MAJOR 1)
