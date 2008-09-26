@@ -27,12 +27,40 @@
 
 #define NESET "0123456789"
 
+void types(void) {
+	printf( 	"  1: Code 11                40: Postnet                   80: Databar-14 Stack Omni\n"
+			"  2: Standard 2 of 5        47: MSI Plessey               81: Databar Extended Stack\n"
+			"  3: Interleaved 2 of 5     49: FIM                       82: Planet\n"
+			"  4: IATA 2 of 5            50: Logmars                   84: MicroPDF\n"
+			"  6: Data Logic             51: Pharma One-Track          85: USPS OneCode\n"
+			"  7: Industrial 2 of 5      52: PZN                       86: UK Plessey\n"
+			"  8: Code 39                53: Pharma Two-Track          87: Telepen Numeric\n"
+			"  9: Extended Code 39       55: PDF417                    89: ITF-14\n"
+			" 13: EAN                    56: PDF417 Trunc              90: KIX Code\n"
+			" 16: GS1-128                57: Maxicode                  92: Aztec Code\n"
+			" 18: Codabar                58: QR Code                   93: DAFT Code\n"
+			" 20: Code 128               60: Code 128-B               129: Code 23\n"
+			" 21: Leitcode               63: AP Standard Customer     130: Comp + EAN\n"
+			" 22: Identcode              66: AP Reply Paid            131: Comp + GS1-128\n"
+			" 23: Code 16k               67: AP Routing               132: Comp + Databar-14\n"
+			" 25: Code 93                68: AP Redirection           133: Comp + Databar Ltd\n"
+			" 28: Flattermarken          69: ISBN                     134: Comp + Databar Ext\n"
+			" 29: Databar-14             70: RM4SCC                   135: Comp + UPC-A\n"
+			" 30: Databar Limited        71: Data Matrix              136: Comp + UPC-E\n"
+			" 31: Databar Extended       72: EAN-14                   137: Comp + Databar-14 Stack\n"
+			" 32: Telepen Alpha          74: Codablock-F              138: Comp + Databar Stack Omni\n"
+			" 34: UPC-A                  75: NVE-18                   139: Comp + Databar Ext Stack\n"
+			" 37: UPC-E                  79: Databar-14 Stack\n"
+	      );
+}
+
 void usage(void)
 {
 	printf(
 		"Zint version %s\n"
 		"Encode input data in a barcode and save as a PNG or EPS file.\n\n"
 		"  -h, --help            Display this message.\n"
+		"  -t, --types           Display table of barcode types\n"
 		"  -o, --output=FILE     Write image to FILE. (default is out.png)\n"
 		"  -d, --data=DATA       Barcode content.\n"
 		"  -b, --barcode=NUMBER  Number of barcode type (default is 20 (=Code128)).\n"
@@ -53,15 +81,63 @@ void usage(void)
 	, ZINT_VERSION);
 }
 
+int data_process(struct zint_symbol *symbol, unsigned char source[], int rotate_angle)
+{
+	/* Supports UTF-8 input by converting it to Latin-1 Extended ASCII */
+	int input_length;
+	int error_number, i, j, next;
+	
+	error_number = 0;
+	input_length = strlen(source);
+	unsigned char latin1[input_length];
+	
+	j = 0;
+	i = 0;
+	do {
+		next = -1;
+		if(source[i] < 128) {
+			latin1[j] = source[i];
+			j++;
+			next = i + 1;
+		} else {
+			if(source[i] == 0xC2) {
+				latin1[j] = source[i + 1];
+				j++;
+				next = i + 2;
+			}
+			if(source[i] == 0xC3) {
+				latin1[j] = source[i + 1] + 64;
+				j++;
+				next = i + 2;
+			}
+		}
+		if(next == -1) {
+			strcpy(symbol->errtxt, "Invalid character in input string (only Latin-1 characters supported)");
+			error_number = WARN_INVALID_OPTION;
+			return error_number;
+		}
+		i = next;
+	} while(i < input_length);
+	latin1[j] = '\0';
+	
+	if(rotate_angle == 0) {
+		error_number = ZBarcode_Encode_and_Print(symbol, latin1);
+	} else {
+		error_number = ZBarcode_Encode_and_Print_Rotated(symbol, latin1, rotate_angle);
+	}
+	
+	return error_number;
+}
+
 int main(int argc, char **argv)
 {
 	struct zint_symbol *my_symbol;
 	int i, mode, stack_row;
 	int c;
-	int errornum;
+	int error_number;
 	int rotate_angle;
 	
-	errornum = 0;
+	error_number = 0;
 	rotate_angle = 0;
 	my_symbol = ZBarcode_Create();
 
@@ -74,6 +150,7 @@ int main(int argc, char **argv)
 		int option_index = 0;
 		static struct option long_options[] = {
 			{"help", 0, 0, 'h'},
+			{"types", 0, 0, 't'},
 			{"bind", 0, 0, 0},
 			{"box", 0, 0, 0},
 			{"barcode=", 1, 0, 'b'},
@@ -94,7 +171,7 @@ int main(int argc, char **argv)
 			{"primary=", 1, 0, 0},
 			{0, 0, 0, 0}
 		};
-		c = getopt_long(argc, argv, "hb:w:d:o:i:rcmp", long_options, &option_index);
+		c = getopt_long(argc, argv, "htb:w:d:o:i:rcmp", long_options, &option_index);
 		if(c == -1) break; 
 		
 		switch(c) {
@@ -112,8 +189,8 @@ int main(int argc, char **argv)
 					strncpy(my_symbol->bgcolour, optarg, 7);
 				}
 				if(!strcmp(long_options[option_index].name, "border=")) {
-					errornum = is_sane(NESET, optarg);
-					if(errornum == ERROR_INVALID_DATA) {
+					error_number = is_sane(NESET, optarg);
+					if(error_number == ERROR_INVALID_DATA) {
 						fprintf(stderr, "Invalid border width\n");
 						exit(1);
 					}
@@ -124,8 +201,8 @@ int main(int argc, char **argv)
 					}
 				}
 				if(!strcmp(long_options[option_index].name, "height=")) {
-					errornum = is_sane(NESET, optarg);
-					if(errornum == ERROR_INVALID_DATA) {
+					error_number = is_sane(NESET, optarg);
+					if(error_number == ERROR_INVALID_DATA) {
 						fprintf(stderr, "Invalid symbol height\n");
 						exit(1);
 					}
@@ -175,8 +252,8 @@ int main(int argc, char **argv)
 				}
 				if(!strcmp(long_options[option_index].name, "rotate=")) {
 					/* Only certain inputs allowed */
-					errornum = is_sane(NESET, optarg);
-					if(errornum == ERROR_INVALID_DATA) {
+					error_number = is_sane(NESET, optarg);
+					if(error_number == ERROR_INVALID_DATA) {
 						fprintf(stderr, "Invalid rotation parameter\n");
 						exit(1);
 					}
@@ -193,9 +270,13 @@ int main(int argc, char **argv)
 				usage();
 				break;
 				
+			case 't':
+				types();
+				break;
+				
 			case 'b':
-				errornum = is_sane(NESET, optarg);
-				if(errornum == ERROR_INVALID_DATA) {
+				error_number = is_sane(NESET, optarg);
+				if(error_number == ERROR_INVALID_DATA) {
 					printf("Invalid barcode type\n");
 					exit(1);
 				}
@@ -203,8 +284,8 @@ int main(int argc, char **argv)
 				break;
 				
 			case 'w':
-				errornum = is_sane(NESET, optarg);
-				if(errornum == ERROR_INVALID_DATA) {
+				error_number = is_sane(NESET, optarg);
+				if(error_number == ERROR_INVALID_DATA) {
 					printf("Invalid whitespace value\n");
 					exit(1);
 				}
@@ -216,16 +297,10 @@ int main(int argc, char **argv)
 				break;
 				
 			case 'd': /* we have some data! */
-				if(rotate_angle == 0) {
-					if(ZBarcode_Encode_and_Print(my_symbol, optarg) != 0) {
-						printf("%s\n", my_symbol->errtxt);
-						return 1;
-					}
-				} else {
-					if(ZBarcode_Encode_and_Print_Rotated(my_symbol, optarg, rotate_angle) != 0) {
-						printf("%s\n", my_symbol->errtxt);
-						return 1;
-					}
+				error_number = data_process(my_symbol, optarg, rotate_angle);
+				if(error_number != 0) {
+					printf("%s\n", my_symbol->errtxt);
+					return 1;
 				}
 				break;
 				
@@ -260,5 +335,5 @@ int main(int argc, char **argv)
 	
 	ZBarcode_Delete(my_symbol); 
 	
-	return errornum;
+	return error_number;
 }
