@@ -5,7 +5,7 @@ project(zint)
 find_package(PNG)
 find_package(Qr)
 
-set(zint_COMMON_SRCS common.c png.c library.c ps.c large.c reedsol.c)
+set(zint_COMMON_SRCS common.c library.c ps.c large.c reedsol.c)
 set(zint_ONEDIM_SRCS code.c code128.c 2of5.c upcean.c telepen.c medical.c plessey.c rss.c)
 set(zint_POSTAL_SRCS postal.c auspost.c imail.c)
 set(zint_TWODIM_SRCS code16k.c blockf.c dmatrix.c dm200.c pdf417.c qr.c maxicode.c composite.c aztec.c)
@@ -13,6 +13,7 @@ set(zint_SRCS ${zint_COMMON_SRCS} ${zint_ONEDIM_SRCS} ${zint_POSTAL_SRCS} ${zint
 
 if(PNG_FOUND)
     include_directories( ${PNG_INCLUDES} )
+    set(zint_SRCS ${zint_SRCS} png.c)
 else(PNG_FOUND)
     add_definitions (-DNO_PNG)
 endif(PNG_FOUND)

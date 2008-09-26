@@ -2,7 +2,7 @@
 
 project(QZint)
 
-include_directories(BEFORE ../backend )
+include_directories(BEFORE "${CMAKE_SOURCE_DIR}/backend" )
 
 set(QZint_SRCS qzint.cpp)
 
@@ -19,7 +19,7 @@ set_target_properties(QZint PROPERTIES	VERSION ${ZINT_VERSION}
 
 add_dependencies(QZint zint)
 
-link_directories( "../backend" )
+link_directories( "${CMAKE_BINARY_DIR}/backend" )
 
 target_link_libraries(QZint zint ${QT_QTGUI_LIBRARY} 
         ${QT_QTCORE_LIBRARY} )
