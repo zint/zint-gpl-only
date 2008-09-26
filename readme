@@ -1,7 +1,7 @@
-Zint and libzint 1.6.3
+Zint and libzint 2.0.0
 ----------------------
 
-Zint is a front end program and library which provides support for over 30 barcode symbologies
+Zint is a front end program and library which provides support for over 40 barcode symbologies
 in an open source package released under the GNU General Public License. Currently supported
 symbologies include:
 
@@ -11,7 +11,8 @@ EAN-5, EAN-8, EAN-13, UK Plessey, MSI Plessey, Telepen Alpha, Telepen Numeric, C
 Extended Code 39, Code 93, PZN, Code 23, LOGMARS, Codabar, Pharmacode, Code 128, EAN-128, NVE-18,
 Code 16k, PDF417, MicroPDF417, Two-Track Pharmacode, PostNet, PLANET, Australia Post 4-State Symbols,
 RM4SCC, USPS OneCode, GS1 DataBar, DataBar-14, DataBar Limited, DataBar Extended, DataBar Stacked,
-Composite Symbology, Data Matrix, QR Code, Maxicode, Aztec Code, FIM and Flattermarken.
+Composite Symbology, Data Matrix, QR Code, Maxicode, Aztec Code, EAN-13, Codablock-F, FIM and
+Flattermarken.
 
 Full documentation is included in the 'docs' directory. The libzint back end code is included
 in the 'backend' directory, and the front end command line program 'zint' is included in the
@@ -25,8 +26,8 @@ SUPPORT ZINT
 The Zint project is committed to providing the open source community with encoding software for
 all public domain barcode standards. For this we need access to the standard documentation and,
 unfortunately, this is not free. Your donation will contribute towards the purchase of standard documents
-from ANSI. Standards which we hope to add to Zint in this way include Codablock-F, Aztec Mesas,
-Code 49, Supercode, Code One. If you have a preference regarding
+from ANSI. Standards which we hope to add to Zint in this way include Aztec Mesas, Code 49, 
+Supercode, Code One. If you have a preference regarding
 which standard you would like your donation to go towards then please let us know and we will reserve your
 donation for that standard.
 
