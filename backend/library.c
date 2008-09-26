@@ -109,7 +109,10 @@ extern int codablock(struct zint_symbol *symbol, unsigned char source[]); /* Cod
 extern int daft_code(struct zint_symbol *symbol, unsigned char source[]); /* DAFT Code */
 extern int ean_14(struct zint_symbol *symbol, unsigned char source[]); /* EAN-14 */
 
+#ifndef NO_PNG
 extern int png_plot(struct zint_symbol *symbol);
+#endif
+
 extern int ps_plot(struct zint_symbol *symbol);
 
 int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input)
