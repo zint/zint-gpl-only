@@ -47,6 +47,7 @@ public:
 		DPLEIT		=21,
 		DPIDENT		=22,
 		CODE16K		=23,
+		CODE49		=24,
 		CODE93		=25,
 		FLAT		=28,
 		RSS14		=29,
@@ -74,7 +75,7 @@ public:
 		ISBNX		=69,
 		RM4SCC		=70,
 		DATAMATRIX	=71,
-		ITF14		=72,
+		EAN14		=72,
 		CODABLOCKF	=74,
 		NVE18		=75,
 		KOREAPOST	=77,
@@ -87,15 +88,14 @@ public:
 		PLESSEY		=86,
 		
 		/* Tbarcode 8 codes */
+		TELEPEN_NUM	=87,
+		ITF14		=89,
 		KIX		=90,
 		AZTEC		=92,
 		DAFT		=93,
-		ITALYPOST	=94,
-		DPD		=96,
 		MICROQR		=97,
 		
 		/* Zint specific */
-		TELEPEN_NUM	=128,
 		CODE32		=129,
 		EANX_CC		=130,
 		EAN128_CC	=131,
