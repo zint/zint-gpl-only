@@ -15,4 +15,4 @@ SOURCES += main.cpp \
 HEADERS += mainwindow.h \
  barcodeitem.h
 
-LIBS += -lQtZint
+LIBS += -lQZint
