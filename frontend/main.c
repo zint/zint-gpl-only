@@ -300,6 +300,7 @@ int main(int argc, char **argv)
 				error_number = data_process(my_symbol, optarg, rotate_angle);
 				if(error_number != 0) {
 					printf("%s\n", my_symbol->errtxt);
+					ZBarcode_Delete(my_symbol);
 					return 1;
 				}
 				break;
@@ -332,7 +333,6 @@ int main(int argc, char **argv)
 		printf(my_symbol->errtxt);
 		printf("\n");
 	}
-	
 	ZBarcode_Delete(my_symbol); 
 	
 	return error_number;
