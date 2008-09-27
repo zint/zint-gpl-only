@@ -403,6 +403,7 @@ int maxi_png_plot(struct zint_symbol *symbol, int rotate_angle)
 	}
 
 	png_to_file(symbol, image_height, image_width, pixelbuf, rotate_angle);
+	free(pixelbuf);
 }
 
 int png_plot(struct zint_symbol *symbol, int rotate_angle)
@@ -786,8 +787,9 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 		textpos = (image_width / 2);
 		draw_string(pixelbuf, symbol->text, textpos, (image_height - 17), image_width, image_height);
 	}
-	
+
 	png_to_file(symbol, image_height, image_width, pixelbuf, rotate_angle);
+	free(pixelbuf);
 }
 
 int png_handle(struct zint_symbol *symbol, int rotate_angle)
