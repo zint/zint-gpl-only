@@ -37,10 +37,10 @@ LIBS+= -lqrencode
 endif
  
 libzint: code.c code128.c 2of5.c upcean.c medical.c telepen.c plessey.c postal.c auspost.c imail.c code16k.c dmatrix.c dm200.c reedsol.c pdf417.c maxicode.c rss.c common.c png.c library.c ps.c qr.c large.c composite.c aztec.c blockf.c
-	$(CC) -fPIC $(CFLAGS) $(ZINT_VERSION) -c $(ONEDIM)
-	$(CC) -fPIC $(CFLAGS) $(ZINT_VERSION) -c $(POSTAL)
-	$(CC) -fPIC $(DEFINES) $(CFLAGS) $(ZINT_VERSION) -c $(TWODIM)
-	$(CC) -fPIC $(CFLAGS) $(ZINT_VERSION) -c $(COMMON)
+	$(CC) -Wall -fPIC $(CFLAGS) $(ZINT_VERSION) -c $(ONEDIM)
+	$(CC) -Wall -fPIC $(CFLAGS) $(ZINT_VERSION) -c $(POSTAL)
+	$(CC) -Wall -fPIC $(DEFINES) $(CFLAGS) $(ZINT_VERSION) -c $(TWODIM)
+	$(CC) -Wall -fPIC $(CFLAGS) $(ZINT_VERSION) -c $(COMMON)
 	$(CC) $(CFLAGS) $(ZINT_VERSION) -shared -Wl,-soname,libzint.so -o libzint.so.1.6.3 $(INCLUDE) $(COMMON_OBJ) $(ONEDIM_OBJ) $(TWODIM_OBJ) $(POSTAL_OBJ) $(LIBS)
 	ln -s libzint.so.* libzint.so
 
