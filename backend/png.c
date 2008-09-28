@@ -370,7 +370,8 @@ int maxi_png_plot(struct zint_symbol *symbol, int rotate_angle)
 	int i, row, column, xposn, yposn;
 	int image_height, image_width;
 	char *pixelbuf;
-	
+	int error_number;
+
 	image_width = 300;
 	image_height = 300;
 	
@@ -402,8 +403,9 @@ int maxi_png_plot(struct zint_symbol *symbol, int rotate_angle)
 		}
 	}
 
-	png_to_file(symbol, image_height, image_width, pixelbuf, rotate_angle);
+	error_number=png_to_file(symbol, image_height, image_width, pixelbuf, rotate_angle);
 	free(pixelbuf);
+	return error_number;
 }
 
 int png_plot(struct zint_symbol *symbol, int rotate_angle)
@@ -416,6 +418,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 	int addon_latch = 0;
 	int this_row, block_width, plot_height, plot_yposn, textpos;
 	float row_height, row_posn;
+	int error_number;
 	
 	textdone = 0;
 	main_width = symbol->width;
@@ -788,8 +791,9 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 		draw_string(pixelbuf, symbol->text, textpos, (image_height - 17), image_width, image_height);
 	}
 
-	png_to_file(symbol, image_height, image_width, pixelbuf, rotate_angle);
+	error_number=png_to_file(symbol, image_height, image_width, pixelbuf, rotate_angle);
 	free(pixelbuf);
+	return error_number;
 }
 
 int png_handle(struct zint_symbol *symbol, int rotate_angle)
