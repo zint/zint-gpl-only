@@ -17,12 +17,12 @@ bindir := $(prefix)/bin
 DESTDIR :=
 
 zint: main.c
-	$(CC) $(INCLUDE) $(CFLAGS) $(ZINT_VERSION) -I../backend -L../backend main.c -o zint -lzint
+	$(CC) -Wall $(INCLUDE) $(CFLAGS) $(ZINT_VERSION) -I../backend -L../backend main.c -o zint -lzint
 
 .PHONY: install uninstall clean dist
 
 clean:
-	rm -f zint *.o *.a *~ *.png *.eps
+	rm -f zint *.o *.a *~ *.png *.eps *.log
 
 install:
 	install -D -p  zint $(DESTDIR)$(bindir)/zint

@@ -5,7 +5,7 @@ project(zint-package)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-#set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 #comment or remove the above line before release
 
 set (ZINT_VERSION_MAJOR 1)
@@ -13,7 +13,7 @@ set (ZINT_VERSION_MINOR 99)
 set (ZINT_VERSION_RELEASE 1)
 set (ZINT_VERSION "${ZINT_VERSION_MAJOR}.${ZINT_VERSION_MINOR}.${ZINT_VERSION_RELEASE}" )
 
-add_definitions (-DZINT_VERSION=\"${ZINT_VERSION}\")
+add_definitions (-DZINT_VERSION=\"${ZINT_VERSION}\" -Wall)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules" )
 
