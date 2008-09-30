@@ -81,6 +81,16 @@ void usage(void)
 	, ZINT_VERSION);
 }
 
+int ustrlen(unsigned char data[]) {
+	/* Local replacement for strlen() with unsigned char strings */
+	int i;
+	
+	i = -1;
+	do { i++; } while (data[i] != '\0');
+
+	return i;
+}
+
 int data_process(struct zint_symbol *symbol, unsigned char source[], int rotate_angle)
 {
 	/* Supports UTF-8 input by converting it to Latin-1 Extended ASCII */
@@ -88,7 +98,7 @@ int data_process(struct zint_symbol *symbol, unsigned char source[], int rotate_
 	int error_number, i, j, next;
 	
 	error_number = 0;
-	input_length = strlen(source);
+	input_length = ustrlen(source);
 	unsigned char latin1[input_length];
 	
 	j = 0;
@@ -129,10 +139,24 @@ int data_process(struct zint_symbol *symbol, unsigned char source[], int rotate_
 	return error_number;
 }
 
+int validator(char test_string[], char source[])
+{ /* Verifies that a string only uses valid characters */
+	unsigned int i, j, latch;
+
+	for(i = 0; i < strlen(source); i++) {
+		latch = 0;
+		for(j = 0; j < strlen(test_string); j++) {
+			if (source[i] == test_string[j]) { latch = 1; } }
+			if (!(latch)) { 
+				return ERROR_INVALID_DATA; }
+	}
+	
+	return 0;
+}
+
 int main(int argc, char **argv)
 {
 	struct zint_symbol *my_symbol;
-	int i, mode, stack_row;
 	int c;
 	int error_number;
 	int rotate_angle;
@@ -189,7 +213,7 @@ int main(int argc, char **argv)
 					strncpy(my_symbol->bgcolour, optarg, 7);
 				}
 				if(!strcmp(long_options[option_index].name, "border=")) {
-					error_number = is_sane(NESET, optarg);
+					error_number = validator(NESET, optarg);
 					if(error_number == ERROR_INVALID_DATA) {
 						fprintf(stderr, "Invalid border width\n");
 						exit(1);
@@ -201,7 +225,7 @@ int main(int argc, char **argv)
 					}
 				}
 				if(!strcmp(long_options[option_index].name, "height=")) {
-					error_number = is_sane(NESET, optarg);
+					error_number = validator(NESET, optarg);
 					if(error_number == ERROR_INVALID_DATA) {
 						fprintf(stderr, "Invalid symbol height\n");
 						exit(1);
@@ -252,7 +276,7 @@ int main(int argc, char **argv)
 				}
 				if(!strcmp(long_options[option_index].name, "rotate=")) {
 					/* Only certain inputs allowed */
-					error_number = is_sane(NESET, optarg);
+					error_number = validator(NESET, optarg);
 					if(error_number == ERROR_INVALID_DATA) {
 						fprintf(stderr, "Invalid rotation parameter\n");
 						exit(1);
@@ -275,7 +299,7 @@ int main(int argc, char **argv)
 				break;
 				
 			case 'b':
-				error_number = is_sane(NESET, optarg);
+				error_number = validator(NESET, optarg);
 				if(error_number == ERROR_INVALID_DATA) {
 					printf("Invalid barcode type\n");
 					exit(1);
@@ -284,7 +308,7 @@ int main(int argc, char **argv)
 				break;
 				
 			case 'w':
-				error_number = is_sane(NESET, optarg);
+				error_number = validator(NESET, optarg);
 				if(error_number == ERROR_INVALID_DATA) {
 					printf("Invalid whitespace value\n");
 					exit(1);
