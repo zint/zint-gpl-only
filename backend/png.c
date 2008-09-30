@@ -61,10 +61,9 @@ int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, c
 	png_structp  png_ptr;
 	png_infop  info_ptr;
 	graphic = &wpng_info;
-	long j;
 	unsigned long rowbytes;
 	unsigned char *image_data;
-	int i, k, offset, row, column, errno;
+	int i, row, column, errno;
 	int fgred, fggrn, fgblu, bgred, bggrn, bgblu;
 	
 	switch(rotate_angle) {
@@ -356,7 +355,7 @@ void draw_string(char *pixbuf, unsigned char input_string[], int xposn, int ypos
 	/* Plot a string into the pixel buffer */
 	int i, string_length, string_left_hand;
 	
-	string_length = strlen(input_string);
+	string_length = ustrlen(input_string);
 	string_left_hand = xposn - ((7 * string_length) / 2);
 	
 	for(i = 0; i < string_length; i++) {

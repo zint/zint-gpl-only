@@ -25,6 +25,16 @@
 
 #define SSET	"0123456789ABCDEF"
 
+int ustrlen(unsigned char data[]) {
+	/* Local replacement for strlen() with unsigned char strings */
+	int i;
+	
+	i = -1;
+	do { i++; } while (data[i] != '\0');
+
+	return i;
+}
+
 void concat(char dest[], char source[])
 { /* Concatinates dest[] with the contents of source[], copying /0 as well */
 	unsigned int i, j;
@@ -53,7 +63,7 @@ void to_upper(unsigned char source[])
 { /* Converts lower case characters to upper case in a string source[] */
 	unsigned int i;
 
-	for (i = 0; i < strlen(source); i++) {
+	for (i = 0; i < ustrlen(source); i++) {
 		if ((source[i] >= 'a') && (source[i] <= 'z')) {
 			source [i] = (source[i] - 'a') + 'A'; }
 	}
@@ -63,7 +73,7 @@ int is_sane(char test_string[], unsigned char source[])
 { /* Verifies that a string only uses valid characters */
 	unsigned int i, j, latch;
 
-	for(i = 0; i < strlen(source); i++) {
+	for(i = 0; i < ustrlen(source); i++) {
 		latch = FALSE;
 		for(j = 0; j < strlen(test_string); j++) {
 			if (source[i] == test_string[j]) { latch = TRUE; } }

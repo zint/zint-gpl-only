@@ -55,7 +55,7 @@ int pharma_one(struct zint_symbol *symbol, unsigned char source[])
 	error_number = 0;
 	strcpy(dest, "");
 
-	if(strlen(source) > 6) {
+	if(ustrlen(source) > 6) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -158,7 +158,7 @@ int pharma_two(struct zint_symbol *symbol, unsigned char source[])
 	int error_number = 0;
 	strcpy(height_pattern, "");
 
-	if(strlen(source) > 8) {
+	if(ustrlen(source) > 8) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -201,7 +201,7 @@ int codabar(struct zint_symbol *symbol, unsigned char source[])
 	error_number = 0;
 	strcpy(dest, "");
 
-	if(strlen(source) > 60) { /* No stack smashing please */
+	if(ustrlen(source) > 60) { /* No stack smashing please */
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -220,14 +220,14 @@ int codabar(struct zint_symbol *symbol, unsigned char source[])
 		return 6;
 	}
 
-	if(((source[strlen(source) - 1] != 'A') && (source[strlen(source) - 1] != 'B')) &&
-		    ((source[strlen(source) - 1] != 'C') && (source[strlen(source) - 1] != 'D')))
+	if(((source[ustrlen(source) - 1] != 'A') && (source[ustrlen(source) - 1] != 'B')) &&
+		    ((source[ustrlen(source) - 1] != 'C') && (source[ustrlen(source) - 1] != 'D')))
 	{
 		strcpy(symbol->errtxt, "error: invalid characters in data");
 		return 6;
 	}
 
-	for(i = 0; i <= strlen(source); i++)
+	for(i = 0; i <= ustrlen(source); i++)
 	{
 		lookup(CASET, CodaTable, source[i], dest);
 	}
@@ -246,7 +246,7 @@ int code32(struct zint_symbol *symbol, unsigned char source[])
 	char tabella[34];
 	
 	/* Validate the input */
-	if(strlen(source) > 8) {
+	if(ustrlen(source) > 8) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -258,7 +258,7 @@ int code32(struct zint_symbol *symbol, unsigned char source[])
 	
 	/* Add leading zeros as required */
 	strcpy(localstr, "");
-	zeroes = 8 - strlen(source);
+	zeroes = 8 - ustrlen(source);
 	for(i = 0; i < zeroes; i++) {
 		concat(localstr, "0");
 	}

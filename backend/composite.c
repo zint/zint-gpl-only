@@ -109,7 +109,6 @@ int encode928(UINT bitString[], UINT codeWords[], int bitLng) {
 
 int cc_a(struct zint_symbol *symbol, unsigned char source[], int cc_width)
 { /* CC-A 2D component */
-	int temp;
 	int i, strpos, segment, bitlen, cwCnt, variant, rows;
 	int k, offset, j, total, rsCodeWords[8];
 	int LeftRAPStart, RightRAPStart, CentreRAPStart, StartCluster;
@@ -122,7 +121,7 @@ int cc_a(struct zint_symbol *symbol, unsigned char source[], int cc_width)
 	for(i = 0; i < 13; i++) { bitStr[i] = 0; }
 	for(i = 0; i < 28; i++) { codeWords[i] = 0; }
 	
-	bitlen = strlen(source);
+	bitlen = ustrlen(source);
 	
 	for(i = bitlen; i < 197; i++) {
 		source[i] = '0';
@@ -322,7 +321,7 @@ int cc_a(struct zint_symbol *symbol, unsigned char source[], int cc_width)
 int cc_b(struct zint_symbol *symbol, unsigned char source[], int cc_width)
 { /* CC-B 2D component */
 	int length, i, binloc;
-	unsigned char data_string[(strlen(source) / 8) + 3];
+	unsigned char data_string[(ustrlen(source) / 8) + 3];
 	int chainemc[180], mclength;
 	int k, j, longueur, mccorrection[50], offset;
 	int total, dummy[5];
@@ -330,7 +329,7 @@ int cc_b(struct zint_symbol *symbol, unsigned char source[], int cc_width)
 	int variant, LeftRAPStart, CentreRAPStart, RightRAPStart, StartCluster;
 	int LeftRAP, CentreRAP, RightRAP, Cluster, writer, flip, loop;
 	
-	length = strlen(source) / 8;
+	length = ustrlen(source) / 8;
 	
 	for(i = 0; i < length; i++) {
 		binloc = i * 8;
@@ -549,13 +548,13 @@ int cc_b(struct zint_symbol *symbol, unsigned char source[], int cc_width)
 int cc_c(struct zint_symbol *symbol, unsigned char source[], int cc_width, int ecc_level)
 { /* CC-C 2D component - byte compressed PDF417 */
 	int length, i, binloc;
-	unsigned char data_string[(strlen(source) / 8) + 4];
+	unsigned char data_string[(ustrlen(source) / 8) + 4];
 	int chainemc[1000], mclength, k;
 	int offset, longueur, loop, total, j, mccorrection[520];
 	int c1, c2, c3, dummy[35];
 	char codebarre[100], pattern[580];
 	
-	length = strlen(source) / 8;
+	length = ustrlen(source) / 8;
 	
 	for(i = 0; i < length; i++) {
 		binloc = i * 8;
@@ -689,9 +688,9 @@ int cc_binary_string(struct zint_symbol *symbol, unsigned char source[], char bi
 { /* Handles all data encodation from section 5 of ISO/IEC 24723 */
 	int encoding_method, read_posn, d1, d2, value, alpha_pad;
 	int group_val, i, j, mask, ai_crop, ai_crop_posn, fnc1_latch;
-	int ai90_mode, latch, remainder;
+	int ai90_mode, latch, remainder, binary_length;
 	char date_str[4];
-	char general_field[strlen(source)], general_field_type[strlen(source)];
+	char general_field[ustrlen(source)], general_field_type[ustrlen(source)];
 	int target_bitsize;
 	
 	encoding_method = 1;
@@ -703,7 +702,7 @@ int cc_binary_string(struct zint_symbol *symbol, unsigned char source[], char bi
 	ai90_mode = 0;
 	*(ecc) = 0;
 	
-	if((source[0] == '1') && ((source[1] == '0') || (source[1] == '1') || (source[1] == '7')) && (strlen(source) > 8)) {
+	if((source[0] == '1') && ((source[1] == '0') || (source[1] == '1') || (source[1] == '7')) && (ustrlen(source) > 8)) {
 		/* Source starts (10), (11) or (17) */
 		encoding_method = 2;
 	}
@@ -772,8 +771,8 @@ int cc_binary_string(struct zint_symbol *symbol, unsigned char source[], char bi
 
 	if (encoding_method == 3) {
 		/* Encodation Method field of "11" - AI 90 */
-		char ninety[strlen(source)], numeric_part[4];
-		int alpha, alphanum, numeric, test1, test2, test3, next_ai_posn, test4;
+		char ninety[ustrlen(source)], numeric_part[4];
+		int alpha, alphanum, numeric, test1, test2, test3, next_ai_posn;
 		int numeric_value, table3_letter, mask;
 		
 		/* "This encodation method may be used if an element string with an AI
@@ -785,7 +784,7 @@ int cc_binary_string(struct zint_symbol *symbol, unsigned char source[], char bi
 		do {
 			ninety[i] = source[i + 2];
 			i++;
-		} while ((source[i + 2] != '[') && ((i + 2) < strlen(source)));
+		} while ((source[i + 2] != '[') && ((i + 2) < ustrlen(source)));
 		ninety[i] = '\0';
 		
 		/* Find out if the AI 90 data is alphabetic or numeric or both */
@@ -1071,7 +1070,7 @@ int cc_binary_string(struct zint_symbol *symbol, unsigned char source[], char bi
 		j++;
 	}
 	
-	for(i = read_posn; i < strlen(source); i++) {
+	for(i = read_posn; i < ustrlen(source); i++) {
 		general_field[j] = source[i];
 		j++;
 	}
@@ -1334,34 +1333,35 @@ int cc_binary_string(struct zint_symbol *symbol, unsigned char source[], char bi
 		}
 	} while (i + latch < strlen(general_field));
 
+	binary_length = strlen(binary_string);
 	if(cc_mode == 1) {
 		/* CC-A 2D component - calculate remaining space */
 		switch(*(cc_width)) {
 			case 2:
-				if(strlen(binary_string) > 167) { return ERROR_TOO_LONG; }
-				if(strlen(binary_string) <= 167) { target_bitsize = 167; }
-				if(strlen(binary_string) <= 138) { target_bitsize = 138; }
-				if(strlen(binary_string) <= 118) { target_bitsize = 118; }
-				if(strlen(binary_string) <= 108) { target_bitsize = 108; }
-				if(strlen(binary_string) <= 88) { target_bitsize = 88; }
-				if(strlen(binary_string) <= 78) { target_bitsize = 78; }
-				if(strlen(binary_string) <= 59) { target_bitsize = 59; }
+				if(binary_length > 167) { return ERROR_TOO_LONG; }
+				if(binary_length <= 167) { target_bitsize = 167; }
+				if(binary_length <= 138) { target_bitsize = 138; }
+				if(binary_length <= 118) { target_bitsize = 118; }
+				if(binary_length <= 108) { target_bitsize = 108; }
+				if(binary_length <= 88) { target_bitsize = 88; }
+				if(binary_length <= 78) { target_bitsize = 78; }
+				if(binary_length <= 59) { target_bitsize = 59; }
 				break;
 			case 3:
-				if(strlen(binary_string) > 167) { return ERROR_TOO_LONG; }
-				if(strlen(binary_string) <= 167) { target_bitsize = 167; }
-				if(strlen(binary_string) <= 138) { target_bitsize = 138; }
-				if(strlen(binary_string) <= 118) { target_bitsize = 118; }
-				if(strlen(binary_string) <= 98) { target_bitsize = 98; }
-				if(strlen(binary_string) <= 78) { target_bitsize = 78; }
+				if(binary_length > 167) { return ERROR_TOO_LONG; }
+				if(binary_length <= 167) { target_bitsize = 167; }
+				if(binary_length <= 138) { target_bitsize = 138; }
+				if(binary_length <= 118) { target_bitsize = 118; }
+				if(binary_length <= 98) { target_bitsize = 98; }
+				if(binary_length <= 78) { target_bitsize = 78; }
 				break;
 			case 4:
-				if(strlen(binary_string) > 197) { return ERROR_TOO_LONG; }
-				if(strlen(binary_string) <= 197) { target_bitsize = 197; }
-				if(strlen(binary_string) <= 167) { target_bitsize = 167; }
-				if(strlen(binary_string) <= 138) { target_bitsize = 138; }
-				if(strlen(binary_string) <= 108) { target_bitsize = 108; }
-				if(strlen(binary_string) <= 78) { target_bitsize = 78; }
+				if(binary_length > 197) { return ERROR_TOO_LONG; }
+				if(binary_length <= 197) { target_bitsize = 197; }
+				if(binary_length <= 167) { target_bitsize = 167; }
+				if(binary_length <= 138) { target_bitsize = 138; }
+				if(binary_length <= 108) { target_bitsize = 108; }
+				if(binary_length <= 78) { target_bitsize = 78; }
 				break;
 		}
 	}
@@ -1370,41 +1370,41 @@ int cc_binary_string(struct zint_symbol *symbol, unsigned char source[], char bi
 		/* CC-B 2D component - calculated from ISO/IEC 24728 Table 1  */
 		switch(*(cc_width)) {
 			case 2:
-				if(strlen(binary_string) > 336) { return ERROR_TOO_LONG; }
-				if(strlen(binary_string) <= 336) { target_bitsize = 336; }
-				if(strlen(binary_string) <= 296) { target_bitsize = 296; }
-				if(strlen(binary_string) <= 256) { target_bitsize = 256; }
-				if(strlen(binary_string) <= 208) { target_bitsize = 208; }
-				if(strlen(binary_string) <= 160) { target_bitsize = 160; }
-				if(strlen(binary_string) <= 104) { target_bitsize = 104; }
-				if(strlen(binary_string) <= 56) { target_bitsize = 56; }
+				if(binary_length > 336) { return ERROR_TOO_LONG; }
+				if(binary_length <= 336) { target_bitsize = 336; }
+				if(binary_length <= 296) { target_bitsize = 296; }
+				if(binary_length <= 256) { target_bitsize = 256; }
+				if(binary_length <= 208) { target_bitsize = 208; }
+				if(binary_length <= 160) { target_bitsize = 160; }
+				if(binary_length <= 104) { target_bitsize = 104; }
+				if(binary_length <= 56) { target_bitsize = 56; }
 				break;
 			case 3:
-				if(strlen(binary_string) > 768) { return ERROR_TOO_LONG; }
-				if(strlen(binary_string) <= 768) { target_bitsize = 768; }
-				if(strlen(binary_string) <= 648) { target_bitsize = 648; }
-				if(strlen(binary_string) <= 536) { target_bitsize = 536; }
-				if(strlen(binary_string) <= 416) { target_bitsize = 416; }
-				if(strlen(binary_string) <= 304) { target_bitsize = 304; }
-				if(strlen(binary_string) <= 208) { target_bitsize = 208; }
-				if(strlen(binary_string) <= 152) { target_bitsize = 152; }
-				if(strlen(binary_string) <= 112) { target_bitsize = 112; }
-				if(strlen(binary_string) <= 72) { target_bitsize = 72; }
-				if(strlen(binary_string) <= 32) { target_bitsize = 32; }
+				if(binary_length > 768) { return ERROR_TOO_LONG; }
+				if(binary_length <= 768) { target_bitsize = 768; }
+				if(binary_length <= 648) { target_bitsize = 648; }
+				if(binary_length <= 536) { target_bitsize = 536; }
+				if(binary_length <= 416) { target_bitsize = 416; }
+				if(binary_length <= 304) { target_bitsize = 304; }
+				if(binary_length <= 208) { target_bitsize = 208; }
+				if(binary_length <= 152) { target_bitsize = 152; }
+				if(binary_length <= 112) { target_bitsize = 112; }
+				if(binary_length <= 72) { target_bitsize = 72; }
+				if(binary_length <= 32) { target_bitsize = 32; }
 				break;
 			case 4:
-				if(strlen(binary_string) > 1184) { return ERROR_TOO_LONG; }
-				if(strlen(binary_string) <= 1184) { target_bitsize = 1184; }
-				if(strlen(binary_string) <= 1016) { target_bitsize = 1016; }
-				if(strlen(binary_string) <= 840) { target_bitsize = 840; }
-				if(strlen(binary_string) <= 672) { target_bitsize = 672; }
-				if(strlen(binary_string) <= 496) { target_bitsize = 496; }
-				if(strlen(binary_string) <= 352) { target_bitsize = 352; }
-				if(strlen(binary_string) <= 264) { target_bitsize = 264; }
-				if(strlen(binary_string) <= 208) { target_bitsize = 208; }
-				if(strlen(binary_string) <= 152) { target_bitsize = 152; }
-				if(strlen(binary_string) <= 96) { target_bitsize = 96; }
-				if(strlen(binary_string) <= 56) { target_bitsize = 56; }
+				if(binary_length > 1184) { return ERROR_TOO_LONG; }
+				if(binary_length <= 1184) { target_bitsize = 1184; }
+				if(binary_length <= 1016) { target_bitsize = 1016; }
+				if(binary_length <= 840) { target_bitsize = 840; }
+				if(binary_length <= 672) { target_bitsize = 672; }
+				if(binary_length <= 496) { target_bitsize = 496; }
+				if(binary_length <= 352) { target_bitsize = 352; }
+				if(binary_length <= 264) { target_bitsize = 264; }
+				if(binary_length <= 208) { target_bitsize = 208; }
+				if(binary_length <= 152) { target_bitsize = 152; }
+				if(binary_length <= 96) { target_bitsize = 96; }
+				if(binary_length <= 56) { target_bitsize = 56; }
 				break;
 		}
 	}
@@ -1414,8 +1414,8 @@ int cc_binary_string(struct zint_symbol *symbol, unsigned char source[], char bi
 		int byte_length, codewords_used, ecc_level, ecc_codewords, rows;
 		int codewords_total, target_codewords, target_bytesize;
 		
-		byte_length = strlen(binary_string) / 8;
-		if(strlen(binary_string) % 8 != 0) { byte_length++; }
+		byte_length = binary_length / 8;
+		if(binary_length % 8 != 0) { byte_length++; }
 		
 		codewords_used = (byte_length / 6) * 5;
 		codewords_used += byte_length % 6;
@@ -1461,7 +1461,7 @@ int cc_binary_string(struct zint_symbol *symbol, unsigned char source[], char bi
 		target_bitsize = 8 * target_bytesize;
 	}
 	
-	remainder = strlen(binary_string) - target_bitsize;
+	remainder = binary_length - target_bitsize;
 	
 	if(latch == 1) {
 		i = 0;
@@ -1507,34 +1507,35 @@ int cc_binary_string(struct zint_symbol *symbol, unsigned char source[], char bi
 	/* all the code below is repeated from above - it needs to be calculated again because the
 	   size of the symbol may have changed when adding data in the above sequence */
 	
+	binary_length = strlen(binary_string);
 	if(cc_mode == 1) {
 		/* CC-A 2D component - calculate padding required */
 		switch(*(cc_width)) {
 			case 2:
-				if(strlen(binary_string) > 167) { return ERROR_TOO_LONG; }
-				if(strlen(binary_string) <= 167) { target_bitsize = 167; }
-				if(strlen(binary_string) <= 138) { target_bitsize = 138; }
-				if(strlen(binary_string) <= 118) { target_bitsize = 118; }
-				if(strlen(binary_string) <= 108) { target_bitsize = 108; }
-				if(strlen(binary_string) <= 88) { target_bitsize = 88; }
-				if(strlen(binary_string) <= 78) { target_bitsize = 78; }
-				if(strlen(binary_string) <= 59) { target_bitsize = 59; }
+				if(binary_length > 167) { return ERROR_TOO_LONG; }
+				if(binary_length <= 167) { target_bitsize = 167; }
+				if(binary_length <= 138) { target_bitsize = 138; }
+				if(binary_length <= 118) { target_bitsize = 118; }
+				if(binary_length <= 108) { target_bitsize = 108; }
+				if(binary_length <= 88) { target_bitsize = 88; }
+				if(binary_length <= 78) { target_bitsize = 78; }
+				if(binary_length <= 59) { target_bitsize = 59; }
 				break;
 			case 3:
-				if(strlen(binary_string) > 167) { return ERROR_TOO_LONG; }
-				if(strlen(binary_string) <= 167) { target_bitsize = 167; }
-				if(strlen(binary_string) <= 138) { target_bitsize = 138; }
-				if(strlen(binary_string) <= 118) { target_bitsize = 118; }
-				if(strlen(binary_string) <= 98) { target_bitsize = 98; }
-				if(strlen(binary_string) <= 78) { target_bitsize = 78; }
+				if(binary_length > 167) { return ERROR_TOO_LONG; }
+				if(binary_length <= 167) { target_bitsize = 167; }
+				if(binary_length <= 138) { target_bitsize = 138; }
+				if(binary_length <= 118) { target_bitsize = 118; }
+				if(binary_length <= 98) { target_bitsize = 98; }
+				if(binary_length <= 78) { target_bitsize = 78; }
 				break;
 			case 4:
-				if(strlen(binary_string) > 197) { return ERROR_TOO_LONG; }
-				if(strlen(binary_string) <= 197) { target_bitsize = 197; }
-				if(strlen(binary_string) <= 167) { target_bitsize = 167; }
-				if(strlen(binary_string) <= 138) { target_bitsize = 138; }
-				if(strlen(binary_string) <= 108) { target_bitsize = 108; }
-				if(strlen(binary_string) <= 78) { target_bitsize = 78; }
+				if(binary_length > 197) { return ERROR_TOO_LONG; }
+				if(binary_length <= 197) { target_bitsize = 197; }
+				if(binary_length <= 167) { target_bitsize = 167; }
+				if(binary_length <= 138) { target_bitsize = 138; }
+				if(binary_length <= 108) { target_bitsize = 108; }
+				if(binary_length <= 78) { target_bitsize = 78; }
 				break;
 		}
 	}
@@ -1543,41 +1544,41 @@ int cc_binary_string(struct zint_symbol *symbol, unsigned char source[], char bi
 		/* CC-B 2D component */
 		switch(*(cc_width)) {
 			case 2:
-				if(strlen(binary_string) > 336) { return ERROR_TOO_LONG; }
-				if(strlen(binary_string) <= 336) { target_bitsize = 336; }
-				if(strlen(binary_string) <= 296) { target_bitsize = 296; }
-				if(strlen(binary_string) <= 256) { target_bitsize = 256; }
-				if(strlen(binary_string) <= 208) { target_bitsize = 208; }
-				if(strlen(binary_string) <= 160) { target_bitsize = 160; }
-				if(strlen(binary_string) <= 104) { target_bitsize = 104; }
-				if(strlen(binary_string) <= 56) { target_bitsize = 56; }
+				if(binary_length > 336) { return ERROR_TOO_LONG; }
+				if(binary_length <= 336) { target_bitsize = 336; }
+				if(binary_length <= 296) { target_bitsize = 296; }
+				if(binary_length <= 256) { target_bitsize = 256; }
+				if(binary_length <= 208) { target_bitsize = 208; }
+				if(binary_length <= 160) { target_bitsize = 160; }
+				if(binary_length <= 104) { target_bitsize = 104; }
+				if(binary_length <= 56) { target_bitsize = 56; }
 				break;
 			case 3:
-				if(strlen(binary_string) > 768) { return ERROR_TOO_LONG; }
-				if(strlen(binary_string) <= 768) { target_bitsize = 768; }
-				if(strlen(binary_string) <= 648) { target_bitsize = 648; }
-				if(strlen(binary_string) <= 536) { target_bitsize = 536; }
-				if(strlen(binary_string) <= 416) { target_bitsize = 416; }
-				if(strlen(binary_string) <= 304) { target_bitsize = 304; }
-				if(strlen(binary_string) <= 208) { target_bitsize = 208; }
-				if(strlen(binary_string) <= 152) { target_bitsize = 152; }
-				if(strlen(binary_string) <= 112) { target_bitsize = 112; }
-				if(strlen(binary_string) <= 72) { target_bitsize = 72; }
-				if(strlen(binary_string) <= 32) { target_bitsize = 32; }
+				if(binary_length > 768) { return ERROR_TOO_LONG; }
+				if(binary_length <= 768) { target_bitsize = 768; }
+				if(binary_length <= 648) { target_bitsize = 648; }
+				if(binary_length <= 536) { target_bitsize = 536; }
+				if(binary_length <= 416) { target_bitsize = 416; }
+				if(binary_length <= 304) { target_bitsize = 304; }
+				if(binary_length <= 208) { target_bitsize = 208; }
+				if(binary_length <= 152) { target_bitsize = 152; }
+				if(binary_length <= 112) { target_bitsize = 112; }
+				if(binary_length <= 72) { target_bitsize = 72; }
+				if(binary_length <= 32) { target_bitsize = 32; }
 				break;
 			case 4:
-				if(strlen(binary_string) > 1184) { return ERROR_TOO_LONG; }
-				if(strlen(binary_string) <= 1184) { target_bitsize = 1184; }
-				if(strlen(binary_string) <= 1016) { target_bitsize = 1016; }
-				if(strlen(binary_string) <= 840) { target_bitsize = 840; }
-				if(strlen(binary_string) <= 672) { target_bitsize = 672; }
-				if(strlen(binary_string) <= 496) { target_bitsize = 496; }
-				if(strlen(binary_string) <= 352) { target_bitsize = 352; }
-				if(strlen(binary_string) <= 264) { target_bitsize = 264; }
-				if(strlen(binary_string) <= 208) { target_bitsize = 208; }
-				if(strlen(binary_string) <= 152) { target_bitsize = 152; }
-				if(strlen(binary_string) <= 96) { target_bitsize = 96; }
-				if(strlen(binary_string) <= 56) { target_bitsize = 56; }
+				if(binary_length > 1184) { return ERROR_TOO_LONG; }
+				if(binary_length <= 1184) { target_bitsize = 1184; }
+				if(binary_length <= 1016) { target_bitsize = 1016; }
+				if(binary_length <= 840) { target_bitsize = 840; }
+				if(binary_length <= 672) { target_bitsize = 672; }
+				if(binary_length <= 496) { target_bitsize = 496; }
+				if(binary_length <= 352) { target_bitsize = 352; }
+				if(binary_length <= 264) { target_bitsize = 264; }
+				if(binary_length <= 208) { target_bitsize = 208; }
+				if(binary_length <= 152) { target_bitsize = 152; }
+				if(binary_length <= 96) { target_bitsize = 96; }
+				if(binary_length <= 56) { target_bitsize = 56; }
 				break;
 		}
 	}
@@ -1587,8 +1588,8 @@ int cc_binary_string(struct zint_symbol *symbol, unsigned char source[], char bi
 		int byte_length, codewords_used, ecc_level, ecc_codewords, rows;
 		int codewords_total, target_codewords, target_bytesize;
 		
-		byte_length = strlen(binary_string) / 8;
-		if(strlen(binary_string) % 8 != 0) { byte_length++; }
+		byte_length = binary_length / 8;
+		if(binary_length % 8 != 0) { byte_length++; }
 		
 		codewords_used = (byte_length / 6) * 5;
 		codewords_used += byte_length % 6;
@@ -1634,7 +1635,7 @@ int cc_binary_string(struct zint_symbol *symbol, unsigned char source[], char bi
 		target_bitsize = 8 * target_bytesize;
 	}
 	
-	if(strlen(binary_string) < target_bitsize) {
+	if(binary_length < target_bitsize) {
 		/* Now add padding to binary string */
 		if (alpha_pad == 1) {
 			concat(binary_string, "11111");
@@ -1662,7 +1663,7 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 {
 	int errno, cc_mode, cc_width, ecc_level;
 	int j, last_ai, ai_latch, i, k, separator_row;
-	char reduced[3000], binary_string[10 * strlen(source)], ai_string[4];
+	char reduced[3000], binary_string[10 * ustrlen(source)], ai_string[4];
 	struct zint_symbol *linear;
 	int top_shift, bottom_shift;
 	
@@ -1674,7 +1675,7 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 		return ERROR_INVALID_OPTION;
 	}
 	
-	if(strlen(source) > 2990) {
+	if(ustrlen(source) > 2990) {
 		strcpy(symbol->errtxt, "error: 2D component input data too long");
 		return ERROR_TOO_LONG;
 	}
@@ -1684,7 +1685,7 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 		return ERROR_INVALID_DATA;
 	}
 	
-	for(i = 0; i < strlen(source) - 1; i++) {
+	for(i = 0; i < ustrlen(source) - 1; i++) {
 		if((source[i] == '[') && (source[i + 1] == '[')) {
 			/* Can't have nested brackets - Quit */
 			strcpy(symbol->errtxt, "Nested AI detected (two or more open brackets)");
@@ -1692,7 +1693,7 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 		}
 	}
 	
-	for(i = 0; i < strlen(source) - 1; i++) {
+	for(i = 0; i < ustrlen(source) - 1; i++) {
 		if((source[i] == ']') && (source[i + 1] == ']')) {
 			/* Can't have nested brackets - Quit */
 			strcpy(symbol->errtxt, "Nested AI detected (two or more close brackets)");
@@ -1706,7 +1707,7 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 	j = 0;
 	last_ai = 0;
 	ai_latch = 1;
-	for(i = 0; i < strlen(source); i++) {
+	for(i = 0; i < ustrlen(source); i++) {
 		if((source[i] != '[') && (source[i] != ']')) {
 			reduced[j] = source[i];
 			j++;

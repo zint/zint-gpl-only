@@ -56,7 +56,7 @@ int postnet(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	
 	error_number = 0;
 
-	if(strlen(source) > 90) {
+	if(ustrlen(source) > 90) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -70,7 +70,7 @@ int postnet(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	/* start character */
 	concat (dest, "L");
 
-	for (i=0; i < strlen(source); i++)
+	for (i=0; i < ustrlen(source); i++)
 	{
 		lookup(NESET, PNTable, source[i], dest);
 		sum += ctoi(source[i]);
@@ -82,7 +82,7 @@ int postnet(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	/* stop character */
 	concat (dest, "L");
 	
-	h = strlen(source);
+	h = ustrlen(source);
 	source[h] = itoc(check_digit);
 	source[h + 1] = '\0';
 	strcpy(symbol->text, "");
@@ -132,7 +132,7 @@ int planet(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	
 	error_number = 0;
 	
-	if(strlen(source) > 90) {
+	if(ustrlen(source) > 90) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -146,7 +146,7 @@ int planet(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	/* start character */
 	concat (dest, "L");
 
-	for (i=0; i < strlen(source); i++)
+	for (i=0; i < ustrlen(source); i++)
 	{
 		lookup(NESET, PLTable, source[i], dest);
 		sum += ctoi(source[i]);
@@ -158,7 +158,7 @@ int planet(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	/* stop character */
 	concat (dest, "L");
 	
-	h = strlen(source);
+	h = ustrlen(source);
 	source[h] = itoc(check_digit);
 	source[h + 1] = '\0';
 	strcpy(symbol->text, "");
@@ -211,7 +211,7 @@ int fim(struct zint_symbol *symbol, unsigned char source[])
 	strcpy(dest, "");
 	
 	to_upper(source);
-	if(strlen(source) > 1) {
+	if(ustrlen(source) > 1) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -274,7 +274,7 @@ int royal_plot(struct zint_symbol *symbol, unsigned char source[])
 	error_number = 0;
 	
 	to_upper(source);
-	if(strlen(source) > 120) {
+	if(ustrlen(source) > 120) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -306,7 +306,7 @@ int royal_plot(struct zint_symbol *symbol, unsigned char source[])
 	symbol->rows = 3;
 	symbol->width = writer - 1;
 	
-	h = strlen(source);
+	h = ustrlen(source);
 	source[h] = check;
 	source[h + 1] = '\0';
 	strcpy(symbol->text, "");
@@ -328,7 +328,7 @@ int kix_code(struct zint_symbol *symbol, unsigned char source[])
 	error_number = 0;
 	
 	to_upper(source);
-	if(strlen(source) != 11) {
+	if(ustrlen(source) != 11) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -337,7 +337,7 @@ int kix_code(struct zint_symbol *symbol, unsigned char source[])
 		strcpy(symbol->errtxt, "error: invalid characters in data");
 		return error_number;
 	}
-	for (i = 0; i < strlen(source); i++) {
+	for (i = 0; i < ustrlen(source); i++) {
 		lookup(KRSET, RoyalTable, source[i], height_pattern);
 	}
 	
@@ -377,7 +377,7 @@ int daft_code(struct zint_symbol *symbol, unsigned char source[])
 	int writer, i;
 	strcpy(height_pattern, "");
 	
-	input_length = strlen(source);
+	input_length = ustrlen(source);
 	strcpy(local_source, source);
 	if(input_length > 50) {
 		strcpy(symbol->errtxt, "Input too long");
@@ -427,7 +427,7 @@ int flattermarken(struct zint_symbol *symbol, unsigned char source[])
 	error_number = 0;
 	strcpy(dest, "");
 	
-	if(strlen(source) > 90) {
+	if(ustrlen(source) > 90) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -437,7 +437,7 @@ int flattermarken(struct zint_symbol *symbol, unsigned char source[])
 		return error_number;
 	}
 	
-	for(loop = 0; loop < strlen(source); loop++) {
+	for(loop = 0; loop < ustrlen(source); loop++) {
 		lookup(NESET, FlatTable, source[loop], dest);
 	}
 	

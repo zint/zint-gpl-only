@@ -94,7 +94,6 @@ void getRSSwidths(int val, int n, int elements, int maxWidth, int noNarrow)
 {
 	int bar;
 	int elmWidth;
-	int i;
 	int mxwElement;
 	int subVal, lessVal;
 	int narrowMask = 0;
@@ -141,7 +140,7 @@ void getRSSwidths(int val, int n, int elements, int maxWidth, int noNarrow)
 
 int rss14(struct zint_symbol *symbol, unsigned char source[])
 { /* GS1 DataBar-14 */
-	int error_number = 0, i, j, read, mask;
+	int error_number = 0, i, j, mask;
 	short int accum[112], left_reg[112], right_reg[112], x_reg[112], y_reg[112];
 	int data_character[4], data_group[4], v_odd[4], v_even[4];
 	int data_widths[8][4], checksum, c_left, c_right, total_widths[46], writer;
@@ -150,7 +149,7 @@ int rss14(struct zint_symbol *symbol, unsigned char source[])
 	
 	separator_row = 0;
 
-	if(strlen(source) > 13) {
+	if(ustrlen(source) > 13) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -427,8 +426,8 @@ int rss14(struct zint_symbol *symbol, unsigned char source[])
 		for(i = 0; i < 14; i++) {
 			hrt[i] = '0';
 		}
-		for(i = 0; i < strlen(source); i++) {
-			hrt[12 - i] = source[strlen(source) - i - 1];
+		for(i = 0; i < ustrlen(source); i++) {
+			hrt[12 - i] = source[ustrlen(source) - i - 1];
 		}
 		hrt[14] = '\0';
 	
@@ -647,7 +646,7 @@ int rsslimited(struct zint_symbol *symbol, unsigned char source[])
 
 	separator_row = 0;
 	
-	if(strlen(source) > 13) {
+	if(ustrlen(source) > 13) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -876,8 +875,8 @@ int rsslimited(struct zint_symbol *symbol, unsigned char source[])
 	for(i = 0; i < 14; i++) {
 		hrt[i] = '0';
 	}
-	for(i = 0; i < strlen(source); i++) {
-		hrt[12 - i] = source[strlen(source) - i - 1];
+	for(i = 0; i < ustrlen(source); i++) {
+		hrt[12 - i] = source[ustrlen(source) - i - 1];
 	}
 	
 	for (i = 0; i < 13; i++)
@@ -1020,7 +1019,7 @@ int general_rules(char field[], char type[])
 int rss_binary_string(struct zint_symbol *symbol, unsigned char source[], char binary_string[])
 { /* Handles all data encodation from section 7.2.5 of ISO/IEC 24724 */
 	int encoding_method, i, mask, j, read_posn, latch;
-	char general_field[strlen(source)], general_field_type[strlen(source)];
+	char general_field[ustrlen(source)], general_field_type[ustrlen(source)];
 	int remainder, d1, d2, value;
 	char padstring[14];
 	
@@ -1028,7 +1027,7 @@ int rss_binary_string(struct zint_symbol *symbol, unsigned char source[], char b
 	/* Decide whether a compressed data field is required and if so what
 	method to use - method 2 = no compressed data field */
 	
-	if((strlen(source) >= 16) && ((source[0] == '0') && (source[1] == '1'))) {
+	if((ustrlen(source) >= 16) && ((source[0] == '0') && (source[1] == '1'))) {
 		/* (01) and other AIs */
 		encoding_method = 1;
 	} else {
@@ -1036,10 +1035,10 @@ int rss_binary_string(struct zint_symbol *symbol, unsigned char source[], char b
 		encoding_method = 2;
 	}
 	
-	if(((strlen(source) >= 20) && (encoding_method == 1)) && ((source[2] == '9') && (source[16] == '3'))) {
+	if(((ustrlen(source) >= 20) && (encoding_method == 1)) && ((source[2] == '9') && (source[16] == '3'))) {
 		/* Possibly encoding method > 2 */
 		
-		if((strlen(source) >= 26) && (source[17] == '1')) {
+		if((ustrlen(source) >= 26) && (source[17] == '1')) {
 			/* Methods 3, 7, 9, 11 and 13 */
 			
 			if(source[18] == '0') {
@@ -1057,14 +1056,14 @@ int rss_binary_string(struct zint_symbol *symbol, unsigned char source[], char b
 
 					encoding_method = 7;
 					
-					if((source[19] == '3') && (strlen(source) == 26)) {
+					if((source[19] == '3') && (ustrlen(source) == 26)) {
 						/* (01) and (3103) */
 						weight = atof(weight_str) / 1000.0;
 						
 						if(weight <= 32.767) { encoding_method = 3; }
 					}
 					
-					if(strlen(source) == 34){
+					if(ustrlen(source) == 34){
 						if((source[26] == '1') && (source[27] == '1')) {
 							/* (01), (310x) and (11) - metric weight and production date */
 							encoding_method = 7;
@@ -1089,7 +1088,7 @@ int rss_binary_string(struct zint_symbol *symbol, unsigned char source[], char b
 			}
 		}
 		
-		if((strlen(source) >= 26) && (source[17] == '2')) {
+		if((ustrlen(source) >= 26) && (source[17] == '2')) {
 			/* Methods 4, 8, 10, 12 and 14 */
 			
 			if(source[18] == '0') {
@@ -1106,7 +1105,7 @@ int rss_binary_string(struct zint_symbol *symbol, unsigned char source[], char b
 
 					encoding_method = 8;
 					
-					if(((source[19] == '2') || (source[19] == '3')) && (strlen(source) == 26)) {
+					if(((source[19] == '2') || (source[19] == '3')) && (ustrlen(source) == 26)) {
 						/* (01) and (3202)/(3203) */
 						
 						if(source[19] == '3') {
@@ -1123,7 +1122,7 @@ int rss_binary_string(struct zint_symbol *symbol, unsigned char source[], char b
 						
 					}
 					
-					if(strlen(source) == 34){
+					if(ustrlen(source) == 34){
 						if((source[26] == '1') && (source[27] == '1')) {
 							/* (01), (320x) and (11) - English weight and production date */
 							encoding_method = 8;
@@ -1165,18 +1164,18 @@ int rss_binary_string(struct zint_symbol *symbol, unsigned char source[], char b
 	switch(encoding_method) { /* Encoding method - Table 10 */
 		case 1: concat(binary_string, "1XX"); read_posn = 16; break;
 		case 2: concat(binary_string, "00XX"); read_posn = 0; break;
-		case 3: concat(binary_string, "0100"); read_posn = strlen(source); break;
-		case 4: concat(binary_string, "0101"); read_posn = strlen(source); break;
+		case 3: concat(binary_string, "0100"); read_posn = ustrlen(source); break;
+		case 4: concat(binary_string, "0101"); read_posn = ustrlen(source); break;
 		case 5: concat(binary_string, "01100XX"); read_posn = 20; break;
 		case 6: concat(binary_string, "01101XX"); read_posn = 23; break;
-		case 7: concat(binary_string, "0111000"); read_posn = strlen(source); break;
-		case 8: concat(binary_string, "0111001"); read_posn = strlen(source); break;
-		case 9: concat(binary_string, "0111010"); read_posn = strlen(source); break;
-		case 10: concat(binary_string, "0111011"); read_posn = strlen(source); break;
-		case 11: concat(binary_string, "0111100"); read_posn = strlen(source); break;
-		case 12: concat(binary_string, "0111101"); read_posn = strlen(source); break;
-		case 13: concat(binary_string, "0111110"); read_posn = strlen(source); break;
-		case 14: concat(binary_string, "0111111"); read_posn = strlen(source); break;
+		case 7: concat(binary_string, "0111000"); read_posn = ustrlen(source); break;
+		case 8: concat(binary_string, "0111001"); read_posn = ustrlen(source); break;
+		case 9: concat(binary_string, "0111010"); read_posn = ustrlen(source); break;
+		case 10: concat(binary_string, "0111011"); read_posn = ustrlen(source); break;
+		case 11: concat(binary_string, "0111100"); read_posn = ustrlen(source); break;
+		case 12: concat(binary_string, "0111101"); read_posn = ustrlen(source); break;
+		case 13: concat(binary_string, "0111110"); read_posn = ustrlen(source); break;
+		case 14: concat(binary_string, "0111111"); read_posn = ustrlen(source); break;
 	}
 	
 	/* Variable length symbol bit field is just given a place holder (XX)
@@ -1373,7 +1372,7 @@ int rss_binary_string(struct zint_symbol *symbol, unsigned char source[], char b
 			mask = mask >> 1;
 		}
 		
-		if(strlen(source) == 34) {
+		if(ustrlen(source) == 34) {
 			/* Date information is included */
 			date_str[0] = source[28];
 			date_str[1] = source[29];
@@ -1490,7 +1489,7 @@ int rss_binary_string(struct zint_symbol *symbol, unsigned char source[], char b
 	rest of the data (if any) goes into a general-purpose data compaction field */
 	
 	j = 0;
-	for(i = read_posn; i < strlen(source); i++) {
+	for(i = read_posn; i < ustrlen(source); i++) {
 		general_field[j] = source[i];
 		j++;
 	}
@@ -1828,7 +1827,7 @@ int rss_binary_string(struct zint_symbol *symbol, unsigned char source[], char b
 int rssexpanded(struct zint_symbol *symbol, unsigned char source[])
 { /* GS1 DataBar Expanded */
 	int i, j, k, l, data_chars, vs[21], group[21], v_odd[21], v_even[21];
-	char binary_string[7 * strlen(source)], substring[21][14], latch;
+	char binary_string[7 * ustrlen(source)], substring[21][14], latch;
 	int char_widths[21][8], checksum, check_widths[8], c_group;
 	int check_char, c_odd, c_even, elements[235], pattern_width, reader, writer;
 	int row, elements_in_sub, special_case_row, left_to_right;
@@ -1843,7 +1842,7 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[])
 		return ERROR_INVALID_DATA;
 	}
 	
-	for(i = 0; i < strlen(source) - 1; i++) {
+	for(i = 0; i < ustrlen(source) - 1; i++) {
 		if((source[i] == '[') && (source[i + 1] == '[')) {
 			/* Can't have nested brackets - Quit */
 			strcpy(symbol->errtxt, "Nested AI detected (two or more open brackets)");
@@ -1851,7 +1850,7 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[])
 		}
 	}
 	
-	for(i = 0; i < strlen(source) - 1; i++) {
+	for(i = 0; i < ustrlen(source) - 1; i++) {
 		if((source[i] == ']') && (source[i + 1] == ']')) {
 			/* Can't have nested brackets - Quit */
 			strcpy(symbol->errtxt, "Nested AI detected (two or more close brackets)");
@@ -1878,7 +1877,7 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[])
 	j = 0;
 	last_ai = 0;
 	ai_latch = 1;
-	for(i = 0; i < strlen(source); i++) {
+	for(i = 0; i < ustrlen(source); i++) {
 		if((source[i] != '[') && (source[i] != ']')) {
 			reduced[j] = source[i];
 			j++;
@@ -1963,6 +1962,9 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[])
 		char_widths[i][7] = widths[3];
 	}
 	
+	/* 7.2.6 Check character */
+	/* The checksum value is equal to the mod 211 residue of the weighted sum of the widths of the
+	   elements in the data characters. */
 	checksum = 0;
 	for(i = 0; i < data_chars; i++) {
 		row = weight_rows[(((data_chars - 3) / 2) * 21) + i];
@@ -1972,7 +1974,6 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[])
 		}
 	}
 	
-	checksum;
 	check_char = (211 * ((data_chars + 1) - 4)) + (checksum % 211);
 	
 	if(check_char <= 347) { c_group = 1; }
@@ -2072,7 +2073,7 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[])
 		}
 		
 		/* Add human readable text */
-		for(i = 0; i <= strlen(source); i++) {
+		for(i = 0; i <= ustrlen(source); i++) {
 			if((source[i] != '[') && (source[i] != ']')) {
 				symbol->text[i] = source[i];
 			} else {

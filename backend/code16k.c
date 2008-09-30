@@ -121,7 +121,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	int input_length;
 
 	errornum = 0;
-	input_length = strlen(source);
+	input_length = ustrlen(source);
 	
 	if(input_length > 157) {
 		strcpy(symbol->errtxt, "error: input too long");
@@ -391,7 +391,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 				read += 2;
 				break;
 		}
-	} while (read < strlen(source));
+	} while (read < ustrlen(source));
 
 	
 	pads_needed = 5 - ((bar_characters + 2) % 5);

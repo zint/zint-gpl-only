@@ -142,6 +142,7 @@ extern int ZBarcode_Delete(struct zint_symbol *symbol);
 extern int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input);
 extern int ZBarcode_Print(struct zint_symbol *symbol);
 extern int ZBarcode_Encode_and_Print(struct zint_symbol *symbol, unsigned char *input);
+extern int ZBarcode_Encode_and_Print_Rotated(struct zint_symbol *symbol, unsigned char *input, int rotate_angle);
 
 #ifdef __cplusplus
 }

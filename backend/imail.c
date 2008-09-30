@@ -22,6 +22,18 @@
 /*  The function "USPS_MSB_Math_CRC11GenerateFrameCheckSequence"
     is Copyright (C) 2006 United States Postal Service */
 
+static short int BCD[40] = {
+	0, 0, 0, 0,
+ 1, 0, 0, 0,
+ 0, 1, 0, 0,
+ 1, 1, 0, 0,
+ 0, 0, 1, 0,
+ 1, 0, 1, 0,
+ 0, 1, 1, 0,
+ 1, 1, 1, 0,
+ 0, 0, 0, 1,
+ 1, 0, 0, 1 };
+
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -300,7 +312,7 @@ int imail(struct zint_symbol *symbol, unsigned char source[])
 	
 	errno = 0;
 
-	if(strlen(source) > 32) {
+	if(ustrlen(source) > 32) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -325,7 +337,7 @@ int imail(struct zint_symbol *symbol, unsigned char source[])
 	
 	read = 0;
 	j = 0;
-	for(i = 0; i < strlen(source); i++) {
+	for(i = 0; i < ustrlen(source); i++) {
 		if(source[i] == '-') {
 			tracker[read] = '\0';
 			j = 1;
