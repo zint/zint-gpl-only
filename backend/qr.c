@@ -27,7 +27,6 @@
 #include <qrencode.h>
 
 static int kanji = 0;
-static QRecLevel level = QR_ECLEVEL_L;
 
 QRcode *encode(int security, int size, const unsigned char *intext)
 {

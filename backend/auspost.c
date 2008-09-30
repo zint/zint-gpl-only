@@ -118,7 +118,7 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[])
 	/* Do all of the length checking first to avoid stack smashing */
 	if(symbol->symbology == BARCODE_AUSPOST) {
 		/* Format control code (FCC) */
-		switch(strlen(source))
+		switch(ustrlen(source))
 		{
 			case 8: strcpy(fcc, "11"); break;
 			case 13: strcpy(fcc, "59"); break;
@@ -134,7 +134,7 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[])
 			return errno;
 		}
 	} else {
-		if(strlen(source) != 8) {
+		if(ustrlen(source) != 8) {
 			strcpy(symbol->errtxt, "error: auspost input is wrong length");
 			return ERROR_TOO_LONG;
 		}
@@ -181,15 +181,15 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[])
 	}
 
 	/* Customer Information */
-	if(strlen(source) > 8)
+	if(ustrlen(source) > 8)
 	{
-		if((strlen(source) == 13) || (strlen(source) == 18)) {
-			for(reader = 8; reader < strlen(source); reader++) {
+		if((ustrlen(source) == 13) || (ustrlen(source) == 18)) {
+			for(reader = 8; reader < ustrlen(source); reader++) {
 				lookup(GDSET, AusCTable, source[reader], data_pattern);
 			}
 		}
-		if((strlen(source) == 16) || (strlen(source) == 23)) {
-			for(reader = 8; reader < strlen(source); reader++) {
+		if((ustrlen(source) == 16) || (ustrlen(source) == 23)) {
+			for(reader = 8; reader < ustrlen(source); reader++) {
 				lookup(NESET, AusNTable, source[reader], data_pattern);
 			}
 		}

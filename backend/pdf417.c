@@ -292,8 +292,7 @@ void textprocess(int *chainemc, int *mclength, char chaine[], int start, int len
 void byteprocess(int *chainemc, int *mclength, unsigned char chaine[], int start, int length, int block)
 {
 	
-	int i, j, k, l, loop, longueur;
-	double multiple, total;
+	int i, j, k, l, longueur;
 	short int accum[112], x_reg[112], y_reg[112];
 	
 	if(length == 1) {
@@ -476,13 +475,13 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 	/* 463 */
 	do {
 		liste[1][indexliste] = mode;
-		while ((liste[1][indexliste] == mode) && (indexchaine < strlen(chaine))) {
+		while ((liste[1][indexliste] == mode) && (indexchaine < ustrlen(chaine))) {
 			liste[0][indexliste]++;
 			indexchaine++;
 			mode = quelmode(chaine[indexchaine]);
 		}
 		indexliste++;
-	} while (indexchaine < strlen(chaine));
+	} while (indexchaine < ustrlen(chaine));
 	
 	/* 474 */
 	pdfsmooth(&indexliste);
@@ -761,13 +760,13 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 	/* 463 */
 	do {
 		liste[1][indexliste] = mode;
-		while ((liste[1][indexliste] == mode) && (indexchaine < strlen(chaine))) {
+		while ((liste[1][indexliste] == mode) && (indexchaine < ustrlen(chaine))) {
 			liste[0][indexliste]++;
 			indexchaine++;
 			mode = quelmode(chaine[indexchaine]);
 		}
 		indexliste++;
-	} while (indexchaine < strlen(chaine));
+	} while (indexchaine < ustrlen(chaine));
 	
 	/* 474 */
 	pdfsmooth(&indexliste);

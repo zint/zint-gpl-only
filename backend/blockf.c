@@ -66,7 +66,8 @@ int a3_convert(unsigned char source) {
 	if(source < 32) { return source + 64; }
 	if((source >= 32) && (source <= 127)) { return source - 32; }
 	if((source >= 128) && (source <= 159)) { return (source - 128) + 64; }
-	if(source >= 160) { return (source - 128) - 32; }
+	/* if source >= 160 */
+	return (source - 128) - 32;
 }
 
 int character_subset_select(unsigned char source[], int input_position) {
@@ -92,14 +93,14 @@ int character_subset_select(unsigned char source[], int input_position) {
 
 int data_encode_blockf(unsigned char source[], int subset_selector[], int blockmatrix[][62], int *columns_needed, int *rows_needed, int *final_mode)
 {
-	int i, j, input_position, input_length, current_mode, current_row, error_number;
+	int i, input_position, input_length, current_mode, current_row, error_number;
 	int column_position, c, done, exit_status;
 	
 	error_number = 0;
 	exit_status = 0;
 	current_row = 0;
 	current_mode = MODEA;
-	input_length = strlen(source);
+	input_length = ustrlen(source);
 	column_position = 0;
 	input_position = 0;
 	done = 0;
@@ -146,7 +147,7 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 							column_position++;
 							c--;
 						}
-						done == 1;
+						done = 1;
 					}
 					
 					if((source[input_position] >= 128) && (done == 0)) {
@@ -186,7 +187,7 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 							column_position++;
 							c--;
 						}
-						done == 1;
+						done = 1;
 					}
 					
 					if((source[input_position] >= 160) && (done == 0)) {
@@ -532,7 +533,7 @@ int codablock(struct zint_symbol *symbol, unsigned char source[])
 	int k1_check, k2_check;
 	
 	error_number = 0;
-	input_length = strlen(source);
+	input_length = ustrlen(source);
 	final_mode = MODEA;
 	
 	if(input_length > 5450) {

@@ -19,18 +19,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-static short int BCD[40] = {
-	0, 0, 0, 0,
-	1, 0, 0, 0,
-	0, 1, 0, 0,
-	1, 1, 0, 0,
-	0, 0, 1, 0,
-	1, 0, 1, 0,
-	0, 1, 1, 0,
-	1, 1, 1, 0,
-	0, 0, 0, 1,
-	1, 0, 0, 1 };
-
 void binary_load(short int reg[], char data[]);
 void binary_add(short int accumulator[], short int input_buffer[]);
 void binary_subtract(short int accumulator[], short int input_buffer[]);

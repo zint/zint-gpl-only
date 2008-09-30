@@ -25,6 +25,7 @@
 #include "maxicode.h"
 #include "reedsol.h"
 #include <string.h>
+#include <stdlib.h>
 
 int maxi_codeword[144];
 
@@ -97,7 +98,7 @@ void maxi_do_secondary_chk_even(int ecclen )
 		maxi_codeword[ datalen + (2 *j) + 20] = results[j];
 }
 
-int maxi_bump(int set[], int character[], int bump_posn)
+void maxi_bump(int set[], int character[], int bump_posn)
 {
 	/* Moves everything up so that a shift or latch can be inserted */
 	int i;
@@ -118,7 +119,7 @@ int maxi_text_process(int mode, unsigned char source[])
 	
 	int set[144], character[144], i, j, done, count, length, current_set;
 	
-	length = strlen(source);
+	length = ustrlen(source);
 	
 	if(length > 138) {
 		return ERROR_TOO_LONG;
@@ -297,7 +298,7 @@ int maxi_text_process(int mode, unsigned char source[])
 		}
 	}
 	
-	for(i = strlen(source); i < 144; i++) {
+	for(i = ustrlen(source); i < 144; i++) {
 		/* Add the padding */
 		if(set[length - 1] == 2) {
 			set[i] = 2;

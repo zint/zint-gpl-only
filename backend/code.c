@@ -86,7 +86,7 @@ int code_11(struct zint_symbol *symbol, unsigned char source[])
 	error_number = 0;
 	strcpy(dest, "");
 
-	if(strlen(source) > 80) {
+	if(ustrlen(source) > 80) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -104,13 +104,13 @@ int code_11(struct zint_symbol *symbol, unsigned char source[])
 	concat (dest, "112211");
 
 	/* Draw main body of barcode */
-	for(i = 0; i < strlen(source); i++) {
+	for(i = 0; i < ustrlen(source); i++) {
 		lookup(NASET, C11Table, source[i], dest);
 		weight[i] = ctoi(source[i]);
 	}
 
 	/* Calculate C checksum */
-	for(h = (strlen(source) - 1); h >= 0; h--) {
+	for(h = (ustrlen(source) - 1); h >= 0; h--) {
 		c_count += (c_weight * weight[h]);
 		c_weight++;
 
@@ -122,10 +122,10 @@ int code_11(struct zint_symbol *symbol, unsigned char source[])
 
 	/* Draw C checksum */
 	lookup(NASET, C11Table, itoc(c_digit), dest);
-	weight[strlen(source)] = c_digit;
+	weight[ustrlen(source)] = c_digit;
 
 	/* Calculate K checksum */
-	for(h = strlen(source); h >= 0; h--) {
+	for(h = ustrlen(source); h >= 0; h--) {
 		k_count += (k_weight * weight[h]);
 		k_weight++;
 
@@ -141,7 +141,7 @@ int code_11(struct zint_symbol *symbol, unsigned char source[])
 	/* Stop character */
 	concat (dest, "11221");
 	
-	h = strlen(source);
+	h = ustrlen(source);
 	source[h] = itoc(c_digit);
 	source[h + 1] = itoc(k_digit);
 	source[h + 2] = '\0';
@@ -167,7 +167,7 @@ int c39(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	to_upper(source);
-	if(strlen(source) > 45) {
+	if(ustrlen(source) > 45) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -180,7 +180,7 @@ int c39(struct zint_symbol *symbol, unsigned char source[])
 	/* Start character */
 	concat(dest, "1211212111");
 
-	for(i = 0; i < strlen(source); i++) {
+	for(i = 0; i < ustrlen(source); i++) {
 		lookup(TCSET, C39Table, source[i], dest);
 		counter += posn(TCSET, source[i]);
 	}
@@ -212,7 +212,7 @@ int c39(struct zint_symbol *symbol, unsigned char source[])
 			check_digit = '_';
 		}
 		
-		h = strlen(source);
+		h = ustrlen(source);
 		source[h] = check_digit;
 		source[h + 1] = '\0';
 	}
@@ -250,7 +250,7 @@ int pharmazentral(struct zint_symbol *symbol, unsigned char source[])
 	error_number = 0;
 
 	count = 0;
-	h = strlen(source);
+	h = ustrlen(source);
 	if(h != 6) {
 		strcpy(symbol->errtxt, "error: input wrong length");
 		return ERROR_TOO_LONG;
@@ -295,7 +295,7 @@ int ec39(struct zint_symbol *symbol, unsigned char source[])
 	
 	error_number = 0;
 
-	if(strlen(source) > 45) {
+	if(ustrlen(source) > 45) {
 		/* only stops strings which are far too long - actual length of the barcode
 		depends on the type of data being encoded - if it's too long it's picked up
 		by c39() */
@@ -304,7 +304,7 @@ int ec39(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	
-	for(i = 0; i < strlen(source); i++) {
+	for(i = 0; i < ustrlen(source); i++) {
 		if(source[i] > 127) {
 			/* Cannot encode extended ASCII */
 			strcpy(symbol->errtxt, "error: invalid characters in input data");
@@ -313,7 +313,7 @@ int ec39(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	/* Creates a buffer string and places control characters into it */
-	for(i = 0; i < strlen(source); i++) {
+	for(i = 0; i < ustrlen(source); i++) {
 		ascii_value = source[i];
 		concat(buffer, EC39Ctrl[ascii_value]);
 	}
@@ -345,14 +345,14 @@ int c93(struct zint_symbol *symbol, unsigned char source[])
 	error_number = 0;
 	strcpy(dest, "");
 
-	if(strlen(source) > 45) {
+	if(ustrlen(source) > 45) {
 		/* This stops rediculously long input - the actual length of the barcode
 		depends on the type of data */
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
 	
-	for(i = 0; i < strlen(source); i++) {
+	for(i = 0; i < ustrlen(source); i++) {
 		if(source[i] > 127) {
 			/* Cannot encode extended ASCII */
 			strcpy(symbol->errtxt, "error: invalid characters in input data");
@@ -364,7 +364,7 @@ int c93(struct zint_symbol *symbol, unsigned char source[])
 	concat(dest, "111141");
 
 	/* Message Content */
-	for(i = 0; i < strlen(source); i++) {
+	for(i = 0; i < ustrlen(source); i++) {
 		ascii_value = source[i];
 		concat(buffer, C93Ctrl[ascii_value]);
 	}
@@ -429,7 +429,7 @@ int c93(struct zint_symbol *symbol, unsigned char source[])
 	/* Stop character */
 	concat(dest, "1111411");
 	
-	h = strlen(source);
+	h = ustrlen(source);
 	source[h] = set_copy[c];
 	source[h + 1] = set_copy[k];
 	source[h + 2] = '\0';

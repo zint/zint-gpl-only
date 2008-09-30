@@ -46,7 +46,7 @@ int plessey(struct zint_symbol *symbol, unsigned char source[])
 	error_number = 0;
 	strcpy(dest, "");
 	
-	if(strlen(source) > 65) {
+	if(ustrlen(source) > 65) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -55,13 +55,13 @@ int plessey(struct zint_symbol *symbol, unsigned char source[])
 		strcpy(symbol->errtxt, "error: invalid characters in data");
 		return error_number;
 	}
-	checkptr = calloc (1, strlen(source) * 4 + 8);
+	checkptr = calloc (1, ustrlen(source) * 4 + 8);
 
 	/* Start character */
 	concat(dest, "31311331");
 
 	/* Data area */
-	for(i = 0; i <= strlen(source); i++)
+	for(i = 0; i <= ustrlen(source); i++)
 	{
 		check = posn(SSET, source[i]);
 		lookup(SSET, PlessTable, source[i], dest);
@@ -74,7 +74,7 @@ int plessey(struct zint_symbol *symbol, unsigned char source[])
 	/* CRC check digit code adapted from code by Leonid A. Broukhis
 	   used in GNU Barcode */
 
-	for (i=0; i < 4*strlen(source); i++) {
+	for (i=0; i < 4*ustrlen(source); i++) {
 		int j;
 		if (checkptr[i])
 			for (j = 0; j < 9; j++)
@@ -82,7 +82,7 @@ int plessey(struct zint_symbol *symbol, unsigned char source[])
 	}
 
 	for (i = 0; i < 8; i++) {
-		switch(checkptr[strlen(source) * 4 + i])
+		switch(checkptr[ustrlen(source) * 4 + i])
 		{
 			case 0: concat(dest, "13"); break;
 			case 1: concat(dest, "31"); break;
@@ -107,7 +107,7 @@ int msi_plessey(struct zint_symbol *symbol, unsigned char source[])
 	error_number = 0;
 	strcpy(dest, "");
 
-	if(strlen(source) > 55) {
+	if(ustrlen(source) > 55) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -120,7 +120,7 @@ int msi_plessey(struct zint_symbol *symbol, unsigned char source[])
 	/* start character */
 	concat (dest, "21");
 
-	for(i = 0; i <= strlen(source); i++)
+	for(i = 0; i <= ustrlen(source); i++)
 	{
 		lookup(NESET, MSITable, source[i], dest);
 	}
@@ -145,7 +145,7 @@ int msi_plessey_mod10(struct zint_symbol *symbol, unsigned char source[])
 	error_number = 0;
 	strcpy(dest, "");
 
-	if(strlen(source) > 55) { 
+	if(ustrlen(source) > 55) { 
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -159,16 +159,16 @@ int msi_plessey_mod10(struct zint_symbol *symbol, unsigned char source[])
 	concat (dest, "21");
 
 	/* draw data section */
-	for(i = 0; i < strlen(source); i++)
+	for(i = 0; i < ustrlen(source); i++)
 	{
 		lookup(NESET, MSITable, source[i], dest);
 	}
 
 	/* caluculate check digit */
 	wright = 0;
-	if((strlen(source)%2) == 0)
+	if((ustrlen(source)%2) == 0)
 	{
-		for(i = 1; i < strlen(source); i+=2)
+		for(i = 1; i < ustrlen(source); i+=2)
 		{
 			un[wright] = source[i];
 			wright ++;
@@ -176,7 +176,7 @@ int msi_plessey_mod10(struct zint_symbol *symbol, unsigned char source[])
 	}
 	else
 	{
-		for(i = 0; i < strlen(source); i+=2)
+		for(i = 0; i < ustrlen(source); i+=2)
 		{
 			un[wright] = source[i];
 			wright ++;
@@ -196,16 +196,16 @@ int msi_plessey_mod10(struct zint_symbol *symbol, unsigned char source[])
 	}
 
 
-	if((strlen(source)%2) == 0)
+	if((ustrlen(source)%2) == 0)
 	{
-		for(i = 0; i < strlen(source); i+=2)
+		for(i = 0; i < ustrlen(source); i+=2)
 		{
 			pedwar += ctoi(source[i]);
 		}
 	}
 	else
 	{
-		for(i = 1; i < strlen(source); i+=2)
+		for(i = 1; i < ustrlen(source); i+=2)
 		{
 			pedwar += ctoi(source[i]);
 		}
@@ -223,7 +223,7 @@ int msi_plessey_mod10(struct zint_symbol *symbol, unsigned char source[])
 	/* Stop character */
 	concat (dest, "121");
 	
-	h = strlen(source);
+	h = ustrlen(source);
 	source[h] = itoc(pump);
 	source[h + 1] = '\0';
 	expand(symbol, dest);
@@ -243,7 +243,7 @@ int msi_plessey_mod1010(struct zint_symbol *symbol, unsigned char source[])
 	error_number = 0;
 	strcpy(dest, "");
 	
-	if(strlen(source) > 55) { /* No Entry Stack Smashers! */
+	if(ustrlen(source) > 55) { /* No Entry Stack Smashers! */
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -257,16 +257,16 @@ int msi_plessey_mod1010(struct zint_symbol *symbol, unsigned char source[])
 	concat (dest, "21");
 
 	/* draw data section */
-	for(i = 0; i < strlen(source); i++)
+	for(i = 0; i < ustrlen(source); i++)
 	{
 		lookup(NESET, MSITable, source[i], dest);
 	}
 
 	/* calculate first check digit */
 	wright = 0;
-	if((strlen(source)%2) == 0)
+	if((ustrlen(source)%2) == 0)
 	{
-		for(i = 1; i < strlen(source); i+=2)
+		for(i = 1; i < ustrlen(source); i+=2)
 		{
 			un[wright] = source[i];
 			wright ++;
@@ -274,7 +274,7 @@ int msi_plessey_mod1010(struct zint_symbol *symbol, unsigned char source[])
 	}
 	else
 	{
-		for(i = 0; i < strlen(source); i+=2)
+		for(i = 0; i < ustrlen(source); i+=2)
 		{
 			un[wright] = source[i];
 			wright ++;
@@ -294,16 +294,16 @@ int msi_plessey_mod1010(struct zint_symbol *symbol, unsigned char source[])
 	}
 
 
-	if((strlen(source)%2) == 0)
+	if((ustrlen(source)%2) == 0)
 	{
-		for(i = 0; i < strlen(source); i+=2)
+		for(i = 0; i < ustrlen(source); i+=2)
 		{
 			pedwar += ctoi(source[i]);
 		}
 	}
 	else
 	{
-		for(i = 1; i < strlen(source); i+=2)
+		for(i = 1; i < ustrlen(source); i+=2)
 		{
 			pedwar += ctoi(source[i]);
 		}
@@ -317,9 +317,9 @@ int msi_plessey_mod1010(struct zint_symbol *symbol, unsigned char source[])
 
 	/* calculate second check digit */
 	wright = 0;
-	if((strlen(source)%2) == 0)
+	if((ustrlen(source)%2) == 0)
 	{
-		for(i = 0; i < strlen(source); i+=2)
+		for(i = 0; i < ustrlen(source); i+=2)
 		{
 			un[wright] = source[i];
 			wright ++;
@@ -327,7 +327,7 @@ int msi_plessey_mod1010(struct zint_symbol *symbol, unsigned char source[])
 	}
 	else
 	{
-		for(i = 1; i < strlen(source); i+=2)
+		for(i = 1; i < ustrlen(source); i+=2)
 		{
 			un[wright] = source[i];
 			wright ++;
@@ -349,16 +349,16 @@ int msi_plessey_mod1010(struct zint_symbol *symbol, unsigned char source[])
 	}
 
 
-	if((strlen(source)%2) == 0)
+	if((ustrlen(source)%2) == 0)
 	{
-		for(i = 1; i < strlen(source); i+=2)
+		for(i = 1; i < ustrlen(source); i+=2)
 		{
 			pedwar += ctoi(source[i]);
 		}
 	}
 	else
 	{
-		for(i = 0; i < strlen(source); i+=2)
+		for(i = 0; i < ustrlen(source); i+=2)
 		{
 			pedwar += ctoi(source[i]);
 		}
@@ -377,7 +377,7 @@ int msi_plessey_mod1010(struct zint_symbol *symbol, unsigned char source[])
 	/* Stop character */
 	concat (dest, "121");
 	
-	h = strlen(source);
+	h = ustrlen(source);
 	source[h] = itoc(pump);
 	source[h + 1] = itoc(chwech);
 	source[h + 2] = '\0';
@@ -400,7 +400,7 @@ int msi_plessey_mod11(struct zint_symbol *symbol, unsigned char source[])
 	error_number = 0;
 	strcpy(dest, "");
 
-	if(strlen(source) > 55) {
+	if(ustrlen(source) > 55) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -414,7 +414,7 @@ int msi_plessey_mod11(struct zint_symbol *symbol, unsigned char source[])
 	concat (dest, "21");
 	
 	/* draw data section */
-	for(i = 0; i < strlen(source); i++)
+	for(i = 0; i < ustrlen(source); i++)
 	{
 		lookup(NESET, MSITable, source[i], dest);
 	}
@@ -422,7 +422,7 @@ int msi_plessey_mod11(struct zint_symbol *symbol, unsigned char source[])
 	/* calculate check digit */
 	x = 0;
 	weight = 2;
-	for(i = (strlen(source) - 1); i >= 0; i--) {
+	for(i = (ustrlen(source) - 1); i >= 0; i--) {
 		x += weight * ctoi(source[i]);
 		weight++;
 		if(weight > 7) {
@@ -438,7 +438,7 @@ int msi_plessey_mod11(struct zint_symbol *symbol, unsigned char source[])
 		lookup(NESET, MSITable, itoc(check), dest);
 	}
 	
-	h = strlen(source);
+	h = ustrlen(source);
 	if(check == 10) {
 		source[h] = '1';
 		source[h + 1] = '0';
@@ -470,7 +470,7 @@ int msi_plessey_mod1110(struct zint_symbol *symbol, unsigned char source[])
 	error_number = 0;
 	strcpy(dest, "");
 
-	if(strlen(source) > 55) {
+	if(ustrlen(source) > 55) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -484,16 +484,16 @@ int msi_plessey_mod1110(struct zint_symbol *symbol, unsigned char source[])
 	concat (dest, "21");
 	
 	/* draw data section */
-	for(i = 0; i < strlen(source); i++)
+	for(i = 0; i < ustrlen(source); i++)
 	{
 		lookup(NESET, MSITable, source[i], dest);
 	}
 
 	/* calculate first (mod 11) digit */
-	wright = strlen(source);
+	wright = ustrlen(source);
 	x = 0;
 	weight = 2;
-	for(i = (strlen(source) - 1); i >= 0; i--) {
+	for(i = (ustrlen(source) - 1); i >= 0; i--) {
 		x += weight * ctoi(source[i]);
 		weight++;
 		if(weight > 7) {
@@ -516,9 +516,9 @@ int msi_plessey_mod1110(struct zint_symbol *symbol, unsigned char source[])
 	
 	/* caluculate second (mod 10) check digit */
 	wright = 0;
-	if((strlen(source)%2) == 0)
+	if((ustrlen(source)%2) == 0)
 	{
-		for(i = 1; i < strlen(source); i+=2)
+		for(i = 1; i < ustrlen(source); i+=2)
 		{
 			un[wright] = source[i];
 			wright ++;
@@ -526,7 +526,7 @@ int msi_plessey_mod1110(struct zint_symbol *symbol, unsigned char source[])
 	}
 	else
 	{
-		for(i = 0; i < strlen(source); i+=2)
+		for(i = 0; i < ustrlen(source); i+=2)
 		{
 			un[wright] = source[i];
 			wright ++;
@@ -546,16 +546,16 @@ int msi_plessey_mod1110(struct zint_symbol *symbol, unsigned char source[])
 	}
 
 
-	if((strlen(source)%2) == 0)
+	if((ustrlen(source)%2) == 0)
 	{
-		for(i = 0; i < strlen(source); i+=2)
+		for(i = 0; i < ustrlen(source); i+=2)
 		{
 			pedwar += ctoi(source[i]);
 		}
 	}
 	else
 	{
-		for(i = 1; i < strlen(source); i+=2)
+		for(i = 1; i < ustrlen(source); i+=2)
 		{
 			pedwar += ctoi(source[i]);
 		}
@@ -573,7 +573,7 @@ int msi_plessey_mod1110(struct zint_symbol *symbol, unsigned char source[])
 	/* stop character */
 	concat (dest, "121");
 	
-	h = strlen(source);
+	h = ustrlen(source);
 	source[h] = itoc(pump);
 	source[h + 1] = '\0';
 

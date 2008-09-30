@@ -44,7 +44,7 @@ int matrix_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	error_number = 0;
 	strcpy(dest, "");
 	
-	if(strlen(source) > 80) {
+	if(ustrlen(source) > 80) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -57,7 +57,7 @@ int matrix_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	/* start character */
 	concat (dest, "411111");
 
-	for(i = 0; i <= strlen(source); i++) {
+	for(i = 0; i <= ustrlen(source); i++) {
 		lookup(NESET, C25MatrixTable, source[i], dest);
 	}
 
@@ -78,7 +78,7 @@ int industrial_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	error_number = 0;
 	strcpy(dest, "");
 	
-	if(strlen(source) > 45) {
+	if(ustrlen(source) > 45) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -91,7 +91,7 @@ int industrial_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	/* start character */
 	concat (dest, "313111");
 
-	for(i = 0; i <= strlen(source); i++) {
+	for(i = 0; i <= ustrlen(source); i++) {
 		lookup(NESET, C25IndustTable, source[i], dest);
 	}
 
@@ -111,7 +111,7 @@ int iata_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	error_number = 0;
 	strcpy(dest, "");
 	
-	if(strlen(source) > 45) {
+	if(ustrlen(source) > 45) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -124,7 +124,7 @@ int iata_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	/* start */
 	concat (dest, "1111");
 	
-	for(i = 0; i < strlen(source); i++) {
+	for(i = 0; i < ustrlen(source); i++) {
 		lookup(NESET, C25IndustTable, source[i], dest);
 	}
 	
@@ -145,7 +145,7 @@ int logic_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	error_number = 0;
 	strcpy(dest, "");
 
-	if(strlen(source) > 80) {
+	if(ustrlen(source) > 80) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -158,7 +158,7 @@ int logic_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	/* start character */
 	concat (dest, "1111");
 
-	for(i = 0; i <= strlen(source); i++) {
+	for(i = 0; i <= ustrlen(source); i++) {
 		lookup(NESET, C25MatrixTable, source[i], dest);
 	}
 
@@ -179,7 +179,7 @@ int interleaved_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	error_number = 0;
 	strcpy(dest, "");
 	
-	if(strlen(source) > 90) {
+	if(ustrlen(source) > 90) {
 		strcpy(symbol->errtxt, "error: input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -191,13 +191,13 @@ int interleaved_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	
 	/* Input must be an even number of characters for Interlaced 2 of 5 to work:
 	   if an odd number of characters has been entered then add a leading zero */
-	if ((strlen(source)%2) != 0)
+	if ((ustrlen(source)%2) != 0)
 	{
 		/* there are an odd number of input characters */
 		unsigned int length;
 		char temp[100];
 
-		length = strlen(source);
+		length = ustrlen(source);
 
 		strcpy(temp, source);
 		source[0] = '0';
@@ -211,7 +211,7 @@ int interleaved_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	/* start character */
 	concat(dest, "1111");
 
-	for(i = 0; i < strlen(source); i+=2 )
+	for(i = 0; i < ustrlen(source); i+=2 )
 	{
 		/* look up the bars and the spaces and put them in two strings */
 		strcpy(bars, "");
@@ -247,7 +247,7 @@ int itf14(struct zint_symbol *symbol, unsigned char source[])
 	error_number = 0;
 
 	count = 0;
-	h = strlen(source);
+	h = ustrlen(source);
 	
 	if(h != 13) {
 		strcpy(symbol->errtxt, "error: input wrong length");
@@ -287,7 +287,7 @@ int dpleit(struct zint_symbol *symbol, unsigned char source[])
 
 	error_number = 0;
 	count = 0;
-	h = strlen(source);
+	h = ustrlen(source);
 	if(h != 13) {
 		strcpy(symbol->errtxt, "error: input wrong length");
 		return ERROR_TOO_LONG;
@@ -322,7 +322,7 @@ int dpident(struct zint_symbol *symbol, unsigned char source[])
 	unsigned int h, count, check_digit;
 
 	count = 0;
-	h = strlen(source);
+	h = ustrlen(source);
 	if(h != 11) {
 		strcpy(symbol->errtxt, "erro: input wrong length");
 		return ERROR_TOO_LONG;

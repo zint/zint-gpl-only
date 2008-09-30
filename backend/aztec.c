@@ -48,14 +48,14 @@ void insert(char binary_string[], int posn, char newbit)
 
 int aztec_text_process(unsigned char source[], char binary_string[])
 { /* Encode input data into a binary string */
-	int map_posn, i, j, k, bytes;
-	int charmap[strlen(source)], typemap[strlen(source)], maplength;
+	int i, j, k, bytes;
+	int charmap[ustrlen(source)], typemap[ustrlen(source)], maplength;
 	int curtable, newtable, lasttable, chartype;
-	int blockmap[2][strlen(source)], blocks;
+	int blockmap[2][ustrlen(source)], blocks;
 	
 	
 	/* Lookup input string in encoding table */
-	for(i = 0; i < strlen(source); i++) {
+	for(i = 0; i < ustrlen(source); i++) {
 		if(source[i] > 127) {
 			charmap[i] = source[i];
 			typemap[i] = BINARY;
@@ -64,7 +64,7 @@ int aztec_text_process(unsigned char source[], char binary_string[])
 			typemap[i] = AztecCodeSet[source[i]];
 		}
 	}
-	maplength = strlen(source);
+	maplength = ustrlen(source);
 	
 	/* Look for double character encoding possibilities */
 	i = 0;
@@ -151,7 +151,6 @@ int aztec_text_process(unsigned char source[], char binary_string[])
 	}
 	
 	/* Combine blocks of the same type */
-	blocks;
 	i = 0;
 	do{
 		if(blockmap[0][i] == blockmap[0][i + 1]) {

@@ -79,7 +79,7 @@ int dmatrix(struct zint_symbol *symbol, unsigned char source[])
 		barcode[barcodelen] = 0;	// null terminate anyway
 		fclose(f); 
 } else */
-		barcodelen = strlen(source);
+		barcodelen = ustrlen(source);
 		if(barcodelen > 780) {
 			strcpy(symbol->errtxt, "error: input too long");
 			return ERROR_TOO_LONG;

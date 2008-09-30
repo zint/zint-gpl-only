@@ -28,6 +28,7 @@
 
 #include "zint.h"
 
+int ustrlen(unsigned char source[]);
 void concat(char dest[], char source[]);
 int ctoi(char source);
 char itoc(int source);

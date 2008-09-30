@@ -194,7 +194,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 	errornum = 0;
 	strcpy(dest, "");
 	
-	sourcelen = strlen(source);
+	sourcelen = ustrlen(source);
 	
 	j = 0;
 	e_count = 0;
@@ -582,7 +582,7 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 	errornum = 0;
 	strcpy(dest, "");
 	linkage_flag = 0;
-	sourcelen = strlen(source);
+	sourcelen = ustrlen(source);
 
 	j = 0;
 	e_count = 0;
@@ -907,7 +907,7 @@ int ean_14(struct zint_symbol *symbol, unsigned char source[])
 	char ean128_equiv[20];
 	
 	strcpy(ean128_equiv, "");
-	input_length = strlen(source);
+	input_length = ustrlen(source);
 	
 	if(input_length != 13) {
 		strcpy(symbol->errtxt, "error: input wrong length");
