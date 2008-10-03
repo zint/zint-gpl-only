@@ -97,14 +97,14 @@ void upca(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	source[length] = upc_check(source);
 	source[length + 1] = '\0';
 	upca_draw(source, dest);
-	strcpy(symbol->text, source);
+	strcpy(symbol->text, (char*)source);
 }
 
 void upce(struct zint_symbol *symbol, unsigned char source[], char dest[])
 { /* UPC E is a zero-compressed version of UPC A */
 	unsigned int i, num_system;
 	char emode, equivalent[12], check_digit, parity[8], temp[8];
-	char hrt[8];
+	char hrt[9];
 
 	/* Two number systems can be used - system 0 and system 1 */
 	if(ustrlen(source) == 7) {
@@ -113,8 +113,8 @@ void upce(struct zint_symbol *symbol, unsigned char source[], char dest[])
 			case '1': num_system = 1; break;
 			default: num_system = 0; source[0] = '0'; break;
 		}
-		strcpy(temp, source);
-		strcpy(hrt, source);
+		strcpy(temp, (char*)source);
+		strcpy(hrt, (char*)source);
 		for(i = 1; i <= 7; i++) {
 			source[i - 1] = temp[i];
 		}
@@ -123,7 +123,7 @@ void upce(struct zint_symbol *symbol, unsigned char source[], char dest[])
 		num_system = 0;
 		hrt[0] = '0';
 		hrt[1] = '\0';
-		concat(hrt, source);
+		concat(hrt, (char*)source);
 	}
 
 	/* Expand the zero-compressed UPCE code to make a UPCA equivalent (EN Table 5) */
@@ -181,7 +181,7 @@ void upce(struct zint_symbol *symbol, unsigned char source[], char dest[])
 
 	/* Get the check digit from the expanded UPCA code */
 
-	check_digit = upc_check(equivalent);
+	check_digit = upc_check((unsigned char*)equivalent);
 
 	/* Use the number system and check digit information to choose a parity scheme */
 	if(num_system == 1) {
@@ -344,7 +344,7 @@ void ean13(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	/* stop character */
 	concat (dest, "111");
 	
-	strcpy(symbol->text, source);
+	strcpy(symbol->text, (char*)source);
 }
 
 void ean8(struct zint_symbol *symbol, unsigned char source[], char dest[])
@@ -356,7 +356,7 @@ void ean8(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	source[length] = upc_check(source);
 	source[length + 1] = '\0';
 	upca_draw(source, dest);
-	strcpy(symbol->text, source);
+	strcpy(symbol->text, (char*)source);
 }
 
 char isbn13_check(unsigned char source[]) /* For ISBN(13) only */
@@ -490,14 +490,14 @@ int isbn(struct zint_symbol *symbol, unsigned char source[], char dest[]) /* Mak
 int eanx(struct zint_symbol *symbol, unsigned char source[])
 {
 	/* splits string to parts before and after '+' parts */
-	char first_part[20], second_part[20], dest[1000];
+	unsigned char first_part[20], second_part[20], dest[1000];
 	unsigned int latch, reader, writer, with_addon;
-	strcpy(first_part, "");
-	strcpy(second_part, "");
 	int errno, i;
 	
 	errno = 0;
-	strcpy(dest, "");
+	memset(dest,0,1000);
+	memset(first_part,0,20);
+	memset(second_part,0,20);
 
 	with_addon = FALSE;
 	latch = FALSE;
@@ -542,24 +542,24 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 			}
 		} while (reader <= ustrlen(source));
 	} else {
-		strcpy(first_part, source);
+		strcpy((char*)first_part, (char*)source);
 	}
 
 
 	switch(symbol->symbology)
 	{
 		case BARCODE_EANX:
-			switch(strlen(first_part))
+			switch(ustrlen(first_part))
 			{
-				case 2: add_on(first_part, dest, 0); strcpy(symbol->text, first_part); break;
-				case 5: add_on(first_part, dest, 0); strcpy(symbol->text, first_part); break;
-				case 7: ean8(symbol, first_part, dest); break;
-				case 12: ean13(symbol, first_part, dest); break;
+				case 2: add_on(first_part, (char*)dest, 0); strcpy(symbol->text, (char*)first_part); break;
+				case 5: add_on(first_part, (char*)dest, 0); strcpy(symbol->text, (char*)first_part); break;
+				case 7: ean8(symbol, first_part, (char*)dest); break;
+				case 12: ean13(symbol, first_part, (char*)dest); break;
 				default: strcpy(symbol->errtxt, "error: invalid length input"); return ERROR_TOO_LONG; break;
 			}
 			break;
 		case BARCODE_EANX_CC:
-			switch(strlen(first_part))
+			switch(ustrlen(first_part))
 			{ /* Adds vertical separator bars according to ISO/IEC 24723 section 11.4 */
 				case 7: symbol->encoded_data[symbol->rows][1] = '1';
 					symbol->encoded_data[symbol->rows][67] = '1';
@@ -571,7 +571,7 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 					symbol->row_height[symbol->rows + 1] = 2;
 					symbol->row_height[symbol->rows + 2] = 2;
 					symbol->rows += 3;
-					ean8(symbol, first_part, dest); break;
+					ean8(symbol, first_part, (char*)dest); break;
 				case 12:symbol->encoded_data[symbol->rows][1] = '1';
 					symbol->encoded_data[symbol->rows][95] = '1';
 					symbol->encoded_data[symbol->rows + 1][0] = '1';
@@ -582,20 +582,20 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 					symbol->row_height[symbol->rows + 1] = 2;
 					symbol->row_height[symbol->rows + 2] = 2;
 					symbol->rows += 3;
-					ean13(symbol, first_part, dest); break;
+					ean13(symbol, first_part, (char*)dest); break;
 				default: strcpy(symbol->errtxt, "error: invalid length EAN input"); return ERROR_TOO_LONG; break;
 			}
 			break;
 		case BARCODE_UPCA:
-			if(strlen(first_part) == 11) {
-				upca(symbol, first_part, dest);
+			if(ustrlen(first_part) == 11) {
+				upca(symbol, first_part, (char*)dest);
 			} else {
 				strcpy(symbol->errtxt, "error: input wrong length");
 				return ERROR_TOO_LONG;
 			}
 			break;
 		case BARCODE_UPCA_CC:
-			if(strlen(first_part) == 11) {
+			if(ustrlen(first_part) == 11) {
 				symbol->encoded_data[symbol->rows][1] = '1';
 				symbol->encoded_data[symbol->rows][95] = '1';
 				symbol->encoded_data[symbol->rows + 1][0] = '1';
@@ -606,22 +606,22 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 				symbol->row_height[symbol->rows + 1] = 2;
 				symbol->row_height[symbol->rows + 2] = 2;
 				symbol->rows += 3;
-				upca(symbol, first_part, dest);
+				upca(symbol, first_part, (char*)dest);
 			} else {
 				strcpy(symbol->errtxt, "error: UPCA input wrong length");
 				return ERROR_TOO_LONG;
 			}
 			break;
 		case BARCODE_UPCE:
-			if((strlen(first_part) >= 6) && (strlen(first_part) <= 7)) {
-				upce(symbol, first_part, dest);
+			if((ustrlen(first_part) >= 6) && (ustrlen(first_part) <= 7)) {
+				upce(symbol, first_part, (char*)dest);
 			} else {
 				strcpy(symbol->errtxt, "error: input wrong length");
 				return ERROR_TOO_LONG;
 			}
 			break;
 		case BARCODE_UPCE_CC:
-			if((strlen(first_part) >= 6) && (strlen(first_part) <= 7)) {
+			if((ustrlen(first_part) >= 6) && (ustrlen(first_part) <= 7)) {
 				symbol->encoded_data[symbol->rows][1] = '1';
 				symbol->encoded_data[symbol->rows][51] = '1';
 				symbol->encoded_data[symbol->rows + 1][0] = '1';
@@ -632,31 +632,31 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 				symbol->row_height[symbol->rows + 1] = 2;
 				symbol->row_height[symbol->rows + 2] = 2;
 				symbol->rows += 3;
-				upce(symbol, first_part, dest);
+				upce(symbol, first_part, (char*)dest);
 			} else {
 				strcpy(symbol->errtxt, "error: UPCE input wrong length");
 				return ERROR_TOO_LONG;
 			}
 			break;
 		case BARCODE_ISBNX:
-			errno = isbn(symbol, first_part, dest);
+			errno = isbn(symbol, first_part, (char*)dest);
 			if(errno > 4) {
 				return errno;
 			}
 			break;
 	}
-	switch(strlen(second_part))
+	switch(ustrlen(second_part))
 	{
 		case 0: break;
 		case 2:
-			add_on(second_part, dest, 1);
+			add_on(second_part, (char*)dest, 1);
 			concat(symbol->text, "+");
-			concat(symbol->text, second_part);
+			concat(symbol->text, (char*)second_part);
 			break;
 		case 5:
-			add_on(second_part, dest, 1);
+			add_on(second_part, (char*)dest, 1);
 			concat(symbol->text, "+");
-			concat(symbol->text, second_part);
+			concat(symbol->text, (char*)second_part);
 			break;
 		default:
 			strcpy(symbol->errtxt, "error: invalid length input");
@@ -664,7 +664,7 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 			break;
 	}
 	
-	expand(symbol, dest);
+	expand(symbol, (char*)dest);
 
 	switch(symbol->symbology) {
 		case BARCODE_EANX_CC:
