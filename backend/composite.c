@@ -45,9 +45,15 @@
 #include "large.h"
 #include "composite.h"
 #include "pdf417.h"
+
 #define UINT unsigned short
 
 int general_rules(char field[], char type[]);
+int eanx(struct zint_symbol *symbol, unsigned char source[]);
+int ean_128(struct zint_symbol *symbol, unsigned char source[]);
+int rss14(struct zint_symbol *symbol, unsigned char source[]);
+int rsslimited(struct zint_symbol *symbol, unsigned char source[]);
+int rssexpanded(struct zint_symbol *symbol, unsigned char source[]);
 
 static UINT pwr928[69][7];
 
@@ -117,7 +123,9 @@ int cc_a(struct zint_symbol *symbol, unsigned char source[], int cc_width)
 	UINT codeWords[28];
 	UINT bitStr[13];
 	char codebarre[100], pattern[580];
-	
+
+	variant=0;
+
 	for(i = 0; i < 13; i++) { bitStr[i] = 0; }
 	for(i = 0; i < 28; i++) { codeWords[i] = 0; }
 	
@@ -701,7 +709,9 @@ int cc_binary_string(struct zint_symbol *symbol, unsigned char source[], char bi
 	alpha_pad = 0;
 	ai90_mode = 0;
 	*(ecc) = 0;
-	
+	value = 0;
+	target_bitsize = 0;
+
 	if((source[0] == '1') && ((source[1] == '0') || (source[1] == '1') || (source[1] == '7')) && (ustrlen(source) > 8)) {
 		/* Source starts (10), (11) or (17) */
 		encoding_method = 2;
@@ -1663,7 +1673,8 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 {
 	int errno, cc_mode, cc_width, ecc_level;
 	int j, last_ai, ai_latch, i, k, separator_row;
-	char reduced[3000], binary_string[10 * ustrlen(source)], ai_string[4];
+	unsigned char reduced[3000];
+	char binary_string[10 * ustrlen(source)], ai_string[4];
 	struct zint_symbol *linear;
 	int top_shift, bottom_shift;
 	
@@ -1758,16 +1769,16 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	switch(symbol->symbology) {
-		case BARCODE_EANX_CC: errno = eanx(linear, symbol->primary); break;
-		case BARCODE_EAN128_CC: errno = ean_128(linear, symbol->primary); break;
-		case BARCODE_RSS14_CC: errno = rss14(linear, symbol->primary); break;
-		case BARCODE_RSS_LTD_CC: errno = rsslimited(linear, symbol->primary); break;
-		case BARCODE_RSS_EXP_CC: errno = rssexpanded(linear, symbol->primary); break;
-		case BARCODE_UPCA_CC: errno = eanx(linear, symbol->primary); break;
-		case BARCODE_UPCE_CC: errno = eanx(linear, symbol->primary); break;
-		case BARCODE_RSS14STACK_CC: errno = rss14(linear, symbol->primary); break;
-		case BARCODE_RSS14_OMNI_CC: errno = rss14(linear, symbol->primary); break;
-		case BARCODE_RSS_EXPSTACK_CC: errno = rssexpanded(linear, symbol->primary); break;
+		case BARCODE_EANX_CC: errno = eanx(linear, (unsigned char *)symbol->primary); break;
+		case BARCODE_EAN128_CC: errno = ean_128(linear, (unsigned char *)symbol->primary); break;
+		case BARCODE_RSS14_CC: errno = rss14(linear, (unsigned char *)symbol->primary); break;
+		case BARCODE_RSS_LTD_CC: errno = rsslimited(linear, (unsigned char *)symbol->primary); break;
+		case BARCODE_RSS_EXP_CC: errno = rssexpanded(linear, (unsigned char *)symbol->primary); break;
+		case BARCODE_UPCA_CC: errno = eanx(linear, (unsigned char *)symbol->primary); break;
+		case BARCODE_UPCE_CC: errno = eanx(linear, (unsigned char *)symbol->primary); break;
+		case BARCODE_RSS14STACK_CC: errno = rss14(linear, (unsigned char *)symbol->primary); break;
+		case BARCODE_RSS14_OMNI_CC: errno = rss14(linear, (unsigned char *)symbol->primary); break;
+		case BARCODE_RSS_EXPSTACK_CC: errno = rssexpanded(linear, (unsigned char *)symbol->primary); break;
 	}
 	
 	switch(symbol->symbology) {
@@ -1816,7 +1827,7 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 			if(symbol->symbology != BARCODE_EAN128_CC) {
 				return ERROR_TOO_LONG;
 			} else {
-				cc_mode == 3;
+				cc_mode = 3;
 			}
 		}
 	}
@@ -1830,9 +1841,9 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	switch(cc_mode) { /* Note that ecc_level is only relevant to CC-C */
-		case 1: errno = cc_a(symbol, binary_string, cc_width); break;
-		case 2: errno = cc_b(symbol, binary_string, cc_width); break;
-		case 3: errno = cc_c(symbol, binary_string, cc_width, ecc_level); break;
+		case 1: errno = cc_a(symbol, (unsigned char*)binary_string, cc_width); break;
+		case 2: errno = cc_b(symbol, (unsigned char*)binary_string, cc_width); break;
+		case 3: errno = cc_c(symbol, (unsigned char*)binary_string, cc_width, ecc_level); break;
 	}
 	
 	if(errno != 0) {

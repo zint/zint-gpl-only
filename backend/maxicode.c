@@ -32,8 +32,8 @@ int maxi_codeword[144];
 void maxi_do_primary_check(  )
 {
 	/* Handles error correction of primary message */
-	char data[15];
-	char results[15];
+	unsigned char data[15];
+	unsigned char results[15];
 	int j;
 	int datalen = 10;
 	int ecclen = 10;
@@ -53,8 +53,8 @@ void maxi_do_primary_check(  )
 void maxi_do_secondary_chk_odd( int ecclen )
 {
 	/* Handles error correction of odd characters in secondary */
-	char data[100];
-	char results[30];
+	unsigned char data[100];
+	unsigned char results[30];
 	int j;
 	int datalen = 68;
 	
@@ -77,8 +77,8 @@ void maxi_do_secondary_chk_odd( int ecclen )
 void maxi_do_secondary_chk_even(int ecclen )
 {
 	/* Handles error correction of even characters in secondary */
-	char data[100];
-	char results[30];
+	unsigned char data[100];
+	unsigned char results[30];
 	int j;
 	int datalen = 68;
 
@@ -418,7 +418,7 @@ int maxi_text_process(int mode, unsigned char source[])
 	do {
 		if (set[i] == 6) {
 			/* Number compression */
-			char substring[10];
+			char substring[11];
 			int value;
 			
 			for(j = 0; j < 10; j++) {
@@ -517,7 +517,7 @@ void maxi_do_primary_3(char postcode[], int country, int service)
 	/* Format structured primary for Mode 3 */
 	int i;
 
-	to_upper(postcode);
+	to_upper((unsigned char*)postcode);
 	for(i = 0; i < strlen(postcode); i++) {
 		if((postcode[i] >= 65) && (postcode[i] <= 90)) {
 			/* (Capital) letters shifted to Code Set A values */

@@ -35,6 +35,8 @@ QRcode *encode(int security, int size, const unsigned char *intext)
 	QRencodeMode hint;
 	QRcode *code;
 
+	level=QR_ECLEVEL_L;
+
 	if(kanji) {
 		hint = QR_MODE_KANJI;
 	} else {
@@ -58,7 +60,7 @@ QRcode *encode(int security, int size, const unsigned char *intext)
 		version = 0;
 	}
 
-	code = QRcode_encodeString(intext, version, level, hint, 1);
+	code = QRcode_encodeString((char*)intext, version, level, hint, 1);
 
 	return code;
 }

@@ -49,7 +49,7 @@ void rs_error(char data_pattern[])
 
 	int reader, triple_writer;
 	char triple[31], inv_triple[31];
-	char result[5];
+	unsigned char result[5];
 
 	triple_writer = 0;
 
@@ -85,7 +85,7 @@ void rs_error(char data_pattern[])
 
 	rs_init_gf(0x43);
 	rs_init_code(4, 1);
-	rs_encode(triple_writer, inv_triple, result);
+	rs_encode(triple_writer, (unsigned char*) inv_triple, result);
 
 	for(reader = 4; reader > 0; reader--)
 	{
@@ -157,7 +157,7 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[])
 		dpid[loopey] = source[loopey];
 	}
 	dpid[8] = '\0';
-	errno = is_sane(NESET, dpid);
+	errno = is_sane(NESET, (unsigned char*)dpid);
 	if(errno == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "error: invalid characters in DPID");
 		return errno;
