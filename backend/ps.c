@@ -43,6 +43,7 @@ int ps_plot(struct zint_symbol *symbol)
 	int large_bar_count, comp_offset;
 	float addon_text_posn;
 	
+	row_height=0;
 	textdone = 0;
 	main_width = symbol->width;
 	strcpy(addon, "");
@@ -56,8 +57,8 @@ int ps_plot(struct zint_symbol *symbol)
 	}
 	
 	/* sort out colour options */
-	to_upper(symbol->fgcolour);
-	to_upper(symbol->bgcolour);
+	to_upper((unsigned char*)symbol->fgcolour);
+	to_upper((unsigned char*)symbol->bgcolour);
 	
 	if(strlen(symbol->fgcolour) != 6) {
 		strcpy(symbol->errtxt, "error: malformed foreground colour target");
@@ -67,12 +68,12 @@ int ps_plot(struct zint_symbol *symbol)
 		strcpy(symbol->errtxt, "error: malformed background colour target");
 		return ERROR_INVALID_OPTION;
 	}
-	error_number = is_sane(SSET, symbol->fgcolour);
+	error_number = is_sane(SSET, (unsigned char*)symbol->fgcolour);
 	if (error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "error: malformed foreground colour target");
 		return ERROR_INVALID_OPTION;
 	}
-	error_number = is_sane(SSET, symbol->bgcolour);
+	error_number = is_sane(SSET, (unsigned char*)symbol->bgcolour);
 	if (error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "error: malformed background colour target");
 		return ERROR_INVALID_OPTION;
@@ -166,7 +167,7 @@ int ps_plot(struct zint_symbol *symbol)
 	yoffset = symbol->border_width;
 	
 	/* Start writing the header */
-	fprintf(feps, "%!PS-Adobe-3.0 EPSF-3.0\n");
+	fprintf(feps, "%%!PS-Adobe-3.0 EPSF-3.0\n");
 	fprintf(feps, "%%%%Creator: Zint %s\n", ZINT_VERSION);
 	if(strlen(symbol->text) != 0) {
 		fprintf(feps, "%%%%Title: %s\n",symbol->text);

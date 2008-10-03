@@ -321,7 +321,7 @@ int main(int argc, char **argv)
 				break;
 				
 			case 'd': /* we have some data! */
-				error_number = data_process(my_symbol, optarg, rotate_angle);
+				error_number = data_process(my_symbol, (unsigned char*)optarg, rotate_angle);
 				if(error_number != 0) {
 					printf("%s\n", my_symbol->errtxt);
 					ZBarcode_Delete(my_symbol);

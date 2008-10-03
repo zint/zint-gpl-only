@@ -69,7 +69,7 @@ int parunmodd(unsigned char llyth);
 void grwp(int *indexliste);
 void dxsmooth(int *indexliste);
 
-void c16k_set_a(unsigned char source, int values[], int *bar_chars)
+void c16k_set_a(unsigned char source, unsigned int values[], unsigned int *bar_chars)
 {
 	if(source > 127) {
 		if(source < 160) {
@@ -87,7 +87,7 @@ void c16k_set_a(unsigned char source, int values[], int *bar_chars)
 	(*bar_chars)++;
 }
 
-void c16k_set_b(unsigned char source, int values[], int *bar_chars)
+void c16k_set_b(unsigned char source, unsigned int values[], unsigned int *bar_chars)
 {
 	if(source > 127) {
 		values[(*bar_chars)] = source - 32 - 128;
@@ -97,7 +97,7 @@ void c16k_set_b(unsigned char source, int values[], int *bar_chars)
 	(*bar_chars)++;
 }
 
-void c16k_set_c(unsigned char source_a, unsigned char source_b, int values[], int *bar_chars)
+void c16k_set_c(unsigned char source_a, unsigned char source_b, unsigned int values[], unsigned int *bar_chars)
 {
 	int weight;
 

@@ -104,7 +104,7 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 	column_position = 0;
 	input_position = 0;
 	done = 0;
-	
+	c = 0;
 	do {
 		done = 0;
 		/* 'done' ensures that the instructions are followed in the correct order for each input character */

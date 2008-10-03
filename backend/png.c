@@ -80,8 +80,8 @@ int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, c
 	}
 	
 	/* sort out colour options */
-	to_upper(symbol->fgcolour);
-	to_upper(symbol->bgcolour);
+	to_upper((unsigned char*)symbol->fgcolour);
+	to_upper((unsigned char*)symbol->bgcolour);
 	
 	if(strlen(symbol->fgcolour) != 6) {
 		strcpy(symbol->errtxt, "error: malformed foreground colour target");
@@ -91,12 +91,12 @@ int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, c
 		strcpy(symbol->errtxt, "error: malformed background colour target");
 		return ERROR_INVALID_OPTION;
 	}
-	errno = is_sane(SSET, symbol->fgcolour);
+	errno = is_sane(SSET, (unsigned char*)symbol->fgcolour);
 	if (errno == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "error: malformed foreground colour target");
 		return ERROR_INVALID_OPTION;
 	}
-	errno = is_sane(SSET, symbol->bgcolour);
+	errno = is_sane(SSET, (unsigned char*)symbol->bgcolour);
 	if (errno == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "error: malformed background colour target");
 		return ERROR_INVALID_OPTION;
@@ -350,12 +350,12 @@ void draw_letter(char *pixelbuf, unsigned char letter, int xposn, int yposn, int
 	}
 }
 
-void draw_string(char *pixbuf, unsigned char input_string[], int xposn, int yposn, int image_width, int image_height)
+void draw_string(char *pixbuf, char input_string[], int xposn, int yposn, int image_width, int image_height)
 {
 	/* Plot a string into the pixel buffer */
 	int i, string_length, string_left_hand;
 	
-	string_length = ustrlen(input_string);
+	string_length = strlen(input_string);
 	string_left_hand = xposn - ((7 * string_length) / 2);
 	
 	for(i = 0; i < string_length; i++) {
@@ -424,7 +424,8 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 	strcpy(addon, "");
 	comp_offset = 0;
 	addon_text_posn = 0.0;
-	
+	row_height = 0;
+
 	if (symbol->height == 0) {
 		symbol->height = 50;
 	}
