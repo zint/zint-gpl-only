@@ -91,7 +91,7 @@ int telepen(struct zint_symbol *symbol, unsigned char source[])
 	concat(dest, TeleTable['z']);
 	
 	expand(symbol, dest);
-	strcpy(symbol->text, source);
+	strcpy(symbol->text, (char*)source);
 	return error_number;
 }
 
@@ -99,12 +99,13 @@ int telepen_num(struct zint_symbol *symbol, unsigned char source[])
 {
 	unsigned int i, count, check_digit, glyph;
 	int error_number, input_length;
-	char dest[1000];
-	char local_source[100];
+	unsigned char dest[1000];
+	unsigned char local_source[100];
 	
 	error_number = 0;
-	strcpy(dest, "");
-	strcpy(local_source, source);
+	memset(dest, 0, 1000);
+	memset(local_source, 0, 100);
+	strcpy((char*)local_source, (char*)source);
 	input_length = ustrlen(source);
 
 	count = 0;
@@ -125,7 +126,7 @@ int telepen_num(struct zint_symbol *symbol, unsigned char source[])
 	{
 		char temp[200];
 
-		strcpy(temp, local_source);
+		strcpy(temp, (char*)local_source);
 		local_source[0] = '0';
 
 		for(i = 0; i <= input_length; i++)
@@ -136,7 +137,7 @@ int telepen_num(struct zint_symbol *symbol, unsigned char source[])
 	}
 
 	/* Start character */
-	concat(dest, TeleTable['_']);
+	concat((char*)dest, TeleTable['_']);
 
 	for (i=0; i < input_length; i+=2)
 	{
@@ -153,17 +154,17 @@ int telepen_num(struct zint_symbol *symbol, unsigned char source[])
 			glyph += 27;
 			count += glyph;
 		}
-		concat(dest, TeleTable[glyph]);
+		concat((char*)dest, TeleTable[glyph]);
 	}
 
 	check_digit = 127 - (count % 127);
-	concat(dest, TeleTable[check_digit]);
+	concat((char*)dest, TeleTable[check_digit]);
 
 	/* Stop character */
-	concat(dest, TeleTable['z']);
+	concat((char*)dest, TeleTable['z']);
 	
-	expand(symbol, dest);
-	strcpy(symbol->text, local_source);
+	expand(symbol, (char*)dest);
+	strcpy(symbol->text, (char*)local_source);
 	return error_number;
 }
 

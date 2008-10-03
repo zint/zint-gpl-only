@@ -31,7 +31,9 @@
 static char *CodaTable[20] = {"11111221", "11112211", "11121121", "22111111", "11211211", "21111211",
 	"12111121", "12112111", "12211111", "21121111", "11122111", "11221111", "21112121", "21211121",
 	"21212111", "11212121", "11221211", "12121121", "11121221", "11122211"};
-	
+
+int c39(struct zint_symbol *symbol, unsigned char source[]);
+
 int pharma_one(struct zint_symbol *symbol, unsigned char source[])
 {
 	/* "Pharmacode can represent only a single integer from 3 to 131070. Unlike other
@@ -66,7 +68,7 @@ int pharma_one(struct zint_symbol *symbol, unsigned char source[])
 	}
 
 	strcpy(inter, "");
-	tester = atoi(source);
+	tester = atoi((char*)source);
 
 	if((tester < 3) || (tester > 131070)) {
 		strcpy(symbol->errtxt, "error: data out of range");
@@ -114,7 +116,7 @@ int pharma_two_calc(struct zint_symbol *symbol, unsigned char source[], char des
 	strcpy(dest, "");
 	
 	strcpy(inter, "");
-	tester = atoi(source);
+	tester = atoi((char*)source);
 
 	if((tester < 4) || (tester > 64570080))
 	{
@@ -233,7 +235,7 @@ int codabar(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	expand(symbol, dest);
-	strcpy(symbol->text, source);
+	strcpy(symbol->text, (char*)source);
 	return error_number;
 }
 
@@ -262,7 +264,7 @@ int code32(struct zint_symbol *symbol, unsigned char source[])
 	for(i = 0; i < zeroes; i++) {
 		concat(localstr, "0");
 	}
-	concat(localstr, source);
+	concat(localstr, (char*)source);
 	
 	/* Calculate the check digit */
 	checksum = 0;
@@ -309,7 +311,7 @@ int code32(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	/* Plot the barcode using Code 39 */
-	error_number = c39(symbol, risultante);
+	error_number = c39(symbol, (unsigned char*)risultante);
 	if(error_number != 0) { return error_number; }
 	
 	/* Override the normal text output with the Pharmacode number */
