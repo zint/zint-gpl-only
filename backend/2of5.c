@@ -65,7 +65,7 @@ int matrix_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	concat (dest, "41111");
 	
 	expand(symbol, dest);
-	strcpy(symbol->text, source);
+	strcpy(symbol->text, (char*)source);
 	return error_number;
 }
 
@@ -99,7 +99,7 @@ int industrial_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	concat (dest, "31113");
 	
 	expand(symbol, dest);
-	strcpy(symbol->text, source);
+	strcpy(symbol->text, (char*)source);
 	return error_number;
 }
 
@@ -132,7 +132,7 @@ int iata_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	concat (dest, "311");
 	
 	expand(symbol, dest);
-	strcpy(symbol->text, source);
+	strcpy(symbol->text, (char*)source);
 	return error_number;
 }
 
@@ -166,7 +166,7 @@ int logic_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	concat (dest, "311");
 	
 	expand(symbol, dest);
-	strcpy(symbol->text, source);
+	strcpy(symbol->text, (char*)source);
 	return error_number;
 }
 
@@ -199,7 +199,7 @@ int interleaved_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 
 		length = ustrlen(source);
 
-		strcpy(temp, source);
+		strcpy(temp, (char*)source);
 		source[0] = '0';
 
 		for(i = 0; i <= length; i++)
@@ -234,7 +234,7 @@ int interleaved_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	concat (dest, "311");
 	
 	expand(symbol, dest);
-	strcpy(symbol->text, source);
+	strcpy(symbol->text, (char*)source);
 	return error_number;
 
 }
@@ -276,7 +276,7 @@ int itf14(struct zint_symbol *symbol, unsigned char source[])
 	source[h] = itoc(check_digit);
 	source[h + 1] = '\0';
 	error_number = interleaved_two_of_five(symbol, source);
-	strcpy(symbol->text, source);
+	strcpy(symbol->text, (char*)source);
 	return error_number;
 }
 
@@ -312,7 +312,7 @@ int dpleit(struct zint_symbol *symbol, unsigned char source[])
 	source[h] = itoc(check_digit);
 	source[h + 1] = '\0';
 	error_number = interleaved_two_of_five(symbol, source);
-	strcpy(symbol->text, source);
+	strcpy(symbol->text, (char*)source);
 	return error_number;
 }
 
@@ -347,6 +347,6 @@ int dpident(struct zint_symbol *symbol, unsigned char source[])
 	source[h] = itoc(check_digit);
 	source[h + 1] = '\0';
 	error_number = interleaved_two_of_five(symbol, source);
-	strcpy(symbol->text, source);
+	strcpy(symbol->text, (char*)source);
 	return error_number;
 }

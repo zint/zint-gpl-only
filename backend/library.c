@@ -110,7 +110,7 @@ extern int daft_code(struct zint_symbol *symbol, unsigned char source[]); /* DAF
 extern int ean_14(struct zint_symbol *symbol, unsigned char source[]); /* EAN-14 */
 
 #ifndef NO_PNG
-extern int png_plot(struct zint_symbol *symbol);
+int png_handle(struct zint_symbol *symbol, int rotate_angle);
 #endif
 
 extern int ps_plot(struct zint_symbol *symbol);
@@ -256,7 +256,7 @@ int ZBarcode_Print(struct zint_symbol *symbol)
 		output[1] = symbol->outfile[strlen(symbol->outfile) - 2];
 		output[2] = symbol->outfile[strlen(symbol->outfile) - 1];
 		output[3] = '\0';
-		to_upper(output);
+		to_upper((unsigned char*)output);
 #ifndef NO_PNG
 		if(!(strcmp(output, "PNG"))) {
 			error_number = png_handle(symbol, 0);
@@ -289,7 +289,7 @@ int ZBarcode_Print_Rotated(struct zint_symbol *symbol, int rotate_angle)
 		output[1] = symbol->outfile[strlen(symbol->outfile) - 2];
 		output[2] = symbol->outfile[strlen(symbol->outfile) - 1];
 		output[3] = '\0';
-		to_upper(output);
+		to_upper((unsigned char*)output);
 #ifndef NO_PNG
 		if(!(strcmp(output, "PNG"))) {
 			error_number = png_handle(symbol, rotate_angle);

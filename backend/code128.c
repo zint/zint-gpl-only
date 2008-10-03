@@ -566,7 +566,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 	/* Stop character */
 	concat(dest, C128Table[106]);
 	expand(symbol, dest);
-	strcpy(symbol->text, source);
+	strcpy(symbol->text, (char*)source);
 	return errornum;
 }
 
@@ -904,9 +904,9 @@ int ean_14(struct zint_symbol *symbol, unsigned char source[])
 	/* EAN-14 - A version of EAN-128 */
 	int input_length, i, count, check_digit;
 	int error_number;
-	char ean128_equiv[20];
+	unsigned char ean128_equiv[20];
 	
-	strcpy(ean128_equiv, "");
+	memset(ean128_equiv, 0, 20);
 	input_length = ustrlen(source);
 	
 	if(input_length != 13) {
@@ -919,8 +919,8 @@ int ean_14(struct zint_symbol *symbol, unsigned char source[])
 		strcpy(symbol->errtxt, "error: invalid character in data");
 		return error_number;
 	}
-	concat(ean128_equiv, "[01]");
-	concat(ean128_equiv, source);
+	concat((char*)ean128_equiv, "[01]");
+	concat((char*)ean128_equiv, (char*)source);
 	
 	count = 0;
 	for (i = input_length - 1; i >= 0; i--)

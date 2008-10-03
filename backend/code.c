@@ -146,7 +146,7 @@ int code_11(struct zint_symbol *symbol, unsigned char source[])
 	source[h + 1] = itoc(k_digit);
 	source[h + 2] = '\0';
 	expand(symbol, dest);
-	strcpy(symbol->text, source);
+	strcpy(symbol->text, (char*)source);
 	return error_number;
 }
 
@@ -233,10 +233,10 @@ int c39(struct zint_symbol *symbol, unsigned char source[])
 	
 	if(symbol->symbology == BARCODE_CODE39) {
 		strcpy(symbol->text, "*");
-		concat(symbol->text, source);
+		concat(symbol->text, (char*)source);
 		concat(symbol->text, "*");
 	} else {
-		strcpy(symbol->text, source);
+		strcpy(symbol->text, (char*)source);
 	}
 	return error_number;
 }
@@ -277,7 +277,7 @@ int pharmazentral(struct zint_symbol *symbol, unsigned char source[])
 	source[h + 1] = itoc(check_digit);
 	source[h + 2] = '\0';
 	error_number = c39(symbol, source);
-	strcpy(symbol->text, source);
+	strcpy(symbol->text, (char*)source);
 	return error_number;
 }
 
@@ -287,12 +287,12 @@ int pharmazentral(struct zint_symbol *symbol, unsigned char source[])
 int ec39(struct zint_symbol *symbol, unsigned char source[])
 { /* Extended Code 39 - ISO/IEC 16388:2007 Annex A */
 
-	char buffer[100];
+	unsigned char buffer[100];
 	unsigned int i;
-	strcpy(buffer, "");
 	int ascii_value;
 	int error_number;
-	
+
+	memset(buffer,0,100);
 	error_number = 0;
 
 	if(ustrlen(source) > 45) {
@@ -315,13 +315,13 @@ int ec39(struct zint_symbol *symbol, unsigned char source[])
 	/* Creates a buffer string and places control characters into it */
 	for(i = 0; i < ustrlen(source); i++) {
 		ascii_value = source[i];
-		concat(buffer, EC39Ctrl[ascii_value]);
+		concat((char*)buffer, EC39Ctrl[ascii_value]);
 	}
 
 	/* Then sends the buffer to the C39 function */
 	error_number = c39(symbol, buffer);
 	
-	strcpy(symbol->text, source);
+	strcpy(symbol->text, (char*)source);
 	return error_number;
 }
 
@@ -434,6 +434,6 @@ int c93(struct zint_symbol *symbol, unsigned char source[])
 	source[h + 1] = set_copy[k];
 	source[h + 2] = '\0';
 	expand(symbol, dest);
-	strcpy(symbol->text, source);
+	strcpy(symbol->text, (char*)source);
 	return error_number;
 }
