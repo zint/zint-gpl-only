@@ -181,7 +181,7 @@ int rss14(struct zint_symbol *symbol, unsigned char source[])
 		data_group[i] = 0;
 	}
 	
-	binary_load(accum, source);
+	binary_load(accum, (char*)source);
 	
 	if(symbol->option_1 == 2) {
 		/* Add symbol linkage flag */
@@ -669,7 +669,7 @@ int rsslimited(struct zint_symbol *symbol, unsigned char source[])
 		y_reg[i] = 0;
 	}
 	
-	binary_load(accum, source);
+	binary_load(accum, (char*)source);
 	if(symbol->option_1 == 2) {
 		/* Add symbol linkage flag */
 		binary_load(y_reg, "2015133531096");
@@ -1022,8 +1022,10 @@ int rss_binary_string(struct zint_symbol *symbol, unsigned char source[], char b
 	char general_field[ustrlen(source)], general_field_type[ustrlen(source)];
 	int remainder, d1, d2, value;
 	char padstring[14];
-	
-	
+
+	read_posn=0;
+	value=0;
+
 	/* Decide whether a compressed data field is required and if so what
 	method to use - method 2 = no compressed data field */
 	
@@ -1836,7 +1838,8 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[])
 	int last_ai, ai_latch, separator_row;
 	
 	separator_row = 0;
-	
+	reader=0;
+
 	if(source[0] != '[') {
 		strcpy(symbol->errtxt, "Data does not start with an AI");
 		return ERROR_INVALID_DATA;
@@ -1911,7 +1914,7 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[])
 	actually conform to the right data length - that is required of the person or
 	program inputting the data */
 	
-	i = rss_binary_string(symbol, reduced, binary_string);
+	i = rss_binary_string(symbol, (unsigned char*)reduced, binary_string);
 	if(i != 0) {
 		return i;
 	}

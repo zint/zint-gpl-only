@@ -239,10 +239,10 @@ char rm4scc(char source[], unsigned char dest[])
 	bottom = 0;
 
 	/* start character */
-	concat (dest, "1");
+	concat ((char*)dest, "1");
 
 	for (i=0; i < strlen(source); i++) {
-		lookup(KRSET, RoyalTable, source[i], dest);
+		lookup(KRSET, RoyalTable, source[i], (char*)dest);
 		strcpy(values, RoyalValues[posn(KRSET, source[i])]);
 		top += ctoi(values[0]);
 		bottom += ctoi(values[1]);
@@ -254,10 +254,10 @@ char rm4scc(char source[], unsigned char dest[])
 	if(row == -1) { row = 5; }
 	if(column == -1) { column = 5; }
 	check_digit = (6 * row) + column;
-	concat(dest, RoyalTable[check_digit]);
+	concat((char*)dest, RoyalTable[check_digit]);
 
 	/* stop character */
-	concat (dest, "0");
+	concat ((char*)dest, "0");
 	
 	return set_copy[check_digit];
 }
@@ -283,7 +283,7 @@ int royal_plot(struct zint_symbol *symbol, unsigned char source[])
 		strcpy(symbol->errtxt, "error: invalid characters in data");
 		return error_number;
 	}
-	check = rm4scc(source, height_pattern);
+	check = rm4scc((char*)source, (unsigned char*)height_pattern);
 	
 	writer = 0;
 	for(loopey = 0; loopey < strlen(height_pattern); loopey++)
@@ -378,12 +378,12 @@ int daft_code(struct zint_symbol *symbol, unsigned char source[])
 	strcpy(height_pattern, "");
 	
 	input_length = ustrlen(source);
-	strcpy(local_source, source);
+	strcpy(local_source, (char*)source);
 	if(input_length > 50) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	to_upper(local_source);
+	to_upper((unsigned char*)local_source);
 	
 	for (i = 0; i < input_length; i++) {
 		if(local_source[i] == 'D') { concat(height_pattern, "2"); }
