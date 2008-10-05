@@ -151,7 +151,7 @@ void upce(struct zint_symbol *symbol, unsigned char source[], char dest[])
 			equivalent[10] = source[4];
 			if(((source[2] == '0') || (source[2] == '1')) || (source[2] == '2')) {
 				/* Note 1 - "X3 shall not be equal to 0, 1 or 2" */
-				strcpy(symbol->errtxt, "warning: invalid UPC-E data");
+				strcpy(symbol->errtxt, "Invalid UPC-E data [371]");
 			}
 			break;
 		case '4':
@@ -160,7 +160,7 @@ void upce(struct zint_symbol *symbol, unsigned char source[], char dest[])
 			equivalent[10] = source[4];
 			if(source[3] == '0') {
 				/* Note 2 - "X4 shall not be equal to 0" */
-				strcpy(symbol->errtxt, "warning: invalid UPC-E data");
+				strcpy(symbol->errtxt, "Invalid UPC-E data [372]");
 			}
 			break;
 		case '5':
@@ -174,7 +174,7 @@ void upce(struct zint_symbol *symbol, unsigned char source[], char dest[])
 			equivalent[10] = emode;
 			if(source[4] == '0') {
 				/* Note 3 - "X5 shall not be equal to 0" */
-				strcpy(symbol->errtxt, "warning: invalid UPC-E data");
+				strcpy(symbol->errtxt, "Invalid UPC-E data [373]");
 			}
 			break;
 	}
@@ -403,14 +403,14 @@ int isbn(struct zint_symbol *symbol, unsigned char source[], char dest[]) /* Mak
 	to_upper(source);
 	errno = is_sane("0123456789X", source);
 	if(errno == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid characters in input");
+		strcpy(symbol->errtxt, "Invalid characters in input [691]");
 		return errno;
 	}
 
 	/* Input must be 9, 10 or 13 characters */
 	if(((ustrlen(source) < 9) || (ustrlen(source) > 13)) || ((ustrlen(source) > 10) && (ustrlen(source) < 13)))
 	{
-		strcpy(symbol->errtxt, "error: input wrong length");
+		strcpy(symbol->errtxt, "Input wrong length [692]");
 		return ERROR_TOO_LONG;
 	}
 
@@ -419,14 +419,14 @@ int isbn(struct zint_symbol *symbol, unsigned char source[], char dest[]) /* Mak
 		if(!(((source[0] == '9') && (source[1] == '7')) &&
 				     ((source[2] == '8') || (source[2] == '9'))))
 		{
-			strcpy(symbol->errtxt, "error: invalid ISBN");
+			strcpy(symbol->errtxt, "Invalid ISBN [693]");
 			return ERROR_INVALID_DATA;
 		}
 
 		check_digit = isbn13_check(source);
 		if (source[ustrlen(source) - 1] != check_digit)
 		{
-			strcpy(symbol->errtxt, "error: incorrect ISBN check");
+			strcpy(symbol->errtxt, "Incorrect ISBN check [694]");
 			return ERROR_INVALID_CHECK;
 		}
 		source[12] = '\0';
@@ -439,7 +439,7 @@ int isbn(struct zint_symbol *symbol, unsigned char source[], char dest[]) /* Mak
 		check_digit = isbn_check(source);
 		if(check_digit != source[ustrlen(source) - 1])
 		{
-			strcpy(symbol->errtxt, "error: incorrect ISBN check");
+			strcpy(symbol->errtxt, "Incorrect ISBN check [695]");
 			return ERROR_INVALID_CHECK;
 		}
 		for(i = 13; i > 0; i--)
@@ -467,7 +467,7 @@ int isbn(struct zint_symbol *symbol, unsigned char source[], char dest[]) /* Mak
 		check_digit = isbn_check(source);
 		if(check_digit != source[ustrlen(source) - 1])
 		{
-			strcpy(symbol->errtxt, "error: incorrect SBN check");
+			strcpy(symbol->errtxt, "Incorrect SBN check [696]");
 			return ERROR_INVALID_CHECK;
 		}
 
@@ -504,14 +504,14 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 	writer = 0;
 
 	if(ustrlen(source) > 19) {
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [131]");
 		return ERROR_TOO_LONG;
 	}
 	if(symbol->symbology != BARCODE_ISBNX) {
 		/* ISBN has it's own checking routine */
 		errno = is_sane(NASET, source);
 		if(errno == ERROR_INVALID_DATA) {
-			strcpy(symbol->errtxt, "error: invalid characters in data");
+			strcpy(symbol->errtxt, "Invalid characters in data [132]");
 			return errno;
 		}
 	}
@@ -555,7 +555,7 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 				case 5: add_on(first_part, (char*)dest, 0); strcpy(symbol->text, (char*)first_part); break;
 				case 7: ean8(symbol, first_part, (char*)dest); break;
 				case 12: ean13(symbol, first_part, (char*)dest); break;
-				default: strcpy(symbol->errtxt, "error: invalid length input"); return ERROR_TOO_LONG; break;
+				default: strcpy(symbol->errtxt, "Invalid length input [133]"); return ERROR_TOO_LONG; break;
 			}
 			break;
 		case BARCODE_EANX_CC:
@@ -583,14 +583,14 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 					symbol->row_height[symbol->rows + 2] = 2;
 					symbol->rows += 3;
 					ean13(symbol, first_part, (char*)dest); break;
-				default: strcpy(symbol->errtxt, "error: invalid length EAN input"); return ERROR_TOO_LONG; break;
+					default: strcpy(symbol->errtxt, "Invalid length EAN input [134]"); return ERROR_TOO_LONG; break;
 			}
 			break;
 		case BARCODE_UPCA:
 			if(ustrlen(first_part) == 11) {
 				upca(symbol, first_part, (char*)dest);
 			} else {
-				strcpy(symbol->errtxt, "error: input wrong length");
+				strcpy(symbol->errtxt, "Input wrong length [135]");
 				return ERROR_TOO_LONG;
 			}
 			break;
@@ -608,7 +608,7 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 				symbol->rows += 3;
 				upca(symbol, first_part, (char*)dest);
 			} else {
-				strcpy(symbol->errtxt, "error: UPCA input wrong length");
+				strcpy(symbol->errtxt, "UPCA input wrong length [136]");
 				return ERROR_TOO_LONG;
 			}
 			break;
@@ -616,7 +616,7 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 			if((ustrlen(first_part) >= 6) && (ustrlen(first_part) <= 7)) {
 				upce(symbol, first_part, (char*)dest);
 			} else {
-				strcpy(symbol->errtxt, "error: input wrong length");
+				strcpy(symbol->errtxt, "Input wrong length [137]");
 				return ERROR_TOO_LONG;
 			}
 			break;
@@ -634,7 +634,7 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 				symbol->rows += 3;
 				upce(symbol, first_part, (char*)dest);
 			} else {
-				strcpy(symbol->errtxt, "error: UPCE input wrong length");
+				strcpy(symbol->errtxt, "UPCE input wrong length [138]");
 				return ERROR_TOO_LONG;
 			}
 			break;
@@ -659,7 +659,7 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 			concat(symbol->text, (char*)second_part);
 			break;
 		default:
-			strcpy(symbol->errtxt, "error: invalid length input");
+			strcpy(symbol->errtxt, "Invalid length input [139]");
 			return ERROR_TOO_LONG;
 			break;
 	}

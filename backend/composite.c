@@ -826,7 +826,7 @@ int cc_binary_string(struct zint_symbol *symbol, unsigned char source[], char bi
 			if (!(((ninety[i] >= '0') && (ninety[i] <= '9')) || ((ninety[i] >= 'A') && (ninety[i] <= 'Z')))) {
 				if((ninety[i] != '*') && (ninety[i] != ',') && (ninety[i] != '-') && (ninety[i] != '.') && (ninety[i] != '/')) {
 					/* An Invalid AI 90 character */
-					strcpy(symbol->errtxt, "error: invalid AI 90 data");
+					strcpy(symbol->errtxt, "Invalid AI 90 data [A1]");
 					return ERROR_INVALID_DATA;
 				}
 			}
@@ -1151,7 +1151,7 @@ int cc_binary_string(struct zint_symbol *symbol, unsigned char source[], char bi
 	
 	if(latch == 1) {
 		/* Invalid characters in input data */
-		strcpy(symbol->errtxt, "Invalid characters in input data");
+		strcpy(symbol->errtxt, "Invalid characters in input data [A2]");
 		return ERROR_INVALID_DATA;
 	}
 
@@ -1510,7 +1510,7 @@ int cc_binary_string(struct zint_symbol *symbol, unsigned char source[], char bi
 	}
 	
 	if(strlen(binary_string) > 11805) { /* (2361 * 5) */
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [A3]");
 		return ERROR_TOO_LONG;
 	}
 	
@@ -1682,24 +1682,24 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 	separator_row = 0;
 	
 	if(strlen(symbol->primary) == 0) {
-		strcpy(symbol->errtxt, "error: No primary (linear) message in 2D composite");
+		strcpy(symbol->errtxt, "No primary (linear) message in 2D composite [A4]");
 		return ERROR_INVALID_OPTION;
 	}
 	
 	if(ustrlen(source) > 2990) {
-		strcpy(symbol->errtxt, "error: 2D component input data too long");
+		strcpy(symbol->errtxt, "2D component input data too long [A5]");
 		return ERROR_TOO_LONG;
 	}
 	
 	if(source[0] != '[') {
-		strcpy(symbol->errtxt, "Data does not start with an AI");
+		strcpy(symbol->errtxt, "Data does not start with an AI [A6]");
 		return ERROR_INVALID_DATA;
 	}
 	
 	for(i = 0; i < ustrlen(source) - 1; i++) {
 		if((source[i] == '[') && (source[i + 1] == '[')) {
 			/* Can't have nested brackets - Quit */
-			strcpy(symbol->errtxt, "Nested AI detected (two or more open brackets)");
+			strcpy(symbol->errtxt, "Nested AI detected (two or more open brackets) [A7]");
 			return ERROR_INVALID_DATA;
 		}
 	}
@@ -1707,7 +1707,7 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 	for(i = 0; i < ustrlen(source) - 1; i++) {
 		if((source[i] == ']') && (source[i + 1] == ']')) {
 			/* Can't have nested brackets - Quit */
-			strcpy(symbol->errtxt, "Nested AI detected (two or more close brackets)");
+			strcpy(symbol->errtxt, "Nested AI detected (two or more close brackets) [A8]");
 			return ERROR_INVALID_DATA;
 		}
 	}
@@ -1754,7 +1754,7 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 	
 	if((cc_mode == 3) && (symbol->symbology != BARCODE_EAN128_CC)) {
 		/* CC-C can only be used with a GS1-128 linear part */
-		strcpy(symbol->errtxt, "Invalid mode (CC-C only valid with GS1-128 linear component)");
+		strcpy(symbol->errtxt, "Invalid mode (CC-C only valid with GS1-128 linear component) [A9]");
 		return ERROR_INVALID_OPTION;
 	}
 	

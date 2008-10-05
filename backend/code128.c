@@ -210,7 +210,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 	if(sourcelen > 160) {
 		/* This only blocks rediculously long input - the actual length of the
 		   resulting barcode depends on the type of data, so this is trapped later */
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [201]");
 		return ERROR_TOO_LONG;
 	}
 
@@ -218,11 +218,11 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 	if(symbol->symbology == BARCODE_NVE18) {
 		errornum = is_sane(NESET, source);
 		if(errornum == ERROR_INVALID_DATA) {
-			strcpy(symbol->errtxt, "error: invalid characters in data");
+			strcpy(symbol->errtxt, "Invalid characters in data [202]");
 			return errornum;
 		}
 		if(sourcelen != 17) {
-			strcpy(symbol->errtxt, "error: input wrong length");
+			strcpy(symbol->errtxt, "Input wrong length [203]");
 			return ERROR_TOO_LONG;
 		}
 		for(i = sourcelen + 2; i > 1; i--) {
@@ -400,7 +400,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 		}
 	}
 	if(glyph_count > 80.0) {
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [204]");
 		return ERROR_TOO_LONG;
 	}
 	
@@ -597,20 +597,20 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 	if(sourcelen > 160) {
 		/* This only blocks rediculously long input - the actual length of the
 		resulting barcode depends on the type of data, so this is trapped later */
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [161]");
 		return ERROR_TOO_LONG;
 	}
 
 	/* Detect extended ASCII characters */
 	for(i = 0; i <  sourcelen; i++) {
 		if(source[i] >=128) {
-			strcpy(symbol->errtxt, "error: extended ASCII characters not supported by GS1-128");
+			strcpy(symbol->errtxt, "Extended ASCII characters not supported by GS1-128 [162]");
 			return ERROR_INVALID_DATA;
 		}
 	}
 	
 	if(source[0] != '[') {
-		strcpy(symbol->errtxt, "error: input string doesn't start with AI");
+		strcpy(symbol->errtxt, "Input string doesn't start with AI [163]");
 		return ERROR_INVALID_DATA;
 	}
 	
@@ -750,7 +750,7 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 		}
 	}
 	if(glyph_count > 80.0) {
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [164]");
 		return ERROR_TOO_LONG;
 	}
 	
@@ -910,13 +910,13 @@ int ean_14(struct zint_symbol *symbol, unsigned char source[])
 	input_length = ustrlen(source);
 	
 	if(input_length != 13) {
-		strcpy(symbol->errtxt, "error: input wrong length");
+		strcpy(symbol->errtxt, "Input wrong length [721]");
 		return ERROR_TOO_LONG;
 	}
 	
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid character in data");
+		strcpy(symbol->errtxt, "Invalid character in data [722]");
 		return error_number;
 	}
 	concat((char*)ean128_equiv, "[01]");

@@ -124,7 +124,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	input_length = ustrlen(source);
 	
 	if(input_length > 157) {
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [231]");
 		return ERROR_TOO_LONG;
 	}
 
@@ -265,7 +265,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 		}
 	}
 	if(glyph_count > 77.0) {
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [232]");
 		return ERROR_TOO_LONG;
 	}
 	

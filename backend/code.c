@@ -87,12 +87,12 @@ int code_11(struct zint_symbol *symbol, unsigned char source[])
 	strcpy(dest, "");
 
 	if(ustrlen(source) > 80) {
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [011]");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NASET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid characters in data");
+		strcpy(symbol->errtxt, "Invalid characters in data [012]");
 		return error_number;
 	}
 	c_weight = 1;
@@ -168,12 +168,12 @@ int c39(struct zint_symbol *symbol, unsigned char source[])
 	
 	to_upper(source);
 	if(ustrlen(source) > 45) {
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [081]");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(TCSET , source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid characters in data");
+		strcpy(symbol->errtxt, "Invalid characters in data [082]");
 		return error_number;
 	}
 
@@ -252,12 +252,12 @@ int pharmazentral(struct zint_symbol *symbol, unsigned char source[])
 	count = 0;
 	h = ustrlen(source);
 	if(h != 6) {
-		strcpy(symbol->errtxt, "error: input wrong length");
+		strcpy(symbol->errtxt, "Input wrong length [521]");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid characters in data");
+		strcpy(symbol->errtxt, "Invalid characters in data [522]");
 		return error_number;
 	}
 	
@@ -299,7 +299,7 @@ int ec39(struct zint_symbol *symbol, unsigned char source[])
 		/* only stops strings which are far too long - actual length of the barcode
 		depends on the type of data being encoded - if it's too long it's picked up
 		by c39() */
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [091]");
 		return ERROR_TOO_LONG;
 	}
 	
@@ -307,7 +307,7 @@ int ec39(struct zint_symbol *symbol, unsigned char source[])
 	for(i = 0; i < ustrlen(source); i++) {
 		if(source[i] > 127) {
 			/* Cannot encode extended ASCII */
-			strcpy(symbol->errtxt, "error: invalid characters in input data");
+			strcpy(symbol->errtxt, "Invalid characters in input data [092]");
 			return ERROR_INVALID_DATA;
 		}
 	}
@@ -348,14 +348,14 @@ int c93(struct zint_symbol *symbol, unsigned char source[])
 	if(ustrlen(source) > 45) {
 		/* This stops rediculously long input - the actual length of the barcode
 		depends on the type of data */
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [251]");
 		return ERROR_TOO_LONG;
 	}
 	
 	for(i = 0; i < ustrlen(source); i++) {
 		if(source[i] > 127) {
 			/* Cannot encode extended ASCII */
-			strcpy(symbol->errtxt, "error: invalid characters in input data");
+			strcpy(symbol->errtxt, "Invalid characters in input data [252]");
 			return ERROR_INVALID_DATA;
 		}
 	}
@@ -371,7 +371,7 @@ int c93(struct zint_symbol *symbol, unsigned char source[])
 
 	/* Now we can check the true length of the barcode */
 	if(strlen(buffer) > 45) {
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [253]");
 		return ERROR_TOO_LONG;
 	}
 	

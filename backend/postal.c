@@ -57,12 +57,12 @@ int postnet(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	error_number = 0;
 
 	if(ustrlen(source) > 90) {
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [401]");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid characters in data");
+		strcpy(symbol->errtxt, "Invalid characters in data [402]");
 		return error_number;
 	}
 	sum = 0;
@@ -133,12 +133,12 @@ int planet(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	error_number = 0;
 	
 	if(ustrlen(source) > 90) {
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [821]");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid characters in data");
+		strcpy(symbol->errtxt, "Invalid characters in data [822]");
 		return error_number;
 	}
 	sum = 0;
@@ -212,12 +212,12 @@ int fim(struct zint_symbol *symbol, unsigned char source[])
 	
 	to_upper(source);
 	if(ustrlen(source) > 1) {
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [491]");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(BESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid characters in data");
+		strcpy(symbol->errtxt, "Invalid characters in data [492]");
 		return error_number;
 	}
 	lookup(BESET, FIMTable, source[0], dest);
@@ -275,12 +275,12 @@ int royal_plot(struct zint_symbol *symbol, unsigned char source[])
 	
 	to_upper(source);
 	if(ustrlen(source) > 120) {
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [701]");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(KRSET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid characters in data");
+		strcpy(symbol->errtxt, "Invalid characters in data [702]");
 		return error_number;
 	}
 	check = rm4scc((char*)source, (unsigned char*)height_pattern);
@@ -329,12 +329,12 @@ int kix_code(struct zint_symbol *symbol, unsigned char source[])
 	
 	to_upper(source);
 	if(ustrlen(source) != 11) {
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [901]");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(KRSET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid characters in data");
+		strcpy(symbol->errtxt, "Invalid characters in data [902]");
 		return error_number;
 	}
 	for (i = 0; i < ustrlen(source); i++) {
@@ -380,7 +380,7 @@ int daft_code(struct zint_symbol *symbol, unsigned char source[])
 	input_length = ustrlen(source);
 	strcpy(local_source, (char*)source);
 	if(input_length > 50) {
-		strcpy(symbol->errtxt, "Input too long");
+		strcpy(symbol->errtxt, "Input too long [931]");
 		return ERROR_TOO_LONG;
 	}
 	to_upper((unsigned char*)local_source);
@@ -428,12 +428,12 @@ int flattermarken(struct zint_symbol *symbol, unsigned char source[])
 	strcpy(dest, "");
 	
 	if(ustrlen(source) > 90) {
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [281]");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid characters in data");
+		strcpy(symbol->errtxt, "Invalid characters in data [282]");
 		return error_number;
 	}
 	

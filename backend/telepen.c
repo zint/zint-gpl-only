@@ -62,14 +62,14 @@ int telepen(struct zint_symbol *symbol, unsigned char source[])
 	count = 0;
 
 	if(ustrlen(source) > 30) {
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [321]");
 		return ERROR_TOO_LONG;
 	}
 
 	for(i = 0; i < ustrlen(source); i++) {
 		if(source[i] > 127) {
 			/* Cannot encode extended ASCII */
-			strcpy(symbol->errtxt, "error: invalid characters in input data");
+			strcpy(symbol->errtxt, "Invalid characters in input data [322]");
 			return ERROR_INVALID_DATA;
 		}
 	}
@@ -111,13 +111,13 @@ int telepen_num(struct zint_symbol *symbol, unsigned char source[])
 	count = 0;
 
 	if(input_length > 60) {
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [871]");
 		return ERROR_TOO_LONG;
 	}
 	to_upper(local_source);
 	error_number = is_sane(NASET, local_source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid characters in data");
+		strcpy(symbol->errtxt, "Invalid characters in data [872]");
 		return error_number;
 	}
 	
@@ -142,7 +142,7 @@ int telepen_num(struct zint_symbol *symbol, unsigned char source[])
 	for (i=0; i < input_length; i+=2)
 	{
 		if(local_source[i] == 'X') {
-			strcpy(symbol->errtxt, "Invalid position of X in Telepen data");
+			strcpy(symbol->errtxt, "Invalid position of X in Telepen data [873]");
 			return ERROR_INVALID_DATA;
 		}
 		

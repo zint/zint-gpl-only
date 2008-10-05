@@ -73,7 +73,7 @@ int qr_code(struct zint_symbol *symbol, unsigned char source[])
 	
 	code = encode(symbol->option_1, symbol->option_2, source);
 	if(code == NULL) {
-		strcpy(symbol->errtxt, "error: libqrencode failed to encode the input data");
+		strcpy(symbol->errtxt, "libqrencode failed to encode the input data [581]");
 		return ERROR_ENCODING_PROBLEM;
 	}
 	
@@ -100,7 +100,7 @@ int qr_code(struct zint_symbol *symbol, unsigned char source[])
 /* Handler if no QR Encode library is available */
 int qr_code(struct zint_symbol *symbol, unsigned char source[])
 {
-	strcpy(symbol->errtxt, "error: QR Code library <qrencode> not available");
+	strcpy(symbol->errtxt, "QR Code library <qrencode> not available [580]");
 	return ERROR_INVALID_OPTION;
 }
 #endif
