@@ -45,12 +45,12 @@ int matrix_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	strcpy(dest, "");
 	
 	if(ustrlen(source) > 80) {
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [021]");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid characters in data");
+		strcpy(symbol->errtxt, "Invalid characters in data [022]");
 		return error_number;
 	}
 	
@@ -79,12 +79,12 @@ int industrial_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	strcpy(dest, "");
 	
 	if(ustrlen(source) > 45) {
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [071]");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid character in data");
+		strcpy(symbol->errtxt, "Invalid character in data [072]");
 		return error_number;
 	}
 	
@@ -112,12 +112,12 @@ int iata_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	strcpy(dest, "");
 	
 	if(ustrlen(source) > 45) {
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [041]");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid characters in data");
+		strcpy(symbol->errtxt, "Invalid characters in data [042]");
 		return error_number;
 	}
 	
@@ -146,12 +146,12 @@ int logic_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	strcpy(dest, "");
 
 	if(ustrlen(source) > 80) {
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [061]");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid characters in data");
+		strcpy(symbol->errtxt, "Invalid characters in data [062]");
 		return error_number;
 	}
 
@@ -180,12 +180,12 @@ int interleaved_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	strcpy(dest, "");
 	
 	if(ustrlen(source) > 90) {
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [031]");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if (error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid characters in data");
+		strcpy(symbol->errtxt, "Invalid characters in data [032]");
 		return error_number;
 	}
 	
@@ -250,13 +250,13 @@ int itf14(struct zint_symbol *symbol, unsigned char source[])
 	h = ustrlen(source);
 	
 	if(h != 13) {
-		strcpy(symbol->errtxt, "error: input wrong length");
+		strcpy(symbol->errtxt, "Input wrong length [891]");
 		return ERROR_TOO_LONG;
 	}
 	
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid character in data");
+		strcpy(symbol->errtxt, "Invalid character in data [892]");
 		return error_number;
 	}
 
@@ -289,12 +289,12 @@ int dpleit(struct zint_symbol *symbol, unsigned char source[])
 	count = 0;
 	h = ustrlen(source);
 	if(h != 13) {
-		strcpy(symbol->errtxt, "error: input wrong length");
+		strcpy(symbol->errtxt, "Input wrong length [211]");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid characters in data");
+		strcpy(symbol->errtxt, "Invalid characters in data [212]");
 		return error_number;
 	}
 
@@ -324,12 +324,12 @@ int dpident(struct zint_symbol *symbol, unsigned char source[])
 	count = 0;
 	h = ustrlen(source);
 	if(h != 11) {
-		strcpy(symbol->errtxt, "erro: input wrong length");
+		strcpy(symbol->errtxt, "Input wrong length [221]");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid characters in data");
+		strcpy(symbol->errtxt, "Invalid characters in data [222]");
 		return error_number;
 	}
 
