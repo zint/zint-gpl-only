@@ -47,12 +47,12 @@ int plessey(struct zint_symbol *symbol, unsigned char source[])
 	strcpy(dest, "");
 	
 	if(ustrlen(source) > 65) {
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [861]");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(SSET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid characters in data");
+		strcpy(symbol->errtxt, "Invalid characters in data [862]");
 		return error_number;
 	}
 	checkptr = calloc (1, ustrlen(source) * 4 + 8);
@@ -108,12 +108,12 @@ int msi_plessey(struct zint_symbol *symbol, unsigned char source[])
 	strcpy(dest, "");
 
 	if(ustrlen(source) > 55) {
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [471]");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid characters in data");
+		strcpy(symbol->errtxt, "Invalid characters in data [472]");
 		return error_number;
 	}
 
@@ -146,12 +146,12 @@ int msi_plessey_mod10(struct zint_symbol *symbol, unsigned char source[])
 	strcpy(dest, "");
 
 	if(ustrlen(source) > 55) { 
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [473]");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid characters in data");
+		strcpy(symbol->errtxt, "Invalid characters in data [474]");
 		return error_number;
 	}
 
@@ -244,12 +244,12 @@ int msi_plessey_mod1010(struct zint_symbol *symbol, unsigned char source[])
 	strcpy(dest, "");
 	
 	if(ustrlen(source) > 55) { /* No Entry Stack Smashers! */
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [475]");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if (error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid characters in data");
+		strcpy(symbol->errtxt, "Invalid characters in data [476]");
 		return error_number;
 	}
 
@@ -401,12 +401,12 @@ int msi_plessey_mod11(struct zint_symbol *symbol, unsigned char source[])
 	strcpy(dest, "");
 
 	if(ustrlen(source) > 55) {
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [477]");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid characters in data");
+		strcpy(symbol->errtxt, "Invalid characters in data [478]");
 		return error_number;
 	}
 	
@@ -471,12 +471,12 @@ int msi_plessey_mod1110(struct zint_symbol *symbol, unsigned char source[])
 	strcpy(dest, "");
 
 	if(ustrlen(source) > 55) {
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [479]");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if (error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid characters in data");
+		strcpy(symbol->errtxt, "Invalid characters in data [47A]");
 		return error_number;
 	}
 	

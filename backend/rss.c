@@ -150,12 +150,12 @@ int rss14(struct zint_symbol *symbol, unsigned char source[])
 	separator_row = 0;
 
 	if(ustrlen(source) > 13) {
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [291]");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid characters in data");
+		strcpy(symbol->errtxt, "Invalid characters in data [292]");
 		return error_number;
 	}
 	
@@ -647,12 +647,12 @@ int rsslimited(struct zint_symbol *symbol, unsigned char source[])
 	separator_row = 0;
 	
 	if(ustrlen(source) > 13) {
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [301]");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid characters in data");
+		strcpy(symbol->errtxt, "Invalid characters in data [302]");
 		return error_number;
 	}
 	
@@ -1189,7 +1189,7 @@ int rss_binary_string(struct zint_symbol *symbol, unsigned char source[], char b
 		if((source[i] < '0') || (source[i] > '9')) {
 			if((source[i] != '[') && (source[i] != ']')) {
 				/* Something is wrong */
-				strcpy(symbol->errtxt, "Invalid characters in input data");
+				strcpy(symbol->errtxt, "Invalid characters in input data [314]");
 				return ERROR_INVALID_DATA;
 			}
 		}
@@ -1560,7 +1560,7 @@ int rss_binary_string(struct zint_symbol *symbol, unsigned char source[], char b
 	
 	if(latch == 1) {
 		/* Invalid characters in input data */
-		strcpy(symbol->errtxt, "Invalid characters in input data");
+		strcpy(symbol->errtxt, "Invalid characters in input data [315]");
 		return ERROR_INVALID_DATA;
 	}
 	
@@ -1793,7 +1793,7 @@ int rss_binary_string(struct zint_symbol *symbol, unsigned char source[], char b
 	}
 	
 	if(strlen(binary_string) > 252) {
-		strcpy(symbol->errtxt, "error: input too long");
+		strcpy(symbol->errtxt, "Input too long [316]");
 		return ERROR_TOO_LONG;
 	}
 	
@@ -1841,14 +1841,14 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[])
 	reader=0;
 
 	if(source[0] != '[') {
-		strcpy(symbol->errtxt, "Data does not start with an AI");
+		strcpy(symbol->errtxt, "Data does not start with an AI [311]");
 		return ERROR_INVALID_DATA;
 	}
 	
 	for(i = 0; i < ustrlen(source) - 1; i++) {
 		if((source[i] == '[') && (source[i + 1] == '[')) {
 			/* Can't have nested brackets - Quit */
-			strcpy(symbol->errtxt, "Nested AI detected (two or more open brackets)");
+			strcpy(symbol->errtxt, "Nested AI detected (two or more open brackets) [312]");
 			return ERROR_INVALID_DATA;
 		}
 	}
@@ -1856,7 +1856,7 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[])
 	for(i = 0; i < ustrlen(source) - 1; i++) {
 		if((source[i] == ']') && (source[i + 1] == ']')) {
 			/* Can't have nested brackets - Quit */
-			strcpy(symbol->errtxt, "Nested AI detected (two or more close brackets)");
+			strcpy(symbol->errtxt, "Nested AI detected (two or more close brackets) [313]");
 			return ERROR_INVALID_DATA;
 		}
 	}

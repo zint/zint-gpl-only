@@ -81,7 +81,7 @@ int dmatrix(struct zint_symbol *symbol, unsigned char source[])
 } else */
 		barcodelen = ustrlen(source);
 		if(barcodelen > 780) {
-			strcpy(symbol->errtxt, "error: input too long");
+			strcpy(symbol->errtxt, "Input too long [711]");
 			return ERROR_TOO_LONG;
 		}
 	// check parameters
@@ -93,9 +93,13 @@ int dmatrix(struct zint_symbol *symbol, unsigned char source[])
 		if (!H)
 			W = H;
 	}
-	if (eccstr)
+/*	if (eccstr) */
 		ecc = atoi(eccstr);
-	if (W & 1) {		// odd size
+		
+		/* Yes I _have_ commented out large blocks of code! - odd size Data Matrix support
+		   may be included in a later release but the code for it isn't needed here */
+		
+/*	if (W & 1) {		// odd size
 		if (W != H || W < 9 || W > 49) {
 			strcpy(symbol->errtxt, "error: invalid Data Matrix size");
 			return ERROR_INVALID_OPTION;
@@ -117,7 +121,7 @@ int dmatrix(struct zint_symbol *symbol, unsigned char source[])
 			return ERROR_INVALID_OPTION;
 		}
 
-	} else if (W) {		// even size
+	} else if (W) {		 // even size
 		if (W < H) {
 			int t = W;
 			W = H;
@@ -129,28 +133,26 @@ int dmatrix(struct zint_symbol *symbol, unsigned char source[])
 			strcpy(symbol->errtxt, "error: invalid size for ecc 200");
 			return ERROR_INVALID_OPTION;
 		}
-	}
+	} 
 
 	else {			// auto size
 		if (!eccstr)
 			// default is even sizes only unless explicit ecc set to force odd
 			// sizes
 			ecc = 200;
-	}
+	} */
 
 	// processing stamps
-	if ((W & 1) || ecc < 200) {	// odd sizes
+	/*if ((W & 1) || ecc < 200) {	// odd sizes
 		strcpy(symbol->errtxt, "error: odd sizes not supported");
 		return ERROR_INVALID_OPTION;
-	} else {		// even sizes
-		grid =
-		    iec16022ecc200(&W, &H, &encoding, barcodelen, source, &len,
-				   &maxlen, &ecclen);
-	}
+	} else { */		// even sizes
+		grid = iec16022ecc200(&W, &H, &encoding, barcodelen, source, &len, &maxlen, &ecclen);
+	/*} */
 
 	// output
 	if (!grid || !W) {
-		strcpy(symbol->errtxt, "error: Data Matrix encoding error");
+		strcpy(symbol->errtxt, "Data Matrix encoding error [722]");
 		return ERROR_ENCODING_PROBLEM;
 	}
 	int y;

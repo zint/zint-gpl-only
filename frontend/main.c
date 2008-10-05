@@ -122,8 +122,8 @@ int data_process(struct zint_symbol *symbol, unsigned char source[], int rotate_
 			}
 		}
 		if(next == -1) {
-			strcpy(symbol->errtxt, "Invalid character in input string (only Latin-1 characters supported)");
-			error_number = WARN_INVALID_OPTION;
+			strcpy(symbol->errtxt, "error: Invalid character in input string (only Latin-1 characters supported)");
+			error_number = ERROR_INVALID_DATA;
 			return error_number;
 		}
 		i = next;
@@ -160,9 +160,11 @@ int main(int argc, char **argv)
 	int c;
 	int error_number;
 	int rotate_angle;
+	int generated;
 	
 	error_number = 0;
 	rotate_angle = 0;
+	generated = 0;
 	my_symbol = ZBarcode_Create();
 
 	if(argc == 1) {
@@ -301,7 +303,7 @@ int main(int argc, char **argv)
 			case 'b':
 				error_number = validator(NESET, optarg);
 				if(error_number == ERROR_INVALID_DATA) {
-					printf("Invalid barcode type\n");
+					fprintf(stderr, "Invalid barcode type\n");
 					exit(1);
 				}
 				my_symbol->symbology = atoi(optarg);
@@ -310,7 +312,7 @@ int main(int argc, char **argv)
 			case 'w':
 				error_number = validator(NESET, optarg);
 				if(error_number == ERROR_INVALID_DATA) {
-					printf("Invalid whitespace value\n");
+					fprintf(stderr, "Invalid whitespace value\n");
 					exit(1);
 				}
 				if((atoi(optarg) >= 0) && (atoi(optarg) <= 1000)) {
@@ -322,8 +324,9 @@ int main(int argc, char **argv)
 				
 			case 'd': /* we have some data! */
 				error_number = data_process(my_symbol, (unsigned char*)optarg, rotate_angle);
+				generated = 1;
 				if(error_number != 0) {
-					printf("%s\n", my_symbol->errtxt);
+					fprintf(stderr, "%s\n", my_symbol->errtxt);
 					ZBarcode_Delete(my_symbol);
 					return 1;
 				}
@@ -342,21 +345,21 @@ int main(int argc, char **argv)
 				break;
 				
 			default:
-				printf("?? getopt error 0%o\n", c);
+				fprintf(stderr, "?? getopt error 0%o\n", c);
 		} 
 	}
 	
 		if (optind < argc) {
-		printf("Invalid option ");
+		fprintf(stderr, "Invalid option ");
 		while (optind < argc)
-			printf("%s", argv[optind++]);
-		printf("\n");
+			fprintf(stderr, "%s", argv[optind++]);
+		fprintf(stderr, "\n");
 	}
 	
-	if(strcmp(my_symbol->errtxt, "")) {
-		printf(my_symbol->errtxt);
-		printf("\n");
+	if(generated == 0) {
+		fprintf(stderr, "error: No data received, no symbol generated\n");
 	}
+	
 	ZBarcode_Delete(my_symbol); 
 	
 	return error_number;

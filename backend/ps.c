@@ -52,7 +52,7 @@ int ps_plot(struct zint_symbol *symbol)
 	
 	feps = fopen(symbol->outfile, "w");
 	if(feps == NULL) {
-		strcpy(symbol->errtxt, "error: could not open output file");
+		strcpy(symbol->errtxt, "Could not open output file [C1]");
 		return ERROR_FILE_ACCESS;
 	}
 	
@@ -61,21 +61,21 @@ int ps_plot(struct zint_symbol *symbol)
 	to_upper((unsigned char*)symbol->bgcolour);
 	
 	if(strlen(symbol->fgcolour) != 6) {
-		strcpy(symbol->errtxt, "error: malformed foreground colour target");
+		strcpy(symbol->errtxt, "Malformed foreground colour target [C2]");
 		return ERROR_INVALID_OPTION;
 	}
 	if(strlen(symbol->bgcolour) != 6) {
-		strcpy(symbol->errtxt, "error: malformed background colour target");
+		strcpy(symbol->errtxt, "Malformed background colour target [C3]");
 		return ERROR_INVALID_OPTION;
 	}
 	error_number = is_sane(SSET, (unsigned char*)symbol->fgcolour);
 	if (error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: malformed foreground colour target");
+		strcpy(symbol->errtxt, "Malformed foreground colour target [C4]");
 		return ERROR_INVALID_OPTION;
 	}
 	error_number = is_sane(SSET, (unsigned char*)symbol->bgcolour);
 	if (error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: malformed background colour target");
+		strcpy(symbol->errtxt, "Malformed background colour target [C5]");
 		return ERROR_INVALID_OPTION;
 	}
 	

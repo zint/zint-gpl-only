@@ -115,49 +115,69 @@ int png_handle(struct zint_symbol *symbol, int rotate_angle);
 
 extern int ps_plot(struct zint_symbol *symbol);
 
+void error_tag(char error_string[], int error_number)
+{
+	char error_buffer[100];
+	
+	if(error_number != 0) {
+		strcpy(error_buffer, error_string);
+		
+		if(error_number > 4) {
+			strcpy(error_string, "error: ");
+		} else {
+			strcpy(error_string, "warning: ");
+		}
+		
+		concat(error_string, error_buffer);
+	}
+}
+
 int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input)
 {
-	int error_number;
+	int error_number, error_buffer;
 	error_number = 0;
 
 	/* First check the symbology field */
 	
-	if(symbol->symbology < 1) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
+	if(symbol->symbology < 1) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128 [Z01]"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
 
 	/* symbol->symbologys 1 to 86 are defined by tbarcode */
 	if(symbol->symbology == 5) { symbol->symbology = BARCODE_C25MATRIX; }
 	if((symbol->symbology >= 10) && (symbol->symbology <= 12)) { symbol->symbology = BARCODE_EANX; }
 	if((symbol->symbology == 14) || (symbol->symbology == 15)) { symbol->symbology = BARCODE_EANX; }
 	if(symbol->symbology == 17) { symbol->symbology = BARCODE_UPCA; }
-	if(symbol->symbology == 19) { strcpy(symbol->errtxt, "Codabar 18 not supported, using Codabar"); symbol->symbology = BARCODE_CODABAR; error_number = WARN_INVALID_OPTION; }
-	if(symbol->symbology == 24) { strcpy(symbol->errtxt, "Code 49 not supported, using Code 93"); symbol->symbology = BARCODE_CODE93; error_number = WARN_INVALID_OPTION; }
+	if(symbol->symbology == 19) { strcpy(symbol->errtxt, "Codabar 18 not supported, using Codabar [Z02]"); symbol->symbology = BARCODE_CODABAR; error_number = WARN_INVALID_OPTION; }
+	if(symbol->symbology == 24) { strcpy(symbol->errtxt, "Code 49 not supported, using Code 93 [Z03]"); symbol->symbology = BARCODE_CODE93; error_number = WARN_INVALID_OPTION; }
 	if(symbol->symbology == 26) { symbol->symbology = BARCODE_UPCA; }
-	if(symbol->symbology == 27) { strcpy(symbol->errtxt, "UPCD1 not supported"); error_number = ERROR_INVALID_OPTION; }
+	if(symbol->symbology == 27) { strcpy(symbol->errtxt, "UPCD1 not supported [Z04]"); error_number = ERROR_INVALID_OPTION; }
 	if(symbol->symbology == 33) { symbol->symbology = BARCODE_EAN128; }
 	if((symbol->symbology == 35) || (symbol->symbology == 36)) { symbol->symbology = BARCODE_UPCA; }
 	if((symbol->symbology == 38) || (symbol->symbology == 39)) { symbol->symbology = BARCODE_UPCE; }
 	if((symbol->symbology >= 41) && (symbol->symbology <= 45)) { symbol->symbology = BARCODE_POSTNET; }
 	if(symbol->symbology == 46) { symbol->symbology = BARCODE_PLESSEY; }
 	if(symbol->symbology == 48) { symbol->symbology = BARCODE_NVE18; }
-	if(symbol->symbology == 54) { strcpy(symbol->errtxt, "General Parcel Code not supported, using Code 128"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
+	if(symbol->symbology == 54) { strcpy(symbol->errtxt, "General Parcel Code not supported, using Code 128 [Z05]"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
 	if((symbol->symbology == 59) || (symbol->symbology == 61)) { symbol->symbology = BARCODE_CODE128; }
 	if(symbol->symbology == 62) { symbol->symbology = BARCODE_CODE93; }
 	if((symbol->symbology == 64) || (symbol->symbology == 65)) { symbol->symbology = BARCODE_AUSPOST; }
-	if(symbol->symbology == 73) { strcpy(symbol->errtxt, "Codablock E not supported"); error_number = ERROR_INVALID_OPTION; }
-	if(symbol->symbology == 76) { strcpy(symbol->errtxt, "Japanese Postal Code not supported"); error_number = ERROR_INVALID_OPTION; }
-	if(symbol->symbology == 77) { strcpy(symbol->errtxt, "Korean Postal Code not supported"); error_number = ERROR_INVALID_OPTION; }
+	if(symbol->symbology == 73) { strcpy(symbol->errtxt, "Codablock E not supported [Z06]"); error_number = ERROR_INVALID_OPTION; }
+	if(symbol->symbology == 76) { strcpy(symbol->errtxt, "Japanese Postal Code not supported [Z07]"); error_number = ERROR_INVALID_OPTION; }
+	if(symbol->symbology == 77) { strcpy(symbol->errtxt, "Korean Postal Code not supported [Z08]"); error_number = ERROR_INVALID_OPTION; }
 	if(symbol->symbology == 78) { symbol->symbology = BARCODE_RSS14; }
 	if(symbol->symbology == 83) { symbol->symbology = BARCODE_PLANET; }
 	/* NOTE: Tbarcode v8 needs sorting out */
 	if(symbol->symbology == 88) { symbol->symbology = BARCODE_EAN128; }
-	if(symbol->symbology == 91) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128\n"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
+	if(symbol->symbology == 91) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128 [Z09]"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
 	/* leave a gap for future expansion of tbarcode */
-	if((symbol->symbology >= 94) && (symbol->symbology <= 128)) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128\n"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
+	if((symbol->symbology >= 94) && (symbol->symbology <= 128)) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128 [Z10]"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
 	/* Everything from 100 up is Zint-specific */
-	if(symbol->symbology >= 140) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
+	if(symbol->symbology >= 140) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128 [Z11]"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
 	
 	if(error_number > 4) {
+		error_tag(symbol->errtxt, error_number);
 		return error_number;
+	} else {
+		error_buffer = error_number;
 	}
 	
 	if(symbol->symbology == BARCODE_CODE16K) {
@@ -243,6 +263,11 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input)
 		case BARCODE_EAN14: error_number = ean_14(symbol, input); break;
 	}
 	
+	if(error_number == 0) {
+		error_number = error_buffer;
+	}
+	
+	error_tag(symbol->errtxt, error_number);
 	return error_number;
 }
 
@@ -265,17 +290,20 @@ int ZBarcode_Print(struct zint_symbol *symbol)
 			if(!(strcmp(output, "EPS"))) {
 				error_number = ps_plot(symbol);
 			} else {
-				strcpy(symbol->errtxt, "error: unknown output format");
+				strcpy(symbol->errtxt, "Unknown output format [Z20]");
+				error_tag(symbol->errtxt, ERROR_INVALID_OPTION);
 				return ERROR_INVALID_OPTION;
 			}
 #ifndef NO_PNG
 		}
 #endif
 	} else {
-		strcpy(symbol->errtxt, "error: unknown output format");
+		strcpy(symbol->errtxt, "Unknown output format [Z21]");
+		error_tag(symbol->errtxt, ERROR_INVALID_OPTION);
 		return ERROR_INVALID_OPTION;
 	}
 
+	error_tag(symbol->errtxt, error_number);
 	return error_number;
 }
 
@@ -298,17 +326,20 @@ int ZBarcode_Print_Rotated(struct zint_symbol *symbol, int rotate_angle)
 			if(!(strcmp(output, "EPS"))) {
 				error_number = ps_plot(symbol);
 			} else {
-				strcpy(symbol->errtxt, "error: unknown output format");
+				strcpy(symbol->errtxt, "Unknown output format [Z23]");
+				error_tag(symbol->errtxt, ERROR_INVALID_OPTION);
 				return ERROR_INVALID_OPTION;
 			}
 #ifndef NO_PNG
 		}
 #endif
 	} else {
-		strcpy(symbol->errtxt, "error: unknown output format");
+		strcpy(symbol->errtxt, "Unknown output format [Z24]");
+		error_tag(symbol->errtxt, ERROR_INVALID_OPTION);
 		return ERROR_INVALID_OPTION;
 	}
 
+	error_tag(symbol->errtxt, error_number);
 	return error_number;
 }
 

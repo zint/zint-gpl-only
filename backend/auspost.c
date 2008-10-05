@@ -89,7 +89,7 @@ void rs_error(char data_pattern[])
 
 	for(reader = 4; reader > 0; reader--)
 	{
-		concat(data_pattern, AusBarTable[result[reader - 1]]);
+		concat(data_pattern, AusBarTable[(int)result[reader - 1]]);
 	}
 }
 
@@ -125,17 +125,17 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[])
 			case 16: strcpy(fcc, "59"); errno = is_sane(NESET, source); break;
 			case 18: strcpy(fcc, "62"); break;
 			case 23: strcpy(fcc, "62"); errno = is_sane(NESET, source); break;
-			default: strcpy(symbol->errtxt, "error: auspost input is wrong length");
+			default: strcpy(symbol->errtxt, "Auspost input is wrong length [631]");
 			return ERROR_TOO_LONG;
 				break;
 		}
 		if(errno == ERROR_INVALID_DATA) {
-			strcpy(symbol->errtxt, "error: invalid characters in data");
+			strcpy(symbol->errtxt, "Invalid characters in data [632]");
 			return errno;
 		}
 	} else {
 		if(ustrlen(source) != 8) {
-			strcpy(symbol->errtxt, "error: auspost input is wrong length");
+			strcpy(symbol->errtxt, "Auspost input is wrong length [633]");
 			return ERROR_TOO_LONG;
 		}
 		switch(symbol->symbology) {
@@ -148,7 +148,7 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[])
 	
 	errno = is_sane(GDSET, source);
 	if(errno == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid characters in data");
+		strcpy(symbol->errtxt, "Invalid characters in data [634]");
 		return errno;
 	}
 	
@@ -159,7 +159,7 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[])
 	dpid[8] = '\0';
 	errno = is_sane(NESET, (unsigned char*)dpid);
 	if(errno == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "error: invalid characters in DPID");
+		strcpy(symbol->errtxt, "Invalid characters in DPID [635]");
 		return errno;
 	}
 
