@@ -102,7 +102,7 @@ int aztec_text_process(unsigned char source[], char binary_string[])
 		}
 		
 		i++;
-	}while(i < maplength);
+	}while(i < (maplength - 1));
 	
 	/* look for blocks of characters which use the same table */
 	blocks = 0;
@@ -136,7 +136,7 @@ int aztec_text_process(unsigned char source[], char binary_string[])
 	if(blockmap[0][blocks - 1] & 8) { blockmap[0][blocks - 1] = 8; }
 	
 	/* look for adjacent blocks which can use the same table (right to left search) */
-	for(i = blocks; i > 0; i--) {
+	for(i = blocks - 1; i > 0; i--) {
 		if(blockmap[0][i] & blockmap[0][i + 1]) {
 			blockmap[0][i] = (blockmap[0][i] & blockmap[0][i + 1]);
 		}
@@ -657,7 +657,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 			for(i = 0; i <= data_length; i++) {
 				adjusted_string[i] = binary_string[i];
 			}
-		
+			
 			/* Data string can't have all '0's or all '1's in a block */
 			i = 0;
 			do{
@@ -675,7 +675,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 					insert(adjusted_string, i+(codeword_size - 1), '0');
 				}
 				i += codeword_size;
-			} while (i < strlen(adjusted_string));
+			} while ((i + codeword_size) < strlen(adjusted_string));
 			adjusted_length = strlen(adjusted_string);
 			
 		} while(adjusted_length > data_maxsize);
@@ -725,7 +725,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 				insert(adjusted_string, i+(codeword_size - 1), '0');
 			}
 			i += codeword_size;
-		} while (i < strlen(adjusted_string));
+		} while ((i + codeword_size) < strlen(adjusted_string));
 		adjusted_length = strlen(adjusted_string);
 		
 		/* Check if the data actually fits into the selected symbol size */

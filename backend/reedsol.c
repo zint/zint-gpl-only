@@ -62,13 +62,6 @@ void rs_init_gf(int poly)
 {
 	int m, b, p, v;
 
-	// Return storage from previous setup
-	if (log) {
-		free(log);
-		free(alog);
-		free(rspoly);
-		rspoly = NULL;
-	}
 	// Find the top bit, and hence the symbol size
 	for (b = 1, m = 0; b <= poly; b <<= 1)
 		m++;
@@ -102,8 +95,6 @@ void rs_init_code(int nsym, int index)
 {
 	int i, k;
 
-	if (rspoly)
-		free(rspoly);
 	rspoly = (int *)malloc(sizeof(int) * (nsym + 1));
 
 	rlen = nsym;
@@ -143,6 +134,12 @@ void rs_encode(int len, unsigned char *data, unsigned char *res)
 		else
 			res[0] = 0;
 	}
+	
+	free(log);
+	free(alog);
+	free(rspoly);
+	rspoly = NULL;
+
 }
 
 void rs_encode_long(int len, unsigned int *data, unsigned int *res)
@@ -166,5 +163,10 @@ void rs_encode_long(int len, unsigned int *data, unsigned int *res)
 		else
 			res[0] = 0;
 	}
+	
+	free(log);
+	free(alog);
+	free(rspoly);
+	rspoly = NULL;
 }
 

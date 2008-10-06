@@ -131,10 +131,10 @@ int cc_a(struct zint_symbol *symbol, unsigned char source[], int cc_width)
 	
 	bitlen = ustrlen(source);
 	
-	for(i = bitlen; i < 197; i++) {
+	for(i = bitlen; i < 208; i++) {
 		source[i] = '0';
 	}
-	source[197] = '\0';
+	source[208] = '\0';
 	
 	for(segment = 0; segment < 13; segment++) {
 		strpos = segment * 16;
