@@ -43,13 +43,13 @@ static char *EANsetA[10] = {"3211", "2221", "2122", "1411", "1132", "1231", "111
 static char *EANsetB[10] = {"1123", "1222", "2212", "1141", "2311", "1321", "4111", "2131", "3121",
 	"2113"}; /* Representation set B (EN Table 1) */
 
-char upc_check(unsigned char source[])
+char upc_check(char source[])
 { /* Calculate the correct check digit for a UPC barcode */
 	unsigned int i, count, check_digit;
 
 	count = 0;
 
-	for (i = 0; i < ustrlen(source); i++)
+	for (i = 0; i < strlen(source); i++)
 	{
 		count += ctoi(source[i]);
 
@@ -64,16 +64,16 @@ char upc_check(unsigned char source[])
 	return itoc(check_digit);
 }
 
-void upca_draw(unsigned char source[], char dest[])
+void upca_draw(char source[], char dest[])
 { /* UPC A is usually used for 12 digit numbers, but this function takes a source of any length */
 	unsigned int i, half_way;
 
-	half_way = ustrlen(source) / 2;
+	half_way = strlen(source) / 2;
 
 	/* start character */
 	concat (dest, "111");
 
-	for(i = 0; i <= ustrlen(source); i++)
+	for(i = 0; i <= strlen(source); i++)
 	{
 		if (i == half_way)
 		{
@@ -92,12 +92,14 @@ void upca_draw(unsigned char source[], char dest[])
 void upca(struct zint_symbol *symbol, unsigned char source[], char dest[])
 { /* Make a UPC A barcode when we haven't been given the check digit */
 	int length;
+	char gtin[15];
 
-	length = ustrlen(source);
-	source[length] = upc_check(source);
-	source[length + 1] = '\0';
-	upca_draw(source, dest);
-	strcpy(symbol->text, (char*)source);
+	strcpy(gtin, (char*)source);
+	length = strlen(gtin);
+	gtin[length] = upc_check(gtin);
+	gtin[length + 1] = '\0';
+	upca_draw(gtin, dest);
+	strcpy(symbol->text, gtin);
 }
 
 void upce(struct zint_symbol *symbol, unsigned char source[], char dest[])
@@ -181,7 +183,7 @@ void upce(struct zint_symbol *symbol, unsigned char source[], char dest[])
 
 	/* Get the check digit from the expanded UPCA code */
 
-	check_digit = upc_check((unsigned char*)equivalent);
+	check_digit = upc_check(equivalent);
 
 	/* Use the number system and check digit information to choose a parity scheme */
 	if(num_system == 1) {
@@ -279,14 +281,14 @@ void add_on(unsigned char source[], char dest[], int mode)
 
 /* ************************ EAN-13 ****************** */
 
-char ean_check(unsigned char source[])
+char ean_check(char source[])
 { /* Calculate the correct check digit for a EAN-13 barcode */
 	int i;
 	unsigned int h, count, check_digit;
 
 	count = 0;
 
-	h = ustrlen(source);
+	h = strlen(source);
 	for (i = h - 1; i >= 0; i--)
 	{
 		count += ctoi(source[i]);
@@ -305,16 +307,18 @@ void ean13(struct zint_symbol *symbol, unsigned char source[], char dest[])
 {
 	unsigned int length, i, half_way;
 	char parity[6];
+	char gtin[15];
 
 	strcpy(parity, "");
+	strcpy(gtin, (char*)source);
 	
 	/* Add the appropriate check digit */
-	length = ustrlen(source);
-	source[length] = ean_check(source);
-	source[length + 1] = '\0';
+	length = strlen(gtin);
+	gtin[length] = ean_check(gtin);
+	gtin[length + 1] = '\0';
 
 	/* Get parity for first half of the symbol */
-	lookup(NASET, EAN13Parity, source[0], parity);
+	lookup(NASET, EAN13Parity, gtin[0], parity);
 
 	/* Now get on with the cipher */
 	half_way = 7;
@@ -322,7 +326,7 @@ void ean13(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	/* start character */
 	concat (dest, "111");
 
-	for(i = 1; i <= ustrlen(source); i++)
+	for(i = 1; i <= strlen(gtin); i++)
 	{
 		if (i == half_way)
 		{
@@ -333,30 +337,32 @@ void ean13(struct zint_symbol *symbol, unsigned char source[], char dest[])
 
 		if(((i > 1) && (i < 7)) && (parity[i - 2] == 'B'))
 		{
-			lookup(NESET, EANsetB, source[i], dest);
+			lookup(NESET, EANsetB, gtin[i], dest);
 		}
 		else
 		{
-			lookup(NESET, EANsetA, source[i], dest);
+			lookup(NESET, EANsetA, gtin[i], dest);
 		}
 	}
 
 	/* stop character */
 	concat (dest, "111");
 	
-	strcpy(symbol->text, (char*)source);
+	strcpy(symbol->text, gtin);
 }
 
 void ean8(struct zint_symbol *symbol, unsigned char source[], char dest[])
 { /* Make an EAN-8 barcode when we haven't been given the check digit */
   /* EAN-8 is basically the same as UPC-A but with fewer digits */
 	int length;
+	char gtin[10];
 
-	length = ustrlen(source);
-	source[length] = upc_check(source);
-	source[length + 1] = '\0';
-	upca_draw(source, dest);
-	strcpy(symbol->text, (char*)source);
+	strcpy(gtin, (char*)source);
+	length = strlen(gtin);
+	gtin[length] = upc_check(gtin);
+	gtin[length + 1] = '\0';
+	upca_draw(gtin, dest);
+	strcpy(symbol->text, gtin);
 }
 
 char isbn13_check(unsigned char source[]) /* For ISBN(13) only */
