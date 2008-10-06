@@ -239,8 +239,7 @@ char ecc200encode(unsigned char *t, int tl, unsigned char *s, int sl, char *enco
 	// do the encoding
 	while (sp < sl && tp < tl) {
 		char newenc = enc;	// suggest new encoding
-		if (tl - tp <= 1 && (enc == 'c' || enc == 't') || tl - tp <= 2
-		    && enc == 'x')
+		if ((tl - tp <= 1 && (enc == 'c' || enc == 't')) || (tl - tp <= 2  && enc == 'x'))
 			enc = 'a';	// auto revert to ASCII
 		newenc = tolower(encoding[sp]);
 		switch (newenc) {	// encode character
@@ -710,7 +709,7 @@ static char *encmake(int l, unsigned char *s, int *lenp, char exact)
 		while (p < l) {
 			int t, m = 0, b = 0;
 			for (e = 0; e < E_MAX; e++)
-				if (enc[p][(int)e].t && ((t = enc[p][(int)e].t + switchcost[(int)cur][(int)e]) < m || t == m && e == cur || !m)) {
+				if (enc[p][(int)e].t && (((t = enc[p][(int)e].t + switchcost[(int)cur][(int)e]) < m) || ((t == m && e == cur) || !m))) {
 					b = e;
 					m = t;
 				}
@@ -837,7 +836,7 @@ unsigned char *iec16022ecc200(int *Wptr, int *Hptr, char **encodingptr, int barc
 			for (x = 0; x < NC; x++) {
 				int v = places[(NR - y - 1) * NC + x];
 				//fprintf (stderr, "%4d", v);
-				if (v == 1 || v > 7 && (binary[(v >> 3) - 1] & (1 << (v & 7))))
+				if (v == 1 || (v > 7 && (binary[(v >> 3) - 1] & (1 << (v & 7)))))
 					grid[(1 + y + 2 * (y / (matrix->FH - 2))) * W + 1 + x + 2 * (x / (matrix->FW - 2))] = 1;
 			}
 			//fprintf (stderr, "\n");
