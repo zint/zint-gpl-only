@@ -613,6 +613,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 				draw_bar(pixelbuf, (94 + xoffset), 1, (4 + (int)yoffset), 5, image_width, image_height);
 
 				textpart[0] = symbol->text[0];
+				textpart[1] = '\0';
 				textpos = 2 * (-7 + xoffset);
 				draw_string(pixelbuf, textpart, textpos, (image_height - 17), image_width, image_height);
 				for(i = 0; i < 6; i++) {
