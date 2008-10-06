@@ -933,7 +933,7 @@ int general_rules(char field[], char type[])
 		current = block[1][i];
 		next = block[1][i + 1];
 		
-		if(current == ISOIEC) {
+		if((current == ISOIEC) && (i != (block_count - 1))) {
 			if((next == ANY_ENC) && (block[0][i + 1] >= 4)) {
 				block[1][i + 1] = NUMERIC;
 			}
@@ -952,7 +952,7 @@ int general_rules(char field[], char type[])
 			block[1][i] = ALPHA;
 		}
 		
-		if(current == ALPHA) {
+		if((current == ALPHA) && (i != (block_count - 1))) {
 			if((next == ANY_ENC) && (block[0][i + 1] >= 6)) {
 				block[1][i + 1] = NUMERIC;
 			}
@@ -1798,8 +1798,12 @@ int rss_binary_string(struct zint_symbol *symbol, unsigned char source[], char b
 	}
 	
 	/* Now add padding to binary string */
-	if (general_field_type[strlen(general_field) - 1] == NUMERIC) {
-		strcpy(padstring, "000000100001");
+	if(strlen(general_field) != 0) {
+		if (general_field_type[strlen(general_field) - 1] == NUMERIC) {
+			strcpy(padstring, "000000100001");
+		} else {
+			strcpy(padstring, "001000010000");
+		}
 	} else {
 		strcpy(padstring, "001000010000");
 	}
