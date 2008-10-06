@@ -202,6 +202,7 @@ int c39(struct zint_symbol *symbol, unsigned char source[])
 					case 40: check_digit = '/'; break;
 					case 41: check_digit = '+'; break;
 					case 42: check_digit = 37; break;
+					default: check_digit = ' '; break; /* Keep compiler happy */
 				}
 			}
 		}

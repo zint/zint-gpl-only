@@ -218,6 +218,7 @@ int aztec_text_process(unsigned char source[], char binary_string[])
 	}
 	
 	curtable = UPPER; /* start with UPPER table */
+	lasttable = UPPER;
 	for(i = 0; i < maplength; i++) {
 		newtable = curtable;
 		if(typemap[i] != curtable) {
@@ -572,12 +573,14 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 		ecc_level = 2;
 	}
 	
+	data_length = strlen(binary_string);
+	layers = 0; /* Keep compiler happy! */
+	data_maxsize = 0; /* Keep compiler happy! */
 	if(symbol->option_2 == 0) { /* The size of the symbol can be determined by Zint */
 		do {
 			/* Decide what size symbol to use - the smallest that fits the data */
 			compact = 0; /* 1 = Aztec Compact, 0 = Normal Aztec */
 			layers = 0;
-			data_length = strlen(binary_string);
 			switch(ecc_level) {
 				/* For each level of error correction work out the smallest symbol which
 				the data will fit in */
@@ -649,7 +652,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 			}
 			
 			/* Determine codeword bitlength - Table 3 */
-			if((layers >= 0) && (layers <= 2)) { codeword_size = 6; }
+			codeword_size = 6; /* if (layers <= 2) */
 			if((layers >= 3) && (layers <= 8)) { codeword_size = 8; }
 			if((layers >= 9) && (layers <= 22)) { codeword_size = 10; }
 			if(layers >= 23) { codeword_size = 12; }
