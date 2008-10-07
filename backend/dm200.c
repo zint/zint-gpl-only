@@ -772,6 +772,8 @@ unsigned char *iec16022ecc200(int *Wptr, int *Hptr, char **encodingptr, int barc
 					fprintf(stderr,
 						"Cannot make barcode fit %dx%d\n",
 						W, H);
+					if (e)
+						free(e);
 					return 0;
 				}
 			}
@@ -808,6 +810,7 @@ unsigned char *iec16022ecc200(int *Wptr, int *Hptr, char **encodingptr, int barc
 	}
 	if (!ecc200encode(binary, matrix->bytes, barcode, barcodelen, encoding, lenp)) {
 		fprintf(stderr, "Barcode too long for %dx%d\n", W, H);
+		free(encoding);
 		return 0;
 	}
 	// ecc code
@@ -841,6 +844,7 @@ unsigned char *iec16022ecc200(int *Wptr, int *Hptr, char **encodingptr, int barc
 			}
 			//fprintf (stderr, "\n");
 		}
+		free(grid);
 		free(places);
 	}
 	if (Wptr)
@@ -854,5 +858,6 @@ unsigned char *iec16022ecc200(int *Wptr, int *Hptr, char **encodingptr, int barc
 	if (eccp)
 		*eccp =
 		    (matrix->bytes + 2) / matrix->datablock * matrix->rsblock;
+	free(encoding);
 	return grid;
 }

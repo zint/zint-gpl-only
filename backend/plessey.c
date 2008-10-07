@@ -94,6 +94,7 @@ int plessey(struct zint_symbol *symbol, unsigned char source[])
 	
 	expand(symbol, dest);
 	strcpy(symbol->text, (char*)source);
+	free(checkptr);
 	return error_number;
 }
 
