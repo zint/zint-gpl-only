@@ -47,7 +47,6 @@ public:
 		DPLEIT		=21,
 		DPIDENT		=22,
 		CODE16K		=23,
-		CODE49		=24,
 		CODE93		=25,
 		FLAT		=28,
 		RSS14		=29,
@@ -78,7 +77,6 @@ public:
 		EAN14		=72,
 		CODABLOCKF	=74,
 		NVE18		=75,
-		KOREAPOST	=77,
 		RSS14STACK	=79,
 		RSS14STACK_OMNI	=80,
 		RSS_EXPSTACK	=81,
@@ -92,8 +90,6 @@ public:
 		ITF14		=89,
 		KIX		=90,
 		AZTEC		=92,
-		DAFT		=93,
-		MICROQR		=97,
 		
 		/* Zint specific */
 		CODE32		=129,
@@ -117,6 +113,11 @@ public slots:
 	void on_generate_clicked();
 	void on_fgcolor_clicked();
 	void on_bgcolor_clicked();
+	void on_zoomIn_clicked();
+	void on_zoomOut_clicked();
+	void on_rotateAc_clicked();
+	void on_rotateC_clicked();
+	void on_reset_clicked();
 
 private:
 	QColor m_fgcolor,m_bgcolor;

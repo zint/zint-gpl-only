@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>787</width>
+    <width>873</width>
     <height>748</height>
    </rect>
   </property>
@@ -13,10 +13,101 @@
    <string>Zint Qt fontend</string>
   </property>
   <layout class="QGridLayout" name="gridLayout" >
-   <item row="0" column="0" colspan="2" >
+   <item row="0" column="0" >
+    <widget class="QPushButton" name="zoomIn" >
+     <property name="toolTip" >
+      <string>Ctrl++</string>
+     </property>
+     <property name="text" >
+      <string>Zoom in</string>
+     </property>
+     <property name="shortcut" >
+      <string>Ctrl++</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" >
+    <widget class="QPushButton" name="zoomOut" >
+     <property name="toolTip" >
+      <string>Ctrl+-</string>
+     </property>
+     <property name="text" >
+      <string>Zoom out</string>
+     </property>
+     <property name="shortcut" >
+      <string>Ctrl+-</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2" >
+    <spacer name="horizontalSpacer_4" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>85</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="3" colspan="2" >
+    <widget class="QPushButton" name="reset" >
+     <property name="toolTip" >
+      <string>Ctrl+0</string>
+     </property>
+     <property name="text" >
+      <string>Reset</string>
+     </property>
+     <property name="shortcut" >
+      <string>Ctrl+0</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="5" >
+    <spacer name="horizontalSpacer_3" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>76</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="6" >
+    <widget class="QPushButton" name="rotateAc" >
+     <property name="toolTip" >
+      <string>Ctrl+Left</string>
+     </property>
+     <property name="text" >
+      <string>Rotate anticlockwise</string>
+     </property>
+     <property name="shortcut" >
+      <string>Ctrl+Left</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="7" >
+    <widget class="QPushButton" name="rotateC" >
+     <property name="toolTip" >
+      <string>Ctrl+Right</string>
+     </property>
+     <property name="text" >
+      <string>Rotate clockwise</string>
+     </property>
+     <property name="shortcut" >
+      <string>Ctrl+Right</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="8" >
     <widget class="QGraphicsView" name="view" />
    </item>
-   <item row="1" column="0" >
+   <item row="2" column="0" colspan="4" >
     <layout class="QHBoxLayout" name="horizontalLayout_2" >
      <item>
       <widget class="QLabel" name="label" >
@@ -33,7 +124,7 @@
      </item>
     </layout>
    </item>
-   <item row="1" column="1" >
+   <item row="2" column="4" colspan="4" >
     <layout class="QHBoxLayout" name="horizontalLayout_12" >
      <item>
       <widget class="QLabel" name="label_11" >
@@ -63,7 +154,7 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="0" >
+   <item row="3" column="0" colspan="4" >
     <layout class="QHBoxLayout" name="horizontalLayout_3" >
      <item>
       <widget class="QLabel" name="label_3" >
@@ -87,7 +178,7 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="1" >
+   <item row="3" column="4" colspan="4" >
     <layout class="QHBoxLayout" name="horizontalLayout_13" >
      <item>
       <widget class="QLabel" name="label_12" >
@@ -117,7 +208,7 @@
      </item>
     </layout>
    </item>
-   <item row="3" column="0" >
+   <item row="4" column="0" colspan="4" >
     <layout class="QHBoxLayout" name="horizontalLayout_5" >
      <item>
       <widget class="QLabel" name="label_5" >
@@ -141,7 +232,7 @@
      </item>
     </layout>
    </item>
-   <item row="3" column="1" >
+   <item row="4" column="4" colspan="4" >
     <layout class="QHBoxLayout" name="horizontalLayout_4" >
      <item>
       <widget class="QLabel" name="label_4" >
@@ -158,7 +249,7 @@
      </item>
     </layout>
    </item>
-   <item row="4" column="0" >
+   <item row="5" column="0" colspan="4" >
     <layout class="QHBoxLayout" name="horizontalLayout_6" >
      <item>
       <widget class="QLabel" name="label_6" >
@@ -185,7 +276,7 @@
      </item>
     </layout>
    </item>
-   <item rowspan="8" row="4" column="1" >
+   <item rowspan="8" row="5" column="4" colspan="4" >
     <layout class="QVBoxLayout" name="verticalLayout" >
      <item>
       <widget class="QLabel" name="label_2" >
@@ -210,7 +301,7 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item row="5" column="0" >
+   <item row="6" column="0" colspan="4" >
     <layout class="QHBoxLayout" name="horizontalLayout_7" >
      <item>
       <widget class="QLabel" name="label_7" >
@@ -237,7 +328,7 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item row="6" column="0" >
+   <item row="7" column="0" colspan="4" >
     <layout class="QHBoxLayout" name="horizontalLayout_8" >
      <item>
       <widget class="QLabel" name="label_8" >
@@ -264,7 +355,7 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item row="7" column="0" >
+   <item row="8" column="0" colspan="4" >
     <layout class="QHBoxLayout" name="horizontalLayout_10" >
      <item>
       <widget class="QLabel" name="label_9" >
@@ -297,7 +388,7 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item row="8" column="0" >
+   <item row="9" column="0" colspan="4" >
     <layout class="QHBoxLayout" name="horizontalLayout_11" >
      <item>
       <widget class="QLabel" name="label_10" >
@@ -324,7 +415,7 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item row="9" column="0" >
+   <item row="10" column="0" colspan="4" >
     <layout class="QHBoxLayout" name="horizontalLayout_14" >
      <item>
       <widget class="QLabel" name="label_13" >
@@ -367,7 +458,7 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item row="10" column="0" >
+   <item row="11" column="0" colspan="4" >
     <layout class="QHBoxLayout" name="horizontalLayout_15" >
      <item>
       <widget class="QLabel" name="label_14" >
@@ -395,7 +486,7 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item row="11" column="0" >
+   <item row="12" column="0" colspan="4" >
     <layout class="QHBoxLayout" name="horizontalLayout_9" >
      <item>
       <widget class="QPushButton" name="fgcolor" >
@@ -413,7 +504,7 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item row="12" column="0" colspan="2" >
+   <item row="13" column="0" colspan="8" >
     <layout class="QHBoxLayout" name="horizontalLayout" >
      <item>
       <spacer name="horizontalSpacer" >
