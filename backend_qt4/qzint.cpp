@@ -320,29 +320,35 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 	{
 		painter.save();
 		painter.setRenderHint(QPainter::Antialiasing);
-
-		for (int row=0;row<m_zintSymbol->rows;row++)
-			for (int i=0;i<m_zintSymbol->width;i++)
-				if (m_zintSymbol->encoded_data[row][i]=='1')
+		const qreal diagonal=11;
+		const qreal width=1.73205807568877*diagonal/2;
+		for (int r=0;r<m_zintSymbol->rows;r++)
+		{
+			for (int c=0;c<m_zintSymbol->width;c++)
+			{
+				if (m_zintSymbol->encoded_data[r][c]=='1')
 				{
+					qreal col=c*(width+1)+(r%2)*((width+1)/2);
+					qreal row=r*diagonal+1;
 					QPainterPath pt;
-					pt.moveTo(i*12+4, row*12);
-					pt.lineTo(i*12+4+4, row*12);
-					pt.lineTo(i*12+12, row*12+4);
-					pt.lineTo(i*12+12, row*12+4+4);
-					pt.lineTo(i*12+4+4, row*12+12);
-					pt.lineTo(i*12+4, row*12+12);
-					pt.lineTo(i*12, row*12+4+4);
-					pt.lineTo(i*12, row*12+4);
-					pt.lineTo(i*12+4, row*12);
+					pt.moveTo(col+width/2, 	row);
+					pt.lineTo(col+width, 	row+diagonal/4);
+					pt.lineTo(col+width, 	row+(diagonal-diagonal/4));
+					pt.lineTo(col+width/2, 	row+diagonal);
+					pt.lineTo(col, 		row+(diagonal-diagonal/4));
+					pt.lineTo(col, 		row+diagonal/4);
+					pt.lineTo(col+width/2, 	row);
 					painter.fillPath(pt,QBrush(m_fgColor));
 				}
-
-		p.setWidth(8);
+			}
+		}
+		p.setWidth(width);
 		painter.setPen(p);
-		painter.drawEllipse(QPointF((qreal)m_zintSymbol->width/2*12,m_zintSymbol->height/2*12),12+4,12+4);
-		painter.drawEllipse(QPointF((qreal)m_zintSymbol->width/2*12,m_zintSymbol->height/2*12),12+8+8+4,12+8+8+4);
-		painter.drawEllipse(QPointF((qreal)m_zintSymbol->width/2*12,m_zintSymbol->height/2*12),12+8+8+8+8+4,12+8+8+8+8+4);
+		const qreal w=width+1;
+		const qreal h=diagonal+1;
+		painter.drawEllipse(QPointF((qreal)(m_zintSymbol->width-1)/2*w,(m_zintSymbol->height-1)/2*h),h,h);
+		painter.drawEllipse(QPointF((qreal)(m_zintSymbol->width-1)/2*w,(m_zintSymbol->height-1)/2*h),h+w*1.5,h+w*1.5);
+		painter.drawEllipse(QPointF((qreal)(m_zintSymbol->width-1)/2*w,(m_zintSymbol->height-1)/2*h),h+w*3,h+w*3);
 		painter.restore();
 	}
 	else
