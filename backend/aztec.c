@@ -52,8 +52,8 @@ int aztec_text_process(unsigned char source[], char binary_string[])
 	int charmap[ustrlen(source)], typemap[ustrlen(source)], maplength;
 	int curtable, newtable, lasttable, chartype;
 	int blockmap[2][ustrlen(source)], blocks;
-	
-	
+
+
 	/* Lookup input string in encoding table */
 	for(i = 0; i < ustrlen(source); i++) {
 		if(source[i] > 127) {
@@ -550,12 +550,15 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 	int x, y, i, j, k, data_blocks, ecc_blocks, layers, total_bits;
 	char binary_string[20000], bit_pattern[20045], descriptor[42];
 	char adjusted_string[20000];
-	unsigned int data_part[1500], ecc_part[510];
+	unsigned int data_part[1500], ecc_part[840];
 	unsigned char desc_data[4], desc_ecc[6];
 	int err_code, ecc_level, compact, data_length, data_maxsize, codeword_size, adjusted_length;
 	
+	memset(binary_string,0,20000);
+	memset(adjusted_string,0,20000);
+
 	err_code = aztec_text_process(source, binary_string);
-	
+
 	if(err_code != 0) {
 		strcpy(symbol->errtxt, "Input too long or too many extended ASCII characters [921]");
 		return err_code;
@@ -574,6 +577,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	data_length = strlen(binary_string);
+
 	layers = 0; /* Keep compiler happy! */
 	data_maxsize = 0; /* Keep compiler happy! */
 	if(symbol->option_2 == 0) { /* The size of the symbol can be determined by Zint */
@@ -771,12 +775,8 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	/* Copy across data into separate integers */
-	for(i = 0; i < 1500; i++) {
-		data_part[i] = 0;
-	}
-	for(i = 0; i < 840; i++) {
-		ecc_part[i] = 0;
-	}
+	memset(data_part,0,1500*sizeof(int));
+	memset(ecc_part,0,840*sizeof(int));
 	
 	/* Split into codewords and calculate reed-colomon error correction codes */
 	switch(codeword_size) {
@@ -891,9 +891,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	/* Invert the data so that actual data is on the outside and reed-solomon on the inside */
-	for(i = 0; i < 20045; i++) {
-		bit_pattern[i] = '0';
-	}
+	memset(bit_pattern,'0',20045);
 	
 	total_bits = (data_blocks + ecc_blocks) * codeword_size;
 	for(i = 0; i < total_bits; i++) {
@@ -901,13 +899,9 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	/* Now add the symbol descriptor */
-	for(i = 0; i < 42; i++) {
-		descriptor[i] = '0';
-	}
-	for(i = 0; i < 4; i++) {
-		desc_data[i] = 0;
-		desc_ecc[i] = 0;
-	}
+	memset(descriptor,0,42);
+	memset(desc_data,0,4);
+	memset(desc_ecc,0,6);
 
 	if(compact) {
 		/* The first 2 bits represent the number of layers minus 1 */
