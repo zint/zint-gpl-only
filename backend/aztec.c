@@ -123,47 +123,49 @@ int aztec_text_process(unsigned char source[], char binary_string[])
 	if(blockmap[0][0] & 4) { blockmap[0][0] = 4; }
 	if(blockmap[0][0] & 8) { blockmap[0][0] = 8; }
 	
-	/* look for adjacent blocks which can use the same table (left to right search) */
-	for(i = 1; i < blocks; i++) {
-		if(blockmap[0][i] & blockmap[0][i - 1]) {
-			blockmap[0][i] = (blockmap[0][i] & blockmap[0][i - 1]);
-		}
-	}
-	
-	if(blockmap[0][blocks - 1] & 1) { blockmap[0][blocks - 1] = 1; }
-	if(blockmap[0][blocks - 1] & 2) { blockmap[0][blocks - 1] = 2; }
-	if(blockmap[0][blocks - 1] & 4) { blockmap[0][blocks - 1] = 4; }
-	if(blockmap[0][blocks - 1] & 8) { blockmap[0][blocks - 1] = 8; }
-	
-	/* look for adjacent blocks which can use the same table (right to left search) */
-	for(i = blocks - 1; i > 0; i--) {
-		if(blockmap[0][i] & blockmap[0][i + 1]) {
-			blockmap[0][i] = (blockmap[0][i] & blockmap[0][i + 1]);
-		}
-	}
-	
-	/* determine the encoding table for characters which do not fit with adjacent blocks */
-	for(i = 1; i < blocks; i++) {
-		if(blockmap[0][i] & 8) { blockmap[0][i] = 8; }
-		if(blockmap[0][i] & 4) { blockmap[0][i] = 4; }
-		if(blockmap[0][i] & 2) { blockmap[0][i] = 2; }
-		if(blockmap[0][i] & 1) { blockmap[0][i] = 1; }
-	}
-	
-	/* Combine blocks of the same type */
-	i = 0;
-	do{
-		if(blockmap[0][i] == blockmap[0][i + 1]) {
-			blockmap[1][i] += blockmap[1][i + 1];
-			for(j = i + 1; j < blocks; j++) {
-				blockmap[0][j] = blockmap[0][j + 1];
-				blockmap[1][j] = blockmap[1][j + 1];
+	if(blocks > 1) {
+		/* look for adjacent blocks which can use the same table (left to right search) */
+		for(i = 1; i < blocks; i++) {
+			if(blockmap[0][i] & blockmap[0][i - 1]) {
+				blockmap[0][i] = (blockmap[0][i] & blockmap[0][i - 1]);
 			}
-			blocks--;
-		} else {
-			i++;
 		}
-	} while (i < blocks);
+		
+		if(blockmap[0][blocks - 1] & 1) { blockmap[0][blocks - 1] = 1; }
+		if(blockmap[0][blocks - 1] & 2) { blockmap[0][blocks - 1] = 2; }
+		if(blockmap[0][blocks - 1] & 4) { blockmap[0][blocks - 1] = 4; }
+		if(blockmap[0][blocks - 1] & 8) { blockmap[0][blocks - 1] = 8; }
+		
+		/* look for adjacent blocks which can use the same table (right to left search) */
+		for(i = blocks - 1; i > 0; i--) {
+			if(blockmap[0][i] & blockmap[0][i + 1]) {
+				blockmap[0][i] = (blockmap[0][i] & blockmap[0][i + 1]);
+			}
+		}
+		
+		/* determine the encoding table for characters which do not fit with adjacent blocks */
+		for(i = 1; i < blocks; i++) {
+			if(blockmap[0][i] & 8) { blockmap[0][i] = 8; }
+			if(blockmap[0][i] & 4) { blockmap[0][i] = 4; }
+			if(blockmap[0][i] & 2) { blockmap[0][i] = 2; }
+			if(blockmap[0][i] & 1) { blockmap[0][i] = 1; }
+		}
+		
+		/* Combine blocks of the same type */
+		i = 0;
+		do{
+			if(blockmap[0][i] == blockmap[0][i + 1]) {
+				blockmap[1][i] += blockmap[1][i + 1];
+				for(j = i + 1; j < blocks; j++) {
+					blockmap[0][j] = blockmap[0][j + 1];
+					blockmap[1][j] = blockmap[1][j + 1];
+				}
+				blocks--;
+			} else {
+				i++;
+			}
+		} while (i < blocks);
+	}
 	
 	/* Put the adjusted block data back into typemap */
 	j = 0;
