@@ -28,6 +28,7 @@
 #include <ctype.h>
 #include <string.h>
 #include "reedsol.h"
+#include "common.h"
 #include "dm200.h"
 
 static struct ecc200matrix_s {
@@ -740,27 +741,25 @@ static char *encmake(int l, unsigned char *s, int *lenp, char exact)
  * Returns 0 on error (writes to stderr with details).
  */
 
-unsigned char *iec16022ecc200(int *Wptr, int *Hptr, char **encodingptr, int barcodelen, unsigned char *barcode, int *lenp, int *maxp, int *eccp)
+int iec16022ecc200(unsigned char *barcode, int barcodelen, struct zint_symbol *symbol)
 {
 	unsigned char binary[3000];	// encoded raw data and ecc to place in barcode
 	int W = 0, H = 0;
 	char *encoding = 0;
 	unsigned char *grid = 0;
+	int lend, *lenp;
 	struct ecc200matrix_s *matrix;
 	memset(binary, 0, sizeof(binary));
-	if (encodingptr)
-		encoding = *encodingptr;
-	if (Wptr)
-		W = *Wptr;
-	if (Hptr)
-		H = *Hptr;
 
+	lend = 0;
+	lenp = &lend;
+	
 	// encoding
 	if (W) {		// known size
 		for (matrix = ecc200matrix; matrix->W && (matrix->W != W || matrix->H != H); matrix++) ;
 		if (!matrix->W) {
-			fprintf(stderr, "Invalid size %dx%d\n", W, H);
-			return 0;
+			strcpy(symbol->errtxt, "Invalid size");
+			return ERROR_INVALID_OPTION;
 		}
 		if (!encoding) {
 			int len;
@@ -769,12 +768,9 @@ unsigned char *iec16022ecc200(int *Wptr, int *Hptr, char **encodingptr, int barc
 				free(e);
 				e = encmake(barcodelen, barcode, &len, 0);
 				if (len > matrix->bytes) {
-					fprintf(stderr,
-						"Cannot make barcode fit %dx%d\n",
-						W, H);
-					if (e)
-						free(e);
-					return 0;
+					strcpy(symbol->errtxt, "Cannot make barcode fit");
+					if (e) free (e);
+					return ERROR_INVALID_OPTION;
 				}
 			}
 			encoding = e;
@@ -786,7 +782,7 @@ unsigned char *iec16022ecc200(int *Wptr, int *Hptr, char **encodingptr, int barc
 
 		if (encoding) {	// find one that fits chosen encoding
 			for (matrix = ecc200matrix; matrix->W; matrix++)
-				if (ecc200encode(binary, matrix->bytes, barcode, barcodelen, encoding, 0))
+				if (ecc200encode(binary, matrix->bytes, barcode, barcodelen, encoding, 0)) 
 					break;
 		} else {
 			int len;
@@ -802,16 +798,16 @@ unsigned char *iec16022ecc200(int *Wptr, int *Hptr, char **encodingptr, int barc
 			encoding = e;
 		}
 		if (!matrix->W) {
-			fprintf(stderr, "Cannot find suitable size, barcode too long\n");
-			return 0;
+			strcpy(symbol->errtxt, "Cannot find suitable size, barcode too long");
+			return ERROR_INVALID_OPTION;
 		}
 		W = matrix->W;
 		H = matrix->H;
 	}
 	if (!ecc200encode(binary, matrix->bytes, barcode, barcodelen, encoding, lenp)) {
-		fprintf(stderr, "Barcode too long for %dx%d\n", W, H);
+		strcpy(symbol->errtxt, "Barcode too long");
 		free(encoding);
-		return 0;
+		return ERROR_INVALID_OPTION;
 	}
 	// ecc code
 	ecc200(binary, matrix->bytes, matrix->datablock, matrix->rsblock);
@@ -844,20 +840,25 @@ unsigned char *iec16022ecc200(int *Wptr, int *Hptr, char **encodingptr, int barc
 			}
 			//fprintf (stderr, "\n");
 		}
+		
+		for(y = H - 1; y >= 0; y--) {
+			int x;
+			for(x = 0; x < W; x++) {
+				if(grid[W * y + x]) {
+					symbol->encoded_data[(H - y) - 1][x] = '1'; }
+					else {
+						symbol->encoded_data[(H - y) - 1][x] = '0'; }
+			}
+			symbol->row_height[(H - y) - 1] = 1;
+		}
+		
 		free(grid);
 		free(places);
 	}
-	if (Wptr)
-		*Wptr = W;
-	if (Hptr)
-		*Hptr = H;
-	if (encodingptr)
-		*encodingptr = encoding;
-	if (maxp)
-		*maxp = matrix->bytes;
-	if (eccp)
-		*eccp =
-		    (matrix->bytes + 2) / matrix->datablock * matrix->rsblock;
+	
+	symbol->rows = H;
+	symbol->width = W;
+	
 	free(encoding);
-	return grid;
+	return 0;
 }
