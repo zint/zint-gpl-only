@@ -36,12 +36,12 @@
  *
  */
 
+#include "common.h"
+
 #ifndef __IEC16022ECC200_H
 #define __IEC16022ECC200_H
 
-unsigned char *iec16022ecc200(int *Wptr, int *Hptr, char **encodingptr,
-			      int barcodelen, unsigned char *barcode,
-			      int *lenp, int *maxp, int *eccp);
+int iec16022ecc200(unsigned char *barcode, int barcodelen, struct zint_symbol *symbol);
 #define MAXBARCODE 3116
 
 #endif				/* __IEC16022ECC200_H */
