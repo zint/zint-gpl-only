@@ -275,6 +275,10 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	rows_needed = (i/5);
 	if(i%5 > 0) { rows_needed++; }
 	
+	if(rows_needed == 1) {
+		rows_needed = 2;
+	}
+	
 	/* start with the mode character - Table 2 */
 	m = 0;
 	switch(set[0]) {
@@ -393,16 +397,19 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 		}
 	} while (read < ustrlen(source));
 
-	
 	pads_needed = 5 - ((bar_characters + 2) % 5);
 	if(pads_needed == 5) {
 		pads_needed = 0;
+	}
+	if((bar_characters + pads_needed) < 8) {
+		pads_needed += 8 - (bar_characters + pads_needed);
 	}
 	for(i = 0; i < pads_needed; i++) {
 		values[bar_characters] = 106;
 		bar_characters++;
 	}
-
+	
+	/* Calculate check digits */
 	first_sum = 0;
 	second_sum = 0;
 	for(i = 0; i < bar_characters; i++)
@@ -424,6 +431,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 		concat(width_pattern, "1");
 		for(i = 0; i < 5; i++) {
 			concat(width_pattern, C16KTable[values[(current_row * 5) + i]]);
+			
 		}
 		concat(width_pattern, C16KStartStop[C16KStopValues[current_row]]);
 
