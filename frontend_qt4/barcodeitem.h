@@ -34,7 +34,6 @@ public:
 
 public:
 	mutable Zint::QZint bc;
-	int scaleFactor;
 	int w,h;
 };
 

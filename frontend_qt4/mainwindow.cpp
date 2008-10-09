@@ -59,7 +59,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 	connect(heightb, SIGNAL(valueChanged( int )), SLOT(on_generate_clicked()));
 	connect(widthb,  SIGNAL(valueChanged( int )), SLOT(on_generate_clicked()));
 	connect(security,  SIGNAL(valueChanged( int )), SLOT(on_generate_clicked()));
-	connect(scaleFactor,  SIGNAL(valueChanged( int )), SLOT(on_generate_clicked()));
 	connect(bwidth,  SIGNAL(valueChanged( int )), SLOT(on_generate_clicked()));
 	connect(codewords,  SIGNAL(valueChanged( int )), SLOT(on_generate_clicked()));
 	connect(iwidth,  SIGNAL(valueChanged( int )), SLOT(on_generate_clicked()));
@@ -89,7 +88,6 @@ void MainWindow::on_bgcolor_clicked()
 void MainWindow::on_generate_clicked()
 {
 	QString error;
-	m_bc.scaleFactor=scaleFactor->value();
 	m_bc.w=iwidth->value();
 	m_bc.h=iheight->value();
 	m_bc.bc.setText(text->toPlainText());
