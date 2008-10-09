@@ -19,12 +19,15 @@
 namespace Zint
 {
 
+static const qreal maxi_diagonal=11;
+static const qreal maxi_width=1.73205807568877*maxi_diagonal/2;
+
 QZint::QZint()
 {
 	m_symbol=BARCODE_CODE128;
 	m_height=50;
 	m_border=NO_BORDER;
-	m_boderWidth=0;
+	m_boderWidth=1;
 	m_securityLevel=-1;
 	m_pdf417CodeWords=928;
 	m_fgColor=Qt::black;
@@ -125,7 +128,7 @@ void QZint::setPrimaryMessage(const QString & primaryMessage)
 int QZint::height()
 {
 	encode();
-	return m_zintSymbol->height+(m_border==BOX)?m_boderWidth*2:0;
+	return (m_zintSymbol->height+(m_border!=NO_BORDER)?m_boderWidth*2:0)*(m_zintSymbol->symbology == BARCODE_MAXICODE?(maxi_diagonal+1):1);
 }
 
 void QZint::setHeight(int height)
@@ -141,7 +144,7 @@ void QZint::setWidth(int width)
 int QZint::width()
 {
 	encode();
-	return m_zintSymbol->width+(m_border!=NO_BORDER)?m_boderWidth*2:0;
+	return (m_zintSymbol->width+(m_border==BOX)?m_boderWidth*2:0)*(m_zintSymbol->symbology == BARCODE_MAXICODE?(maxi_width+1):1);
 }
 
 QColor QZint::fgColor()
@@ -177,6 +180,8 @@ int QZint::borderWidth()
 }
 void QZint::setBorderWidth(int boderWidth)
 {
+	if (boderWidth<1 || boderWidth>16)
+		boderWidth=1;
 	m_boderWidth=boderWidth;
 }
 
@@ -225,9 +230,10 @@ void QZint::setExcode39ExtraSymbology(int excode39SymbologyNumber)
 	m_excode39SymbologyNumber=excode39SymbologyNumber;
 }
 
-void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode mode, qreal scaleFactor)
+void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode mode)
 {
 	encode();
+
 	if (m_lastError.length())
 	{
 		painter.drawText(paintRect,Qt::AlignCenter,m_lastError);
@@ -239,19 +245,20 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 	qreal xtr=paintRect.x();
 	qreal ytr=paintRect.y();
 
-	qreal xsf=scaleFactor;
-	qreal ysf=scaleFactor;
 
-	qreal gwidth=scaleFactor*m_zintSymbol->width;
-	qreal gheight=scaleFactor*m_zintSymbol->height;
+	qreal gwidth=m_zintSymbol->width;
+	qreal gheight=m_zintSymbol->height;
 	if (m_zintSymbol->symbology == BARCODE_MAXICODE)
 	{
-		gheight*=12;
-		gwidth*=12;
+		gheight*=(maxi_diagonal+1);
+		gwidth*=(maxi_width+1);
 	}
 
-	gwidth+=scaleFactor*((m_border==BOX)?m_boderWidth*2:0);
-	gheight+=scaleFactor*((m_border!=NO_BORDER)?m_boderWidth*2:0);
+	qreal xsf=1;
+	qreal ysf=1;
+
+	gwidth+=((m_border==BOX)?m_boderWidth*2:0);
+	gheight+=((m_border!=NO_BORDER)?m_boderWidth*2:0);
 
 	switch(mode)
 	{
@@ -294,8 +301,8 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 	{
 		case BOX:
 			painter.drawLine(m_boderWidth/2,m_boderWidth/2, gwidth-m_boderWidth/2, m_boderWidth/2);
-			painter.drawLine(gwidth-m_boderWidth/2, m_boderWidth/2,gwidth-m_boderWidth/2, gheight-m_boderWidth/2);
-			painter.drawLine(gwidth-m_boderWidth/2, gheight-m_boderWidth/2, m_boderWidth/2, gheight-m_boderWidth/2);
+			painter.drawLine(gwidth-m_boderWidth/2, m_boderWidth/2, gwidth-m_boderWidth/2, gheight-m_boderWidth/2);
+			painter.drawLine(m_boderWidth/2, gheight-m_boderWidth/2, gwidth-m_boderWidth/2, gheight-m_boderWidth/2);
 			painter.drawLine(m_boderWidth/2, gheight-m_boderWidth/2, m_boderWidth/2,m_boderWidth/2);
 			painter.translate(m_boderWidth,m_boderWidth);
 			break;
@@ -320,35 +327,33 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 	{
 		painter.save();
 		painter.setRenderHint(QPainter::Antialiasing);
-		const qreal diagonal=11;
-		const qreal width=1.73205807568877*diagonal/2;
 		for (int r=0;r<m_zintSymbol->rows;r++)
 		{
 			for (int c=0;c<m_zintSymbol->width;c++)
 			{
 				if (m_zintSymbol->encoded_data[r][c]=='1')
 				{
-					qreal col=c*(width+1)+(r%2)*((width+1)/2);
-					qreal row=r*diagonal+1;
+					qreal col=(qreal)c*(maxi_width+1)+(r%2)*((maxi_width+1)/2);
+					qreal row=(qreal)r*(maxi_diagonal+1);
 					QPainterPath pt;
-					pt.moveTo(col+width/2, 	row);
-					pt.lineTo(col+width, 	row+diagonal/4);
-					pt.lineTo(col+width, 	row+(diagonal-diagonal/4));
-					pt.lineTo(col+width/2, 	row+diagonal);
-					pt.lineTo(col, 		row+(diagonal-diagonal/4));
-					pt.lineTo(col, 		row+diagonal/4);
-					pt.lineTo(col+width/2, 	row);
+					pt.moveTo(col+maxi_width/2, 	row);
+					pt.lineTo(col+maxi_width, 	row+maxi_diagonal/4);
+					pt.lineTo(col+maxi_width, 	row+(maxi_diagonal-maxi_diagonal/4));
+					pt.lineTo(col+maxi_width/2, 	row+maxi_diagonal);
+					pt.lineTo(col, 		row+(maxi_diagonal-maxi_diagonal/4));
+					pt.lineTo(col, 		row+maxi_diagonal/4);
+					pt.lineTo(col+maxi_width/2, 	row);
 					painter.fillPath(pt,QBrush(m_fgColor));
 				}
 			}
 		}
-		p.setWidth(width);
+		p.setWidth(maxi_width);
 		painter.setPen(p);
-		const qreal w=width+1;
-		const qreal h=diagonal+1;
-		painter.drawEllipse(QPointF((qreal)(m_zintSymbol->width-1)/2*w,(m_zintSymbol->height-1)/2*h),h,h);
-		painter.drawEllipse(QPointF((qreal)(m_zintSymbol->width-1)/2*w,(m_zintSymbol->height-1)/2*h),h+w*1.5,h+w*1.5);
-		painter.drawEllipse(QPointF((qreal)(m_zintSymbol->width-1)/2*w,(m_zintSymbol->height-1)/2*h),h+w*3,h+w*3);
+		const qreal w=maxi_width+1;
+		const qreal h=maxi_diagonal+1;
+		painter.drawEllipse(QPointF((qreal)m_zintSymbol->width/2*w,(qreal)m_zintSymbol->height/2*h),w,h);
+		painter.drawEllipse(QPointF((qreal)m_zintSymbol->width/2*w,(qreal)m_zintSymbol->height/2*h),w+w*1.5,h+h*1.5);
+		painter.drawEllipse(QPointF((qreal)m_zintSymbol->width/2*w,(qreal)m_zintSymbol->height/2*h),w+w*3,h+h*3);
 		painter.restore();
 	}
 	else
