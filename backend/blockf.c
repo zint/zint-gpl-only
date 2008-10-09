@@ -514,6 +514,31 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 		
 	} while (exit_status == 0);
 	
+	if(current_row == 0) { 
+		/* fill up the first row */
+		for(c = column_position; c <= *(columns_needed); c++) {
+			if(current_mode == MODEA) {
+				blockmatrix[current_row][c] = 100; /* Code B */
+				current_mode = MODEB;
+			} else {
+				blockmatrix[current_row][c] = 101; /* Code A */
+				current_mode = MODEA;
+			}
+		}
+		current_row++;
+		/* add a second row */
+		subset_selector[current_row] = MODEA;
+		current_mode = MODEA;
+		for(c = 0; c <= *(columns_needed) - 2; c++) {
+			if(current_mode == MODEA) {
+				blockmatrix[current_row][c] = 100; /* Code B */
+				current_mode = MODEB;
+			} else {
+				blockmatrix[current_row][c] = 101; /* Code A */
+				current_mode = MODEA;
+			}
+		}
+	}
 	*(rows_needed) = current_row + 1;
 	
 	return error_number;
@@ -602,7 +627,6 @@ int codablock(struct zint_symbol *symbol, unsigned char source[])
 	min_module_height = (0.55 * (columns_needed + 3)) + 3;
 	if(min_module_height < 8) { min_module_height = 8; }
 	
-	
 	/* Encode the Row Indicator in the First Row of the Symbol - Table D2 */
 	if(subset_selector[0] == 99) {
 		/* Code C */
@@ -643,6 +667,13 @@ int codablock(struct zint_symbol *symbol, unsigned char source[])
 	for(i = 0; i < rows_needed; i++) {
 		int writer, flip_flop;
 		
+		printf("row %d: ",i);
+		printf("103 %d %d [", subset_selector[i], row_indicator[i]);
+		for(j = 0; j < columns_needed; j++) {
+			printf("%d ",blockmatrix[i][j]);
+		}
+		printf("] %d 106\n", row_check[i]);
+		
 		strcpy(row_pattern, "");
 		/* Start character */
 		concat(row_pattern, C128Table[103]); /* Always Start A */
@@ -650,18 +681,14 @@ int codablock(struct zint_symbol *symbol, unsigned char source[])
 		concat(row_pattern, C128Table[subset_selector[i]]);
 		concat(row_pattern, C128Table[row_indicator[i]]);
 		
-		/*printf("103 %d %d ", subset_selector[i], row_indicator[i]);*/
-		
 		for(j = 0; j < columns_needed; j++) {
 			concat(row_pattern, C128Table[blockmatrix[i][j]]);
-			/*printf("%d ",blockmatrix[i][j]);*/
 		}
 		
 		concat(row_pattern, C128Table[row_check[i]]);
 		
 		/* Stop character */
 		concat(row_pattern, C128Table[106]);
-		/*printf("%d 106\n", row_check[i]);*/
 		
 		/* Write the information into the symbol */
 		writer = 0;

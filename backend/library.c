@@ -137,8 +137,13 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input)
 	int error_number, error_buffer;
 	error_number = 0;
 
-	/* First check the symbology field */
+	if(ustrlen(input) == 0) {
+		strcpy(symbol->errtxt, "No input data [Z00]");
+		error_tag(symbol->errtxt, ERROR_INVALID_DATA);
+		return ERROR_INVALID_DATA;
+	}
 	
+	/* First check the symbology field */
 	if(symbol->symbology < 1) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128 [Z01]"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
 
 	/* symbol->symbologys 1 to 86 are defined by tbarcode */
@@ -172,7 +177,7 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input)
 	if((symbol->symbology >= 94) && (symbol->symbology <= 128)) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128 [Z10]"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
 	/* Everything from 100 up is Zint-specific */
 	if(symbol->symbology >= 140) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128 [Z11]"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
-	
+
 	if(error_number > 4) {
 		error_tag(symbol->errtxt, error_number);
 		return error_number;
@@ -191,7 +196,7 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input)
 		symbol->border_width = 8;
 		symbol->output_options = BARCODE_BOX;
 	}
-	
+
 	switch(symbol->symbology) {
 		case BARCODE_C25MATRIX: error_number = matrix_two_of_five(symbol, input); break;
 		case BARCODE_C25IND: error_number = industrial_two_of_five(symbol, input); break;
@@ -262,11 +267,9 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input)
 		case BARCODE_DAFT: error_number = daft_code(symbol, input); break;
 		case BARCODE_EAN14: error_number = ean_14(symbol, input); break;
 	}
-	
 	if(error_number == 0) {
 		error_number = error_buffer;
 	}
-	
 	error_tag(symbol->errtxt, error_number);
 	return error_number;
 }
@@ -275,7 +278,7 @@ int ZBarcode_Print(struct zint_symbol *symbol)
 {
 	int error_number;
 	char output[4];
-	
+
 	if(strlen(symbol->outfile) > 3) {
 		output[0] = symbol->outfile[strlen(symbol->outfile) - 3];
 		output[1] = symbol->outfile[strlen(symbol->outfile) - 2];
@@ -318,6 +321,7 @@ int ZBarcode_Print_Rotated(struct zint_symbol *symbol, int rotate_angle)
 		output[2] = symbol->outfile[strlen(symbol->outfile) - 1];
 		output[3] = '\0';
 		to_upper((unsigned char*)output);
+
 #ifndef NO_PNG
 		if(!(strcmp(output, "PNG"))) {
 			error_number = png_handle(symbol, rotate_angle);
