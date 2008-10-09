@@ -25,33 +25,12 @@ namespace Zint
 {
 
 class QZint
-#ifndef NO_QT_KEYWORDS
- : public QObject
-#endif
 {
-#ifndef NO_QT_KEYWORDS
-Q_OBJECT
-	Q_PROPERTY(int symbol READ symbol WRITE setSymbol)
-	Q_PROPERTY(QString text READ text WRITE setText)
-	Q_PROPERTY(QString primaryMessage READ primaryMessage WRITE setPrimaryMessage)
-	Q_PROPERTY(int height READ height WRITE setHeight)
-	Q_PROPERTY(int width READ width WRITE setWidth)
-	Q_PROPERTY(QColor fgColor READ fgColor WRITE setFgColor)
-	Q_PROPERTY(QColor bgColor READ bgColor WRITE setBgColor)
-	Q_PROPERTY(BorderType borderType READ borderType WRITE setBorderType)
-	Q_PROPERTY(int borderWidth READ borderWidth WRITE setBorderWidth)
-	Q_PROPERTY(int pdf417CodeWords READ pdf417CodeWords WRITE setPdf417CodeWords)
-	Q_PROPERTY(int securityLevel READ securityLevel WRITE setSecurityLevel)
-	Q_PROPERTY(int msiExtraSymbology READ msiExtraSymbology WRITE setMsiExtraSymbology)
-	Q_PROPERTY(int code39ExtraSymbology READ code39ExtraSymbology WRITE setCode39ExtraSymbology)
-	Q_PROPERTY(int excode39ExtraSymbology READ excode39ExtraSymbology WRITE setExcode39ExtraSymbology)
-	Q_ENUMS(BorderType) 
-#endif
+private:
 
 public:
-
-enum BorderType{NO_BORDER=0, BIND=1, BOX=2};
-enum AspectRatioMode{IgnoreAspectRatio=0, KeepAspectRatio=1, CenterBarCode=2};
+	 enum BorderType{NO_BORDER=0, BIND=1, BOX=2};
+	 enum AspectRatioMode{IgnoreAspectRatio=0, KeepAspectRatio=1, CenterBarCode=2};
 
 public:
 	QZint();
@@ -99,7 +78,7 @@ public:
 	int excode39ExtraSymbology();
 	void setExcode39ExtraSymbology(int excode39SymbologyNumber);
 
-	void render(QPainter & painter, const QRectF & paintRect, AspectRatioMode mode=IgnoreAspectRatio, qreal scaleFactor=1);
+	void render(QPainter & painter, const QRectF & paintRect, AspectRatioMode mode=IgnoreAspectRatio);
 
 	const QString & lastError();
 	bool hasErrors();

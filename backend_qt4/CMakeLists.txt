@@ -6,12 +6,6 @@ include_directories(BEFORE "${CMAKE_SOURCE_DIR}/backend" )
 
 set(QZint_SRCS qzint.cpp)
 
-QT4_WRAP_CPP(QZint_SRCS qzint.h)
-
-#add_definitions (-DNO_QT_KEYWORDS)
-# Uncomment the above line if you want to compile qzint without qt keywords
-
-
 add_library(QZint SHARED ${QZint_SRCS})
 
 set_target_properties(QZint PROPERTIES	VERSION ${ZINT_VERSION}
