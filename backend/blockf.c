@@ -667,12 +667,12 @@ int codablock(struct zint_symbol *symbol, unsigned char source[])
 	for(i = 0; i < rows_needed; i++) {
 		int writer, flip_flop;
 		
-		printf("row %d: ",i);
+		/*printf("row %d: ",i);
 		printf("103 %d %d [", subset_selector[i], row_indicator[i]);
 		for(j = 0; j < columns_needed; j++) {
 			printf("%d ",blockmatrix[i][j]);
 		}
-		printf("] %d 106\n", row_check[i]);
+		printf("] %d 106\n", row_check[i]);*/
 		
 		strcpy(row_pattern, "");
 		/* Start character */
