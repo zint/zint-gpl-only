@@ -127,9 +127,9 @@
    <item row="2" column="4" colspan="4" >
     <layout class="QHBoxLayout" name="horizontalLayout_12" >
      <item>
-      <widget class="QLabel" name="label_11" >
+      <widget class="QLabel" name="label_7" >
        <property name="text" >
-        <string>Item Width:</string>
+        <string>Aspect ratio:</string>
        </property>
        <property name="alignment" >
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -137,19 +137,22 @@
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="iwidth" >
-       <property name="minimum" >
-        <number>10</number>
-       </property>
-       <property name="maximum" >
-        <number>1000</number>
-       </property>
-       <property name="singleStep" >
-        <number>5</number>
-       </property>
-       <property name="value" >
-        <number>400</number>
-       </property>
+      <widget class="QComboBox" name="aspectRatio" >
+       <item>
+        <property name="text" >
+         <string>Ignore aspect ratio</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Keep aspect ratio</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Center (no scalling)</string>
+        </property>
+       </item>
       </widget>
      </item>
     </layout>
@@ -179,11 +182,11 @@
     </layout>
    </item>
    <item row="3" column="4" colspan="4" >
-    <layout class="QHBoxLayout" name="horizontalLayout_13" >
+    <layout class="QHBoxLayout" name="horizontalLayout_7" >
      <item>
-      <widget class="QLabel" name="label_12" >
+      <widget class="QLabel" name="label_11" >
        <property name="text" >
-        <string>Item Height:</string>
+        <string>Item Width:</string>
        </property>
        <property name="alignment" >
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -191,7 +194,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="iheight" >
+      <widget class="QSpinBox" name="iwidth" >
        <property name="minimum" >
         <number>10</number>
        </property>
@@ -233,11 +236,11 @@
     </layout>
    </item>
    <item row="4" column="4" colspan="4" >
-    <layout class="QHBoxLayout" name="horizontalLayout_4" >
+    <layout class="QHBoxLayout" name="horizontalLayout_13" >
      <item>
-      <widget class="QLabel" name="label_4" >
+      <widget class="QLabel" name="label_12" >
        <property name="text" >
-        <string>Primary</string>
+        <string>Item Height:</string>
        </property>
        <property name="alignment" >
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -245,7 +248,20 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="primary" />
+      <widget class="QSpinBox" name="iheight" >
+       <property name="minimum" >
+        <number>10</number>
+       </property>
+       <property name="maximum" >
+        <number>1000</number>
+       </property>
+       <property name="singleStep" >
+        <number>5</number>
+       </property>
+       <property name="value" >
+        <number>400</number>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -276,28 +292,20 @@
      </item>
     </layout>
    </item>
-   <item rowspan="7" row="5" column="4" colspan="4" >
-    <layout class="QVBoxLayout" name="verticalLayout" >
+   <item row="5" column="4" colspan="4" >
+    <layout class="QHBoxLayout" name="horizontalLayout_4" >
      <item>
-      <widget class="QLabel" name="label_2" >
+      <widget class="QLabel" name="label_4" >
        <property name="text" >
-        <string>Data</string>
+        <string>Primary</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QTextEdit" name="text" >
-       <property name="html" >
-        <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
-&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'DejaVu Sans'; font-size:9pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif'; font-size:10pt;">123456&lt;/p>&lt;/body>&lt;/html></string>
-       </property>
-       <property name="acceptRichText" >
-        <bool>false</bool>
-       </property>
-      </widget>
+      <widget class="QLineEdit" name="primary" />
      </item>
     </layout>
    </item>
@@ -323,6 +331,31 @@ p, li { white-space: pre-wrap; }
        </property>
        <property name="value" >
         <number>0</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item rowspan="6" row="6" column="4" colspan="4" >
+    <layout class="QVBoxLayout" name="verticalLayout" >
+     <item>
+      <widget class="QLabel" name="label_2" >
+       <property name="text" >
+        <string>Data</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QTextEdit" name="text" >
+       <property name="html" >
+        <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'DejaVu Sans'; font-size:9pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif'; font-size:10pt;">123456&lt;/p>&lt;/body>&lt;/html></string>
+       </property>
+       <property name="acceptRichText" >
+        <bool>false</bool>
        </property>
       </widget>
      </item>

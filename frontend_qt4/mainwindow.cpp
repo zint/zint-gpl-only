@@ -66,6 +66,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 	connect(btype, SIGNAL(currentIndexChanged( int )), SLOT(on_generate_clicked()));
 	connect(primary, SIGNAL(textChanged( const QString& )), SLOT(on_generate_clicked()));
 	connect(text, SIGNAL(textChanged()), SLOT(on_generate_clicked()));
+	connect(aspectRatio, SIGNAL(currentIndexChanged( int )), SLOT(on_generate_clicked()));
 
 }
 
@@ -90,6 +91,7 @@ void MainWindow::on_generate_clicked()
 	QString error;
 	m_bc.w=iwidth->value();
 	m_bc.h=iheight->value();
+	m_bc.ar=(Zint::QZint::AspectRatioMode)aspectRatio->currentIndex();
 	m_bc.bc.setText(text->toPlainText());
 	m_bc.bc.setPrimaryMessage(primary->text());
 	m_bc.bc.setSymbol(metaObject()->enumerator(0).value(bstyle->currentIndex()));
