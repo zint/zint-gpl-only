@@ -351,9 +351,9 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 		painter.setPen(p);
 		const qreal w=maxi_width+1;
 		const qreal h=maxi_diagonal+1;
-		painter.drawEllipse(QPointF((qreal)m_zintSymbol->width/2*w,(qreal)m_zintSymbol->height/2*h),w,h);
-		painter.drawEllipse(QPointF((qreal)m_zintSymbol->width/2*w,(qreal)m_zintSymbol->height/2*h),w+w*1.5,h+h*1.5);
-		painter.drawEllipse(QPointF((qreal)m_zintSymbol->width/2*w,(qreal)m_zintSymbol->height/2*h),w+w*3,h+h*3);
+		painter.drawEllipse(QPointF((qreal)m_zintSymbol->width/2*w,(qreal)m_zintSymbol->height/2*h),w,w);
+		painter.drawEllipse(QPointF((qreal)m_zintSymbol->width/2*w,(qreal)m_zintSymbol->height/2*h),w+w*1.5,w+w*1.5);
+		painter.drawEllipse(QPointF((qreal)m_zintSymbol->width/2*w,(qreal)m_zintSymbol->height/2*h),w+w*3,w+w*3);
 		painter.restore();
 	}
 	else
