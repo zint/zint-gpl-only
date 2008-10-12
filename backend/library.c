@@ -108,6 +108,7 @@ extern int code32(struct zint_symbol *symbol, unsigned char source[]); /* Italia
 extern int codablock(struct zint_symbol *symbol, unsigned char source[]); /* Codablock F */
 extern int daft_code(struct zint_symbol *symbol, unsigned char source[]); /* DAFT Code */
 extern int ean_14(struct zint_symbol *symbol, unsigned char source[]); /* EAN-14 */
+extern int nve_18(struct zint_symbol *symbol, unsigned char source[]); /* NVE-18 */
 
 #ifndef NO_PNG
 int png_handle(struct zint_symbol *symbol, int rotate_angle);
@@ -217,7 +218,7 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input)
 		case BARCODE_LOGMARS: error_number = c39(symbol, input); break;
 		case BARCODE_CODE128: error_number = code_128(symbol, input); break;
 		case BARCODE_CODE128B: error_number = code_128(symbol, input); break;
-		case BARCODE_NVE18: error_number = code_128(symbol, input); break;
+		case BARCODE_NVE18: error_number = nve_18(symbol, input); break;
 		case BARCODE_CODE11: error_number = code_11(symbol, input); break;
 		case BARCODE_MSI_PLESSEY: error_number = msi_handle(symbol, input); break;
 		case BARCODE_TELEPEN: error_number = telepen(symbol, input); break;

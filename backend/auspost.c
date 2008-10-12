@@ -110,9 +110,10 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[])
 	char data_pattern[200];
 	char fcc[3], dpid[10];
 	unsigned int loopey, reader;
-	int writer;
+	int writer, i;
 	strcpy (data_pattern, "");
-	int errno;
+	int errno, zeroes;
+	char localstr[30];
 
 	errno = 0;
 	
@@ -135,8 +136,8 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[])
 			return errno;
 		}
 	} else {
-		if(ustrlen(source) != 8) {
-			strcpy(symbol->errtxt, "Auspost input is wrong length [633]");
+		if(ustrlen(source) > 8) {
+			strcpy(symbol->errtxt, "Auspost input is too long [633]");
 			return ERROR_TOO_LONG;
 		}
 		switch(symbol->symbology) {
@@ -144,10 +145,17 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[])
 			case BARCODE_AUSROUTE: strcpy(fcc, "87"); break;
 			case BARCODE_AUSREDIRECT: strcpy(fcc, "92"); break;
 		}
+		
+		/* Add leading zeros as required */
+		strcpy(localstr, "");
+		zeroes = 8 - ustrlen(source);
+		for(i = 0; i < zeroes; i++) {
+			concat(localstr, "0");
+		}
 	}
 
-	
-	errno = is_sane(GDSET, source);
+	concat(localstr, (char*)source);
+	errno = is_sane(GDSET, (unsigned char *)localstr);
 	if(errno == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data [634]");
 		return errno;
@@ -155,10 +163,10 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[])
 	
 	/* Verifiy that the first 8 characters are numbers */
 	for(loopey = 0; loopey < 8; loopey++) {
-		dpid[loopey] = source[loopey];
+		dpid[loopey] = localstr[loopey];
 	}
 	dpid[8] = '\0';
-	errno = is_sane(NESET, (unsigned char*)dpid);
+	errno = is_sane(NESET, (unsigned char *)dpid);
 	if(errno == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in DPID [635]");
 		return errno;
@@ -182,16 +190,16 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[])
 	}
 
 	/* Customer Information */
-	if(ustrlen(source) > 8)
+	if(strlen(localstr) > 8)
 	{
-		if((ustrlen(source) == 13) || (ustrlen(source) == 18)) {
-			for(reader = 8; reader < ustrlen(source); reader++) {
-				lookup(GDSET, AusCTable, source[reader], data_pattern);
+		if((strlen(localstr) == 13) || (strlen(localstr) == 18)) {
+			for(reader = 8; reader < strlen(localstr); reader++) {
+				lookup(GDSET, AusCTable, localstr[reader], data_pattern);
 			}
 		}
-		if((ustrlen(source) == 16) || (ustrlen(source) == 23)) {
-			for(reader = 8; reader < ustrlen(source); reader++) {
-				lookup(NESET, AusNTable, source[reader], data_pattern);
+		if((strlen(localstr) == 16) || (strlen(localstr) == 23)) {
+			for(reader = 8; reader < strlen(localstr); reader++) {
+				lookup(NESET, AusNTable, localstr[reader], data_pattern);
 			}
 		}
 	}

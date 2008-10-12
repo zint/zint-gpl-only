@@ -213,37 +213,6 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 		strcpy(symbol->errtxt, "Input too long [201]");
 		return ERROR_TOO_LONG;
 	}
-
-	/* Add check digit if encoding an NVE18 symbol */
-	if(symbol->symbology == BARCODE_NVE18) {
-		errornum = is_sane(NESET, source);
-		if(errornum == ERROR_INVALID_DATA) {
-			strcpy(symbol->errtxt, "Invalid characters in data [202]");
-			return errornum;
-		}
-		if(sourcelen != 17) {
-			strcpy(symbol->errtxt, "Input wrong length [203]");
-			return ERROR_TOO_LONG;
-		}
-		for(i = sourcelen + 2; i > 1; i--) {
-			source[i] = source[i - 2];
-		}
-		source[0] = '0';
-		source[1] = '0';
-		total_sum = 0;
-		for(i = 0; i < 19; i++)
-		{
-			if((i % 2) == 0) {
-				total_sum +=  3 * ctoi(source[i]);
-			} else {
-				total_sum += ctoi(source[i]);
-			}
-
-		}
-		nve_check = 10 - total_sum%10;
-		source[sourcelen + 1] = '\0';
-		source[sourcelen] = itoc(nve_check);
-	}
 	
 	/* Detect extended ASCII characters */
 	for(i = 0; i < sourcelen; i++) {
@@ -899,17 +868,60 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 	return errornum;
 }
 
+int nve_18(struct zint_symbol *symbol, unsigned char source[])
+{
+	/* Add check digit if encoding an NVE18 symbol */
+	int error_number, zeroes, i, nve_check, total_sum, sourcelen;
+	unsigned char localstr[20], checkstr[3];
+	
+	sourcelen = ustrlen(source);
+	if(sourcelen > 17) {
+		strcpy(symbol->errtxt, "Input too long [203]");
+		return ERROR_TOO_LONG;
+	}
+	
+	error_number = is_sane(NESET, source);
+	if(error_number == ERROR_INVALID_DATA) {
+		strcpy(symbol->errtxt, "Invalid characters in data [202]");
+		return error_number;
+	}
+
+	strcpy(localstr, "00");
+	zeroes = 17 - sourcelen;
+	for(i = 0; i < zeroes; i++)
+		concat(localstr, "0");
+	concat(localstr, (char *)source);
+	
+	total_sum = 0;
+	for(i = 0; i < 19; i++)
+	{
+		if((i % 2) == 0) {
+			total_sum +=  3 * ctoi(localstr[i]);
+		} else {
+			total_sum += ctoi(localstr[i]);
+		}
+
+	}
+	nve_check = 10 - total_sum%10;
+	checkstr[1] = '\0';
+	checkstr[0] = itoc(nve_check);
+	concat(localstr, checkstr);
+	error_number = code_128(symbol, localstr);
+	
+	return error_number;
+}
+
 int ean_14(struct zint_symbol *symbol, unsigned char source[])
 {
 	/* EAN-14 - A version of EAN-128 */
 	int input_length, i, count, check_digit;
-	int error_number;
+	int error_number, zeroes;
 	unsigned char ean128_equiv[20];
 	
 	memset(ean128_equiv, 0, 20);
 	input_length = ustrlen(source);
 	
-	if(input_length != 13) {
+	if(input_length > 13) {
 		strcpy(symbol->errtxt, "Input wrong length [721]");
 		return ERROR_TOO_LONG;
 	}
@@ -920,6 +932,10 @@ int ean_14(struct zint_symbol *symbol, unsigned char source[])
 		return error_number;
 	}
 	concat((char*)ean128_equiv, "[01]");
+	zeroes = 13 - input_length;
+	for(i = 0; i < zeroes; i++) {
+		concat(ean128_equiv, "0");
+	}
 	concat((char*)ean128_equiv, (char*)source);
 	
 	count = 0;
