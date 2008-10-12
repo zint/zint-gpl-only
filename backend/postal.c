@@ -319,16 +319,16 @@ int kix_code(struct zint_symbol *symbol, unsigned char source[])
 	/* Handles Dutch Post TNT KIX symbols */
 	/* The same as RM4SCC but without check digit */
 	/* Specification at http://www.tntpost.nl/zakelijk/klantenservice/downloads/kIX_code/download.aspx */
-	char height_pattern[50];
+	char height_pattern[50], localstr[13];
 	unsigned int loopey;
 	int writer, i;
-	int error_number;
+	int error_number, zeroes;
 	strcpy(height_pattern, "");
 
 	error_number = 0;
 	
 	to_upper(source);
-	if(ustrlen(source) != 11) {
+	if(ustrlen(source) > 11) {
 		strcpy(symbol->errtxt, "Input too long [901]");
 		return ERROR_TOO_LONG;
 	}
@@ -337,8 +337,17 @@ int kix_code(struct zint_symbol *symbol, unsigned char source[])
 		strcpy(symbol->errtxt, "Invalid characters in data [902]");
 		return error_number;
 	}
-	for (i = 0; i < ustrlen(source); i++) {
-		lookup(KRSET, RoyalTable, source[i], height_pattern);
+	
+	/* Add leading zeroes */
+	strcpy(localstr, "");
+	zeroes = 11 - ustrlen(source);
+	for(i = 0; i < zeroes; i++)
+		concat(localstr, "0");
+	concat(localstr, (char *)source);
+	
+	/* Encode data */
+	for (i = 0; i < 11; i++) {
+		lookup(KRSET, RoyalTable, localstr[i], height_pattern);
 	}
 	
 	writer = 0;

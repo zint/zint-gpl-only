@@ -241,16 +241,17 @@ int interleaved_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 
 int itf14(struct zint_symbol *symbol, unsigned char source[])
 {
-	int i, error_number, h;
+	int i, error_number, h, zeroes;
 	unsigned int count, check_digit;
+	char localstr[15];
 	
 	error_number = 0;
 
 	count = 0;
 	h = ustrlen(source);
 	
-	if(h != 13) {
-		strcpy(symbol->errtxt, "Input wrong length [891]");
+	if(h > 13) {
+		strcpy(symbol->errtxt, "Input too long [891]");
 		return ERROR_TOO_LONG;
 	}
 	
@@ -260,23 +261,31 @@ int itf14(struct zint_symbol *symbol, unsigned char source[])
 		return error_number;
 	}
 
+	/* Add leading zeros as required */
+	strcpy(localstr, "");
+	zeroes = 13 - ustrlen(source);
+	for(i = 0; i < zeroes; i++) {
+		concat(localstr, "0");
+	}
+	concat(localstr, (char *)source);
+	
 	/* Calculate the check digit - the same method used for EAN-13 */
 
 	for (i = h - 1; i >= 0; i--)
 	{
-		count += ctoi(source[i]);
+		count += ctoi(localstr[i]);
 
 		if (!((i%2) == 0))
 		{
-			count += 2 * ctoi(source[i]);
+			count += 2 * ctoi(localstr[i]);
 		}
 	}
 	check_digit = 10 - (count%10);
 	if (check_digit == 10) { check_digit = 0; }
-	source[h] = itoc(check_digit);
-	source[h + 1] = '\0';
-	error_number = interleaved_two_of_five(symbol, source);
-	strcpy(symbol->text, (char*)source);
+	localstr[h] = itoc(check_digit);
+	localstr[h + 1] = '\0';
+	error_number = interleaved_two_of_five(symbol, (unsigned char *)localstr);
+	strcpy(symbol->text, localstr);
 	return error_number;
 }
 
@@ -284,11 +293,13 @@ int dpleit(struct zint_symbol *symbol, unsigned char source[])
 { /* Deutshe Post Leitcode */
 	int i, error_number;
 	unsigned int h, count, check_digit;
+	char localstr[15], checkstr[3];
+	int zeroes;
 
 	error_number = 0;
 	count = 0;
 	h = ustrlen(source);
-	if(h != 13) {
+	if(h > 13) {
 		strcpy(symbol->errtxt, "Input wrong length [211]");
 		return ERROR_TOO_LONG;
 	}
@@ -298,32 +309,40 @@ int dpleit(struct zint_symbol *symbol, unsigned char source[])
 		return error_number;
 	}
 
-	for (i = h - 1; i >= 0; i--)
+	strcpy(localstr, "");
+	zeroes = 13 - h;
+	for(i = 0; i < zeroes; i++)
+		concat(localstr, "0");
+	concat(localstr, (char *)source);
+	
+	for (i = 12; i >= 0; i--)
 	{
-		count += 4 * ctoi(source[i]);
+		count += 4 * ctoi(localstr[i]);
 
 		if (!((i%2) == 0))
 		{
-			count += 5 * ctoi(source[i]);
+			count += 5 * ctoi(localstr[i]);
 		}
 	}
 	check_digit = 10 - (count%10);
 	if (check_digit == 10) { check_digit = 0; }
-	source[h] = itoc(check_digit);
-	source[h + 1] = '\0';
-	error_number = interleaved_two_of_five(symbol, source);
-	strcpy(symbol->text, (char*)source);
+	checkstr[0] = itoc(check_digit);
+	checkstr[1] = '\0';
+	strcpy(localstr, checkstr);
+	error_number = interleaved_two_of_five(symbol, (unsigned char *)localstr);
+	strcpy(symbol->text, localstr);
 	return error_number;
 }
 
 int dpident(struct zint_symbol *symbol, unsigned char source[])
 { /* Deutsche Post Identcode */
-	int i, error_number;
+	int i, error_number, zeroes;
 	unsigned int h, count, check_digit;
+	char localstr[13], checkstr[3];
 
 	count = 0;
 	h = ustrlen(source);
-	if(h != 11) {
+	if(h > 11) {
 		strcpy(symbol->errtxt, "Input wrong length [221]");
 		return ERROR_TOO_LONG;
 	}
@@ -333,20 +352,27 @@ int dpident(struct zint_symbol *symbol, unsigned char source[])
 		return error_number;
 	}
 
-	for (i = h - 1; i >= 0; i--)
+	strcpy(localstr, "");
+	zeroes = 11 - h;
+	for(i = 0; i < zeroes; i++)
+		strcpy(localstr, "0");
+	strcpy(localstr, (char *)source);
+	
+	for (i = 10; i >= 0; i--)
 	{
-		count += 4 * ctoi(source[i]);
+		count += 4 * ctoi(localstr[i]);
 
 		if (!((i%2) == 0))
 		{
-			count += 5 * ctoi(source[i]);
+			count += 5 * ctoi(localstr[i]);
 		}
 	}
 	check_digit = 10 - (count%10);
 	if (check_digit == 10) { check_digit = 0; }
-	source[h] = itoc(check_digit);
-	source[h + 1] = '\0';
-	error_number = interleaved_two_of_five(symbol, source);
-	strcpy(symbol->text, (char*)source);
+	checkstr[0] = itoc(check_digit);
+	checkstr[1] = '\0';
+	strcpy(localstr, checkstr);
+	error_number = interleaved_two_of_five(symbol, (unsigned char *)localstr);
+	strcpy(symbol->text, localstr);
 	return error_number;
 }
