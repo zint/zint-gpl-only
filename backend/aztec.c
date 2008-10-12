@@ -802,6 +802,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 				if(ecc_part[i] & 0x02) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
 				if(ecc_part[i] & 0x01) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
 			}
+			rs_free();
 			break;
 		case 8:
 			for(i = 0; i < data_blocks; i++) {
@@ -827,6 +828,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 				if(ecc_part[i] & 0x02) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
 				if(ecc_part[i] & 0x01) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
 			}
+			rs_free();
 			break;
 		case 10:
 			for(i = 0; i < data_blocks; i++) {
@@ -856,6 +858,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 				if(ecc_part[i] & 0x02) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
 				if(ecc_part[i] & 0x01) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
 			}
+			rs_free();
 			break;
 		case 12:
 			for(i = 0; i < data_blocks; i++) {
@@ -889,6 +892,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 				if(ecc_part[i] & 0x02) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
 				if(ecc_part[i] & 0x01) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
 			}
+			rs_free();
 			break;
 	}
 	
@@ -968,6 +972,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 			if(desc_ecc[i] & 0x01) { descriptor[(i * 4) + 19] = '1'; }
 		}
 	}
+	rs_free();
 	
 	/* Merge descriptor with the rest of the symbol */
 	for(i = 0; i < 40; i++) {
