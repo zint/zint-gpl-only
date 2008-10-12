@@ -91,6 +91,7 @@ void rs_error(char data_pattern[])
 	{
 		concat(data_pattern, AusBarTable[(int)result[reader - 1]]);
 	}
+	rs_free();
 }
 
 int australia_post(struct zint_symbol *symbol, unsigned char source[])

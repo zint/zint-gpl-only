@@ -48,6 +48,7 @@ void maxi_do_primary_check(  )
 
 	for ( j = 0; j < ecclen; j += 1)
 		maxi_codeword[ datalen + j] = results[j];
+	rs_free();
 }
 
 void maxi_do_secondary_chk_odd( int ecclen )
@@ -72,6 +73,7 @@ void maxi_do_secondary_chk_odd( int ecclen )
 
 	for ( j = 0; j < (ecclen); j += 1)
 		maxi_codeword[ datalen + (2 *j) + 1 + 20 ] = results[j];
+	rs_free();
 }
 
 void maxi_do_secondary_chk_even(int ecclen )
@@ -96,6 +98,7 @@ void maxi_do_secondary_chk_even(int ecclen )
 
 	for ( j = 0; j < (ecclen); j += 1)
 		maxi_codeword[ datalen + (2 *j) + 20] = results[j];
+	rs_free();
 }
 
 void maxi_bump(int set[], int character[], int bump_posn)

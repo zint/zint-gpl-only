@@ -221,6 +221,7 @@ static void ecc200(unsigned char *binary, int bytes, int datablock, int rsblock)
 		for (n = b; n < rsblock * blocks; n += blocks)
 			binary[bytes + n] = ecc[p--];
 	}
+	rs_free();
 }
 
 /*
@@ -237,6 +238,7 @@ char ecc200encode(unsigned char *t, int tl, unsigned char *s, int sl, char *enco
 		fprintf(stderr, "Encoding string too short\n");
 		return 0;
 	}
+
 	// do the encoding
 	while (sp < sl && tp < tl) {
 		char newenc = enc;	// suggest new encoding
@@ -851,14 +853,12 @@ int iec16022ecc200(unsigned char *barcode, int barcodelen, struct zint_symbol *s
 			}
 			symbol->row_height[(H - y) - 1] = 1;
 		}
-		
 		free(grid);
 		free(places);
 	}
 	
 	symbol->rows = H;
 	symbol->width = W;
-	
 	free(encoding);
 	return 0;
 }

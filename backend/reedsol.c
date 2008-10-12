@@ -104,8 +104,7 @@ void rs_init_code(int nsym, int index)
 		rspoly[i] = 1;
 		for (k = i - 1; k > 0; k--) {
 			if (rspoly[k])
-				rspoly[k] =
-				    alog[(log[rspoly[k]] + index) % logmod];
+				rspoly[k] = alog[(log[rspoly[k]] + index) % logmod];
 			rspoly[k] ^= rspoly[k - 1];
 		}
 		rspoly[0] = alog[(log[rspoly[0]] + index) % logmod];
@@ -122,10 +121,7 @@ void rs_encode(int len, unsigned char *data, unsigned char *res)
 		m = res[rlen - 1] ^ data[i];
 		for (k = rlen - 1; k > 0; k--) {
 			if (m && rspoly[k])
-				res[k] =
-						res[k -
-						1] ^ alog[(log[m] +
-						log[rspoly[k]]) % logmod];
+				res[k] = res[k - 1] ^ alog[(log[m] + log[rspoly[k]]) % logmod];
 			else
 				res[k] = res[k - 1];
 		}
@@ -134,12 +130,6 @@ void rs_encode(int len, unsigned char *data, unsigned char *res)
 		else
 			res[0] = 0;
 	}
-	
-	free(log);
-	free(alog);
-	free(rspoly);
-	rspoly = NULL;
-
 }
 
 void rs_encode_long(int len, unsigned int *data, unsigned int *res)
@@ -151,10 +141,7 @@ void rs_encode_long(int len, unsigned int *data, unsigned int *res)
 		m = res[rlen - 1] ^ data[i];
 		for (k = rlen - 1; k > 0; k--) {
 			if (m && rspoly[k])
-				res[k] =
-				    res[k -
-					1] ^ alog[(log[m] +
-						   log[rspoly[k]]) % logmod];
+				res[k] = res[k - 1] ^ alog[(log[m] + log[rspoly[k]]) % logmod];
 			else
 				res[k] = res[k - 1];
 		}
@@ -163,10 +150,12 @@ void rs_encode_long(int len, unsigned int *data, unsigned int *res)
 		else
 			res[0] = 0;
 	}
-	
+}
+
+void rs_free()
+{ /* Free memory */
 	free(log);
 	free(alog);
 	free(rspoly);
 	rspoly = NULL;
 }
-
