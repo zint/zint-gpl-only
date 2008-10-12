@@ -985,8 +985,8 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 
 	/* Plot all of the data into the symbol in pre-defined spiral pattern */
 	if(compact) {
-		for(y = AztecCompactOffset[layers - 1]; y < (28 - AztecCompactOffset[layers - 1]); y++) {
-			for(x = AztecCompactOffset[layers - 1]; x < (28 - AztecCompactOffset[layers - 1]); x++) {
+		for(y = AztecCompactOffset[layers - 1]; y < (27 - AztecCompactOffset[layers - 1]); y++) {
+			for(x = AztecCompactOffset[layers - 1]; x < (27 - AztecCompactOffset[layers - 1]); x++) {
 				if(CompactAztecMap[(y * 27) + x] == 1) {
 					symbol->encoded_data[y - AztecCompactOffset[layers - 1]][x - AztecCompactOffset[layers - 1]] = '1';
 				}
@@ -1001,8 +1001,8 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 		symbol->rows = 27 - (2 * AztecCompactOffset[layers - 1]);
 		symbol->width = 27 - (2 * AztecCompactOffset[layers - 1]);
 	} else {
-		for(y = AztecOffset[layers - 1]; y < (152 - AztecOffset[layers - 1]); y++) {
-			for(x = AztecOffset[layers - 1]; x < (152 - AztecOffset[layers - 1]); x++) {
+		for(y = AztecOffset[layers - 1]; y < (151 - AztecOffset[layers - 1]); y++) {
+			for(x = AztecOffset[layers - 1]; x < (151 - AztecOffset[layers - 1]); x++) {
 				if(AztecMap[(y * 151) + x] == 1) {
 					symbol->encoded_data[y - AztecOffset[layers - 1]][x - AztecOffset[layers - 1]] = '1';
 				}

@@ -71,6 +71,11 @@ int qr_code(struct zint_symbol *symbol, unsigned char source[])
 	int errno = 0;
 	int i, j;
 	
+	if(ustrlen(source) > 5254) {
+		strcpy(symbol->errtxt, "input data too long [580]");
+		return ERROR_TOO_LONG;
+	}
+	
 	code = encode(symbol->option_1, symbol->option_2, source);
 	if(code == NULL) {
 		strcpy(symbol->errtxt, "libqrencode failed to encode the input data [581]");
