@@ -244,6 +244,7 @@ int itf14(struct zint_symbol *symbol, unsigned char source[])
 	int i, error_number, h, zeroes;
 	unsigned int count, check_digit;
 	char localstr[15];
+	char checkstr[3];
 	
 	error_number = 0;
 
@@ -282,8 +283,9 @@ int itf14(struct zint_symbol *symbol, unsigned char source[])
 	}
 	check_digit = 10 - (count%10);
 	if (check_digit == 10) { check_digit = 0; }
-	localstr[h] = itoc(check_digit);
-	localstr[h + 1] = '\0';
+	checkstr[0] = itoc(check_digit);
+	checkstr[1] = '\0';
+	concat(localstr, checkstr);
 	error_number = interleaved_two_of_five(symbol, (unsigned char *)localstr);
 	strcpy(symbol->text, localstr);
 	return error_number;
@@ -328,7 +330,7 @@ int dpleit(struct zint_symbol *symbol, unsigned char source[])
 	if (check_digit == 10) { check_digit = 0; }
 	checkstr[0] = itoc(check_digit);
 	checkstr[1] = '\0';
-	strcpy(localstr, checkstr);
+	concat(localstr, checkstr);
 	error_number = interleaved_two_of_five(symbol, (unsigned char *)localstr);
 	strcpy(symbol->text, localstr);
 	return error_number;
@@ -355,8 +357,8 @@ int dpident(struct zint_symbol *symbol, unsigned char source[])
 	strcpy(localstr, "");
 	zeroes = 11 - h;
 	for(i = 0; i < zeroes; i++)
-		strcpy(localstr, "0");
-	strcpy(localstr, (char *)source);
+		concat(localstr, "0");
+	concat(localstr, (char *)source);
 	
 	for (i = 10; i >= 0; i--)
 	{
@@ -371,7 +373,7 @@ int dpident(struct zint_symbol *symbol, unsigned char source[])
 	if (check_digit == 10) { check_digit = 0; }
 	checkstr[0] = itoc(check_digit);
 	checkstr[1] = '\0';
-	strcpy(localstr, checkstr);
+	concat(localstr, checkstr);
 	error_number = interleaved_two_of_five(symbol, (unsigned char *)localstr);
 	strcpy(symbol->text, localstr);
 	return error_number;

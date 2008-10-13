@@ -247,12 +247,14 @@ int pharmazentral(struct zint_symbol *symbol, unsigned char source[])
 	
 	int i, error_number;
 	unsigned int h, count, check_digit;
+	char localstr[8];
+	int zeroes;
 	
 	error_number = 0;
 
 	count = 0;
 	h = ustrlen(source);
-	if(h != 6) {
+	if(h > 6) {
 		strcpy(symbol->errtxt, "Input wrong length [521]");
 		return ERROR_TOO_LONG;
 	}
@@ -262,23 +264,29 @@ int pharmazentral(struct zint_symbol *symbol, unsigned char source[])
 		return error_number;
 	}
 	
-	for (i = 0; i < h; i++)
+	strcpy(localstr, "");
+	zeroes = 6 - h;
+	for(i = 0; i < zeroes; i++)
+		concat(localstr, "0");
+	concat(localstr, (char *)source);
+	
+	for (i = 0; i < 6; i++)
 	{
-		count += (i + 2) * ctoi(source[i]);
+		count += (i + 2) * ctoi(localstr[i]);
 	}
 
-	for(i = h + 1; i >= 1; i--)
+	for(i = 7; i >= 1; i--)
 	{
-		source[i] = source[i - 1];
+		localstr[i] = localstr[i - 1];
 	}
-	source[0] = '-';
+	localstr[0] = '-';
 	
 	check_digit = count%11;
 	if (check_digit == 11) { check_digit = 0; }
-	source[h + 1] = itoc(check_digit);
-	source[h + 2] = '\0';
-	error_number = c39(symbol, source);
-	strcpy(symbol->text, (char*)source);
+	localstr[7] = itoc(check_digit);
+	localstr[8] = '\0';
+	error_number = c39(symbol, (unsigned char *)localstr);
+	strcpy(symbol->text, localstr);
 	return error_number;
 }
 
