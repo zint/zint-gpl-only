@@ -872,7 +872,7 @@ int nve_18(struct zint_symbol *symbol, unsigned char source[])
 {
 	/* Add check digit if encoding an NVE18 symbol */
 	int error_number, zeroes, i, nve_check, total_sum, sourcelen;
-	unsigned char localstr[20], checkstr[3];
+	char localstr[20], checkstr[3];
 	
 	sourcelen = ustrlen(source);
 	if(sourcelen > 17) {
@@ -903,10 +903,11 @@ int nve_18(struct zint_symbol *symbol, unsigned char source[])
 
 	}
 	nve_check = 10 - total_sum%10;
+	if(nve_check == 10) { nve_check = 0; }
 	checkstr[1] = '\0';
 	checkstr[0] = itoc(nve_check);
 	concat(localstr, checkstr);
-	error_number = code_128(symbol, localstr);
+	error_number = code_128(symbol, (unsigned char *)localstr);
 	
 	return error_number;
 }
@@ -914,7 +915,7 @@ int nve_18(struct zint_symbol *symbol, unsigned char source[])
 int ean_14(struct zint_symbol *symbol, unsigned char source[])
 {
 	/* EAN-14 - A version of EAN-128 */
-	int input_length, i, count, check_digit;
+	int input_length, i, j, count, check_digit;
 	int error_number, zeroes;
 	unsigned char ean128_equiv[20];
 	
@@ -934,7 +935,9 @@ int ean_14(struct zint_symbol *symbol, unsigned char source[])
 	concat((char*)ean128_equiv, "[01]");
 	zeroes = 13 - input_length;
 	for(i = 0; i < zeroes; i++) {
-		concat(ean128_equiv, "0");
+		j = ustrlen(ean128_equiv);
+		ean128_equiv[j] = '0';
+		ean128_equiv[j + 1] = '\0';
 	}
 	concat((char*)ean128_equiv, (char*)source);
 	
