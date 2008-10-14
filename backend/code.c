@@ -247,7 +247,7 @@ int pharmazentral(struct zint_symbol *symbol, unsigned char source[])
 	
 	int i, error_number;
 	unsigned int h, count, check_digit;
-	char localstr[8];
+	char localstr[8], checkstr[3];
 	int zeroes;
 	
 	error_number = 0;
@@ -264,29 +264,29 @@ int pharmazentral(struct zint_symbol *symbol, unsigned char source[])
 		return error_number;
 	}
 	
-	strcpy(localstr, "");
+	strcpy(localstr, "-");
 	zeroes = 6 - h;
 	for(i = 0; i < zeroes; i++)
 		concat(localstr, "0");
 	concat(localstr, (char *)source);
 	
-	for (i = 0; i < 6; i++)
+	for (i = 1; i < 7; i++)
 	{
-		count += (i + 2) * ctoi(localstr[i]);
+		count += (i + 1) * ctoi(localstr[i]);
 	}
-
-	for(i = 7; i >= 1; i--)
-	{
-		localstr[i] = localstr[i - 1];
-	}
-	localstr[0] = '-';
 	
 	check_digit = count%11;
 	if (check_digit == 11) { check_digit = 0; }
-	localstr[7] = itoc(check_digit);
-	localstr[8] = '\0';
+	checkstr[0] = itoc(check_digit);
+	checkstr[1] = '\0';
+	if(checkstr[0] == 'A') { 
+		strcpy(symbol->errtxt, "Invalid PZN Data");
+		return ERROR_INVALID_DATA;
+	}
+	concat(localstr, checkstr);
 	error_number = c39(symbol, (unsigned char *)localstr);
-	strcpy(symbol->text, localstr);
+	strcpy(symbol->text, "PZN");
+	concat(symbol->text, localstr);
 	return error_number;
 }
 
