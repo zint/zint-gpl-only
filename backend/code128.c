@@ -908,6 +908,11 @@ int nve_18(struct zint_symbol *symbol, unsigned char source[])
 	checkstr[0] = itoc(nve_check);
 	concat(localstr, checkstr);
 	error_number = code_128(symbol, (unsigned char *)localstr);
+	for(i = 2; i <= 20; i++) {
+		localstr[i - 2] = localstr[i];
+	}
+	strcpy(symbol->text, "(00)");
+	concat(symbol->text, localstr);
 	
 	return error_number;
 }
