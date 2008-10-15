@@ -46,7 +46,7 @@ struct zint_symbol *ZBarcode_Create()
 	symbol->option_2 = 0;
 	symbol->option_3 = 928; // PDF_MAX
 	strcpy(symbol->primary, "");
-	for(i = 0; i < 90; i++) {
+	for(i = 0; i < 178; i++) {
 		for(j = 0; j < 1000; j++) {
 			symbol->encoded_data[i][j] = '0';
 		}
@@ -272,6 +272,7 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input)
 		error_number = error_buffer;
 	}
 	error_tag(symbol->errtxt, error_number);
+	printf("%s\n",symbol->text);
 	return error_number;
 }
 
