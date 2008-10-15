@@ -42,7 +42,7 @@ struct zint_symbol {
 	int rows;
 	int width;
 	char primary[100];
-	char encoded_data[155][1000];
+	char encoded_data[178][1000];
 	int row_height[155];
 	char errtxt[100];
 };
