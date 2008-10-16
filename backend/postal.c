@@ -56,7 +56,7 @@ int postnet(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	
 	error_number = 0;
 
-	if(ustrlen(source) > 90) {
+	if(ustrlen(source) > 38) {
 		strcpy(symbol->errtxt, "Input too long [401]");
 		return ERROR_TOO_LONG;
 	}
@@ -132,7 +132,7 @@ int planet(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	
 	error_number = 0;
 	
-	if(ustrlen(source) > 90) {
+	if(ustrlen(source) > 38) {
 		strcpy(symbol->errtxt, "Input too long [821]");
 		return ERROR_TOO_LONG;
 	}
