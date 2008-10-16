@@ -82,6 +82,7 @@ int code_11(struct zint_symbol *symbol, unsigned char source[])
 	int h, c_digit, c_weight, c_count, k_digit, k_weight, k_count;
 	int weight[1000], error_number;
 	char dest[1000];
+	char checkstr[3];
 	
 	error_number = 0;
 	strcpy(dest, "");
@@ -120,8 +121,6 @@ int code_11(struct zint_symbol *symbol, unsigned char source[])
 	}
 	c_digit = c_count%11;
 
-	/* Draw C checksum */
-	lookup(NASET, C11Table, itoc(c_digit), dest);
 	weight[ustrlen(source)] = c_digit;
 
 	/* Calculate K checksum */
@@ -135,18 +134,21 @@ int code_11(struct zint_symbol *symbol, unsigned char source[])
 	}
 	k_digit = k_count%11;
 
-	/* Draw K checksum */
-	lookup(NASET, C11Table, itoc(k_digit), dest);
-
+	checkstr[0] = itoc(c_digit);
+	checkstr[1] = itoc(k_digit);
+	if(checkstr[0] == 'A') { checkstr[0] = '-'; }
+	if(checkstr[1] == 'A') { checkstr[1] = '-'; }
+	checkstr[2] = '\0';
+	lookup(NASET, C11Table, checkstr[0], dest);
+	lookup(NASET, C11Table, checkstr[1], dest);
+	
 	/* Stop character */
 	concat (dest, "11221");
-	
-	h = ustrlen(source);
-	source[h] = itoc(c_digit);
-	source[h + 1] = itoc(k_digit);
-	source[h + 2] = '\0';
+
 	expand(symbol, dest);
+
 	strcpy(symbol->text, (char*)source);
+	concat(symbol->text, checkstr);
 	return error_number;
 }
 
