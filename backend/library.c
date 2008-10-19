@@ -272,7 +272,7 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input)
 		error_number = error_buffer;
 	}
 	error_tag(symbol->errtxt, error_number);
-	printf("%s\n",symbol->text);
+	/*printf("%s\n",symbol->text);*/
 	return error_number;
 }
 
