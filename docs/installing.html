@@ -3,9 +3,9 @@
 <HEAD>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
 	<TITLE>Installing Zint</TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.3  (Linux)">
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Unix)">
 	<META NAME="CREATED" CONTENT="20070730;21081900">
-	<META NAME="CHANGED" CONTENT="20080329;19111200">
+	<META NAME="CHANGED" CONTENT="20081019;8493400">
 	<STYLE TYPE="text/css">
 	<!--
 		TD P { color: #000000 }
@@ -60,39 +60,21 @@ available from
 <A HREF="http://megaui.net/fukuchi/works/qrencode/index.en.html">http://megaui.net/fukuchi/works/qrencode/index.en.html</A>.
 If you don't need QR Code support this can be disabled during
 compilation.</P>
-<P STYLE="font-style: normal">To install libzint with QR Code support
-follow these steps</P>
-<P STYLE="font-style: normal"><FONT FACE="Courier, monospace"><FONT SIZE=2>cd
-backend<BR>make<BR>make install</FONT></FONT></P>
+<P>To install Zint with QR Code support follow these steps</P>
+<P STYLE="font-style: normal"><FONT FACE="Courier, monospace"><FONT SIZE=2>make<BR>make
+install</FONT></FONT></P>
 <P STYLE="font-style: normal">If you do not want QR Code support use
 the following steps</P>
-<P STYLE="font-style: normal"><FONT FACE="Courier, monospace"><FONT SIZE=2>cd
-backend<BR>make libzint_noqr<BR>make install</FONT></FONT></P>
-<P><BR><BR>
-</P>
-<P STYLE="font-style: normal"><A NAME="FRONTEND"></A><FONT SIZE=5><B>2.2
-Installing the front end</B></FONT></P>
-<P STYLE="font-style: normal">To install the front end follow these
-steps</P>
-<P STYLE="font-style: normal"><FONT FACE="Courier, monospace"><FONT SIZE=2>cd
-frontend<BR>make<BR>make install</FONT></FONT></P>
-<P><BR><BR>
-</P>
-<P STYLE="font-style: normal"><A NAME="TESTING"></A><FONT SIZE=5><B>2.3
+<P><FONT FACE="Courier, monospace"><SPAN STYLE="font-style: normal"><FONT SIZE=2>make
+libzint_noqr<BR>make install</FONT></SPAN></FONT></P>
+<P STYLE="font-style: normal"><A NAME="TESTING"></A><FONT SIZE=5><B>2.2
 Testing the Installation</B></FONT></P>
 <P STYLE="font-style: normal">To test that the installation has been
 sucessful a shell script is included in the frontend folder. To run
 the test type</P>
 <P STYLE="font-style: normal"><FONT FACE="Courier, monospace"><FONT SIZE=2>./test.sh</FONT></FONT></P>
-<P STYLE="font-style: normal">This should create numerous files
-showing the many modes of operation which are available from Zint. If
-you get the following message...</P>
-<P STYLE="font-style: normal"><FONT FACE="Courier, monospace"><FONT SIZE=2>zint:
-error while loading shared libraries: libzint.so: cannot open shared
-object file: No such file or directory</FONT></FONT></P>
-<P STYLE="font-style: normal">try the following as root:</P>
-<P STYLE="font-style: normal"><FONT FACE="Courier, monospace"><FONT SIZE=2>ldconfig</FONT></FONT></P>
-<P><BR><BR>
+<P>This should create numerous files showing the many modes of
+operation which are available from Zint. 
 </P>
 <HR>
 <TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0>

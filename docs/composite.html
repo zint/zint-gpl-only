@@ -5,7 +5,7 @@
 	<TITLE>Composite Symbols</TITLE>
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Unix)">
 	<META NAME="CREATED" CONTENT="0;0">
-	<META NAME="CHANGED" CONTENT="20080316;12521000">
+	<META NAME="CHANGED" CONTENT="20081019;9072300">
 	<META NAME="ProgId" CONTENT="FrontPage.Editor.Document">
 	<META HTTP-EQUIV="Content-Language" CONTENT="en-gb">
 	<STYLE TYPE="text/css">
@@ -64,7 +64,7 @@ as with other encoding methods. Valid values are shown below.</P>
 		</TR>
 		<TR VALIGN=TOP>
 			<TD WIDTH=105>
-				<P ALIGN=CENTER>110</P>
+				<P ALIGN=CENTER>130</P>
 			</TD>
 			<TD WIDTH=254>
 				<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_EANX_CC</FONT></P>
@@ -75,7 +75,7 @@ as with other encoding methods. Valid values are shown below.</P>
 		</TR>
 		<TR VALIGN=TOP>
 			<TD WIDTH=105>
-				<P ALIGN=CENTER>111</P>
+				<P ALIGN=CENTER>131</P>
 			</TD>
 			<TD WIDTH=254>
 				<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_EAN128_CC</FONT></P>
@@ -86,7 +86,7 @@ as with other encoding methods. Valid values are shown below.</P>
 		</TR>
 		<TR VALIGN=TOP>
 			<TD WIDTH=105>
-				<P ALIGN=CENTER>112</P>
+				<P ALIGN=CENTER>132</P>
 			</TD>
 			<TD WIDTH=254>
 				<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_RSS14_CC</FONT></P>
@@ -98,7 +98,7 @@ as with other encoding methods. Valid values are shown below.</P>
 		</TR>
 		<TR VALIGN=TOP>
 			<TD WIDTH=105>
-				<P ALIGN=CENTER>113</P>
+				<P ALIGN=CENTER>133</P>
 			</TD>
 			<TD WIDTH=254>
 				<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_RSS_LTD_CC</FONT></P>
@@ -110,7 +110,7 @@ as with other encoding methods. Valid values are shown below.</P>
 		</TR>
 		<TR VALIGN=TOP>
 			<TD WIDTH=105>
-				<P ALIGN=CENTER>114</P>
+				<P ALIGN=CENTER>134</P>
 			</TD>
 			<TD WIDTH=254>
 				<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_RSS_EXP_CC</FONT></P>
@@ -122,7 +122,7 @@ as with other encoding methods. Valid values are shown below.</P>
 		</TR>
 		<TR VALIGN=TOP>
 			<TD WIDTH=105>
-				<P ALIGN=CENTER>115</P>
+				<P ALIGN=CENTER>135</P>
 			</TD>
 			<TD WIDTH=254>
 				<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_UPCA_CC</FONT></P>
@@ -133,7 +133,7 @@ as with other encoding methods. Valid values are shown below.</P>
 		</TR>
 		<TR VALIGN=TOP>
 			<TD WIDTH=105>
-				<P ALIGN=CENTER>116</P>
+				<P ALIGN=CENTER>136</P>
 			</TD>
 			<TD WIDTH=254>
 				<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_UPCE_CC</FONT></P>
@@ -144,7 +144,7 @@ as with other encoding methods. Valid values are shown below.</P>
 		</TR>
 		<TR VALIGN=TOP>
 			<TD WIDTH=105>
-				<P ALIGN=CENTER>117</P>
+				<P ALIGN=CENTER>137</P>
 			</TD>
 			<TD WIDTH=254>
 				<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_RSS14STACK_CC</FONT></P>
@@ -156,7 +156,7 @@ as with other encoding methods. Valid values are shown below.</P>
 		</TR>
 		<TR VALIGN=TOP>
 			<TD WIDTH=105>
-				<P ALIGN=CENTER>118</P>
+				<P ALIGN=CENTER>138</P>
 			</TD>
 			<TD WIDTH=254>
 				<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_RSS14_OMNI_CC</FONT></P>
@@ -168,7 +168,7 @@ as with other encoding methods. Valid values are shown below.</P>
 		</TR>
 		<TR VALIGN=TOP>
 			<TD WIDTH=105>
-				<P ALIGN=CENTER>119</P>
+				<P ALIGN=CENTER>139</P>
 			</TD>
 			<TD WIDTH=254>
 				<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_RSS_EXPSTACK_CC</FONT></P>
@@ -185,14 +185,14 @@ composite symbol should be entered into a primary string with the
 data for the 2D component being entered in the normal way. To do this
 at the command prompt use the <FONT FACE="Courier">--primary=</FONT>
 command. For example:</P>
-<P ALIGN=LEFT><FONT FACE="Courier">zint -b 110 --mode=1
+<P ALIGN=LEFT><FONT FACE="Courier">zint -b 130 --mode=1
 --primary=331234567890 -d &quot;[99]1234-abcd&quot;</FONT></P>
 <P ALIGN=LEFT>This creates an EAN-13 linear component with the data
 &quot;331234567890&quot; and a 2D CC-A (see below) component with the
 data &quot;(99)1234-abcd&quot;. The same results can be achieved
 using the API as shown below:</P>
 <P ALIGN=LEFT>&nbsp;&nbsp;&nbsp;&nbsp;<FONT FACE="Courier, monospace"><FONT SIZE=2>my_symbol-&gt;symbology
-= 110;<BR>&nbsp;&nbsp;&nbsp;&nbsp;my_symbol-&gt;option_1 =
+= 130;<BR>&nbsp;&nbsp;&nbsp;&nbsp;my_symbol-&gt;option_1 =
 1;<BR>&nbsp;&nbsp;&nbsp;&nbsp;strcpy(my_symbol-&gt;primary,
 &quot;331234567890&quot;);<BR>&nbsp;&nbsp;&nbsp;&nbsp;ZBarcode_Encode_and_Print(my_symbol,
 &quot;[99]1234-abcd&quot;);</FONT></FONT></P>
