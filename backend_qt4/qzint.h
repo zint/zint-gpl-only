@@ -29,7 +29,7 @@ class QZint
 private:
 
 public:
-	 enum BorderType{NO_BORDER=0, BIND=1, BOX=2};
+	 enum BorderType{NO_BORDER=0, BIND=2, BOX=4};
 	 enum AspectRatioMode{IgnoreAspectRatio=0, KeepAspectRatio=1, CenterBarCode=2};
 
 public:
@@ -68,6 +68,9 @@ public:
 
 	int securityLevel();
 	void setSecurityLevel(int securityLevel);
+
+	int mode();
+	void setMode(int securityLevel);
 
 	int msiExtraSymbology();
 	void setMsiExtraSymbology(int msiSymbologyNumber);
