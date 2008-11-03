@@ -50,11 +50,12 @@ void QZint::encode()
 
 	m_lastError.clear();
 	m_zintSymbol = ZBarcode_Create();
+	m_zintSymbol->output_options=m_border;
 	m_zintSymbol->symbology=m_symbol;
 	m_zintSymbol->height=m_height;
 	m_zintSymbol->output_options=0;
 	m_zintSymbol->whitespace_width=0;
-	m_zintSymbol->border_width=0;
+	m_zintSymbol->border_width=m_boderWidth;
 	m_zintSymbol->option_1=m_securityLevel;
 	switch (m_symbol)
 	{
@@ -81,21 +82,9 @@ void QZint::encode()
 	int error = ZBarcode_Encode(m_zintSymbol, (unsigned char*)bstr.data());
 	if (error > WARN_INVALID_OPTION)
 		m_lastError=m_zintSymbol->errtxt;
-	else
-	{
-		if (m_zintSymbol->symbology != BARCODE_MAXICODE)
-		{
-			int preset_height = 0;
 
-			for (int i = 0; i < m_zintSymbol->rows; i++)
-				preset_height += m_zintSymbol->row_height[i];
-
-			if (preset_height)
-				m_zintSymbol->height = preset_height;
-		}
-		else
-			m_zintSymbol->height = 33;
-	}
+	if (m_zintSymbol->symbology == BARCODE_MAXICODE)
+		m_zintSymbol->height = 33;
 }
 
 int  QZint::symbol()
@@ -203,6 +192,15 @@ void QZint::setSecurityLevel(int securityLevel)
 	m_securityLevel=securityLevel;
 }
 
+int QZint::mode()
+{
+	return m_securityLevel;
+}
+void QZint::setMode(int securityLevel)
+{
+	m_securityLevel=securityLevel;
+}
+
 int QZint::msiExtraSymbology()
 {
 	return m_msiSymbologyNumber;
@@ -245,6 +243,24 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 	qreal xtr=paintRect.x();
 	qreal ytr=paintRect.y();
 
+	int zrow_height=m_zintSymbol->height;
+	int zrows=0;
+	for (int i=0;i<m_zintSymbol->rows;i++)
+	{
+		zrow_height-=m_zintSymbol->row_height[i];
+		if (!m_zintSymbol->row_height[i])
+			zrows++;
+	}
+	if (zrows)
+	{
+		zrow_height/=zrows;
+		for (int i=0;i<m_zintSymbol->rows;i++)
+			if (!m_zintSymbol->row_height[i])
+				m_zintSymbol->row_height[i]=zrow_height;
+	}
+	else
+		m_zintSymbol->height-=zrow_height;
+
 
 	qreal gwidth=m_zintSymbol->width;
 	qreal gheight=m_zintSymbol->height;
@@ -259,7 +275,7 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 
 	gwidth+=((m_border==BOX)?m_boderWidth*2:0);
 	gheight+=((m_border!=NO_BORDER)?m_boderWidth*2:0);
-
+	gwidth+=m_zintSymbol->whitespace_width*2;
 	switch(mode)
 	{
 		case IgnoreAspectRatio:
@@ -304,24 +320,22 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 			painter.drawLine(gwidth-m_boderWidth/2, m_boderWidth/2, gwidth-m_boderWidth/2, gheight-m_boderWidth/2);
 			painter.drawLine(m_boderWidth/2, gheight-m_boderWidth/2, gwidth-m_boderWidth/2, gheight-m_boderWidth/2);
 			painter.drawLine(m_boderWidth/2, gheight-m_boderWidth/2, m_boderWidth/2,m_boderWidth/2);
-			painter.translate(m_boderWidth,m_boderWidth);
+			painter.translate(m_boderWidth+m_zintSymbol->whitespace_width,m_boderWidth);
 			break;
 
 		case BIND:
 			painter.drawLine(m_boderWidth/2,m_boderWidth/2,gwidth-m_boderWidth/2, m_boderWidth/2);
 			painter.drawLine(m_boderWidth/2,gheight-m_boderWidth/2,gwidth-m_boderWidth/2, gheight-m_boderWidth/2);
-			painter.translate(0,m_boderWidth);
+			painter.translate(m_zintSymbol->whitespace_width,m_boderWidth);
 			break;
 
 		default:
+			painter.translate(m_zintSymbol->whitespace_width,0);
 			break;;
 	}
 
 	p.setWidth(1);
 	painter.setPen(p);
-
-	if (1==m_zintSymbol->rows && !m_zintSymbol->row_height[0])
-		m_zintSymbol->row_height[0]=m_zintSymbol->height;
 
 	if (m_zintSymbol->symbology == BARCODE_MAXICODE)
 	{
@@ -340,8 +354,8 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 					pt.lineTo(col+maxi_width, 	row+maxi_diagonal/4);
 					pt.lineTo(col+maxi_width, 	row+(maxi_diagonal-maxi_diagonal/4));
 					pt.lineTo(col+maxi_width/2, 	row+maxi_diagonal);
-					pt.lineTo(col, 		row+(maxi_diagonal-maxi_diagonal/4));
-					pt.lineTo(col, 		row+maxi_diagonal/4);
+					pt.lineTo(col, 			row+(maxi_diagonal-maxi_diagonal/4));
+					pt.lineTo(col, 			row+maxi_diagonal/4);
 					pt.lineTo(col+maxi_width/2, 	row);
 					painter.fillPath(pt,QBrush(m_fgColor));
 				}
