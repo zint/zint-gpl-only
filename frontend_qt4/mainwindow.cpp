@@ -107,7 +107,7 @@ void MainWindow::on_generate_clicked()
 			m_bc.bc.setExcode39ExtraSymbology(code39->currentIndex());
 			break;
 	}
-	m_bc.bc.setBorderType((Zint::QZint::BorderType)btype->currentIndex());
+	m_bc.bc.setBorderType((Zint::QZint::BorderType)(btype->currentIndex()*2));
 	m_bc.bc.setBorderWidth(bwidth->value());
 	m_bc.bc.setHeight(heightb->value());
 	m_bc.bc.setWidth(widthb->value());
