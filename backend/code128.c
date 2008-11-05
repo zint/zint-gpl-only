@@ -36,6 +36,8 @@
 #define AORB 96
 #define ABORC 97
 
+#define DPDSET	"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ*"
+
 int list[2][170];
 
 /* Code 128 tables checked against ISO/IEC 15417:2007 */
@@ -965,4 +967,3 @@ int ean_14(struct zint_symbol *symbol, unsigned char source[])
 	
 	return error_number;
 }
-

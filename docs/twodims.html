@@ -5,7 +5,7 @@
 	<TITLE>Two-Dimensional Symbols</TITLE>
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Unix)">
 	<META NAME="CREATED" CONTENT="20070730;21081900">
-	<META NAME="CHANGED" CONTENT="20080708;13271600">
+	<META NAME="CHANGED" CONTENT="20081102;14024700">
 	<STYLE TYPE="text/css">
 	<!--
 		TD P { color: #000000 }
@@ -38,10 +38,131 @@
 <H1>5.6 Two-Dimensional Symbols</H1>
 <P><A NAME="DMATRIX"></A><FONT SIZE=5><B>5.6.1 Data Matrix (ISO
 16022)</B></FONT></P>
-<P>Also known as Semacode this symbology can encode a large amount of
-data in a small area. Any length ASCII string can be encoded up to
-780 characters. Symbol size is determined by the length of the input
-data and Reed-Solomon error correction is added.</P>
+<P>Also known as Semacode this symbology was developed in 1989 by
+Acuity CiMatrix in partnership with the US DoD and NASA. The symbol
+can encode a large amount of data in a small area. Zint supports all
+versions of the standard from ISO 16022 as shown in the following
+table. ECC200 uses Reed-Solomon error correction and is recommended
+for new applications. The different modes are accessed using the
+<FONT FACE="Courier, monospace">mode=</FONT> option or by setting
+<FONT FACE="Courier, monospace">option_1</FONT>.</P>
+<DL>
+	<DL>
+		<DL>
+			<DL>
+				<DL>
+					<DD>
+					<TABLE WIDTH=708 BORDER=1 CELLPADDING=4 CELLSPACING=3>
+						<COL WIDTH=143>
+						<COL WIDTH=142>
+						<COL WIDTH=214>
+						<COL WIDTH=160>
+						<TR VALIGN=TOP>
+							<TD WIDTH=143 HEIGHT=20>
+								<P ALIGN=CENTER><B>Input</B></P>
+							</TD>
+							<TD WIDTH=142>
+								<P ALIGN=CENTER><B>Mode</B></P>
+							</TD>
+							<TD WIDTH=214>
+								<P ALIGN=CENTER><B>Error Correction Capacity</B></P>
+							</TD>
+							<TD WIDTH=160>
+								<P ALIGN=CENTER><B>Recovery Capacity</B></P>
+							</TD>
+						</TR>
+						<TR VALIGN=TOP>
+							<TD WIDTH=143>
+								<P ALIGN=CENTER>1 (default)</P>
+							</TD>
+							<TD WIDTH=142>
+								<P ALIGN=CENTER>ECC 200</P>
+							</TD>
+							<TD WIDTH=214>
+								<P ALIGN=CENTER>28 - 62%</P>
+							</TD>
+							<TD WIDTH=160>
+								<P ALIGN=CENTER>30 - 40%</P>
+							</TD>
+						</TR>
+						<TR VALIGN=TOP>
+							<TD WIDTH=143>
+								<P ALIGN=CENTER>2</P>
+							</TD>
+							<TD WIDTH=142>
+								<P ALIGN=CENTER>ECC 000</P>
+							</TD>
+							<TD WIDTH=214>
+								<P ALIGN=CENTER>0%</P>
+							</TD>
+							<TD WIDTH=160>
+								<P ALIGN=CENTER>0%</P>
+							</TD>
+						</TR>
+						<TR VALIGN=TOP>
+							<TD WIDTH=143>
+								<P ALIGN=CENTER>3</P>
+							</TD>
+							<TD WIDTH=142>
+								<P ALIGN=CENTER>ECC 050</P>
+							</TD>
+							<TD WIDTH=214>
+								<P ALIGN=CENTER>25%</P>
+							</TD>
+							<TD WIDTH=160>
+								<P ALIGN=CENTER>2.8%</P>
+							</TD>
+						</TR>
+						<TR VALIGN=TOP>
+							<TD WIDTH=143>
+								<P ALIGN=CENTER>4</P>
+							</TD>
+							<TD WIDTH=142>
+								<P ALIGN=CENTER>ECC 080</P>
+							</TD>
+							<TD WIDTH=214>
+								<P ALIGN=CENTER>33%</P>
+							</TD>
+							<TD WIDTH=160>
+								<P ALIGN=CENTER>5.5%</P>
+							</TD>
+						</TR>
+						<TR VALIGN=TOP>
+							<TD WIDTH=143>
+								<P ALIGN=CENTER>5</P>
+							</TD>
+							<TD WIDTH=142>
+								<P ALIGN=CENTER>ECC 100</P>
+							</TD>
+							<TD WIDTH=214>
+								<P ALIGN=CENTER>50%</P>
+							</TD>
+							<TD WIDTH=160>
+								<P ALIGN=CENTER>12.6%</P>
+							</TD>
+						</TR>
+						<TR VALIGN=TOP>
+							<TD WIDTH=143>
+								<P ALIGN=CENTER>6</P>
+							</TD>
+							<TD WIDTH=142>
+								<P ALIGN=CENTER>ECC 140</P>
+							</TD>
+							<TD WIDTH=214>
+								<P ALIGN=CENTER>75%</P>
+							</TD>
+							<TD WIDTH=160>
+								<P ALIGN=CENTER>25%</P>
+							</TD>
+						</TR>
+					</TABLE>
+				</DL>
+			</DL>
+		</DL>
+	</DL>
+</DL>
+<P><BR><BR>
+</P>
 <P ALIGN=CENTER><IMG SRC="matrix.png" NAME="graphics1" ALIGN=LEFT WIDTH=44 HEIGHT=44 BORDER=0><BR CLEAR=LEFT><BR><BR>
 </P>
 <P><A NAME="QRCODE"></A><FONT SIZE=5><B>5.6.2 QR Code (ISO 18004)</B></FONT></P>
@@ -153,9 +274,16 @@ option or setting <FONT FACE="Courier, monospace">option_2</FONT> to
 the QR Code version required (1-40). The maximum capacity of a
 (version 40) QR Code symbol is 7089 numeric digits, 4296 alphanumeric
 characters or 2953 bytes of data.</P>
-<P ALIGN=CENTER><IMG SRC="qr.png" NAME="graphics2" ALIGN=LEFT WIDTH=50 HEIGHT=50 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P ALIGN=CENTER><IMG SRC="qr.png" NAME="graphics5" ALIGN=LEFT WIDTH=50 HEIGHT=50 BORDER=0><BR CLEAR=LEFT><BR><BR>
 </P>
-<P><A NAME="MAXI"></A><FONT SIZE=5><B>5.6.3 Maxicode (ISO 16023)</B></FONT></P>
+<P><A NAME="MICROQR"></A><FONT SIZE=5><B>5.6.3 Micro QR Code (ISO
+18004)</B></FONT></P>
+<P ALIGN=LEFT>A miniature version of the QR Code symbol for short
+messages. ECC levels can be selected as for QR Code (above). Micro QR
+Code support does not require <I>libqrencode</I>.</P>
+<P ALIGN=LEFT><IMG SRC="microqr.png" NAME="graphics2" ALIGN=LEFT WIDTH=30 HEIGHT=30 BORDER=0><BR CLEAR=LEFT><BR><BR>
+</P>
+<P><A NAME="MAXI"></A><FONT SIZE=5><B>5.6.4 Maxicode (ISO 16023)</B></FONT></P>
 <P ALIGN=LEFT>Developed by UPS the Maxicode symbology employs a grid
 of hexagons surrounding a 'bulls-eye' finder pattern. This symbology
 is designed for the identification of parcels. Zint encodes Maxicode
@@ -344,7 +472,7 @@ resolution of 12 pixels per millimetre (approx 300 dpi) and uses the
 methods set out in Annex J of the ISO/IEC standard.</P>
 <P ALIGN=LEFT><IMG SRC="maxicode.png" NAME="graphics3" ALIGN=LEFT WIDTH=200 HEIGHT=200 BORDER=0><BR CLEAR=LEFT><BR><BR>
 </P>
-<P><A NAME="AZTEC"></A><FONT SIZE=5><B>5.6.4 Aztec Code (ISO 24778)</B></FONT></P>
+<P><A NAME="AZTEC"></A><FONT SIZE=5><B>5.6.5 Aztec Code (ISO 24778)</B></FONT></P>
 <P ALIGN=LEFT>Invented by Andrew Longacre at Welch Allyn Inc in 1995
 the Aztec Code symbol is a matrix symbol with a distinctive bulls-eye
 finder pattern. Zint can generate Compact Aztec Code (sometimes
