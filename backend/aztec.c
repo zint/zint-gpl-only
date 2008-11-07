@@ -21,6 +21,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "common.h"
 #include "aztec.h"
 #include "reedsol.h"
@@ -549,12 +550,13 @@ int aztec_text_process(unsigned char source[], char binary_string[])
 
 int aztec(struct zint_symbol *symbol, unsigned char source[])
 {
-	int x, y, i, j, k, data_blocks, ecc_blocks, layers, total_bits;
+	int x, y, i, j, data_blocks, ecc_blocks, layers, total_bits;
 	char binary_string[20000], bit_pattern[20045], descriptor[42];
 	char adjusted_string[20000];
 	unsigned int data_part[1500], ecc_part[840];
 	unsigned char desc_data[4], desc_ecc[6];
 	int err_code, ecc_level, compact, data_length, data_maxsize, codeword_size, adjusted_length;
+	int remainder, padbits, count;
 	
 	memset(binary_string,0,20000);
 	memset(adjusted_string,0,20000);
@@ -662,30 +664,47 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 			if((layers >= 3) && (layers <= 8)) { codeword_size = 8; }
 			if((layers >= 9) && (layers <= 22)) { codeword_size = 10; }
 			if(layers >= 23) { codeword_size = 12; }
-		
+			
+			j = 0;
+			count = 0;
 			for(i = 0; i <= data_length; i++) {
-				adjusted_string[i] = binary_string[i];
+				remainder = i % codeword_size;
+				if(binary_string[i] == '1') count++;
+				if(remainder == codeword_size - 1) {
+					/* Last bit of codeword */
+					if(count == codeword_size - 1) {
+						/* All 1s - add 0 */
+						adjusted_string[j] = '0';
+						j++;
+					}
+					if(count == 0) {
+						/* All 0s - add 1 */
+						adjusted_string[j] = '1';
+						j++;
+					}
+					count = 0;
+				}
+				adjusted_string[j] = binary_string[i];
+				j++;
 			}
-			
-			/* Data string can't have all '0's or all '1's in a block */
-			i = 0;
-			do{
-				int count0, count1;
-			
-				count0 = 0;
-				count1 = 0;
-				for(j = 0; j < codeword_size; j++) {
-					if(adjusted_string[j + i] == '0') { count0++; } else { count1++; }
-				}
-				if(count0 == codeword_size) { /* If all 0s insert a '1' */
-					insert(adjusted_string, i+(codeword_size - 1), '1');
-				}
-				if(count1 == codeword_size) { /* If all 1s insert a '0' */
-					insert(adjusted_string, i+(codeword_size - 1), '0');
-				}
-				i += codeword_size;
-			} while ((i + codeword_size) < strlen(adjusted_string));
+			adjusted_string[j] = '\0';
 			adjusted_length = strlen(adjusted_string);
+			
+			remainder = adjusted_length % codeword_size;
+			
+			padbits = codeword_size - remainder;
+			if(padbits == codeword_size) { padbits = 0; }
+			
+			for(i = 0; i < padbits; i++) {
+				concat(adjusted_string, "1");
+			}
+			adjusted_length = strlen(adjusted_string);
+			
+			count = 0;
+			for(i = (adjusted_length - codeword_size); i < adjusted_length; i++) {
+				if(adjusted_string[i] == '1') { count++; }
+			}
+			if(count == codeword_size) { adjusted_string[adjusted_length - 1] = '0'; } 
 			
 		} while(adjusted_length > data_maxsize);
 		/* This loop will only repeat on the rare occasions when the rule about not having all 1s or all 0s
@@ -713,29 +732,46 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 		if((layers >= 9) && (layers <= 22)) { codeword_size = 10; }
 		if(layers >= 23) { codeword_size = 12; }
 		
+		j = 0;
+		count = 0;
 		for(i = 0; i <= data_length; i++) {
-			adjusted_string[i] = binary_string[i];
+			remainder = i % codeword_size;
+			if(binary_string[i] == '1') count++;
+			if(remainder == codeword_size - 1) {
+				/* Last bit of codeword */
+				if(count == codeword_size - 1) {
+					/* All 1s - add 0 */
+					adjusted_string[j] = '0';
+					j++;
+				}
+				if(count == 0) {
+					/* All 0s - add 1 */
+					adjusted_string[j] = '1';
+					j++;
+				}
+				count = 0;
+			}
+			adjusted_string[j] = binary_string[i];
+			j++;
 		}
-		
-		/* Data string can't have all '0's or all '1's in a block */
-		i = 0;
-		do{
-			int count0, count1;
-			
-			count0 = 0;
-			count1 = 0;
-			for(j = 0; j < codeword_size; j++) {
-				if(adjusted_string[j + i] == '0') { count0++; } else { count1++; }
-			}
-			if(count0 == codeword_size) { /* If all 0s insert a '1' */
-				insert(adjusted_string, i+(codeword_size - 1), '1');
-			}
-			if(count1 == codeword_size) { /* If all 1s insert a '0' */
-				insert(adjusted_string, i+(codeword_size - 1), '0');
-			}
-			i += codeword_size;
-		} while ((i + codeword_size) < strlen(adjusted_string));
+		adjusted_string[j] = '\0';
 		adjusted_length = strlen(adjusted_string);
+			
+		remainder = adjusted_length % codeword_size;
+			
+		padbits = codeword_size - remainder;
+		if(padbits == codeword_size) { padbits = 0; }
+			
+		for(i = 0; i < padbits; i++) {
+			concat(adjusted_string, "1");
+		}
+		adjusted_length = strlen(adjusted_string);
+			
+		count = 0;
+		for(i = (adjusted_length - codeword_size); i < adjusted_length; i++) {
+			if(adjusted_string[i] == '1') { count++; }
+		}
+		if(count == codeword_size) { adjusted_string[adjusted_length - 1] = '0'; } 
 		
 		/* Check if the data actually fits into the selected symbol size */
 		if (compact) {
@@ -748,24 +784,6 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 			strcpy(symbol->errtxt, "Data too long for specified Aztec Code symbol size [925]");
 			return ERROR_TOO_LONG;
 		}
-	}
-	
-	/* The value of i is used from above to indicate the number of bits to the end of the last
-	used data block - this is now a set value */
-
-	/* Insert extra '1's to pad out the final block of data */
-	for(j = 0; j < (i - adjusted_length); j++) {
-		concat(adjusted_string, "1");
-	}
-	adjusted_length = i;
-	
-	/* But be careful that the final block of data doesn't contain all '1's */
-	k = 0;
-	for(j = (i - codeword_size); j < i; j++) {
-		if(adjusted_string[j] == '1') { k++; }
-	}
-	if(k == codeword_size) { /* Change the very last bit */
-		adjusted_string[adjusted_length - 1] = '0';
 	}
 	
 	data_blocks = adjusted_length / codeword_size;
@@ -905,40 +923,41 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	/* Now add the symbol descriptor */
-	memset(descriptor,0,42);
 	memset(desc_data,0,4);
 	memset(desc_ecc,0,6);
 
 	if(compact) {
 		/* The first 2 bits represent the number of layers minus 1 */
-		if((layers - 1) & 0x02) { descriptor[0] = '1'; }
-		if((layers - 1) & 0x01) { descriptor[1] = '1'; }
+		if((layers - 1) & 0x02) { descriptor[0] = '1'; } else { descriptor[0] = '0'; }
+		if((layers - 1) & 0x01) { descriptor[1] = '1'; } else { descriptor[1] = '0'; }
 		/* The next 6 bits represent the number of data blocks minus 1 */
-		if((data_blocks - 1) & 0x20) { descriptor[2] = '1'; }
-		if((data_blocks - 1) & 0x10) { descriptor[3] = '1'; }
-		if((data_blocks - 1) & 0x08) { descriptor[4] = '1'; }
-		if((data_blocks - 1) & 0x04) { descriptor[5] = '1'; }
-		if((data_blocks - 1) & 0x02) { descriptor[6] = '1'; }
-		if((data_blocks - 1) & 0x01) { descriptor[7] = '1'; }
+		if((data_blocks - 1) & 0x20) { descriptor[2] = '1'; } else { descriptor[2] = '0'; }
+		if((data_blocks - 1) & 0x10) { descriptor[3] = '1'; } else { descriptor[3] = '0'; }
+		if((data_blocks - 1) & 0x08) { descriptor[4] = '1'; } else { descriptor[4] = '0'; }
+		if((data_blocks - 1) & 0x04) { descriptor[5] = '1'; } else { descriptor[5] = '0'; }
+		if((data_blocks - 1) & 0x02) { descriptor[6] = '1'; } else { descriptor[6] = '0'; }
+		if((data_blocks - 1) & 0x01) { descriptor[7] = '1'; } else { descriptor[7] = '0'; }
+		descriptor[8] = '\0';
 	} else {
 		/* The first 5 bits represent the number of layers minus 1 */
-		if((layers - 1) & 0x10) { descriptor[0] = '1'; }
-		if((layers - 1) & 0x08) { descriptor[1] = '1'; }
-		if((layers - 1) & 0x04) { descriptor[2] = '1'; }
-		if((layers - 1) & 0x02) { descriptor[3] = '1'; }
-		if((layers - 1) & 0x01) { descriptor[4] = '1'; }
+		if((layers - 1) & 0x10) { descriptor[0] = '1'; } else { descriptor[0] = '0'; }
+		if((layers - 1) & 0x08) { descriptor[1] = '1'; } else { descriptor[1] = '0'; }
+		if((layers - 1) & 0x04) { descriptor[2] = '1'; } else { descriptor[2] = '0'; }
+		if((layers - 1) & 0x02) { descriptor[3] = '1'; } else { descriptor[3] = '0'; }
+		if((layers - 1) & 0x01) { descriptor[4] = '1'; } else { descriptor[4] = '0'; }
 		/* The next 11 bits represent the number of data blocks minus 1 */
-		if((data_blocks - 1) & 0x400) { descriptor[5] = '1'; }
-		if((data_blocks - 1) & 0x200) { descriptor[6] = '1'; }
-		if((data_blocks - 1) & 0x100) { descriptor[7] = '1'; }
-		if((data_blocks - 1) & 0x80) { descriptor[8] = '1'; }
-		if((data_blocks - 1) & 0x40) { descriptor[9] = '1'; }
-		if((data_blocks - 1) & 0x20) { descriptor[10] = '1'; }
-		if((data_blocks - 1) & 0x10) { descriptor[11] = '1'; }
-		if((data_blocks - 1) & 0x08) { descriptor[12] = '1'; }
-		if((data_blocks - 1) & 0x04) { descriptor[13] = '1'; }
-		if((data_blocks - 1) & 0x02) { descriptor[14] = '1'; }
-		if((data_blocks - 1) & 0x01) { descriptor[15] = '1'; }
+		if((data_blocks - 1) & 0x400) { descriptor[5] = '1'; } else { descriptor[5] = '0'; }
+		if((data_blocks - 1) & 0x200) { descriptor[6] = '1'; } else { descriptor[6] = '0'; }
+		if((data_blocks - 1) & 0x100) { descriptor[7] = '1'; } else { descriptor[7] = '0'; }
+		if((data_blocks - 1) & 0x80) { descriptor[8] = '1'; } else { descriptor[8] = '0'; }
+		if((data_blocks - 1) & 0x40) { descriptor[9] = '1'; } else { descriptor[9] = '0'; }
+		if((data_blocks - 1) & 0x20) { descriptor[10] = '1'; } else { descriptor[10] = '0'; }
+		if((data_blocks - 1) & 0x10) { descriptor[11] = '1'; } else { descriptor[11] = '0'; }
+		if((data_blocks - 1) & 0x08) { descriptor[12] = '1'; } else { descriptor[12] = '0'; }
+		if((data_blocks - 1) & 0x04) { descriptor[13] = '1'; } else { descriptor[13] = '0'; }
+		if((data_blocks - 1) & 0x02) { descriptor[14] = '1'; } else { descriptor[14] = '0'; }
+		if((data_blocks - 1) & 0x01) { descriptor[15] = '1'; } else { descriptor[15] = '0'; }
+		descriptor[16] = '\0';
 	}
 	
 	/* Split into 4-bit codewords */
@@ -957,19 +976,19 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 		rs_init_code(5, 1);
 		rs_encode(2, desc_data, desc_ecc);
 		for(i = 0; i < 5; i++) {
-			if(desc_ecc[i] & 0x08) { descriptor[(i * 4) + 8] = '1'; }
-			if(desc_ecc[i] & 0x04) { descriptor[(i * 4) + 9] = '1'; }
-			if(desc_ecc[i] & 0x02) { descriptor[(i * 4) + 10] = '1'; }
-			if(desc_ecc[i] & 0x01) { descriptor[(i * 4) + 11] = '1'; }
+			if(desc_ecc[4 - i] & 0x08) { descriptor[(i * 4) + 8] = '1'; } else { descriptor[(i * 4) + 8] = '0'; }
+			if(desc_ecc[4 - i] & 0x04) { descriptor[(i * 4) + 9] = '1'; } else { descriptor[(i * 4) + 9] = '0'; }
+			if(desc_ecc[4 - i] & 0x02) { descriptor[(i * 4) + 10] = '1'; } else { descriptor[(i * 4) + 10] = '0'; }
+			if(desc_ecc[4 - i] & 0x01) { descriptor[(i * 4) + 11] = '1'; } else { descriptor[(i * 4) + 11] = '0'; }
 		}
 	} else {
 		rs_init_code(6, 1);
 		rs_encode(4, desc_data, desc_ecc);
 		for(i = 0; i < 6; i++) {
-			if(desc_ecc[i] & 0x08) { descriptor[(i * 4) + 16] = '1'; }
-			if(desc_ecc[i] & 0x04) { descriptor[(i * 4) + 17] = '1'; }
-			if(desc_ecc[i] & 0x02) { descriptor[(i * 4) + 18] = '1'; }
-			if(desc_ecc[i] & 0x01) { descriptor[(i * 4) + 19] = '1'; }
+			if(desc_ecc[5 - i] & 0x08) { descriptor[(i * 4) + 16] = '1'; } else { descriptor[(i * 4) + 16] = '0'; }
+			if(desc_ecc[5 - i] & 0x04) { descriptor[(i * 4) + 17] = '1'; } else { descriptor[(i * 4) + 17] = '0'; }
+			if(desc_ecc[5 - i] & 0x02) { descriptor[(i * 4) + 18] = '1'; } else { descriptor[(i * 4) + 18] = '0'; }
+			if(desc_ecc[5 - i] & 0x01) { descriptor[(i * 4) + 19] = '1'; } else { descriptor[(i * 4) + 19] = '0'; }
 		}
 	}
 	rs_free();
@@ -977,9 +996,9 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 	/* Merge descriptor with the rest of the symbol */
 	for(i = 0; i < 40; i++) {
 		if(compact) {
-			bit_pattern[2000 + i] = descriptor[i];
+			bit_pattern[2000 + i - 2] = descriptor[i];
 		} else {
-			bit_pattern[20000 + i] = descriptor[i];
+			bit_pattern[20000 + i - 2] = descriptor[i];
 		}
 	}
 
