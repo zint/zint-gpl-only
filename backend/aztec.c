@@ -216,10 +216,6 @@ int aztec_text_process(unsigned char source[], char binary_string[])
 		}
 	}
 	
-	for(i = 0; i < maplength; i++) {
-		printf("%d  %d\n", charmap[i], typemap[i]);
-	}
-	
 	for(i = 0; i < 20000; i++) {
 		binary_string[i] = '\0';
 	}
@@ -545,8 +541,6 @@ int aztec_text_process(unsigned char source[], char binary_string[])
 
 	}
 	
-	printf("%s\n", binary_string);
-	
 	if(strlen(binary_string) > 14970) {
 		return ERROR_TOO_LONG;
 	}
@@ -705,8 +699,6 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 				concat(adjusted_string, "1");
 			}
 			adjusted_length = strlen(adjusted_string);
-			printf("\nbitlen %d\n", codeword_size);
-			printf("%s\n", adjusted_string);
 			
 			count = 0;
 			for(i = (adjusted_length - codeword_size); i < adjusted_length; i++) {
