@@ -216,6 +216,10 @@ int aztec_text_process(unsigned char source[], char binary_string[])
 		}
 	}
 	
+	for(i = 0; i < maplength; i++) {
+		printf("%d  %d\n", charmap[i], typemap[i]);
+	}
+	
 	for(i = 0; i < 20000; i++) {
 		binary_string[i] = '\0';
 	}
@@ -541,6 +545,8 @@ int aztec_text_process(unsigned char source[], char binary_string[])
 
 	}
 	
+	printf("%s\n", binary_string);
+	
 	if(strlen(binary_string) > 14970) {
 		return ERROR_TOO_LONG;
 	}
@@ -669,7 +675,6 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 			count = 0;
 			for(i = 0; i <= data_length; i++) {
 				remainder = i % codeword_size;
-				if(binary_string[i] == '1') count++;
 				if(remainder == codeword_size - 1) {
 					/* Last bit of codeword */
 					if(count == codeword_size - 1) {
@@ -684,6 +689,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 					}
 					count = 0;
 				}
+				if(binary_string[i] == '1') count++;
 				adjusted_string[j] = binary_string[i];
 				j++;
 			}
@@ -699,6 +705,8 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 				concat(adjusted_string, "1");
 			}
 			adjusted_length = strlen(adjusted_string);
+			printf("\nbitlen %d\n", codeword_size);
+			printf("%s\n", adjusted_string);
 			
 			count = 0;
 			for(i = (adjusted_length - codeword_size); i < adjusted_length; i++) {
@@ -736,7 +744,6 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 		count = 0;
 		for(i = 0; i <= data_length; i++) {
 			remainder = i % codeword_size;
-			if(binary_string[i] == '1') count++;
 			if(remainder == codeword_size - 1) {
 				/* Last bit of codeword */
 				if(count == codeword_size - 1) {
@@ -751,6 +758,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 				}
 				count = 0;
 			}
+			if(binary_string[i] == '1') count++;
 			adjusted_string[j] = binary_string[i];
 			j++;
 		}
