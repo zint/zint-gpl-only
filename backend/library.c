@@ -110,6 +110,7 @@ extern int daft_code(struct zint_symbol *symbol, unsigned char source[]); /* DAF
 extern int ean_14(struct zint_symbol *symbol, unsigned char source[]); /* EAN-14 */
 extern int nve_18(struct zint_symbol *symbol, unsigned char source[]); /* NVE-18 */
 extern int microqr(struct zint_symbol *symbol, unsigned char source[]); /* Micro QR Code */
+extern int aztec_runes(struct zint_symbol *symbol, unsigned char source[]); /* Aztec Runes */
 
 #ifndef NO_PNG
 int png_handle(struct zint_symbol *symbol, int rotate_angle);
@@ -175,7 +176,7 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input)
 	if(symbol->symbology == 88) { symbol->symbology = BARCODE_EAN128; }
 	if(symbol->symbology == 91) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128 [Z09]"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
 	if((symbol->symbology >= 94) && (symbol->symbology <= 96)) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128 [Z10]"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
-	if((symbol->symbology >= 98) && (symbol->symbology <= 128)) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128 [Z10]"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
+	if((symbol->symbology >= 98) && (symbol->symbology <= 127)) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128 [Z10]"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
 	/* Everything from 128 up is Zint-specific */
 	if(symbol->symbology >= 140) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128 [Z11]"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
 
@@ -268,6 +269,7 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input)
 		case BARCODE_DAFT: error_number = daft_code(symbol, input); break;
 		case BARCODE_EAN14: error_number = ean_14(symbol, input); break;
 		case BARCODE_MICROQR: error_number = microqr(symbol, input); break;
+		case BARCODE_AZRUNE: error_number = aztec_runes(symbol, input); break;
 	}
 	if(error_number == 0) {
 		error_number = error_buffer;

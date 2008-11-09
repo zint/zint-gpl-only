@@ -24,6 +24,7 @@ auspost.c:
 aztec.c:
 	Aztec Code
 	Compact Aztec Code
+	Aztec Runes
 
 blockf.c:
 	Codablock-F
@@ -51,8 +52,15 @@ composite.c:
 	CC-B Composite Symbology
 	CC-C Composite Symbology
 
+dm200.c:
+	Data Matrix ECC 200
+
 dmatrix.c:
-	Data Matrix (Semacode)
+	Data Matrix ECC 000
+	Data Matrix ECC 050
+	Data Matrix ECC 080
+	Data Matrix ECC 100
+	Data Matrix ECC 140
 
 imail.c:
 	USPS OneCode (Intelligent Mail)
@@ -65,6 +73,9 @@ medical.c:
 	Two Track Pharma Code
 	Codabar
 	Code 32
+
+micqr.c:
+	Micro QR Code
 
 pdf417.c:
 	PDF417

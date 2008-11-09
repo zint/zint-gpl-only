@@ -112,6 +112,7 @@ struct zint_symbol {
 #define BARCODE_MICROQR		97
 
 /* Zint specific */
+#define BARCODE_AZRUNE		128
 #define BARCODE_CODE32		129
 #define BARCODE_EANX_CC		130
 #define BARCODE_EAN128_CC	131
