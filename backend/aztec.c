@@ -1039,3 +1039,96 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 	
 	return err_code;
 }
+
+int aztec_runes(struct zint_symbol *symbol, unsigned char source[])
+{
+	int input_length, error_number, i, y, x;
+	int input_value;
+	char binary_string[28];
+	unsigned char data_codewords[3], ecc_codewords[6];
+	
+	error_number = 0;
+	input_value = 0;
+	input_length = ustrlen(source);
+	if(input_length > 3) {
+		strcpy(symbol->errtxt, "Input too large");
+		return ERROR_INVALID_DATA;
+	}
+	error_number = is_sane(NESET, source);
+	if(error_number != 0) {
+		strcpy(symbol->errtxt, "Invalid characters in input");
+		return ERROR_INVALID_DATA;
+	}
+	switch(input_length) {
+		case 3: input_value = 100 * ctoi(source[0]);
+			input_value += 10 * ctoi(source[1]);
+			input_value += ctoi(source[2]);
+			break;
+		case 2: input_value = 10 * ctoi(source[0]);
+			input_value += ctoi(source[1]);
+			break;
+		case 1: input_value = ctoi(source[0]);
+			break;
+	}
+	
+	if(input_value > 255) {
+		strcpy(symbol->errtxt, "Input too large");
+		return ERROR_INVALID_DATA;
+	}
+	
+	strcpy(binary_string, "");
+	if(input_value & 0x80) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
+	if(input_value & 0x40) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
+	if(input_value & 0x20) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
+	if(input_value & 0x10) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
+	if(input_value & 0x08) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
+	if(input_value & 0x04) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
+	if(input_value & 0x02) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
+	if(input_value & 0x01) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
+	
+	data_codewords[0] = 0;
+	data_codewords[1] = 0;
+	
+	for(i = 0; i < 2; i++) {
+		if(binary_string[i * 4] == '1') { data_codewords[i] += 8; }
+		if(binary_string[(i * 4) + 1] == '1') { data_codewords[i] += 4; }
+		if(binary_string[(i * 4) + 2] == '1') { data_codewords[i] += 2; }
+		if(binary_string[(i * 4) + 3] == '1') { data_codewords[i] += 1; }
+	}
+	
+	rs_init_gf(0x13);
+	rs_init_code(5, 1);
+	rs_encode(2, data_codewords, ecc_codewords);
+	rs_free();
+	
+	strcpy(binary_string, "");
+	
+	for(i = 0; i < 5; i++) {
+		if(ecc_codewords[4 - i] & 0x08) { binary_string[(i * 4) + 8] = '1'; } else { binary_string[(i * 4) + 8] = '0'; }
+		if(ecc_codewords[4 - i] & 0x04) { binary_string[(i * 4) + 9] = '1'; } else { binary_string[(i * 4) + 9] = '0'; }
+		if(ecc_codewords[4 - i] & 0x02) { binary_string[(i * 4) + 10] = '1'; } else { binary_string[(i * 4) + 10] = '0'; }
+		if(ecc_codewords[4 - i] & 0x01) { binary_string[(i * 4) + 11] = '1'; } else { binary_string[(i * 4) + 11] = '0'; }
+	}
+	
+	for(i = 0; i < 28; i += 2) {
+		if(binary_string[i] == '1') { binary_string[i] = '0'; } else { binary_string[i] = '1'; }
+	}
+	
+	for(y = 8; y < 19; y++) {
+		for(x = 8; x < 19; x++) {
+			if(CompactAztecMap[(y * 27) + x] == 1) {
+				symbol->encoded_data[y - 8][x - 8] = '1';
+			}
+			if(CompactAztecMap[(y * 27) + x] >= 2) {
+				if(binary_string[CompactAztecMap[(y * 27) + x] - 2000] == '1') {
+					symbol->encoded_data[y - 8][x - 8] = '1';
+				}
+			}
+		}
+		symbol->row_height[y - 8] = 1;
+	}
+	symbol->rows = 11;
+	symbol->width = 11;
+	
+	return 0;
+}
