@@ -2,7 +2,7 @@
 
 /*
     libzint - the open source barcode library
-    Copyright (C) 2008 Robin Stuart <zint@hotmail.co.uk>
+    Copyright (C) 2008 Robin Stuart <robin@zint.org.uk>
     Copyright (C) 2006 Kentaro Fukuchi <fukuchi@megaui.net>
 
     This program is free software; you can redistribute it and/or modify
