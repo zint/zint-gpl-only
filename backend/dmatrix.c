@@ -561,7 +561,7 @@ void protect_ecc050(char protected_stream[], char unprotected_stream[])
 	char mid_reg[4];
 	char low_reg[4];
 	char u1, u2, u3;
-	char output[4];
+	char output[6];
 	char gate_input[8];
 	int i, blocks, j, count;
 	
@@ -1073,6 +1073,7 @@ int matrix89(struct zint_symbol *symbol, unsigned char source[])
 	char header[20];
 	int symbol_size, hex_segment, width;
 	
+	symbol_size = 0;
 	for(i = 0; i < input_length; i++) {
 		if(source[i] > 127) {
 			strcpy(symbol->errtxt, "Data Matrix ECC 000 - 140 doesn't support extended ASCII");

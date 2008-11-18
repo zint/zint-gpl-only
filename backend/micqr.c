@@ -39,6 +39,7 @@ void qrnumeric_encode(char binary[], unsigned char source[])
 	char block_binary[11];
 	int block_value;
 	
+	block_value = 0;
 	input_length = ustrlen(source);
 	blocks = input_length / 3;
 	remainder = input_length % 3;
@@ -597,6 +598,8 @@ int microqr(struct zint_symbol *symbol, unsigned char source[])
 	symbol_size = 0;
 	if(is_sane(QRSET, source) == 0) { char_system = ALPHANUM; }
 	if(is_sane(NESET, source) == 0) { char_system = NUMERIC; }
+	width = 0;
+	format = 0;
 	
 	if(symbol->option_1 == 4) {
 		strcpy(symbol->errtxt, "Error correction level H not available for Micro QR symbols");

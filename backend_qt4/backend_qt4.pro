@@ -45,12 +45,15 @@ SOURCES += qrencode/bitstream.c \
            qrencode/split.c 
 }
 
-HEADERS += ../backend/common.h \
+HEADERS +=  ../backend/aztec.h \
+            ../backend/common.h \
             ../backend/composite.h \
             ../backend/dm200.h \
+            ../backend/dmatrix.h \
             ../backend/large.h \
             ../backend/maxicode.h \
             ../backend/maxipng.h \
+            ../backend/micqr.h \
             ../backend/pdf417.h \
             ../backend/reedsol.h \
             ../backend/rss.h \
@@ -73,6 +76,7 @@ SOURCES += ../backend/2of5.c \
            ../backend/library.c \
            ../backend/maxicode.c \
            ../backend/medical.c \
+           ../backend/micqr.c \
            ../backend/pdf417.c \
            ../backend/plessey.c \
            ../backend/postal.c \
