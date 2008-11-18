@@ -90,8 +90,10 @@ public:
 		ITF14		=89,
 		KIX		=90,
 		AZTEC		=92,
+		MICROQR		=97,
 		
 		/* Zint specific */
+		AZRUNE		=128,
 		CODE32		=129,
 		EANX_CC		=130,
 		EAN128_CC	=131,

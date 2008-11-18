@@ -8,7 +8,7 @@ find_package(Qr)
 set(zint_COMMON_SRCS common.c library.c ps.c large.c reedsol.c)
 set(zint_ONEDIM_SRCS code.c code128.c 2of5.c upcean.c telepen.c medical.c plessey.c rss.c)
 set(zint_POSTAL_SRCS postal.c auspost.c imail.c)
-set(zint_TWODIM_SRCS code16k.c blockf.c dmatrix.c dm200.c pdf417.c qr.c maxicode.c composite.c aztec.c)
+set(zint_TWODIM_SRCS code16k.c blockf.c dmatrix.c dm200.c pdf417.c qr.c micqr.c maxicode.c composite.c aztec.c)
 set(zint_SRCS ${zint_COMMON_SRCS} ${zint_ONEDIM_SRCS} ${zint_POSTAL_SRCS} ${zint_TWODIM_SRCS} )
 
 if(PNG_FOUND)

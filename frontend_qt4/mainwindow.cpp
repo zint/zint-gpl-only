@@ -38,8 +38,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
   "Data Matrix", "EAN-14", "Codablock-F", "NVE-18", "Databar Stacked",
   "Databar Stacked Omni", "Databar Expanded Stacked", "PLANET",
   "MicroPDF417", "USPS One Code", "UK Plessey", "Telepen Numeric",
-  "ITF-14", "Dutch Post KIX", "Aztec Code", "Code 32",
-  "Composite EAN", "Composite EAN-128", "Composite Databar",
+  "ITF-14", "Dutch Post KIX", "Aztec Code", "Micro QR Code", "Aztec Runes",
+  "Code 32", "Composite EAN", "Composite EAN-128", "Composite Databar",
   "Composite Databar Limited", "Composite Databar Expanded",
   "Composite UPC-A", "Composite UPC-E", "Composite Databar Stacked",
   "Composite Databar Stacked Omni", "Composite Databar Expanded Stacked"
