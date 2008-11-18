@@ -117,7 +117,7 @@ void QZint::setPrimaryMessage(const QString & primaryMessage)
 int QZint::height()
 {
 	encode();
-	return (m_zintSymbol->height+(m_border!=NO_BORDER)?m_boderWidth*2:0)*(m_zintSymbol->symbology == BARCODE_MAXICODE?(maxi_diagonal+1):1);
+	return (m_zintSymbol->height+(m_border!=NO_BORDER)?m_boderWidth*2:0)*(m_zintSymbol->symbology == BARCODE_MAXICODE?(maxi_width+1):1);
 }
 
 void QZint::setHeight(int height)
@@ -266,7 +266,7 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 	qreal gheight=m_zintSymbol->height;
 	if (m_zintSymbol->symbology == BARCODE_MAXICODE)
 	{
-		gheight*=(maxi_diagonal+1);
+		gheight*=(maxi_width+1);
 		gwidth*=(maxi_width+1);
 	}
 
@@ -348,7 +348,7 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 				if (m_zintSymbol->encoded_data[r][c]=='1')
 				{
 					qreal col=(qreal)c*(maxi_width+1)+(r%2)*((maxi_width+1)/2);
-					qreal row=(qreal)r*(maxi_diagonal+1);
+					qreal row=(qreal)r*(maxi_width+1);
 					QPainterPath pt;
 					pt.moveTo(col+maxi_width/2, 	row);
 					pt.lineTo(col+maxi_width, 	row+maxi_diagonal/4);
@@ -364,10 +364,9 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 		p.setWidth(maxi_width);
 		painter.setPen(p);
 		const qreal w=maxi_width+1;
-		const qreal h=maxi_diagonal+1;
-		painter.drawEllipse(QPointF((qreal)m_zintSymbol->width/2*w,(qreal)m_zintSymbol->height/2*h),w,w);
-		painter.drawEllipse(QPointF((qreal)m_zintSymbol->width/2*w,(qreal)m_zintSymbol->height/2*h),w+w*1.5,w+w*1.5);
-		painter.drawEllipse(QPointF((qreal)m_zintSymbol->width/2*w,(qreal)m_zintSymbol->height/2*h),w+w*3,w+w*3);
+		painter.drawEllipse(QPointF((qreal)m_zintSymbol->width/2*w,(qreal)m_zintSymbol->height/2*w),w,w);
+		painter.drawEllipse(QPointF((qreal)m_zintSymbol->width/2*w,(qreal)m_zintSymbol->height/2*w),w+w*1.5,w+w*1.5);
+		painter.drawEllipse(QPointF((qreal)m_zintSymbol->width/2*w,(qreal)m_zintSymbol->height/2*w),w+w*3,w+w*3);
 		painter.restore();
 	}
 	else
