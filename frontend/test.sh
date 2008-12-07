@@ -176,6 +176,9 @@ echo testing Codablock-F
 echo testing NVE-18
 ./zint -o bar75.png -b 75 --height=50 -d 76543210987654321
 ./zint -o bar75.eps -b 75 --height=50 -d 76543210987654321
+echo testing Korea Post
+./zint -o bar77.eps -b 77 --height=50 -d 123456
+./zint -o bar77.png -b 77 --height=50 -d 123456
 echo testing GS1 DataBar Truncated
 ./zint -o bar78.eps -b 29 --height=13 -d 1234567890
 ./zint -o bar78.png -b 29 --height=13 -d 1234567890
