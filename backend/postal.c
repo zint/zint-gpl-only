@@ -48,6 +48,9 @@ static char *RoyalTable[36] = {"3300", "3210", "3201", "2310", "2301", "2211", "
 static char *FlatTable[10] = {"0504", "18", "0117", "0216", "0315", "0414", "0513", "0612", "0711",
 	"0810"};
 
+static char *KoreaTable[10] = {"1313150613", "0713131313", "0417131313", "1506131313",
+	"0413171313", "17171313", "1315061313", "0413131713", "17131713", "13171713"};
+	
 int postnet(struct zint_symbol *symbol, unsigned char source[], char dest[])
 {
 	/* Handles the PostNet system used for Zip codes in the US */
@@ -196,6 +199,48 @@ int planet_plot(struct zint_symbol *symbol, unsigned char source[])
 	symbol->row_height[1] = 6;
 	symbol->rows = 2;
 	symbol->width = writer - 1;
+	return error_number;
+}
+
+int korea_post(struct zint_symbol *symbol, unsigned char source[])
+{ /* Korean Postal Authority */
+
+	int total, h, loop, check, zeroes, error_number;
+	char localstr[7], checkstr[3], dest[80];
+
+	error_number = 0;
+	h = ustrlen(source);
+	if(h > 6) { 
+		strcpy(symbol->errtxt, "Input too long [771]");
+		return ERROR_TOO_LONG;
+	}
+	error_number = is_sane(NESET, source);
+	if(error_number == ERROR_INVALID_DATA) {
+		strcpy(symbol->errtxt, "Invalid characters in data [772]");
+		return error_number;
+	}
+	strcpy(localstr, "");
+	zeroes = 6 - h;
+	for(loop = 0; loop < zeroes; loop++)
+		concat(localstr, "0");
+	concat(localstr, (char *)source);
+
+	total = 0;
+	for(loop = 0; loop < 6; loop++) {
+		total += ctoi(localstr[loop]);
+	}
+	check = 10 - (total % 10);
+	checkstr[0] = itoc(check);
+	checkstr[1] = '\0';
+	concat(localstr, checkstr);
+
+	strcpy(dest, "");
+	for(loop = 5; loop >= 0; loop--) {
+		lookup(NESET, KoreaTable, localstr[loop], dest);
+	}
+	lookup(NESET, KoreaTable, localstr[6], dest);
+	expand(symbol, dest);
+	strcpy(symbol->text, localstr);
 	return error_number;
 }
 

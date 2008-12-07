@@ -111,6 +111,7 @@ extern int ean_14(struct zint_symbol *symbol, unsigned char source[]); /* EAN-14
 extern int nve_18(struct zint_symbol *symbol, unsigned char source[]); /* NVE-18 */
 extern int microqr(struct zint_symbol *symbol, unsigned char source[]); /* Micro QR Code */
 extern int aztec_runes(struct zint_symbol *symbol, unsigned char source[]); /* Aztec Runes */
+extern int korea_post(struct zint_symbol *symbol, unsigned char source[]); /* Korea Post */
 
 #ifndef NO_PNG
 int png_handle(struct zint_symbol *symbol, int rotate_angle);
@@ -170,7 +171,6 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input)
 	if((symbol->symbology == 64) || (symbol->symbology == 65)) { symbol->symbology = BARCODE_AUSPOST; }
 	if(symbol->symbology == 73) { strcpy(symbol->errtxt, "Codablock E not supported [Z06]"); error_number = ERROR_INVALID_OPTION; }
 	if(symbol->symbology == 76) { strcpy(symbol->errtxt, "Japanese Postal Code not supported [Z07]"); error_number = ERROR_INVALID_OPTION; }
-	if(symbol->symbology == 77) { strcpy(symbol->errtxt, "Korean Postal Code not supported [Z08]"); error_number = ERROR_INVALID_OPTION; }
 	if(symbol->symbology == 78) { symbol->symbology = BARCODE_RSS14; }
 	if(symbol->symbology == 83) { symbol->symbology = BARCODE_PLANET; }
 	if(symbol->symbology == 88) { symbol->symbology = BARCODE_EAN128; }
@@ -270,6 +270,7 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input)
 		case BARCODE_EAN14: error_number = ean_14(symbol, input); break;
 		case BARCODE_MICROQR: error_number = microqr(symbol, input); break;
 		case BARCODE_AZRUNE: error_number = aztec_runes(symbol, input); break;
+		case BARCODE_KOREAPOST: error_number = korea_post(symbol, input); break;
 	}
 	if(error_number == 0) {
 		error_number = error_buffer;
