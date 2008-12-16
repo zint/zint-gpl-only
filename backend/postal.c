@@ -230,6 +230,7 @@ int korea_post(struct zint_symbol *symbol, unsigned char source[])
 		total += ctoi(localstr[loop]);
 	}
 	check = 10 - (total % 10);
+	if(check == 10) { check = 0; }
 	checkstr[0] = itoc(check);
 	checkstr[1] = '\0';
 	concat(localstr, checkstr);
