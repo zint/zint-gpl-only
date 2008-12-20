@@ -42,6 +42,7 @@ int ps_plot(struct zint_symbol *symbol)
 	char textpart[10], addon[6];
 	int large_bar_count, comp_offset;
 	float addon_text_posn;
+	float scaler = symbol->scale;
 	
 	row_height=0;
 	textdone = 0;
@@ -176,9 +177,9 @@ int ps_plot(struct zint_symbol *symbol)
 	}
 	fprintf(feps, "%%%%Pages: 0\n");
 	if(symbol->symbology != BARCODE_MAXICODE) {
-		fprintf(feps, "%%%%BoundingBox: 0 0 %d %d\n", (symbol->width + xoffset + xoffset), (symbol->height + textoffset + yoffset + yoffset));
+		fprintf(feps, "%%%%BoundingBox: 0 0 %d %d\n", (int)((symbol->width + xoffset + xoffset) * scaler), (int)((symbol->height + textoffset + yoffset + yoffset) * scaler));
 	} else {
-		fprintf(feps, "%%%%BoundingBox: 0 0 74 72\n");
+		fprintf(feps, "%%%%BoundingBox: 0 0 %d %d\n", (int)(74.0 * scaler), (int)(72.0 * scaler));
 	}
 	fprintf(feps, "%%%%EndComments\n");
 	
@@ -195,7 +196,7 @@ int ps_plot(struct zint_symbol *symbol)
 	/* Now the actual representation */
 	fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
 	fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_paper, green_paper, blue_paper);
-	fprintf(feps, "%d.00 0.00 TB 0.00 %d.00 TR\n", (symbol->height + textoffset + yoffset + yoffset), symbol->width + xoffset + xoffset);
+	fprintf(feps, "%.2f 0.00 TB 0.00 %.2f TR\n", (symbol->height + textoffset + yoffset + yoffset) * scaler, (symbol->width + xoffset + xoffset) * scaler);
 	
 
 	if(symbol->symbology == BARCODE_MAXICODE) {
@@ -205,9 +206,9 @@ int ps_plot(struct zint_symbol *symbol)
 		fprintf(feps, "TE\n");
 		fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
 		fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-		fprintf(feps, "35.76 35.60 10.85 35.76 35.60 8.97 44.73 35.60 TC\n");
-		fprintf(feps, "35.76 35.60 7.10 35.76 35.60 5.22 40.98 35.60 TC\n");
-		fprintf(feps, "35.76 35.60 3.31 35.76 35.60 1.43 37.19 35.60 TC\n");
+		fprintf(feps, "%.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f TC\n", 35.76 * scaler, 35.60 * scaler, 10.85 * scaler, 35.76 * scaler, 35.60 * scaler, 8.97 * scaler, 44.73 * scaler, 35.60 * scaler);
+		fprintf(feps, "%.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f TC\n", 35.76 * scaler, 35.60 * scaler, 7.10 * scaler, 35.76 * scaler, 35.60 * scaler, 5.22 * scaler, 40.98 * scaler, 35.60 * scaler);
+		fprintf(feps, "%.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f TC\n", 35.76 * scaler, 35.60 * scaler, 3.31 * scaler, 35.76 * scaler, 35.60 * scaler, 1.43 * scaler, 37.19 * scaler, 35.60 * scaler);
 		for(r = 0; r < symbol->rows; r++) {
 			for(i = 0; i < symbol->width; i++) {
 				if(symbol->encoded_data[r][i] == '1') {
@@ -230,7 +231,7 @@ int ps_plot(struct zint_symbol *symbol)
 					dx = mx;
 					ex = mx - 0.86;
 					fx = mx - 0.86;
-					fprintf(feps, "%.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f TH\n", ax, ay, bx, by, cx, cy, dx, dy, ex, ey, fx, fy);
+					fprintf(feps, "%.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f TH\n", ax * scaler, ay * scaler, bx * scaler, by * scaler, cx * scaler, cy * scaler, dx * scaler, dy * scaler, ex * scaler, ey * scaler, fx * scaler, fy * scaler);
 				}
 			}
 		}
@@ -260,7 +261,7 @@ int ps_plot(struct zint_symbol *symbol)
 			
 			fprintf(feps, "TE\n");
 			fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-			fprintf(feps, "%.2f %.2f ", row_height, row_posn);
+			fprintf(feps, "%.2f %.2f ", row_height * scaler, row_posn * scaler);
 			i = 0;
 			if(symbol->encoded_data[this_row][0] == '1') {
 				latch = 1;
@@ -276,13 +277,13 @@ int ps_plot(struct zint_symbol *symbol)
 				if((addon_latch == 0) && (r == 0) && (i > main_width)) {
 					fprintf(feps, "TE\n");
 					fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-					fprintf(feps, "%.2f %.2f ", (row_height - 5.0), (row_posn - 5.0));
+					fprintf(feps, "%.2f %.2f ", (row_height - 5.0) * scaler, (row_posn - 5.0) * scaler);
 					addon_text_posn = row_posn + row_height - 8.0;
 					addon_latch = 1;
 				} 
 				if(latch == 1) { 
 					/* a bar */
-					fprintf(feps, "TB %d.00 %d.00 TR\n", i + xoffset, block_width);
+					fprintf(feps, "TB %.2f %.2f TR\n", (i + xoffset) * scaler, block_width * scaler);
 					latch = 0;
 				} else {
 					/* a space */
@@ -305,13 +306,13 @@ int ps_plot(struct zint_symbol *symbol)
 			case 14:
 				fprintf(feps, "TE\n");
 				fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-				fprintf(feps, "%.2f %.2f ", 5.0, 4.0 + yoffset);
-				fprintf(feps, "TB %d.00 %d.00 TR\n", 0 + xoffset, 1);
-				fprintf(feps, "TB %d.00 %d.00 TR\n", 2 + xoffset, 1);
-				fprintf(feps, "TB %d.00 %d.00 TR\n", 32 + xoffset, 1);
-				fprintf(feps, "TB %d.00 %d.00 TR\n", 34 + xoffset, 1);
-				fprintf(feps, "TB %d.00 %d.00 TR\n", 64 + xoffset, 1);
-				fprintf(feps, "TB %d.00 %d.00 TR\n", 66 + xoffset, 1);
+				fprintf(feps, "%.2f %.2f ", 5.0 * scaler, (4.0 + yoffset) * scaler);
+				fprintf(feps, "TB %.2f %.2f TR\n", (0 + xoffset) * scaler, 1 * scaler);
+				fprintf(feps, "TB %.2f %.2f TR\n", (2 + xoffset) * scaler, 1 * scaler);
+				fprintf(feps, "TB %.2f %.2f TR\n", (32 + xoffset) * scaler, 1 * scaler);
+				fprintf(feps, "TB %.2f %.2f TR\n", (34 + xoffset) * scaler, 1 * scaler);
+				fprintf(feps, "TB %.2f %.2f TR\n", (64 + xoffset) * scaler, 1 * scaler);
+				fprintf(feps, "TB %.2f %.2f TR\n", (66 + xoffset) * scaler, 1 * scaler);
 				for(i = 0; i < 4; i++) {
 					textpart[i] = symbol->text[i];
 				}
@@ -320,9 +321,9 @@ int ps_plot(struct zint_symbol *symbol)
 				fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
 				fprintf(feps, "matrix currentmatrix\n");
 				fprintf(feps, "/Helvetica findfont\n");
-				fprintf(feps, "11.00 scalefont setfont\n");
+				fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
 				textpos = 17;
-				fprintf(feps, " 0 0 moveto %.2f 0.50 translate 0.00 rotate 0 0 moveto\n", textpos + xoffset);
+				fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, 0.50 * scaler);
 				fprintf(feps, " (%s) stringwidth\n", textpart);
 				fprintf(feps, "pop\n");
 				fprintf(feps, "-2 div 0 rmoveto\n");
@@ -334,9 +335,9 @@ int ps_plot(struct zint_symbol *symbol)
 				textpart[4] = '\0';
 				fprintf(feps, "matrix currentmatrix\n");
 				fprintf(feps, "/Helvetica findfont\n");
-				fprintf(feps, "11.00 scalefont setfont\n");
+				fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
 				textpos = 50;
-				fprintf(feps, " 0 0 moveto %.2f 0.50 translate 0.00 rotate 0 0 moveto\n", textpos + xoffset);
+				fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, 0.5 * scaler);
 				fprintf(feps, " (%s) stringwidth\n", textpart);
 				fprintf(feps, "pop\n");
 				fprintf(feps, "-2 div 0 rmoveto\n");
@@ -347,9 +348,9 @@ int ps_plot(struct zint_symbol *symbol)
 					case 2:	
 						fprintf(feps, "matrix currentmatrix\n");
 						fprintf(feps, "/Helvetica findfont\n");
-						fprintf(feps, "11.00 scalefont setfont\n");
+						fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
 						textpos = symbol->width + xoffset - 10;
-						fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos, addon_text_posn);
+						fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
 						fprintf(feps, " (%s) stringwidth\n", addon);
 						fprintf(feps, "pop\n");
 						fprintf(feps, "-2 div 0 rmoveto\n");
@@ -359,9 +360,9 @@ int ps_plot(struct zint_symbol *symbol)
 					case 5:
 						fprintf(feps, "matrix currentmatrix\n");
 						fprintf(feps, "/Helvetica findfont\n");
-						fprintf(feps, "11.00 scalefont setfont\n");
+						fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
 						textpos = symbol->width + xoffset - 23;
-						fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos, addon_text_posn);
+						fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
 						fprintf(feps, " (%s) stringwidth\n", addon);
 						fprintf(feps, "pop\n");
 						fprintf(feps, "-2 div 0 rmoveto\n");
@@ -376,22 +377,22 @@ int ps_plot(struct zint_symbol *symbol)
 			case 19:
 				fprintf(feps, "TE\n");
 				fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-				fprintf(feps, "%.2f %.2f ", 5.0, 4.0 + yoffset);
-				fprintf(feps, "TB %d.00 %d.00 TR\n", 0 + xoffset, 1);
-				fprintf(feps, "TB %d.00 %d.00 TR\n", 2 + xoffset, 1);
-				fprintf(feps, "TB %d.00 %d.00 TR\n", 46 + xoffset, 1);
-				fprintf(feps, "TB %d.00 %d.00 TR\n", 48 + xoffset, 1);
-				fprintf(feps, "TB %d.00 %d.00 TR\n", 92 + xoffset, 1);
-				fprintf(feps, "TB %d.00 %d.00 TR\n", 94 + xoffset, 1);
+				fprintf(feps, "%.2f %.2f ", 5.0 * scaler, (4.0 + yoffset) * scaler);
+				fprintf(feps, "TB %.2f %.2f TR\n", (0 + xoffset) * scaler, 1 * scaler);
+				fprintf(feps, "TB %.2f %.2f TR\n", (2 + xoffset) * scaler, 1 * scaler);
+				fprintf(feps, "TB %.2f %.2f TR\n", (46 + xoffset) * scaler, 1 * scaler);
+				fprintf(feps, "TB %.2f %.2f TR\n", (48 + xoffset) * scaler, 1 * scaler);
+				fprintf(feps, "TB %.2f %.2f TR\n", (92 + xoffset) * scaler, 1 * scaler);
+				fprintf(feps, "TB %.2f %.2f TR\n", (94 + xoffset) * scaler, 1 * scaler);
 				textpart[0] = symbol->text[0];
 				textpart[1] = '\0';
 				fprintf(feps, "TE\n");
 				fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
 				fprintf(feps, "matrix currentmatrix\n");
 				fprintf(feps, "/Helvetica findfont\n");
-				fprintf(feps, "11.00 scalefont setfont\n");
+				fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
 				textpos = -7;
-				fprintf(feps, " 0 0 moveto %.2f 0.50 translate 0.00 rotate 0 0 moveto\n", textpos + xoffset);
+				fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, 0.50 * scaler);
 				fprintf(feps, " (%s) stringwidth\n", textpart);
 				fprintf(feps, "pop\n");
 				fprintf(feps, "-2 div 0 rmoveto\n");
@@ -403,9 +404,9 @@ int ps_plot(struct zint_symbol *symbol)
 				textpart[6] = '\0';
 				fprintf(feps, "matrix currentmatrix\n");
 				fprintf(feps, "/Helvetica findfont\n");
-				fprintf(feps, "11.00 scalefont setfont\n");
+				fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
 				textpos = 24;
-				fprintf(feps, " 0 0 moveto %.2f 0.50 translate 0.00 rotate 0 0 moveto\n", textpos + xoffset);
+				fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, 0.50 * scaler);
 				fprintf(feps, " (%s) stringwidth\n", textpart);
 				fprintf(feps, "pop\n");
 				fprintf(feps, "-2 div 0 rmoveto\n");
@@ -417,9 +418,9 @@ int ps_plot(struct zint_symbol *symbol)
 				textpart[6] = '\0';
 				fprintf(feps, "matrix currentmatrix\n");
 				fprintf(feps, "/Helvetica findfont\n");
-				fprintf(feps, "11.00 scalefont setfont\n");
+				fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
 				textpos = 71;
-				fprintf(feps, " 0 0 moveto %.2f 0.50 translate 0.00 rotate 0 0 moveto\n", textpos + xoffset);
+				fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, 0.5 * scaler);
 				fprintf(feps, " (%s) stringwidth\n", textpart);
 				fprintf(feps, "pop\n");
 				fprintf(feps, "-2 div 0 rmoveto\n");
@@ -430,9 +431,9 @@ int ps_plot(struct zint_symbol *symbol)
 					case 2:	
 						fprintf(feps, "matrix currentmatrix\n");
 						fprintf(feps, "/Helvetica findfont\n");
-						fprintf(feps, "11.00 scalefont setfont\n");
+						fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
 						textpos = symbol->width + xoffset - 10;
-						fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos, addon_text_posn);
+						fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
 						fprintf(feps, " (%s) stringwidth\n", addon);
 						fprintf(feps, "pop\n");
 						fprintf(feps, "-2 div 0 rmoveto\n");
@@ -442,9 +443,9 @@ int ps_plot(struct zint_symbol *symbol)
 					case 5:
 						fprintf(feps, "matrix currentmatrix\n");
 						fprintf(feps, "/Helvetica findfont\n");
-						fprintf(feps, "11.00 scalefont setfont\n");
+						fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
 						textpos = symbol->width + xoffset - 23;
-						fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos, addon_text_posn);
+						fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
 						fprintf(feps, " (%s) stringwidth\n", addon);
 						fprintf(feps, "pop\n");
 						fprintf(feps, "-2 div 0 rmoveto\n");
@@ -461,7 +462,7 @@ int ps_plot(struct zint_symbol *symbol)
 		/* guard bar extensions and text formatting for UPCA */
 		fprintf(feps, "TE\n");
 		fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-		fprintf(feps, "%.2f %.2f ", 5.0, 4.0 + yoffset);
+		fprintf(feps, "%.2f %.2f ", 5.0 * scaler, (4.0 + yoffset) * scaler);
 		latch = 1;
 		
 		i = 0 + comp_offset;
@@ -472,7 +473,7 @@ int ps_plot(struct zint_symbol *symbol)
 			} while (symbol->encoded_data[symbol->rows - 1][i + block_width] == symbol->encoded_data[symbol->rows - 1][i]);
 			if(latch == 1) {
 				/* a bar */
-				fprintf(feps, "TB %d.00 %d.00 TR\n", i + xoffset - comp_offset, block_width);
+				fprintf(feps, "TB %.2f %.2f TR\n", (i + xoffset - comp_offset) * scaler, block_width * scaler);
 				latch = 0;
 			} else {
 				/* a space */
@@ -480,8 +481,8 @@ int ps_plot(struct zint_symbol *symbol)
 			}
 			i += block_width;
 		} while (i < 11 + comp_offset);
-		fprintf(feps, "TB %d.00 %d.00 TR\n", 46 + xoffset, 1);
-		fprintf(feps, "TB %d.00 %d.00 TR\n", 48 + xoffset, 1);
+		fprintf(feps, "TB %.2f %.2f TR\n", (46 + xoffset) * scaler, 1 * scaler);
+		fprintf(feps, "TB %.2f %.2f TR\n", (48 + xoffset) * scaler, 1 * scaler);
 		latch = 1;
 		i = 85 + comp_offset;
 		do {
@@ -491,7 +492,7 @@ int ps_plot(struct zint_symbol *symbol)
 			} while (symbol->encoded_data[symbol->rows - 1][i + block_width] == symbol->encoded_data[symbol->rows - 1][i]);
 			if(latch == 1) {
 				/* a bar */
-				fprintf(feps, "TB %d.00 %d.00 TR\n", i + xoffset - comp_offset, block_width);
+				fprintf(feps, "TB %.2f %.2f TR\n", (i + xoffset - comp_offset) * scaler, block_width * scaler);
 				latch = 0;
 			} else {
 				/* a space */
@@ -505,9 +506,9 @@ int ps_plot(struct zint_symbol *symbol)
 		fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
 		fprintf(feps, "matrix currentmatrix\n");
 		fprintf(feps, "/Helvetica findfont\n");
-		fprintf(feps, "8.00 scalefont setfont\n");
+		fprintf(feps, "%.2f scalefont setfont\n", 8.0 * scaler);
 		textpos = -5;
-		fprintf(feps, " 0 0 moveto %.2f 0.50 translate 0.00 rotate 0 0 moveto\n", textpos + xoffset);
+		fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, 0.5 * scaler);
 		fprintf(feps, " (%s) stringwidth\n", textpart);
 		fprintf(feps, "pop\n");
 		fprintf(feps, "-2 div 0 rmoveto\n");
@@ -519,9 +520,9 @@ int ps_plot(struct zint_symbol *symbol)
 		textpart[5] = '\0';
 		fprintf(feps, "matrix currentmatrix\n");
 		fprintf(feps, "/Helvetica findfont\n");
-		fprintf(feps, "11.00 scalefont setfont\n");
+		fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
 		textpos = 27;
-		fprintf(feps, " 0 0 moveto %.2f 0.50 translate 0.00 rotate 0 0 moveto\n", textpos + xoffset);
+		fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, 0.5 * scaler);
 		fprintf(feps, " (%s) stringwidth\n", textpart);
 		fprintf(feps, "pop\n");
 		fprintf(feps, "-2 div 0 rmoveto\n");
@@ -533,9 +534,9 @@ int ps_plot(struct zint_symbol *symbol)
 		textpart[6] = '\0';
 		fprintf(feps, "matrix currentmatrix\n");
 		fprintf(feps, "/Helvetica findfont\n");
-		fprintf(feps, "11.00 scalefont setfont\n");
+		fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
 		textpos = 68;
-		fprintf(feps, " 0 0 moveto %.2f 0.50 translate 0.00 rotate 0 0 moveto\n", textpos + xoffset);
+		fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, 0.5 * scaler);
 		fprintf(feps, " (%s) stringwidth\n", textpart);
 		fprintf(feps, "pop\n");
 		fprintf(feps, "-2 div 0 rmoveto\n");
@@ -545,9 +546,9 @@ int ps_plot(struct zint_symbol *symbol)
 		textpart[1] = '\0';
 		fprintf(feps, "matrix currentmatrix\n");
 		fprintf(feps, "/Helvetica findfont\n");
-		fprintf(feps, "8.00 scalefont setfont\n");
+		fprintf(feps, "%.2f scalefont setfont\n", 8.0 * scaler);
 		textpos = 100;
-		fprintf(feps, " 0 0 moveto %.2f 0.50 translate 0.00 rotate 0 0 moveto\n", textpos + xoffset);
+		fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, 0.5 * scaler);
 		fprintf(feps, " (%s) stringwidth\n", textpart);
 		fprintf(feps, "pop\n");
 		fprintf(feps, "-2 div 0 rmoveto\n");
@@ -558,9 +559,9 @@ int ps_plot(struct zint_symbol *symbol)
 			case 2:	
 				fprintf(feps, "matrix currentmatrix\n");
 				fprintf(feps, "/Helvetica findfont\n");
-				fprintf(feps, "11.00 scalefont setfont\n");
+				fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
 				textpos = symbol->width + xoffset - 10;
-				fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos, addon_text_posn);
+				fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
 				fprintf(feps, " (%s) stringwidth\n", addon);
 				fprintf(feps, "pop\n");
 				fprintf(feps, "-2 div 0 rmoveto\n");
@@ -570,9 +571,9 @@ int ps_plot(struct zint_symbol *symbol)
 			case 5:
 				fprintf(feps, "matrix currentmatrix\n");
 				fprintf(feps, "/Helvetica findfont\n");
-				fprintf(feps, "11.00 scalefont setfont\n");
+				fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
 				textpos = symbol->width + xoffset - 23;
-				fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos, addon_text_posn);
+				fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
 				fprintf(feps, " (%s) stringwidth\n", addon);
 				fprintf(feps, "pop\n");
 				fprintf(feps, "-2 div 0 rmoveto\n");
@@ -587,21 +588,21 @@ int ps_plot(struct zint_symbol *symbol)
 		/* guard bar extensions and text formatting for UPCE */
 		fprintf(feps, "TE\n");
 		fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-		fprintf(feps, "%.2f %.2f ", 5.0, 4.0 + yoffset);
-		fprintf(feps, "TB %d.00 %d.00 TR\n", 0 + xoffset, 1);
-		fprintf(feps, "TB %d.00 %d.00 TR\n", 2 + xoffset, 1);
-		fprintf(feps, "TB %d.00 %d.00 TR\n", 46 + xoffset, 1);
-		fprintf(feps, "TB %d.00 %d.00 TR\n", 48 + xoffset, 1);
-		fprintf(feps, "TB %d.00 %d.00 TR\n", 50 + xoffset, 1);
+		fprintf(feps, "%.2f %.2f ", 5.0 * scaler, (4.0 + yoffset) * scaler);
+		fprintf(feps, "TB %.2f %.2f TR\n", (0 + xoffset) * scaler, 1 * scaler);
+		fprintf(feps, "TB %.2f %.2f TR\n", (2 + xoffset) * scaler, 1 * scaler);
+		fprintf(feps, "TB %.2f %.2f TR\n", (46 + xoffset) * scaler, 1 * scaler);
+		fprintf(feps, "TB %.2f %.2f TR\n", (48 + xoffset) * scaler, 1 * scaler);
+		fprintf(feps, "TB %.2f %.2f TR\n", (50 + xoffset) * scaler, 1 * scaler);
 		textpart[0] = symbol->text[0];
 		textpart[1] = '\0';
 		fprintf(feps, "TE\n");
 		fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
 		fprintf(feps, "matrix currentmatrix\n");
 		fprintf(feps, "/Helvetica findfont\n");
-		fprintf(feps, "8.00 scalefont setfont\n");
+		fprintf(feps, "%.2f scalefont setfont\n", 8.0 * scaler);
 		textpos = -5;
-		fprintf(feps, " 0 0 moveto %.2f 0.50 translate 0.00 rotate 0 0 moveto\n", textpos + xoffset);
+		fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, 0.5 * scaler);
 		fprintf(feps, " (%s) stringwidth\n", textpart);
 		fprintf(feps, "pop\n");
 		fprintf(feps, "-2 div 0 rmoveto\n");
@@ -613,9 +614,9 @@ int ps_plot(struct zint_symbol *symbol)
 		textpart[6] = '\0';
 		fprintf(feps, "matrix currentmatrix\n");
 		fprintf(feps, "/Helvetica findfont\n");
-		fprintf(feps, "11.00 scalefont setfont\n");
+		fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
 		textpos = 24;
-		fprintf(feps, " 0 0 moveto %.2f 0.50 translate 0.00 rotate 0 0 moveto\n", textpos + xoffset);
+		fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, 0.5 * scaler);
 		fprintf(feps, " (%s) stringwidth\n", textpart);
 		fprintf(feps, "pop\n");
 		fprintf(feps, "-2 div 0 rmoveto\n");
@@ -625,9 +626,9 @@ int ps_plot(struct zint_symbol *symbol)
 		textpart[1] = '\0';
 		fprintf(feps, "matrix currentmatrix\n");
 		fprintf(feps, "/Helvetica findfont\n");
-		fprintf(feps, "8.00 scalefont setfont\n");
+		fprintf(feps, "%.2f scalefont setfont\n", 8.0 * scaler);
 		textpos = 55;
-		fprintf(feps, " 0 0 moveto %.2f 0.50 translate 0.00 rotate 0 0 moveto\n", textpos + xoffset);
+		fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, 0.5 * scaler);
 		fprintf(feps, " (%s) stringwidth\n", textpart);
 		fprintf(feps, "pop\n");
 		fprintf(feps, "-2 div 0 rmoveto\n");
@@ -638,9 +639,9 @@ int ps_plot(struct zint_symbol *symbol)
 			case 2:	
 				fprintf(feps, "matrix currentmatrix\n");
 				fprintf(feps, "/Helvetica findfont\n");
-				fprintf(feps, "11.00 scalefont setfont\n");
+				fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
 				textpos = symbol->width + xoffset - 10;
-				fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos, addon_text_posn);
+				fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
 				fprintf(feps, " (%s) stringwidth\n", addon);
 				fprintf(feps, "pop\n");
 				fprintf(feps, "-2 div 0 rmoveto\n");
@@ -650,9 +651,9 @@ int ps_plot(struct zint_symbol *symbol)
 			case 5:
 				fprintf(feps, "matrix currentmatrix\n");
 				fprintf(feps, "/Helvetica findfont\n");
-				fprintf(feps, "11.00 scalefont setfont\n");
+				fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
 				textpos = symbol->width + xoffset - 23;
-				fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos, addon_text_posn);
+				fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
 				fprintf(feps, " (%s) stringwidth\n", addon);
 				fprintf(feps, "pop\n");
 				fprintf(feps, "-2 div 0 rmoveto\n");
@@ -672,32 +673,32 @@ int ps_plot(struct zint_symbol *symbol)
 			/* boundary bars */
 			fprintf(feps, "TE\n");
 			fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-			fprintf(feps, "%d.00 %d.00 TB %d.00 %d.00 TR\n", symbol->border_width, textoffset, 0, (symbol->width + xoffset + xoffset));
+			fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", symbol->border_width * scaler, textoffset * scaler, 0.0, (symbol->width + xoffset + xoffset) * scaler);
 			fprintf(feps, "TE\n");
 			fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-			fprintf(feps, "%d.00 %d.00 TB %d.00 %d.00 TR\n", symbol->border_width, textoffset + symbol->height + symbol->border_width, 0, (symbol->width + xoffset + xoffset));
+			fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", symbol->border_width * scaler, (textoffset + symbol->height + symbol->border_width) * scaler, 0.0, (symbol->width + xoffset + xoffset) * scaler);
 			if(symbol->rows > 1) {
 				/* row binding */
 				for(r = 1; r < symbol->rows; r++) {
 					fprintf(feps, "TE\n");
 					fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-					fprintf(feps, "%d.00 %.2f TB %d.00 %d.00 TR\n", 2, ((r * row_height) + textoffset + yoffset - 1), xoffset, symbol->width);
+					fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", 2.0, ((r * row_height) + textoffset + yoffset - 1) * scaler, xoffset * scaler, symbol->width * scaler);
 				}
 			}
 		} else {
 			/* boundary bars */
 			fprintf(feps, "TE\n");
 			fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-			fprintf(feps, "%d.00 %d.00 TB %d.00 %d.00 TR\n", symbol->border_width, textoffset, xoffset, symbol->width);
+			fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", symbol->border_width * scaler, textoffset * scaler, xoffset * scaler, symbol->width * scaler);
 			fprintf(feps, "TE\n");
 			fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-			fprintf(feps, "%d.00 %d.00 TB %d.00 %d.00 TR\n", symbol->border_width, textoffset + symbol->height + symbol->border_width, xoffset, symbol->width);
+			fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", symbol->border_width * scaler, (textoffset + symbol->height + symbol->border_width) * scaler, xoffset * scaler, symbol->width * scaler);
 			if(symbol->rows > 1) {
 				/* row binding */
 				for(r = 1; r < symbol->rows; r++) {
 					fprintf(feps, "TE\n");
 					fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-					fprintf(feps, "%d.00 %.2f TB %d.00 %d.00 TR\n", 2, ((r * row_height) + textoffset + yoffset - 1), (xoffset + 11), (symbol->width - 24));
+					fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", 2.0, ((r * row_height) + textoffset + yoffset - 1) * scaler, (xoffset + 11) * scaler, (symbol->width - 24) * scaler);
 				}
 			}
 		}
@@ -707,10 +708,10 @@ int ps_plot(struct zint_symbol *symbol)
 		/* side bars */
 		fprintf(feps, "TE\n");
 		fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-		fprintf(feps, "%d.00 %d.00 TB %d.00 %d.00 TR\n", symbol->height + (2 * symbol->border_width), textoffset, 0, symbol->border_width); 
+		fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", (symbol->height + (2 * symbol->border_width)) * scaler, textoffset * scaler, 0.0, symbol->border_width * scaler); 
 		fprintf(feps, "TE\n");
 		fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-		fprintf(feps, "%d.00 %d.00 TB %d.00 %d.00 TR\n", symbol->height + (2 * symbol->border_width), textoffset, (symbol->width + xoffset + xoffset - symbol->border_width), symbol->border_width);
+		fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", (symbol->height + (2 * symbol->border_width)) * scaler, textoffset * scaler, (symbol->width + xoffset + xoffset - symbol->border_width) * scaler, symbol->border_width * scaler);
 	}
 	
 	/* Put the human readable text at the bottom */
@@ -719,9 +720,9 @@ int ps_plot(struct zint_symbol *symbol)
 		fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
 		fprintf(feps, "matrix currentmatrix\n");
 		fprintf(feps, "/Helvetica findfont\n");
-		fprintf(feps, "8.00 scalefont setfont\n");
+		fprintf(feps, "%.2f scalefont setfont\n", 8.0 * scaler);
 		textpos = symbol->width / 2.0;
-		fprintf(feps, " 0 0 moveto %.2f 1.67 translate 0.00 rotate 0 0 moveto\n", textpos + xoffset);
+		fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, 1.67 * scaler);
 		fprintf(feps, " (%s) stringwidth\n", symbol->text);
 		fprintf(feps, "pop\n");
 		fprintf(feps, "-2 div 0 rmoveto\n");
