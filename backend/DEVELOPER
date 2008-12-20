@@ -94,6 +94,7 @@ postal.c:
 	KIX Code
 	DAFT Code
 	Flattermarken
+	Korean Postal Code
 
 qr.c:
 	QR Code (libqrencode)
