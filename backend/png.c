@@ -114,6 +114,7 @@ int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, c
 		strcpy(symbol->errtxt, "Can't open output file [B5]");
 		return ERROR_FILE_ACCESS;
 	}
+	/* graphic->outfile = stdout; */
 	
 	/* Set up error handling routine as proc() above */
 	png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, graphic,
@@ -276,12 +277,12 @@ void draw_bar(char *pixelbuf, int xpos, int xlen, int ypos, int ylen, int image_
 	/* Draw a rectangle */
 	int i, j, png_ypos;
 	
-	png_ypos = (image_height / 2) - ypos - ylen;
+	png_ypos = image_height - ypos - ylen;
 	/* This fudge is needed because EPS measures height from the bottom up but
 	PNG measures y position from the top down */
 	
-	for(i = (xpos * 2); i < (2 * (xpos + xlen)); i++) {
-		for( j = (png_ypos * 2); j < (2 * (png_ypos + ylen)); j++) {
+	for(i = (xpos); i < (xpos + xlen); i++) {
+		for( j = (png_ypos); j < (png_ypos + ylen); j++) {
 			*(pixelbuf + (image_width * j) + i) = '1';
 		}
 	}
@@ -418,6 +419,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 	int this_row, block_width, plot_height, plot_yposn, textpos;
 	float row_height, row_posn;
 	int error_number;
+	int scaler = (int)(2 * symbol->scale);
 	
 	textdone = 0;
 	main_width = symbol->width;
@@ -499,8 +501,8 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 	}
 	xoffset = symbol->border_width + symbol->whitespace_width;
 	yoffset = symbol->border_width;
-	image_width = 2 * (symbol->width + xoffset + xoffset);
-	image_height = 2 * (symbol->height + textoffset + yoffset + yoffset);
+	image_width = scaler * (symbol->width + xoffset + xoffset);
+	image_height = scaler * (symbol->height + textoffset + yoffset + yoffset);
 	
 	if (!(pixelbuf = (char *) malloc(image_width * image_height))) {
 		printf("Insifficient memory for pixel buffer [BA]");
@@ -552,7 +554,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 			} 
 			if(latch == 1) { 
 				/* a bar */
-				draw_bar(pixelbuf, (i + xoffset), block_width, plot_yposn, plot_height, image_width, image_height);
+				draw_bar(pixelbuf, (i + xoffset) * scaler, block_width * scaler, plot_yposn * scaler, plot_height * scaler, image_width, image_height);
 				latch = 0;
 			} else {
 				/* a space */
@@ -571,33 +573,33 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 			case 8: /* EAN-8 */
 			case 11:
 			case 14:
-				draw_bar(pixelbuf, (0 + xoffset), 1, (4 + (int)yoffset), 5, image_width, image_height);
-				draw_bar(pixelbuf, (2 + xoffset), 1, (4 + (int)yoffset), 5, image_width, image_height);
-				draw_bar(pixelbuf, (32 + xoffset), 1, (4 + (int)yoffset), 5, image_width, image_height);
-				draw_bar(pixelbuf, (34 + xoffset), 1, (4 + (int)yoffset), 5, image_width, image_height);
-				draw_bar(pixelbuf, (64 + xoffset), 1, (4 + (int)yoffset), 5, image_width, image_height);
-				draw_bar(pixelbuf, (66 + xoffset), 1, (4 + (int)yoffset), 5, image_width, image_height);
+				draw_bar(pixelbuf, (0 + xoffset) * scaler, 1 * scaler, (4 + (int)yoffset) * scaler, 5 * scaler, image_width, image_height);
+				draw_bar(pixelbuf, (2 + xoffset) * scaler, 1 * scaler, (4 + (int)yoffset) * scaler, 5 * scaler, image_width, image_height);
+				draw_bar(pixelbuf, (32 + xoffset) * scaler, 1 * scaler, (4 + (int)yoffset) * scaler, 5 * scaler, image_width, image_height);
+				draw_bar(pixelbuf, (34 + xoffset) * scaler, 1 * scaler, (4 + (int)yoffset) * scaler, 5 * scaler, image_width, image_height);
+				draw_bar(pixelbuf, (64 + xoffset) * scaler, 1 * scaler, (4 + (int)yoffset) * scaler, 5 * scaler, image_width, image_height);
+				draw_bar(pixelbuf, (66 + xoffset) * scaler, 1 * scaler, (4 + (int)yoffset) * scaler, 5 * scaler, image_width, image_height);
 				for(i = 0; i < 4; i++) {
 					textpart[i] = symbol->text[i];
 				}
 				textpart[4] = '\0';
-				textpos = 2 * (17 + xoffset);
+				textpos = scaler * (17 + xoffset);
 				draw_string(pixelbuf, textpart, textpos, (image_height - 17), image_width, image_height);
 				for(i = 0; i < 4; i++) {
 					textpart[i] = symbol->text[i + 4];
 				}
 				textpart[4] = '\0';
-				textpos = 2 * (50 + xoffset);
+				textpos = scaler * (50 + xoffset);
 				draw_string(pixelbuf, textpart, textpos, (image_height - 17), image_width, image_height);
 				textdone = 1;
 				switch(strlen(addon)) {
 					case 2:	
-						textpos = 2 * (symbol->width + xoffset - 10);
-						draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, image_width, image_height);
+						textpos = scaler * (symbol->width + xoffset - 10);
+						draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * scaler) - 13, image_width, image_height);
 						break;
 					case 5:
-						textpos = 2 * (symbol->width + xoffset - 23);
-						draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, image_width, image_height);
+						textpos = scaler * (symbol->width + xoffset - 23);
+						draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * scaler) - 13, image_width, image_height);
 						break;
 				}
 
@@ -605,38 +607,38 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 			case 13: /* EAN 13 */
 			case 16:
 			case 19:
-				draw_bar(pixelbuf, (0 + xoffset), 1, (4 + (int)yoffset), 5, image_width, image_height);
-				draw_bar(pixelbuf, (2 + xoffset), 1, (4 + (int)yoffset), 5, image_width, image_height);
-				draw_bar(pixelbuf, (46 + xoffset), 1, (4 + (int)yoffset), 5, image_width, image_height);
-				draw_bar(pixelbuf, (48 + xoffset), 1, (4 + (int)yoffset), 5, image_width, image_height);
-				draw_bar(pixelbuf, (92 + xoffset), 1, (4 + (int)yoffset), 5, image_width, image_height);
-				draw_bar(pixelbuf, (94 + xoffset), 1, (4 + (int)yoffset), 5, image_width, image_height);
+				draw_bar(pixelbuf, (0 + xoffset) * scaler, 1 * scaler, (4 + (int)yoffset) * scaler, 5 * scaler, image_width, image_height);
+				draw_bar(pixelbuf, (2 + xoffset) * scaler, 1 * scaler, (4 + (int)yoffset) * scaler, 5 * scaler, image_width, image_height);
+				draw_bar(pixelbuf, (46 + xoffset) * scaler, 1 * scaler, (4 + (int)yoffset) * scaler, 5 * scaler, image_width, image_height);
+				draw_bar(pixelbuf, (48 + xoffset) * scaler, 1 * scaler, (4 + (int)yoffset) * scaler, 5 * scaler, image_width, image_height);
+				draw_bar(pixelbuf, (92 + xoffset) * scaler, 1 * scaler, (4 + (int)yoffset) * scaler, 5 * scaler, image_width, image_height);
+				draw_bar(pixelbuf, (94 + xoffset) * scaler, 1 * scaler, (4 + (int)yoffset) * scaler, 5 * scaler, image_width, image_height);
 
 				textpart[0] = symbol->text[0];
 				textpart[1] = '\0';
-				textpos = 2 * (-7 + xoffset);
+				textpos = scaler * (-7 + xoffset);
 				draw_string(pixelbuf, textpart, textpos, (image_height - 17), image_width, image_height);
 				for(i = 0; i < 6; i++) {
 					textpart[i] = symbol->text[i + 1];
 				}
 				textpart[6] = '\0';
-				textpos = 2 * (24 + xoffset);
+				textpos = scaler * (24 + xoffset);
 				draw_string(pixelbuf, textpart, textpos, (image_height - 17), image_width, image_height);
 				for(i = 0; i < 6; i++) {
 					textpart[i] = symbol->text[i + 7];
 				}
 				textpart[6] = '\0';
-				textpos = 2 * (71 + xoffset);
+				textpos = scaler * (71 + xoffset);
 				draw_string(pixelbuf, textpart, textpos, (image_height - 17), image_width, image_height);
 				textdone = 1;
 				switch(strlen(addon)) {
 					case 2:	
-						textpos = 2 * (symbol->width + xoffset - 10);
-						draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, image_width, image_height);
+						textpos = scaler * (symbol->width + xoffset - 10);
+						draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * scaler) - 13, image_width, image_height);
 						break;
 					case 5:
-						textpos = 2 * (symbol->width + xoffset - 23);
-						draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, image_width, image_height);
+						textpos = scaler * (symbol->width + xoffset - 23);
+						draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * scaler) - 13, image_width, image_height);
 						break;
 				}
 				break;
@@ -656,7 +658,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 			} while (symbol->encoded_data[symbol->rows - 1][i + block_width] == symbol->encoded_data[symbol->rows - 1][i]);
 			if(latch == 1) {
 				/* a bar */
-				draw_bar(pixelbuf, (i + xoffset - comp_offset), block_width, (4 + (int)yoffset), 5, image_width, image_height);
+				draw_bar(pixelbuf, (i + xoffset - comp_offset) * scaler, block_width * scaler, (4 + (int)yoffset) * scaler, 5 * scaler, image_width, image_height);
 				latch = 0;
 			} else {
 				/* a space */
@@ -664,8 +666,8 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 			}
 			i += block_width;
 		} while (i < 11 + comp_offset);
-		draw_bar(pixelbuf, (46 + xoffset), 1, (4 + (int)yoffset), 5, image_width, image_height);
-		draw_bar(pixelbuf, (48 + xoffset), 1, (4 + (int)yoffset), 5, image_width, image_height);
+		draw_bar(pixelbuf, (46 + xoffset) * scaler, 1 * scaler, (4 + (int)yoffset) * scaler, 5 * scaler, image_width, image_height);
+		draw_bar(pixelbuf, (48 + xoffset) * scaler, 1 * scaler, (4 + (int)yoffset) * scaler, 5 * scaler, image_width, image_height);
 		latch = 1;
 		i = 85 + comp_offset;
 		do {
@@ -675,7 +677,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 			} while (symbol->encoded_data[symbol->rows - 1][i + block_width] == symbol->encoded_data[symbol->rows - 1][i]);
 			if(latch == 1) {
 				/* a bar */
-				draw_bar(pixelbuf, (i + xoffset - comp_offset), block_width, (4 + (int)yoffset), 5, image_width, image_height);
+				draw_bar(pixelbuf, (i + xoffset - comp_offset) * scaler, block_width * scaler, (4 + (int)yoffset) * scaler, 5 * scaler, image_width, image_height);
 				latch = 0;
 			} else {
 				/* a space */
@@ -685,33 +687,33 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 		} while (i < 96 + comp_offset);
 		textpart[0] = symbol->text[0];
 		textpart[1] = '\0';
-		textpos = 2 * (-5 + xoffset);
+		textpos = scaler * (-5 + xoffset);
 		draw_string(pixelbuf, textpart, textpos, (image_height - 17), image_width, image_height);
 		for(i = 0; i < 5; i++) {
 			textpart[i] = symbol->text[i + 1];
 		}
 		textpart[5] = '\0';
-		textpos = 2 * (27 + xoffset);
+		textpos = scaler * (27 + xoffset);
 		draw_string(pixelbuf, textpart, textpos, (image_height - 17), image_width, image_height);
 		for(i = 0; i < 5; i++) {
 			textpart[i] = symbol->text[i + 6];
 		}
 		textpart[6] = '\0';
-		textpos = 2 * (68 + xoffset);
+		textpos = scaler * (68 + xoffset);
 		draw_string(pixelbuf, textpart, textpos, (image_height - 17), image_width, image_height);
 		textpart[0] = symbol->text[11];
 		textpart[1] = '\0';
-		textpos = 2 * (100 + xoffset);
+		textpos = scaler * (100 + xoffset);
 		draw_string(pixelbuf, textpart, textpos, (image_height - 17), image_width, image_height);
 		textdone = 1;
 		switch(strlen(addon)) {
 			case 2:	
-				textpos = 2 * (symbol->width + xoffset - 10);
-				draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, image_width, image_height);
+				textpos = scaler * (symbol->width + xoffset - 10);
+				draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * scaler) - 13, image_width, image_height);
 				break;
 			case 5:
-				textpos = 2 * (symbol->width + xoffset - 23);
-				draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, image_width, image_height);
+				textpos = scaler * (symbol->width + xoffset - 23);
+				draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * scaler) - 13, image_width, image_height);
 				break;
 		}
 
@@ -719,35 +721,35 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 
 	if (((symbol->symbology == BARCODE_UPCE) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_UPCE_CC)) {
 		/* guard bar extensions and text formatting for UPCE */
-		draw_bar(pixelbuf, (0 + xoffset), 1, (4 + (int)yoffset), 5, image_width, image_height);
-		draw_bar(pixelbuf, (2 + xoffset), 1, (4 + (int)yoffset), 5, image_width, image_height);
-		draw_bar(pixelbuf, (46 + xoffset), 1, (4 + (int)yoffset), 5, image_width, image_height);
-		draw_bar(pixelbuf, (48 + xoffset), 1, (4 + (int)yoffset), 5, image_width, image_height);
-		draw_bar(pixelbuf, (50 + xoffset), 1, (4 + (int)yoffset), 5, image_width, image_height);
+		draw_bar(pixelbuf, (0 + xoffset) * scaler, 1 * scaler, (4 + (int)yoffset) * scaler, 5 * scaler, image_width, image_height);
+		draw_bar(pixelbuf, (2 + xoffset) * scaler, 1 * scaler, (4 + (int)yoffset) * scaler, 5 * scaler, image_width, image_height);
+		draw_bar(pixelbuf, (46 + xoffset) * scaler, 1 * scaler, (4 + (int)yoffset) * scaler, 5 * scaler, image_width, image_height);
+		draw_bar(pixelbuf, (48 + xoffset) * scaler, 1 * scaler, (4 + (int)yoffset) * scaler, 5 * scaler, image_width, image_height);
+		draw_bar(pixelbuf, (50 + xoffset) * scaler, 1 * scaler, (4 + (int)yoffset) * scaler, 5 * scaler, image_width, image_height);
 
 		textpart[0] = symbol->text[0];
 		textpart[1] = '\0';
-		textpos = 2 * (-5 + xoffset);
+		textpos = scaler * (-5 + xoffset);
 		draw_string(pixelbuf, textpart, textpos, (image_height - 17), image_width, image_height);
 		for(i = 0; i < 6; i++) {
 			textpart[i] = symbol->text[i + 1];
 		}
 		textpart[6] = '\0';
-		textpos = 2 * (24 + xoffset);
+		textpos = scaler * (24 + xoffset);
 		draw_string(pixelbuf, textpart, textpos, (image_height - 17), image_width, image_height);
 		textpart[0] = symbol->text[7];
 		textpart[1] = '\0';
-		textpos = 2 * (55 + xoffset);
+		textpos = scaler * (55 + xoffset);
 		draw_string(pixelbuf, textpart, textpos, (image_height - 17), image_width, image_height);
 		textdone = 1;
 		switch(strlen(addon)) {
 			case 2:	
-				textpos = 2 * (symbol->width + xoffset - 10);
-				draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, image_width, image_height);
+				textpos = scaler * (symbol->width + xoffset - 10);
+				draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * scaler) - 13, image_width, image_height);
 				break;
 			case 5:
-				textpos = 2 * (symbol->width + xoffset - 23);
-				draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, image_width, image_height);
+				textpos = scaler * (symbol->width + xoffset - 23);
+				draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * scaler) - 13, image_width, image_height);
 				break;
 		}
 
@@ -759,22 +761,22 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 	if ((symbol->output_options == BARCODE_BOX) || (symbol->output_options == BARCODE_BIND)) {
 		if(symbol->symbology != BARCODE_CODABLOCKF) {
 			/* boundary bars */
-			draw_bar(pixelbuf, 0, (symbol->width + xoffset + xoffset), textoffset, symbol->border_width, image_width, image_height);
-			draw_bar(pixelbuf, 0, (symbol->width + xoffset + xoffset), (textoffset + symbol->height + symbol->border_width), symbol->border_width, image_width, image_height);
+			draw_bar(pixelbuf, 0, (symbol->width + xoffset + xoffset) * scaler, textoffset * scaler, symbol->border_width * scaler, image_width, image_height);
+			draw_bar(pixelbuf, 0, (symbol->width + xoffset + xoffset) * scaler, (textoffset + symbol->height + symbol->border_width) * scaler, symbol->border_width * scaler, image_width, image_height);
 			if(symbol->rows > 1) {
 				/* row binding */
 				for(r = 1; r < symbol->rows; r++) {
-					draw_bar(pixelbuf, xoffset, symbol->width, ((r * row_height) + textoffset + yoffset - 1), 2, image_width, image_height);
+					draw_bar(pixelbuf, xoffset * scaler, symbol->width * scaler, ((r * row_height) + textoffset + yoffset - 1) * scaler, 2 * scaler, image_width, image_height);
 				}
 			}
 		} else {
 			/* boundary bars */
-			draw_bar(pixelbuf, xoffset, symbol->width, textoffset, symbol->border_width, image_width, image_height);
-			draw_bar(pixelbuf, xoffset, symbol->width, (textoffset + symbol->height + symbol->border_width), symbol->border_width, image_width, image_height);
+			draw_bar(pixelbuf, xoffset * scaler, symbol->width * scaler, textoffset * scaler, symbol->border_width * scaler, image_width, image_height);
+			draw_bar(pixelbuf, xoffset * scaler, symbol->width * scaler, (textoffset + symbol->height + symbol->border_width) * scaler, symbol->border_width * scaler, image_width, image_height);
 			if(symbol->rows > 1) {
 				/* row binding */
 				for(r = 1; r < symbol->rows; r++) {
-					draw_bar(pixelbuf, (xoffset + 11), (symbol->width - 24), ((r * row_height) + textoffset + yoffset - 1), 2, image_width, image_height);
+					draw_bar(pixelbuf, (xoffset + 11) * scaler, (symbol->width - 24) * scaler, ((r * row_height) + textoffset + yoffset - 1) * scaler, 2 * scaler, image_width, image_height);
 				}
 			}
 		}
@@ -782,8 +784,8 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 	
 	if (symbol->output_options == BARCODE_BOX) {
 		/* side bars */
-		draw_bar(pixelbuf, 0, symbol->border_width, textoffset, symbol->height + (2 * symbol->border_width), image_width, image_height);
-		draw_bar(pixelbuf, (symbol->width + xoffset + xoffset - symbol->border_width), symbol->border_width, textoffset, symbol->height + (2 * symbol->border_width), image_width, image_height);
+		draw_bar(pixelbuf, 0, symbol->border_width * scaler, textoffset * scaler, (symbol->height + (2 * symbol->border_width)) * scaler, image_width, image_height);
+		draw_bar(pixelbuf, (symbol->width + xoffset + xoffset - symbol->border_width) * scaler, symbol->border_width * scaler, textoffset * scaler, (symbol->height + (2 * symbol->border_width)) * scaler, image_width, image_height);
 	}
 	
 	/* Put the human readable text at the bottom */

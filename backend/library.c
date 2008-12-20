@@ -42,6 +42,7 @@ struct zint_symbol *ZBarcode_Create()
 	strcpy(symbol->fgcolour, "000000");
 	strcpy(symbol->bgcolour, "ffffff");
 	strcpy(symbol->outfile, "out.png");
+	symbol->scale = 1.0;
 	symbol->option_1 = -1;
 	symbol->option_2 = 0;
 	symbol->option_3 = 928; // PDF_MAX

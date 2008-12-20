@@ -35,6 +35,7 @@ struct zint_symbol {
 	char fgcolour[10];
 	char bgcolour[10];
 	char outfile[256];
+	float scale;
 	int option_1;
 	int option_2;
 	int option_3;
