@@ -73,6 +73,9 @@ void usage(void)
 		"  -r, --reverse         Reverse colours (white on black).\n"
 		"  --fg=COLOUR           Specify a foreground colour.\n"
 		"  --bg=COLOUR           Specify a background colour.\n"
+		"  --scale=NUMBER        Adjust size of output image.\n"
+		"  --directpng           Send PNG output to stdout\n"
+		"  --directeps           Send EPS output to stdout\n"
 		"  --rotate=NUMBER       Rotate symbol (PNG output only).\n"
 		"  --cols=NUMBER         (PDF417) Number of columns.\n"
 		"  --vers=NUMBER         (QR Code) Version\n"
@@ -180,6 +183,8 @@ int main(int argc, char **argv)
 			{"types", 0, 0, 't'},
 			{"bind", 0, 0, 0},
 			{"box", 0, 0, 0},
+			{"directeps", 0, 0, 0},
+			{"directpng", 0, 0, 0},
 			{"barcode=", 1, 0, 'b'},
 			{"height=", 1, 0, 0},
 			{"whitesp=", 1, 0, 'w'},
@@ -205,10 +210,18 @@ int main(int argc, char **argv)
 		switch(c) {
 			case 0: 
 				if(!strcmp(long_options[option_index].name, "bind")) {
-					my_symbol->output_options = BARCODE_BIND;
+					my_symbol->output_options += BARCODE_BIND;
 				}
 				if(!strcmp(long_options[option_index].name, "box")) {
-					my_symbol->output_options = BARCODE_BOX;
+					my_symbol->output_options += BARCODE_BOX;
+				}
+				if(!strcmp(long_options[option_index].name, "directeps")) {
+					my_symbol->output_options += BARCODE_STDOUT;
+					strncpy(my_symbol->outfile, "dummy.eps", 10);
+				}
+				if(!strcmp(long_options[option_index].name, "directpng")) {
+					my_symbol->output_options += BARCODE_STDOUT;
+					strncpy(my_symbol->outfile, "dummy.png", 10);
 				}
 				if(!strcmp(long_options[option_index].name, "fg=")) {
 					strncpy(my_symbol->fgcolour, optarg, 7);

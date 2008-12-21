@@ -66,7 +66,11 @@ int ps_plot(struct zint_symbol *symbol)
 	comp_offset = 0;
 	addon_text_posn = 0.0;
 	
-	feps = fopen(symbol->outfile, "w");
+	if((symbol->output_options & BARCODE_STDOUT) != 0) {
+		feps = stdout;
+	} else {
+		feps = fopen(symbol->outfile, "w");
+	}
 	if(feps == NULL) {
 		strcpy(symbol->errtxt, "Could not open output file [C1]");
 		return ERROR_FILE_ACCESS;
@@ -683,7 +687,7 @@ int ps_plot(struct zint_symbol *symbol)
 
 
 	/* Put boundary bars or box around symbol */
-	if ((symbol->output_options == BARCODE_BOX) || (symbol->output_options == BARCODE_BIND)) {
+	if (((symbol->output_options & BARCODE_BOX) != 0) || ((symbol->output_options & BARCODE_BIND) != 0)) {
 		if(symbol->symbology != BARCODE_CODABLOCKF) {
 			/* boundary bars */
 			fprintf(feps, "TE\n");
@@ -719,7 +723,7 @@ int ps_plot(struct zint_symbol *symbol)
 		}
 	}
 	
-	if (symbol->output_options == BARCODE_BOX) {
+	if((symbol->output_options & BARCODE_BOX) != 0) {
 		/* side bars */
 		fprintf(feps, "TE\n");
 		fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);

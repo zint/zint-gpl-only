@@ -129,6 +129,7 @@ struct zint_symbol {
 #define BARCODE_NO_ASCII	1
 #define BARCODE_BIND		2
 #define BARCODE_BOX		4
+#define BARCODE_STDOUT		8
 
 #define WARN_INVALID_OPTION	2
 #define ERROR_TOO_LONG		5
