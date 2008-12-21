@@ -110,15 +110,17 @@ int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, c
 	bgblu = (16 * ctoi(symbol->bgcolour[4])) + ctoi(symbol->bgcolour[5]);
 	
 	/* Open output file in binary mode */
-	if (!(graphic->outfile = fopen(symbol->outfile, "wb"))) {
-		strcpy(symbol->errtxt, "Can't open output file [B5]");
-		return ERROR_FILE_ACCESS;
+	if((symbol->output_options & BARCODE_STDOUT) != 0) {
+		graphic->outfile = stdout;
+	} else {
+		if (!(graphic->outfile = fopen(symbol->outfile, "wb"))) {
+			strcpy(symbol->errtxt, "Can't open output file [B5]");
+			return ERROR_FILE_ACCESS;
+		}
 	}
-	/* graphic->outfile = stdout; */
 	
 	/* Set up error handling routine as proc() above */
-	png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, graphic,
-					  writepng_error_handler, NULL);
+	png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, graphic, writepng_error_handler, NULL);
 	if (!png_ptr) {
 		strcpy(symbol->errtxt, "Out of memory [B6]");
 		return ERROR_MEMORY;
@@ -758,7 +760,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 	xoffset -= comp_offset;
 	
 	/* Put boundary bars or box around symbol */
-	if ((symbol->output_options == BARCODE_BOX) || (symbol->output_options == BARCODE_BIND)) {
+	if(((symbol->output_options & BARCODE_BOX) != 0) || ((symbol->output_options & BARCODE_BIND) != 0)) {
 		if(symbol->symbology != BARCODE_CODABLOCKF) {
 			/* boundary bars */
 			draw_bar(pixelbuf, 0, (symbol->width + xoffset + xoffset) * scaler, textoffset * scaler, symbol->border_width * scaler, image_width, image_height);
@@ -782,7 +784,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 		}
 	}
 	
-	if (symbol->output_options == BARCODE_BOX) {
+	if((symbol->output_options & BARCODE_BOX) != 0) {
 		/* side bars */
 		draw_bar(pixelbuf, 0, symbol->border_width * scaler, textoffset * scaler, (symbol->height + (2 * symbol->border_width)) * scaler, image_width, image_height);
 		draw_bar(pixelbuf, (symbol->width + xoffset + xoffset - symbol->border_width) * scaler, symbol->border_width * scaler, textoffset * scaler, (symbol->height + (2 * symbol->border_width)) * scaler, image_width, image_height);
