@@ -196,6 +196,7 @@ int main(int argc, char **argv)
 			{"case", 0, 0, 'c'},
 			{"mode=", 1, 0, 0},
 			{"primary=", 1, 0, 0},
+			{"scale=", 1, 0, 0},
 			{0, 0, 0, 0}
 		};
 		c = getopt_long(argc, argv, "htb:w:d:o:i:rcmp", long_options, &option_index);
@@ -214,6 +215,14 @@ int main(int argc, char **argv)
 				}
 				if(!strcmp(long_options[option_index].name, "bg=")) {
 					strncpy(my_symbol->bgcolour, optarg, 7);
+				}
+				if(!strcmp(long_options[option_index].name, "scale=")) {
+					my_symbol->scale = (float)(atof(optarg));
+					if(my_symbol->scale < 0.01) {
+						/* Zero and negative values are not permitted */
+						fprintf(stderr, "Invalid scale value\n");
+						my_symbol->scale = 1.0;
+					}
 				}
 				if(!strcmp(long_options[option_index].name, "border=")) {
 					error_number = validator(NESET, optarg);
