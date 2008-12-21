@@ -30,6 +30,21 @@
    the formatting rules for EAN and UPC symbols as set out in EN 797:1995 - the
    down side of this support is that the code is now vertually unreadable! */
 
+int roundup(float input)
+{
+	float remainder;
+	int integer_part;
+	
+	integer_part = (int)input;
+	remainder = input - integer_part;
+	
+	if(remainder > 0.1) {
+		integer_part++;
+	}
+	
+	return integer_part;
+}
+
 int ps_plot(struct zint_symbol *symbol)
 {
 	int i, block_width, latch, r, this_row;
@@ -177,9 +192,9 @@ int ps_plot(struct zint_symbol *symbol)
 	}
 	fprintf(feps, "%%%%Pages: 0\n");
 	if(symbol->symbology != BARCODE_MAXICODE) {
-		fprintf(feps, "%%%%BoundingBox: 0 0 %d %d\n", (int)((symbol->width + xoffset + xoffset) * scaler), (int)((symbol->height + textoffset + yoffset + yoffset) * scaler));
+		fprintf(feps, "%%%%BoundingBox: 0 0 %d %d\n", roundup((symbol->width + xoffset + xoffset) * scaler), roundup((symbol->height + textoffset + yoffset + yoffset) * scaler));
 	} else {
-		fprintf(feps, "%%%%BoundingBox: 0 0 %d %d\n", (int)(74.0 * scaler), (int)(72.0 * scaler));
+		fprintf(feps, "%%%%BoundingBox: 0 0 %d %d\n", roundup(74.0 * scaler), roundup(72.0 * scaler));
 	}
 	fprintf(feps, "%%%%EndComments\n");
 	
