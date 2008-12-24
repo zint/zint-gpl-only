@@ -65,9 +65,9 @@ void usage(void)
 		"  -o, --output=FILE     Write image to FILE. (default is out.png)\n"
 		"  -d, --data=DATA       Barcode content.\n"
 		"  -b, --barcode=NUMBER  Number of barcode type (default is 20 (=Code128)).\n"
-		"  --height=HEIGHT       Height of my_symbol in pixels.\n"
-		"  -w, --whitesp=NUMBER  Width of whitespace in pixels.\n"
-		"  --border=NUMBER       Width of border in pixels.\n"
+		"  --height=NUMBER       Height of symbol in multiples of x-dimension.\n"
+		"  -w, --whitesp=NUMBER  Width of whitespace in multiples of x-dimension.\n"
+		"  --border=NUMBER       Width of border in multiples of x-dimension.\n"
 		"  --box                 Add a box.\n"
 		"  --bind                Add boundary bars.\n"
 		"  -r, --reverse         Reverse colours (white on black).\n"
@@ -93,54 +93,6 @@ int ustrlen(unsigned char data[]) {
 	do { i++; } while (data[i] != '\0');
 
 	return i;
-}
-
-int data_process(struct zint_symbol *symbol, unsigned char source[], int rotate_angle)
-{
-	/* Supports UTF-8 input by converting it to Latin-1 Extended ASCII */
-	int input_length;
-	int error_number, i, j, next;
-	
-	error_number = 0;
-	input_length = ustrlen(source);
-	unsigned char latin1[input_length];
-	
-	j = 0;
-	i = 0;
-	do {
-		next = -1;
-		if(source[i] < 128) {
-			latin1[j] = source[i];
-			j++;
-			next = i + 1;
-		} else {
-			if(source[i] == 0xC2) {
-				latin1[j] = source[i + 1];
-				j++;
-				next = i + 2;
-			}
-			if(source[i] == 0xC3) {
-				latin1[j] = source[i + 1] + 64;
-				j++;
-				next = i + 2;
-			}
-		}
-		if(next == -1) {
-			strcpy(symbol->errtxt, "error: Invalid character in input string (only Latin-1 characters supported)");
-			error_number = ERROR_INVALID_DATA;
-			return error_number;
-		}
-		i = next;
-	} while(i < input_length);
-	latin1[j] = '\0';
-	
-	if(rotate_angle == 0) {
-		error_number = ZBarcode_Encode_and_Print(symbol, latin1);
-	} else {
-		error_number = ZBarcode_Encode_and_Print_Rotated(symbol, latin1, rotate_angle);
-	}
-	
-	return error_number;
 }
 
 int validator(char test_string[], char source[])
@@ -198,7 +150,6 @@ int main(int argc, char **argv)
 			{"rotate=", 1, 0, 0},
 			{"secure=", 1, 0, 0},
 			{"reverse", 1, 0, 'r'},
-			{"case", 0, 0, 'c'},
 			{"mode=", 1, 0, 0},
 			{"primary=", 1, 0, 0},
 			{"scale=", 1, 0, 0},
@@ -346,7 +297,11 @@ int main(int argc, char **argv)
 				break;
 				
 			case 'd': /* we have some data! */
-				error_number = data_process(my_symbol, (unsigned char*)optarg, rotate_angle);
+				if(rotate_angle == 0) {
+					error_number = ZBarcode_Encode_and_Print(my_symbol, (unsigned char*)optarg);
+				} else {
+					error_number = ZBarcode_Encode_and_Print_Rotated(my_symbol, (unsigned char*)optarg, rotate_angle);
+				}
 				generated = 1;
 				if(error_number != 0) {
 					fprintf(stderr, "%s\n", my_symbol->errtxt);
