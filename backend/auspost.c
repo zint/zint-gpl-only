@@ -112,10 +112,11 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[])
 	unsigned int loopey, reader;
 	int writer, i;
 	strcpy (data_pattern, "");
-	int errno, zeroes;
+	int error_number, zeroes;
 	char localstr[30];
 
-	errno = 0;
+	error_number = 0;
+	strcpy(localstr, "");
 	
 	/* Do all of the length checking first to avoid stack smashing */
 	if(symbol->symbology == BARCODE_AUSPOST) {
@@ -124,16 +125,16 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[])
 		{
 			case 8: strcpy(fcc, "11"); break;
 			case 13: strcpy(fcc, "59"); break;
-			case 16: strcpy(fcc, "59"); errno = is_sane(NESET, source); break;
+			case 16: strcpy(fcc, "59"); error_number = is_sane(NESET, source); break;
 			case 18: strcpy(fcc, "62"); break;
-			case 23: strcpy(fcc, "62"); errno = is_sane(NESET, source); break;
+			case 23: strcpy(fcc, "62"); error_number = is_sane(NESET, source); break;
 			default: strcpy(symbol->errtxt, "Auspost input is wrong length [631]");
 			return ERROR_TOO_LONG;
 				break;
 		}
-		if(errno == ERROR_INVALID_DATA) {
+		if(error_number == ERROR_INVALID_DATA) {
 			strcpy(symbol->errtxt, "Invalid characters in data [632]");
-			return errno;
+			return error_number;
 		}
 	} else {
 		if(ustrlen(source) > 8) {
@@ -147,7 +148,6 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[])
 		}
 		
 		/* Add leading zeros as required */
-		strcpy(localstr, "");
 		zeroes = 8 - ustrlen(source);
 		for(i = 0; i < zeroes; i++) {
 			concat(localstr, "0");
@@ -155,10 +155,10 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[])
 	}
 
 	concat(localstr, (char*)source);
-	errno = is_sane(GDSET, (unsigned char *)localstr);
-	if(errno == ERROR_INVALID_DATA) {
+	error_number = is_sane(GDSET, (unsigned char *)localstr);
+	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data [634]");
-		return errno;
+		return error_number;
 	}
 	
 	/* Verifiy that the first 8 characters are numbers */
@@ -166,10 +166,10 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[])
 		dpid[loopey] = localstr[loopey];
 	}
 	dpid[8] = '\0';
-	errno = is_sane(NESET, (unsigned char *)dpid);
-	if(errno == ERROR_INVALID_DATA) {
+	error_number = is_sane(NESET, (unsigned char *)dpid);
+	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in DPID [635]");
-		return errno;
+		return error_number;
 	}
 
 	/* Start character */
@@ -244,6 +244,6 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[])
 	symbol->rows = 3;
 	symbol->width = writer - 1;
 
-	return errno;
+	return error_number;
 }
 
