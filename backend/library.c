@@ -137,12 +137,17 @@ void error_tag(char error_string[], int error_number)
 	}
 }
 
-int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input)
+int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *unicode)
 {
 	int error_number, error_buffer;
 	error_number = 0;
+	int input_length;
+	int i, j, next;
+	
+	input_length = ustrlen(unicode);
+	unsigned char latin1[input_length];
 
-	if(ustrlen(input) == 0) {
+	if(ustrlen(unicode) == 0) {
 		strcpy(symbol->errtxt, "No input data [Z00]");
 		error_tag(symbol->errtxt, ERROR_INVALID_DATA);
 		return ERROR_INVALID_DATA;
@@ -188,6 +193,37 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input)
 		error_buffer = error_number;
 	}
 	
+	/* Supports UTF-8 input by converting it to Latin-1 Extended ASCII */
+	/* At the moment all symbologies need this but in future versions this will
+	be adapted to allow automatic ECI switching for more extended character support */
+	j = 0;
+	i = 0;
+	do {
+		next = -1;
+		if(unicode[i] < 128) {
+			latin1[j] = unicode[i];
+			j++;
+			next = i + 1;
+		} else {
+			if(unicode[i] == 0xC2) {
+				latin1[j] = unicode[i + 1];
+				j++;
+				next = i + 2;
+			}
+			if(unicode[i] == 0xC3) {
+				latin1[j] = unicode[i + 1] + 64;
+				j++;
+				next = i + 2;
+			}
+		}
+		if(next == -1) {
+			strcpy(symbol->errtxt, "error: Invalid character in input string (only Latin-1 characters supported)");
+			return ERROR_INVALID_DATA;
+		}
+		i = next;
+	} while(i < input_length);
+	latin1[j] = '\0';
+	
 	if(symbol->symbology == BARCODE_CODE16K) {
 		symbol->whitespace_width = 16;
 		symbol->border_width = 2;
@@ -201,77 +237,77 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input)
 	}
 
 	switch(symbol->symbology) {
-		case BARCODE_C25MATRIX: error_number = matrix_two_of_five(symbol, input); break;
-		case BARCODE_C25IND: error_number = industrial_two_of_five(symbol, input); break;
-		case BARCODE_C25INTER: error_number = interleaved_two_of_five(symbol, input); break;
-		case BARCODE_C25IATA: error_number = iata_two_of_five(symbol, input); break;
-		case BARCODE_C25LOGIC: error_number = logic_two_of_five(symbol, input); break;
-		case BARCODE_DPLEIT: error_number = dpleit(symbol, input); break;
-		case BARCODE_DPIDENT: error_number = dpident(symbol, input); break;
-		case BARCODE_UPCA: error_number = eanx(symbol, input); break;
-		case BARCODE_UPCE: error_number = eanx(symbol, input); break;
-		case BARCODE_EANX: error_number = eanx(symbol, input); break;
-		case BARCODE_EAN128: error_number = ean_128(symbol, input); break;
-		case BARCODE_CODE39: error_number = c39(symbol, input); break;
-		case BARCODE_PZN: error_number = pharmazentral(symbol, input); break;
-		case BARCODE_EXCODE39: error_number = ec39(symbol, input); break;
-		case BARCODE_CODABAR: error_number = codabar(symbol, input); break;
-		case BARCODE_CODE93: error_number = c93(symbol, input); break;
-		case BARCODE_LOGMARS: error_number = c39(symbol, input); break;
-		case BARCODE_CODE128: error_number = code_128(symbol, input); break;
-		case BARCODE_CODE128B: error_number = code_128(symbol, input); break;
-		case BARCODE_NVE18: error_number = nve_18(symbol, input); break;
-		case BARCODE_CODE11: error_number = code_11(symbol, input); break;
-		case BARCODE_MSI_PLESSEY: error_number = msi_handle(symbol, input); break;
-		case BARCODE_TELEPEN: error_number = telepen(symbol, input); break;
-		case BARCODE_TELEPEN_NUM: error_number = telepen_num(symbol, input); break;
-		case BARCODE_PHARMA: error_number = pharma_one(symbol, input); break;
-		case BARCODE_PLESSEY: error_number = plessey(symbol, input); break;
-		case BARCODE_ITF14: error_number = itf14(symbol, input); break;
-		case BARCODE_FLAT: error_number = flattermarken(symbol, input); break;
-		case BARCODE_FIM: error_number = fim(symbol, input); break;
-		case BARCODE_POSTNET: error_number = post_plot(symbol, input); break;
-		case BARCODE_PLANET: error_number = planet_plot(symbol, input); break;
-		case BARCODE_RM4SCC: error_number = royal_plot(symbol, input); break;
-		case BARCODE_AUSPOST: error_number = australia_post(symbol, input); break;
-		case BARCODE_AUSREPLY: error_number = australia_post(symbol, input); break;
-		case BARCODE_AUSROUTE: error_number = australia_post(symbol, input); break;
-		case BARCODE_AUSREDIRECT: error_number = australia_post(symbol, input); break;
-		case BARCODE_CODE16K: error_number = code16k(symbol, input); break;
-		case BARCODE_PHARMA_TWO: error_number = pharma_two(symbol, input); break;
-		case BARCODE_ONECODE: error_number = imail(symbol, input); break;
-		case BARCODE_DATAMATRIX: error_number = dmatrix(symbol, input); break;
-		case BARCODE_PDF417: error_number = pdf417enc(symbol, input); break;
-		case BARCODE_PDF417TRUNC: error_number = pdf417enc(symbol, input); break;
-		case BARCODE_QRCODE: error_number = qr_code(symbol, input); break;
-		case BARCODE_MICROPDF417: error_number = micro_pdf417(symbol, input); break;
-		case BARCODE_ISBNX: error_number = eanx(symbol, input); break;
-		case BARCODE_MAXICODE: error_number = maxicode(symbol, input); break;
-		case BARCODE_RSS14: error_number = rss14(symbol, input); break;
-		case BARCODE_RSS14STACK: error_number = rss14(symbol, input); break;
-		case BARCODE_RSS14STACK_OMNI: error_number = rss14(symbol, input); break;
-		case BARCODE_RSS_LTD: error_number = rsslimited(symbol, input); break;
-		case BARCODE_RSS_EXP: error_number = rssexpanded(symbol, input); break;
-		case BARCODE_RSS_EXPSTACK: error_number = rssexpanded(symbol, input); break;
-		case BARCODE_EANX_CC: error_number = composite(symbol, input); break;
-		case BARCODE_EAN128_CC: error_number = composite(symbol, input); break;
-		case BARCODE_RSS14_CC: error_number = composite(symbol, input); break;
-		case BARCODE_RSS_LTD_CC: error_number = composite(symbol, input); break;
-		case BARCODE_RSS_EXP_CC: error_number = composite(symbol, input); break;
-		case BARCODE_UPCA_CC: error_number = composite(symbol, input); break;
-		case BARCODE_UPCE_CC: error_number = composite(symbol, input); break;
-		case BARCODE_RSS14STACK_CC: error_number = composite(symbol, input); break;
-		case BARCODE_RSS14_OMNI_CC: error_number = composite(symbol, input); break;
-		case BARCODE_RSS_EXPSTACK_CC: error_number = composite(symbol, input); break;
-		case BARCODE_AZTEC: error_number = aztec(symbol, input); break;
-		case BARCODE_KIX: error_number = kix_code(symbol, input); break;
-		case BARCODE_CODE32: error_number = code32(symbol, input); break;
-		case BARCODE_CODABLOCKF: error_number = codablock(symbol, input); break;
-		case BARCODE_DAFT: error_number = daft_code(symbol, input); break;
-		case BARCODE_EAN14: error_number = ean_14(symbol, input); break;
-		case BARCODE_MICROQR: error_number = microqr(symbol, input); break;
-		case BARCODE_AZRUNE: error_number = aztec_runes(symbol, input); break;
-		case BARCODE_KOREAPOST: error_number = korea_post(symbol, input); break;
+		case BARCODE_C25MATRIX: error_number = matrix_two_of_five(symbol, latin1); break;
+		case BARCODE_C25IND: error_number = industrial_two_of_five(symbol, latin1); break;
+		case BARCODE_C25INTER: error_number = interleaved_two_of_five(symbol, latin1); break;
+		case BARCODE_C25IATA: error_number = iata_two_of_five(symbol, latin1); break;
+		case BARCODE_C25LOGIC: error_number = logic_two_of_five(symbol, latin1); break;
+		case BARCODE_DPLEIT: error_number = dpleit(symbol, latin1); break;
+		case BARCODE_DPIDENT: error_number = dpident(symbol, latin1); break;
+		case BARCODE_UPCA: error_number = eanx(symbol, latin1); break;
+		case BARCODE_UPCE: error_number = eanx(symbol, latin1); break;
+		case BARCODE_EANX: error_number = eanx(symbol, latin1); break;
+		case BARCODE_EAN128: error_number = ean_128(symbol, latin1); break;
+		case BARCODE_CODE39: error_number = c39(symbol, latin1); break;
+		case BARCODE_PZN: error_number = pharmazentral(symbol, latin1); break;
+		case BARCODE_EXCODE39: error_number = ec39(symbol, latin1); break;
+		case BARCODE_CODABAR: error_number = codabar(symbol, latin1); break;
+		case BARCODE_CODE93: error_number = c93(symbol, latin1); break;
+		case BARCODE_LOGMARS: error_number = c39(symbol, latin1); break;
+		case BARCODE_CODE128: error_number = code_128(symbol, latin1); break;
+		case BARCODE_CODE128B: error_number = code_128(symbol, latin1); break;
+		case BARCODE_NVE18: error_number = nve_18(symbol, latin1); break;
+		case BARCODE_CODE11: error_number = code_11(symbol, latin1); break;
+		case BARCODE_MSI_PLESSEY: error_number = msi_handle(symbol, latin1); break;
+		case BARCODE_TELEPEN: error_number = telepen(symbol, latin1); break;
+		case BARCODE_TELEPEN_NUM: error_number = telepen_num(symbol, latin1); break;
+		case BARCODE_PHARMA: error_number = pharma_one(symbol, latin1); break;
+		case BARCODE_PLESSEY: error_number = plessey(symbol, latin1); break;
+		case BARCODE_ITF14: error_number = itf14(symbol, latin1); break;
+		case BARCODE_FLAT: error_number = flattermarken(symbol, latin1); break;
+		case BARCODE_FIM: error_number = fim(symbol, latin1); break;
+		case BARCODE_POSTNET: error_number = post_plot(symbol, latin1); break;
+		case BARCODE_PLANET: error_number = planet_plot(symbol, latin1); break;
+		case BARCODE_RM4SCC: error_number = royal_plot(symbol, latin1); break;
+		case BARCODE_AUSPOST: error_number = australia_post(symbol, latin1); break;
+		case BARCODE_AUSREPLY: error_number = australia_post(symbol, latin1); break;
+		case BARCODE_AUSROUTE: error_number = australia_post(symbol, latin1); break;
+		case BARCODE_AUSREDIRECT: error_number = australia_post(symbol, latin1); break;
+		case BARCODE_CODE16K: error_number = code16k(symbol, latin1); break;
+		case BARCODE_PHARMA_TWO: error_number = pharma_two(symbol, latin1); break;
+		case BARCODE_ONECODE: error_number = imail(symbol, latin1); break;
+		case BARCODE_DATAMATRIX: error_number = dmatrix(symbol, latin1); break;
+		case BARCODE_PDF417: error_number = pdf417enc(symbol, latin1); break;
+		case BARCODE_PDF417TRUNC: error_number = pdf417enc(symbol, latin1); break;
+		case BARCODE_QRCODE: error_number = qr_code(symbol, latin1); break;
+		case BARCODE_MICROPDF417: error_number = micro_pdf417(symbol, latin1); break;
+		case BARCODE_ISBNX: error_number = eanx(symbol, latin1); break;
+		case BARCODE_MAXICODE: error_number = maxicode(symbol, latin1); break;
+		case BARCODE_RSS14: error_number = rss14(symbol, latin1); break;
+		case BARCODE_RSS14STACK: error_number = rss14(symbol, latin1); break;
+		case BARCODE_RSS14STACK_OMNI: error_number = rss14(symbol, latin1); break;
+		case BARCODE_RSS_LTD: error_number = rsslimited(symbol, latin1); break;
+		case BARCODE_RSS_EXP: error_number = rssexpanded(symbol, latin1); break;
+		case BARCODE_RSS_EXPSTACK: error_number = rssexpanded(symbol, latin1); break;
+		case BARCODE_EANX_CC: error_number = composite(symbol, latin1); break;
+		case BARCODE_EAN128_CC: error_number = composite(symbol, latin1); break;
+		case BARCODE_RSS14_CC: error_number = composite(symbol, latin1); break;
+		case BARCODE_RSS_LTD_CC: error_number = composite(symbol, latin1); break;
+		case BARCODE_RSS_EXP_CC: error_number = composite(symbol, latin1); break;
+		case BARCODE_UPCA_CC: error_number = composite(symbol, latin1); break;
+		case BARCODE_UPCE_CC: error_number = composite(symbol, latin1); break;
+		case BARCODE_RSS14STACK_CC: error_number = composite(symbol, latin1); break;
+		case BARCODE_RSS14_OMNI_CC: error_number = composite(symbol, latin1); break;
+		case BARCODE_RSS_EXPSTACK_CC: error_number = composite(symbol, latin1); break;
+		case BARCODE_AZTEC: error_number = aztec(symbol, latin1); break;
+		case BARCODE_KIX: error_number = kix_code(symbol, latin1); break;
+		case BARCODE_CODE32: error_number = code32(symbol, latin1); break;
+		case BARCODE_CODABLOCKF: error_number = codablock(symbol, latin1); break;
+		case BARCODE_DAFT: error_number = daft_code(symbol, latin1); break;
+		case BARCODE_EAN14: error_number = ean_14(symbol, latin1); break;
+		case BARCODE_MICROQR: error_number = microqr(symbol, latin1); break;
+		case BARCODE_AZRUNE: error_number = aztec_runes(symbol, latin1); break;
+		case BARCODE_KOREAPOST: error_number = korea_post(symbol, latin1); break;
 	}
 	if(error_number == 0) {
 		error_number = error_buffer;
