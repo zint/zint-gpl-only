@@ -290,7 +290,7 @@ void draw_bar(char *pixelbuf, int xpos, int xlen, int ypos, int ylen, int image_
 	}
 }
 
-void draw_bullseye(char *pixelbuf)
+void draw_bullseye(char *pixelbuf, int image_width, int xoffset, int yoffset)
 {
 	/* Central bullseye in Maxicode symbols */
 	int i, j;
@@ -298,13 +298,13 @@ void draw_bullseye(char *pixelbuf)
 	for(j = 103; j < 196; j++) {
 		for(i = 0; i < 93; i++) {
 			if(bullseye[(((j - 103) * 93) + i)] == 1) {
-				*(pixelbuf + (300 * j) + (i + 99)) = '1';
+				*(pixelbuf + (image_width * j) + (image_width * yoffset) + i + 99 + xoffset) = '1';
 			}
 		}
 	}
 }
 
-void draw_hexagon(char *pixelbuf, int xposn, int yposn)
+void draw_hexagon(char *pixelbuf, int image_width, int xposn, int yposn)
 {
 	/* Put a hexagon into the pixel buffer */
 	int i, j;
@@ -312,7 +312,7 @@ void draw_hexagon(char *pixelbuf, int xposn, int yposn)
 	for(i = 0; i < 12; i++) {
 		for(j = 0; j < 10; j++) {
 			if(hexagon[(i * 10) + j] == 1) {
-				*(pixelbuf + (300 * i) + (300 * yposn) + xposn + j) = '1';
+				*(pixelbuf + (image_width * i) + (image_width * yposn) + xposn + j) = '1';
 			}
 		}
 	}
@@ -373,9 +373,13 @@ int maxi_png_plot(struct zint_symbol *symbol, int rotate_angle)
 	int image_height, image_width;
 	char *pixelbuf;
 	int error_number;
+	int xoffset, yoffset;
+	int scaler = (int)(2 * symbol->scale);
 
-	image_width = 300;
-	image_height = 300;
+	xoffset = symbol->border_width + symbol->whitespace_width;
+	yoffset = symbol->border_width;
+	image_width = 300 + (2 * xoffset * scaler);
+	image_height = 300 + (2 * yoffset * scaler);
 	
 	if (!(pixelbuf = (char *) malloc(image_width * image_height))) {
 		printf("Insifficient memory for pixel buffer [B9]");
@@ -386,7 +390,7 @@ int maxi_png_plot(struct zint_symbol *symbol, int rotate_angle)
 		}
 	}
 	
-	draw_bullseye(pixelbuf);
+	draw_bullseye(pixelbuf, image_width, (scaler * xoffset), (scaler * yoffset));
 	
 	for(row = 0; row < symbol->rows; row++) {
 		yposn = row * 9;
@@ -395,16 +399,28 @@ int maxi_png_plot(struct zint_symbol *symbol, int rotate_angle)
 			if(symbol->encoded_data[row][column] == '1') {
 				if((row % 2) == 0) {
 					/* Even (full) row */
-					draw_hexagon(pixelbuf, xposn, yposn);
+					draw_hexagon(pixelbuf, image_width, xposn + (scaler * xoffset), yposn + (scaler * yoffset));
 				} else {
 					/* Odd (reduced) row */
 					xposn += 5;
-					draw_hexagon(pixelbuf, xposn, yposn);
+					draw_hexagon(pixelbuf, image_width, xposn + (scaler * xoffset), yposn + (scaler * yoffset));
 				}
 			}
 		}
 	}
 
+	if(((symbol->output_options & BARCODE_BOX) != 0) || ((symbol->output_options & BARCODE_BIND) != 0)) {
+		/* boundary bars */
+		draw_bar(pixelbuf, 0, image_width, 0, symbol->border_width * scaler, image_width, image_height);
+		draw_bar(pixelbuf, 0, image_width, 300 + (symbol->border_width * scaler), symbol->border_width * scaler, image_width, image_height);
+	}
+	
+	if((symbol->output_options & BARCODE_BOX) != 0) {
+		/* side bars */
+		draw_bar(pixelbuf, 0, symbol->border_width * scaler, 0, image_height, image_width, image_height);
+		draw_bar(pixelbuf, 300 + ((symbol->border_width + symbol->whitespace_width + symbol->whitespace_width) * scaler), symbol->border_width * scaler, 0, image_height, image_width, image_height);
+	}
+	
 	error_number=png_to_file(symbol, image_height, image_width, pixelbuf, rotate_angle);
 	free(pixelbuf);
 	return error_number;
@@ -765,10 +781,12 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 			/* boundary bars */
 			draw_bar(pixelbuf, 0, (symbol->width + xoffset + xoffset) * scaler, textoffset * scaler, symbol->border_width * scaler, image_width, image_height);
 			draw_bar(pixelbuf, 0, (symbol->width + xoffset + xoffset) * scaler, (textoffset + symbol->height + symbol->border_width) * scaler, symbol->border_width * scaler, image_width, image_height);
-			if(symbol->rows > 1) {
-				/* row binding */
-				for(r = 1; r < symbol->rows; r++) {
-					draw_bar(pixelbuf, xoffset * scaler, symbol->width * scaler, ((r * row_height) + textoffset + yoffset - 1) * scaler, 2 * scaler, image_width, image_height);
+			if((symbol->symbology & BARCODE_BIND) != 0) {
+				if((symbol->rows > 1) && (is_stackable(symbol->symbology) == 1)) {
+					/* row binding */
+					for(r = 1; r < symbol->rows; r++) {
+						draw_bar(pixelbuf, xoffset * scaler, symbol->width * scaler, ((r * row_height) + textoffset + yoffset - 1) * scaler, 2 * scaler, image_width, image_height);
+					}
 				}
 			}
 		} else {
