@@ -198,7 +198,7 @@ int ps_plot(struct zint_symbol *symbol)
 	if(symbol->symbology != BARCODE_MAXICODE) {
 		fprintf(feps, "%%%%BoundingBox: 0 0 %d %d\n", roundup((symbol->width + xoffset + xoffset) * scaler), roundup((symbol->height + textoffset + yoffset + yoffset) * scaler));
 	} else {
-		fprintf(feps, "%%%%BoundingBox: 0 0 %d %d\n", roundup(74.0 * scaler), roundup(72.0 * scaler));
+		fprintf(feps, "%%%%BoundingBox: 0 0 %d %d\n", roundup((74.0 + xoffset + xoffset) * scaler), roundup((72.0 + yoffset + yoffset) * scaler));
 	}
 	fprintf(feps, "%%%%EndComments\n");
 	
@@ -222,34 +222,50 @@ int ps_plot(struct zint_symbol *symbol)
 		/* Maxicode uses hexagons */
 		float ax, ay, bx, by, cx, cy, dx, dy, ex, ey, fx, fy, mx, my;
 		
+				
+		textoffset = 0.0;
+		if (((symbol->output_options & BARCODE_BOX) != 0) || ((symbol->output_options & BARCODE_BIND) != 0)) {
+			fprintf(feps, "TE\n");
+			fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
+			fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", symbol->border_width * scaler, textoffset * scaler, 0.0, (74.0 + xoffset + xoffset) * scaler);
+			fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", symbol->border_width * scaler, (textoffset + 72.0 + symbol->border_width) * scaler, 0.0, (74.0 + xoffset + xoffset) * scaler);
+		}
+		if((symbol->output_options & BARCODE_BOX) != 0) {
+			/* side bars */
+			fprintf(feps, "TE\n");
+			fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
+			fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", (72.0 + (2 * symbol->border_width)) * scaler, textoffset * scaler, 0.0, symbol->border_width * scaler); 
+			fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", (72.0 + (2 * symbol->border_width)) * scaler, textoffset * scaler, (74.0 + xoffset + xoffset - symbol->border_width) * scaler, symbol->border_width * scaler);
+		}
+		
 		fprintf(feps, "TE\n");
 		fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
 		fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-		fprintf(feps, "%.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f TC\n", 35.76 * scaler, 35.60 * scaler, 10.85 * scaler, 35.76 * scaler, 35.60 * scaler, 8.97 * scaler, 44.73 * scaler, 35.60 * scaler);
-		fprintf(feps, "%.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f TC\n", 35.76 * scaler, 35.60 * scaler, 7.10 * scaler, 35.76 * scaler, 35.60 * scaler, 5.22 * scaler, 40.98 * scaler, 35.60 * scaler);
-		fprintf(feps, "%.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f TC\n", 35.76 * scaler, 35.60 * scaler, 3.31 * scaler, 35.76 * scaler, 35.60 * scaler, 1.43 * scaler, 37.19 * scaler, 35.60 * scaler);
+		fprintf(feps, "%.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f TC\n", (35.76 + xoffset) * scaler, (35.60 + yoffset) * scaler, 10.85 * scaler, (35.76 + xoffset) * scaler, (35.60 + yoffset) * scaler, 8.97 * scaler, (44.73 + xoffset) * scaler, (35.60 + yoffset) * scaler);
+		fprintf(feps, "%.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f TC\n", (35.76 + xoffset) * scaler, (35.60 + yoffset) * scaler, 7.10 * scaler, (35.76 + xoffset) * scaler, (35.60 + yoffset) * scaler, 5.22 * scaler, (40.98 + xoffset) * scaler, (35.60 + yoffset) * scaler);
+		fprintf(feps, "%.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f TC\n", (35.76 + xoffset) * scaler, (35.60 + yoffset) * scaler, 3.31 * scaler, (35.76 + xoffset) * scaler, (35.60 + yoffset) * scaler, 1.43 * scaler, (37.19 + xoffset) * scaler, (35.60 + yoffset) * scaler);
 		for(r = 0; r < symbol->rows; r++) {
 			for(i = 0; i < symbol->width; i++) {
 				if(symbol->encoded_data[r][i] == '1') {
 					/* Dump a hexagon */
 					my = ((symbol->rows - r - 1)) * 2.135 + 1.43;
-					ay = my + 1.0;
-					by = my + 0.5;
-					cy = my - 0.5;
-					dy = my - 1.0;
-					ey = my - 0.5;
-					fy = my + 0.5;
+					ay = my + 1.0 + yoffset;
+					by = my + 0.5 + yoffset;
+					cy = my - 0.5 + yoffset;
+					dy = my - 1.0 + yoffset;
+					ey = my - 0.5 + yoffset;
+					fy = my + 0.5 + yoffset;
 					if(r % 2 == 1) {
 						mx = (2.46 * i) + 1.23 + 1.23;
 					} else {
 						mx = (2.46 * i) + 1.23;
 					}
-					ax = mx;
-					bx = mx + 0.86;
-					cx = mx + 0.86;
-					dx = mx;
-					ex = mx - 0.86;
-					fx = mx - 0.86;
+					ax = mx + xoffset;
+					bx = mx + 0.86 + xoffset;
+					cx = mx + 0.86 + xoffset;
+					dx = mx + xoffset;
+					ex = mx - 0.86 + xoffset;
+					fx = mx - 0.86 + xoffset;
 					fprintf(feps, "%.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f TH\n", ax * scaler, ay * scaler, bx * scaler, by * scaler, cx * scaler, cy * scaler, dx * scaler, dy * scaler, ex * scaler, ey * scaler, fx * scaler, fy * scaler);
 				}
 			}
@@ -685,52 +701,49 @@ int ps_plot(struct zint_symbol *symbol)
 
 	xoffset -= comp_offset;
 
-
-	/* Put boundary bars or box around symbol */
-	if (((symbol->output_options & BARCODE_BOX) != 0) || ((symbol->output_options & BARCODE_BIND) != 0)) {
-		if(symbol->symbology != BARCODE_CODABLOCKF) {
-			/* boundary bars */
-			fprintf(feps, "TE\n");
-			fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-			fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", symbol->border_width * scaler, textoffset * scaler, 0.0, (symbol->width + xoffset + xoffset) * scaler);
-			fprintf(feps, "TE\n");
-			fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-			fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", symbol->border_width * scaler, (textoffset + symbol->height + symbol->border_width) * scaler, 0.0, (symbol->width + xoffset + xoffset) * scaler);
-			if(symbol->rows > 1) {
-				/* row binding */
-				for(r = 1; r < symbol->rows; r++) {
-					fprintf(feps, "TE\n");
-					fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-					fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", 2.0, ((r * row_height) + textoffset + yoffset - 1) * scaler, xoffset * scaler, symbol->width * scaler);
-				}
-			}
-		} else {
-			/* boundary bars */
+	switch(symbol->symbology) {
+		case BARCODE_CODABLOCKF:
 			fprintf(feps, "TE\n");
 			fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
 			fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", symbol->border_width * scaler, textoffset * scaler, xoffset * scaler, symbol->width * scaler);
-			fprintf(feps, "TE\n");
-			fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
 			fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", symbol->border_width * scaler, (textoffset + symbol->height + symbol->border_width) * scaler, xoffset * scaler, symbol->width * scaler);
 			if(symbol->rows > 1) {
 				/* row binding */
+				fprintf(feps, "TE\n");
+				fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
 				for(r = 1; r < symbol->rows; r++) {
-					fprintf(feps, "TE\n");
-					fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
 					fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", 2.0, ((r * row_height) + textoffset + yoffset - 1) * scaler, (xoffset + 11) * scaler, (symbol->width - 24) * scaler);
 				}
 			}
-		}
-	}
-	
-	if((symbol->output_options & BARCODE_BOX) != 0) {
-		/* side bars */
-		fprintf(feps, "TE\n");
-		fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-		fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", (symbol->height + (2 * symbol->border_width)) * scaler, textoffset * scaler, 0.0, symbol->border_width * scaler); 
-		fprintf(feps, "TE\n");
-		fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-		fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", (symbol->height + (2 * symbol->border_width)) * scaler, textoffset * scaler, (symbol->width + xoffset + xoffset - symbol->border_width) * scaler, symbol->border_width * scaler);
+			break;
+		case BARCODE_MAXICODE:
+			/* Do nothing! (It's already been done) */
+			break;
+		default:
+			if((symbol->output_options & BARCODE_BIND) != 0) {
+				if((symbol->rows > 1) && (is_stackable(symbol->symbology) == 1)) {
+					/* row binding */
+					fprintf(feps, "TE\n");
+					fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
+					for(r = 1; r < symbol->rows; r++) {
+						fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", 2.0, ((r * row_height) + textoffset + yoffset - 1) * scaler, xoffset * scaler, symbol->width * scaler);
+					}
+				}
+			}
+			if (((symbol->output_options & BARCODE_BOX) != 0) || ((symbol->output_options & BARCODE_BIND) != 0)) {
+				fprintf(feps, "TE\n");
+				fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
+				fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", symbol->border_width * scaler, textoffset * scaler, 0.0, (symbol->width + xoffset + xoffset) * scaler);
+				fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", symbol->border_width * scaler, (textoffset + symbol->height + symbol->border_width) * scaler, 0.0, (symbol->width + xoffset + xoffset) * scaler);
+			}
+			if((symbol->output_options & BARCODE_BOX) != 0) {
+				/* side bars */
+				fprintf(feps, "TE\n");
+				fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
+				fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", (symbol->height + (2 * symbol->border_width)) * scaler, textoffset * scaler, 0.0, symbol->border_width * scaler); 
+				fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", (symbol->height + (2 * symbol->border_width)) * scaler, textoffset * scaler, (symbol->width + xoffset + xoffset - symbol->border_width) * scaler, symbol->border_width * scaler);
+			}
+			break;
 	}
 	
 	/* Put the human readable text at the bottom */

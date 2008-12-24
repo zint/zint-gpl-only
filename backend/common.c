@@ -134,3 +134,20 @@ void expand(struct zint_symbol *symbol, char data[])
 	}
 	symbol->rows = symbol->rows + 1;
 }
+
+int is_stackable(int symbology) {
+	/* Indicates which symbologies can have row binding */
+	if(symbology < BARCODE_PDF417) { return 1; }
+	if(symbology == BARCODE_CODE128B) { return 1; }
+	if(symbology == BARCODE_ISBNX) { return 1; }
+	if(symbology == BARCODE_EAN14) { return 1; }
+	if(symbology == BARCODE_NVE18) { return 1; }
+	if(symbology == BARCODE_KOREAPOST) { return 1; }
+	if(symbology == BARCODE_PLESSEY) { return 1; }
+	if(symbology == BARCODE_TELEPEN_NUM) { return 1; }
+	if(symbology == BARCODE_ITF14) { return 1; }
+	if(symbology == BARCODE_CODE32) { return 1; }
+	
+	return 0;
+}
+

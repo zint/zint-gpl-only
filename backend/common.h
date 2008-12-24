@@ -37,3 +37,4 @@ int is_sane(char test_string[], unsigned char source[]);
 void lookup(char set_string[], char *table[], char data, char dest[]);
 int posn(char set_string[], char data);
 void expand(struct zint_symbol *symbol, char data[]);
+int is_stackable(int symbology);
