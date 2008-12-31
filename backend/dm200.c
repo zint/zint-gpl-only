@@ -756,6 +756,40 @@ int iec16022ecc200(unsigned char *barcode, int barcodelen, struct zint_symbol *s
 	lend = 0;
 	lenp = &lend;
 	
+	switch(symbol->option_2) {
+		case 1: W = 10; H = 10; break;
+		case 2: W = 12; H = 12; break;
+		case 3: W = 14; H = 14; break;
+		case 4: W = 16; H = 16; break;
+		case 5: W = 18; H = 18; break;
+		case 6: W = 20; H = 20; break;
+		case 7: W = 22; H = 22; break;
+		case 8: W = 24; H = 24; break;
+		case 9: W = 26; H = 26; break;
+		case 10: W = 32; H = 32; break;
+		case 11: W = 36; H = 36; break;
+		case 12: W = 40; H = 40; break;
+		case 13: W = 44; H = 44; break;
+		case 14: W = 48; H = 48; break;
+		case 15: W = 52; H = 52; break;
+		case 16: W = 64; H = 64; break;
+		case 17: W = 72; H = 72; break;
+		case 18: W = 80; H = 80; break;
+		case 19: W = 88; H = 88; break;
+		case 20: W = 96; H = 96; break;
+		case 21: W = 104; H = 104; break;
+		case 22: W = 120; H = 120; break;
+		case 23: W = 132; H = 132; break;
+		case 24: W = 144; H = 144; break;
+		case 25: W = 18; H = 8; break;
+		case 26: W = 32; H = 8; break;
+		case 27: W = 26; H = 12; break;
+		case 28: W = 36; H = 12; break;
+		case 29: W = 36; H = 16; break;
+		case 30: W = 48; H = 16; break;
+		default: W = 0; H = 0; break;
+	}
+	
 	// encoding
 	if (W) {		// known size
 		for (matrix = ecc200matrix; matrix->W && (matrix->W != W || matrix->H != H); matrix++) ;
