@@ -57,11 +57,12 @@ static char *C128Table[107] = {"212222", "222122", "222221", "121223", "121322",
 	"2331112"};
 /* Code 128 character encodation - Table 1 */
 
-int parunmodd(unsigned char llyth)
+int parunmodd(unsigned char llyth, char nullchar)
 {
 	int modd;
 	modd = 0;
 	
+	if(llyth == nullchar) { return SHIFTA; }
 	if(llyth <= 31) { modd = SHIFTA; }
 	if((llyth >= 32) && (llyth <= 95)) { modd = AORB; }
 	if((llyth >= 48) && (llyth <= 57)) { modd = ABORC; }
@@ -136,9 +137,16 @@ void dxsmooth(int *indexliste)
 
 }
 
-void c128_set_a(unsigned char source, char dest[], int values[], int *bar_chars)
+void c128_set_a(unsigned char source, char dest[], int values[], int *bar_chars, char nullchr)
 { /* Translate Code 128 Set A characters into barcodes */
   /* This set handles all control characters NULL to US */
+	
+	if(source == nullchr) { /* Handle NULL character substitution */
+		concat(dest, C128Table[64]);
+		values[(*bar_chars)] = 64;
+		(*bar_chars)++;
+		return;
+	}
 	
 	if(source > 127) {
 		if(source < 160) {
@@ -252,7 +260,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 	indexliste = 0;
 	indexchaine = 0;
 	
-	mode = parunmodd(source[indexchaine]);
+	mode = parunmodd(source[indexchaine], symbol->nullchar);
 	if((symbol->symbology == BARCODE_CODE128B) && (mode == ABORC)) {
 		mode = AORB;
 	}
@@ -266,7 +274,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 		while ((list[1][indexliste] == mode) && (indexchaine < sourcelen)) {
 			list[0][indexliste]++;
 			indexchaine++;
-			mode = parunmodd(source[indexchaine]);
+			mode = parunmodd(source[indexchaine], symbol->nullchar);
 			if((symbol->symbology == BARCODE_CODE128B) && (mode == ABORC)) {
 				mode = AORB;
 			}
@@ -507,7 +515,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 		switch(set[read])
 		{ /* Encode data characters */
 			case 'a':
-			case 'A': c128_set_a(source[read], dest, values, &bar_characters);
+			case 'A': c128_set_a(source[read], dest, values, &bar_characters, symbol->nullchar);
 				read++;
 				break;
 			case 'b':
@@ -523,12 +531,15 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 
 	/* check digit calculation */
 	total_sum = 0;
+	/*for(i = 0; i < bar_characters; i++) {
+		printf("%d\n", values[i]);
+	}*/
+	
 	for(i = 0; i < bar_characters; i++)
 	{
 		if(i > 0)
 		{
 			values[i] *= i;
-
 		}
 		total_sum += values[i];
 	}
@@ -538,6 +549,11 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 	concat(dest, C128Table[106]);
 	expand(symbol, dest);
 	strcpy(symbol->text, (char*)source);
+	for(i = 0; i < strlen(symbol->text); i++) {
+		if(symbol->text[i] == symbol->nullchar) {
+			symbol->text[i] = ' ';
+		}
+	}
 	return errornum;
 }
 
@@ -634,7 +650,7 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 	indexliste = 0;
 	indexchaine = 0;
 	
-	mode = parunmodd(reduced[indexchaine]);
+	mode = parunmodd(reduced[indexchaine], 0x00);
 	if(reduced[indexchaine] == '[') {
 		mode = ABORC;
 	}
@@ -648,7 +664,7 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 		while ((list[1][indexliste] == mode) && (indexchaine < strlen(reduced))) {
 			list[0][indexliste]++;
 			indexchaine++;
-			mode = parunmodd(reduced[indexchaine]);
+			mode = parunmodd(reduced[indexchaine], 0x00);
 			if(reduced[indexchaine] == '[') {
 				if(indexchaine % 2 == 0) {
 					mode = ABORC;
@@ -780,7 +796,7 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 		if(reduced[read] != '[') {
 			switch(set[read])
 			{ /* Encode data characters */
-				case 'A': c128_set_a(reduced[read], dest, values, &bar_characters);
+				case 'A': c128_set_a(reduced[read], dest, values, &bar_characters, 0x00);
 				read++;
 				break;
 				case 'B': c128_set_b(reduced[read], dest, values, &bar_characters);

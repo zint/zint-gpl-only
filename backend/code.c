@@ -326,13 +326,22 @@ int ec39(struct zint_symbol *symbol, unsigned char source[])
 	/* Creates a buffer string and places control characters into it */
 	for(i = 0; i < ustrlen(source); i++) {
 		ascii_value = source[i];
-		concat((char*)buffer, EC39Ctrl[ascii_value]);
+		if(ascii_value == symbol->nullchar) {
+			concat((char*)buffer, EC39Ctrl[0]);
+		} else {
+			concat((char*)buffer, EC39Ctrl[ascii_value]);
+		}
 	}
 
 	/* Then sends the buffer to the C39 function */
 	error_number = c39(symbol, buffer);
 	
 	strcpy(symbol->text, (char*)source);
+	for(i = 0; i < strlen(symbol->text); i++) {
+		if(symbol->text[i] == symbol->nullchar) {
+			symbol->text[i] = ' ';
+		}
+	}
 	return error_number;
 }
 
@@ -377,7 +386,11 @@ int c93(struct zint_symbol *symbol, unsigned char source[])
 	/* Message Content */
 	for(i = 0; i < ustrlen(source); i++) {
 		ascii_value = source[i];
-		concat(buffer, C93Ctrl[ascii_value]);
+		if(ascii_value == symbol->nullchar) {
+			concat(buffer, C93Ctrl[0]);
+		} else {
+			concat(buffer, C93Ctrl[ascii_value]);
+		}
 	}
 
 	/* Now we can check the true length of the barcode */
@@ -446,5 +459,10 @@ int c93(struct zint_symbol *symbol, unsigned char source[])
 	source[h + 2] = '\0';
 	expand(symbol, dest);
 	strcpy(symbol->text, (char*)source);
+	for(i = 0; i < strlen(symbol->text); i++) {
+		if(symbol->text[i] == symbol->nullchar) {
+			symbol->text[i] = ' ';
+		}
+	}
 	return error_number;
 }

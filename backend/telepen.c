@@ -80,7 +80,11 @@ int telepen(struct zint_symbol *symbol, unsigned char source[])
 	for (i=0; i < ustrlen(source); i++)
 	{
 		ascii_value = source[i];
-		concat(dest, TeleTable[ascii_value]);
+		if(ascii_value == symbol->nullchar) {
+			concat(dest, TeleTable[0]);
+		} else {
+			concat(dest, TeleTable[ascii_value]);
+		}
 		count += source[i];
 	}
 

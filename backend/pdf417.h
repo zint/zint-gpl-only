@@ -435,4 +435,4 @@ static char *RAPC[53] = {"", "112231", "121231", "122131", "131131", "131221", "
 	"112213", "112222", "112312", "112321", "111421", "111331", "111322", "111232", "111223",
 	"111133", "111124", "111214", "112114", "121114", "121123", "121132", "112132", "112141" };
 
-void byteprocess(int *chainemc, int *mclength, unsigned char chaine[], int start, int length, int block);
+void byteprocess(int *chainemc, int *mclength, unsigned char chaine[], int start, int length, int block, char nullchar);

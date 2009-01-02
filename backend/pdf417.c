@@ -63,10 +63,14 @@ static int MicroAutosize[56] =
 int liste[2][1000]; /* global - okay, so I got _almost_ everything local! */
 
 /* 866 */
-int quelmode(char codeascii)
+int quelmode(char codeascii, char nullchar)
 {
 	int mode;
 	mode = BYT;
+	
+	if(codeascii == nullchar) {
+		return BYT;
+	}
 	
 	if((codeascii >= ' ') && (codeascii <= '~')) { mode = TEX; }
 	if(codeascii == '\t') { mode = TEX; }
@@ -304,7 +308,7 @@ void textprocess(int *chainemc, int *mclength, char chaine[], int start, int len
 }
 
 /* 671 */
-void byteprocess(int *chainemc, int *mclength, unsigned char chaine[], int start, int length, int block)
+void byteprocess(int *chainemc, int *mclength, unsigned char chaine[], int start, int length, int block, char nullchar)
 {
 	
 	int i, j, k, l, longueur;
@@ -343,16 +347,26 @@ void byteprocess(int *chainemc, int *mclength, unsigned char chaine[], int start
 					for(i = 0; i < 8; i++) {
 						shiftup(y_reg);
 					}
-						
-					if((chaine[start + j + k] & 0x80) != 0) { y_reg[7] = 1; }
-					if((chaine[start + j + k] & 0x40) != 0) { y_reg[6] = 1; }
-					if((chaine[start + j + k] & 0x20) != 0) { y_reg[5] = 1; }
-					if((chaine[start + j + k] & 0x10) != 0) { y_reg[4] = 1; }
-					if((chaine[start + j + k] & 0x08) != 0) { y_reg[3] = 1; }
-					if((chaine[start + j + k] & 0x04) != 0) { y_reg[2] = 1; }
-					if((chaine[start + j + k] & 0x02) != 0) { y_reg[1] = 1; }
-					if((chaine[start + j + k] & 0x01) != 0) { y_reg[0] = 1; }
 					
+					if(chaine[start + j + k] == nullchar) {
+						y_reg[7] = 0;
+						y_reg[6] = 0;
+						y_reg[5] = 0;
+						y_reg[4] = 0;
+						y_reg[3] = 0;
+						y_reg[2] = 0;
+						y_reg[1] = 0;
+						y_reg[0] = 0;
+					} else {
+						if((chaine[start + j + k] & 0x80) != 0) { y_reg[7] = 1; }
+						if((chaine[start + j + k] & 0x40) != 0) { y_reg[6] = 1; }
+						if((chaine[start + j + k] & 0x20) != 0) { y_reg[5] = 1; }
+						if((chaine[start + j + k] & 0x10) != 0) { y_reg[4] = 1; }
+						if((chaine[start + j + k] & 0x08) != 0) { y_reg[3] = 1; }
+						if((chaine[start + j + k] & 0x04) != 0) { y_reg[2] = 1; }
+						if((chaine[start + j + k] & 0x02) != 0) { y_reg[1] = 1; }
+						if((chaine[start + j + k] & 0x01) != 0) { y_reg[0] = 1; }
+					}
 				}
 				
 				for(l = 0; l < 4; l++) {
@@ -481,7 +495,7 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 	indexliste = 0;
 	indexchaine = 0;
 	
-	mode = quelmode(chaine[indexchaine]);
+	mode = quelmode(chaine[indexchaine], symbol->nullchar);
 	
 	for(i = 0; i < 1000; i++) {
 		liste[0][i] = 0;
@@ -493,7 +507,7 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 		while ((liste[1][indexliste] == mode) && (indexchaine < ustrlen(chaine))) {
 			liste[0][indexliste]++;
 			indexchaine++;
-			mode = quelmode(chaine[indexchaine]);
+			mode = quelmode(chaine[indexchaine], symbol->nullchar);
 		}
 		indexliste++;
 	} while (indexchaine < ustrlen(chaine));
@@ -510,7 +524,7 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 				textprocess(chainemc, &mclength, (char*)chaine, indexchaine, liste[0][i], i);
 				break;
 			case BYT: /* 670 - octet stream mode */
-				byteprocess(chainemc, &mclength, chaine, indexchaine, liste[0][i], i);
+				byteprocess(chainemc, &mclength, chaine, indexchaine, liste[0][i], i, symbol->nullchar);
 				break;
 			case NUM: /* 712 - numeric mode */
 				numbprocess(chainemc, &mclength, (char*)chaine, indexchaine, liste[0][i], i);
@@ -766,7 +780,7 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 	indexliste = 0;
 	indexchaine = 0;
 	
-	mode = quelmode(chaine[indexchaine]);
+	mode = quelmode(chaine[indexchaine], symbol->nullchar);
 	
 	for(i = 0; i < 1000; i++) {
 		liste[0][i] = 0;
@@ -778,7 +792,7 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 		while ((liste[1][indexliste] == mode) && (indexchaine < ustrlen(chaine))) {
 			liste[0][indexliste]++;
 			indexchaine++;
-			mode = quelmode(chaine[indexchaine]);
+			mode = quelmode(chaine[indexchaine], symbol->nullchar);
 		}
 		indexliste++;
 	} while (indexchaine < ustrlen(chaine));
@@ -795,7 +809,7 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 				textprocess(chainemc, &mclength, (char*)chaine, indexchaine, liste[0][i], i);
 				break;
 			case BYT: /* 670 - octet stream mode */
-				byteprocess(chainemc, &mclength, chaine, indexchaine, liste[0][i], i);
+				byteprocess(chainemc, &mclength, chaine, indexchaine, liste[0][i], i, symbol->nullchar);
 				break;
 			case NUM: /* 712 - numeric mode */
 				numbprocess(chainemc, &mclength, (char*)chaine, indexchaine, liste[0][i], i);

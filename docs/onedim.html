@@ -5,7 +5,7 @@
 	<TITLE>One-Dimensional Symbols</TITLE>
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Unix)">
 	<META NAME="CREATED" CONTENT="20070730;21081900">
-	<META NAME="CHANGED" CONTENT="20081019;9043400">
+	<META NAME="CHANGED" CONTENT="20090101;17585200">
 	<STYLE TYPE="text/css">
 	<!--
 		TD P { color: #000000 }
@@ -378,20 +378,22 @@ C</A>). </SPAN><FONT SIZE=3><SPAN STYLE="font-weight: medium">The
 following is an example of a valid DataBar Expanded input</SPAN></FONT></P>
 <P ALIGN=LEFT STYLE="font-weight: medium"><FONT FACE="Courier, monospace"><FONT SIZE=2>zint
 --barcode=31 -d &quot;[01]98898765432106[3202]012345[15]991231&quot;</FONT></FONT></P>
-<P ALIGN=CENTER><IMG SRC="databar.png" NAME="graphics12" ALIGN=LEFT WIDTH=302 HEIGHT=118 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P ALIGN=LEFT><IMG SRC="databar.png" NAME="graphics12" ALIGN=LEFT WIDTH=302 HEIGHT=118 BORDER=0><BR CLEAR=LEFT><BR><BR>
 </P>
-<P ALIGN=LEFT>[1] The zint command line program requires Latin-1
-characters to be encoded using the UTF-8 system. These are converted
-by the front-end into an extended ASCII string. When using the API
-this type conversion will need to be done before invoking the library
-otherwise the data will become corrupted. An example program
-<FONT FACE="Courier, monospace">exttest.c</FONT> is included in the
-/<FONT FACE="Courier, monospace">frontend</FONT> folder to show how
-extended ASCII can be used to produce the following symbol. Extended
-ASCII characters may not display properly in EPS due to the
-restrictions of the EPS format.</P>
-<P ALIGN=LEFT><IMG SRC="barext.png" NAME="graphics13" ALIGN=LEFT WIDTH=246 HEIGHT=118 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P ALIGN=LEFT><A NAME="KOREA"></A><FONT SIZE=5><B>5.1.13 Korea Post
+Barcode</B></FONT></P>
+<P ALIGN=LEFT>The Korean Postal Barcode is used to encode a six-digit
+number and includes one check digit.</P>
+<P><IMG SRC="korea.png" NAME="korea post" ALIGN=LEFT WIDTH=334 HEIGHT=118 BORDER=0><BR><BR>
 </P>
+<P ALIGN=LEFT><BR><BR>
+</P>
+<P ALIGN=LEFT><BR><BR>
+</P>
+<P ALIGN=LEFT>[1] Zint requires input data to be encoded in UTF-8
+format. <B>Note this now applies to both frontend and backend input
+text</B>. Extended ASCII characters may not display properly in EPS
+due to the restrictions of the EPS format.</P>
 <HR>
 <TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0>
 	<TR VALIGN=TOP>

@@ -42,7 +42,8 @@ describes how to encode data using the command line front end
 program.</P>
 <P><BR><BR>
 </P>
-<H1><A NAME="INPUT"></A><FONT SIZE=5><B>3.1 Inputting data</B></FONT></H1>
+<P><A NAME="INPUT"></A><FONT SIZE=5><B>3.1 Inputting data</B></FONT> 
+</P>
 <P STYLE="font-style: normal">The data to encode can be entered at
 the command line using the -d option, for example:</P>
 <P STYLE="font-style: normal"><FONT FACE="Courier, monospace"><FONT SIZE=2>zint
@@ -64,6 +65,9 @@ here.png. If an encapsulated Post Script file is needed simply append
 the file name with .eps:</P>
 <P STYLE="font-style: normal"><FONT FACE="Courier, monospace"><FONT SIZE=2>zint
 -o there.eps -d 'This Text'</FONT></FONT></P>
+<P>Output can also be directed to stdout using the --<FONT FACE="Courier, monospace">directeps</FONT>
+and --<FONT FACE="Courier, monospace">directpng</FONT> switches for
+EPS and PNG output respectively.</P>
 <P><BR><BR>
 </P>
 <P STYLE="font-style: normal"><A NAME="BARTYPE"></A><FONT SIZE=5><B>3.3
@@ -451,6 +455,14 @@ appropriate integer value in the following table.</P>
 			</TR>
 			<TR VALIGN=TOP>
 				<TD WIDTH=139>
+					<P ALIGN=CENTER>77</P>
+				</TD>
+				<TD WIDTH=643>
+					<P ALIGN=CENTER>Korea Post</P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=139>
 					<P ALIGN=CENTER>79</P>
 				</TD>
 				<TD WIDTH=643>
@@ -758,27 +770,23 @@ is only available with PNG output.</FONT></P>
 				<COL WIDTH=480>
 				<TR VALIGN=TOP>
 					<TD WIDTH=501>
-						<P ALIGN=CENTER><IMG SRC="bar38n.png" NAME="graphics5" ALIGN=BOTTOM WIDTH=200 HEIGHT=118 BORDER=0><BR><BR><BR>
-						</P>
-						<P ALIGN=CENTER><FONT SIZE=3><FONT FACE="Courier, monospace">--rotate=0</FONT>
+						<P ALIGN=CENTER><IMG SRC="bar38n.png" NAME="graphics5" ALIGN=BOTTOM WIDTH=200 HEIGHT=118 BORDER=0>
+						<BR><FONT FACE="Courier, monospace"><FONT SIZE=3>--rotate=0</FONT></FONT><FONT SIZE=3>
 						(default)</FONT></P>
 					</TD>
 					<TD WIDTH=480>
-						<P ALIGN=CENTER><IMG SRC="bar38u.png" NAME="graphics6" ALIGN=BOTTOM WIDTH=200 HEIGHT=118 BORDER=0><BR><BR><BR>
-						</P>
-						<P ALIGN=CENTER><FONT FACE="Courier, monospace"><FONT SIZE=3>--rotate=180</FONT></FONT></P>
+						<P ALIGN=CENTER><IMG SRC="bar38u.png" NAME="graphics6" ALIGN=BOTTOM WIDTH=200 HEIGHT=118 BORDER=0>
+						<BR><FONT FACE="Courier, monospace"><FONT SIZE=3>--rotate=180</FONT></FONT></P>
 					</TD>
 				</TR>
 				<TR VALIGN=TOP>
 					<TD WIDTH=501>
-						<P ALIGN=CENTER><IMG SRC="bar38l.png" NAME="graphics7" ALIGN=BOTTOM WIDTH=118 HEIGHT=200 BORDER=0><BR><BR><BR>
-						</P>
-						<P ALIGN=CENTER><FONT FACE="Courier, monospace"><FONT SIZE=3>--rotate=270</FONT></FONT></P>
+						<P ALIGN=CENTER><IMG SRC="bar38l.png" NAME="graphics7" ALIGN=BOTTOM WIDTH=118 HEIGHT=200 BORDER=0>
+						<BR><FONT FACE="Courier, monospace"><FONT SIZE=3>--rotate=270</FONT></FONT></P>
 					</TD>
 					<TD WIDTH=480>
-						<P ALIGN=CENTER><IMG SRC="bar38r.png" NAME="graphics8" ALIGN=BOTTOM WIDTH=118 HEIGHT=200 BORDER=0><BR><BR><BR>
-						</P>
-						<P ALIGN=CENTER><FONT FACE="Courier, monospace"><FONT SIZE=3>--rotate=90</FONT></FONT></P>
+						<P ALIGN=CENTER><IMG SRC="bar38r.png" NAME="graphics8" ALIGN=BOTTOM WIDTH=118 HEIGHT=200 BORDER=0>
+						<BR><FONT FACE="Courier, monospace"><FONT SIZE=3>--rotate=90</FONT></FONT></P>
 					</TD>
 				</TR>
 			</TABLE>
@@ -787,9 +795,29 @@ is only available with PNG output.</FONT></P>
 </DL>
 <P><BR><BR>
 </P>
-<P><BR><BR>
+<P STYLE="font-style: normal"><A NAME="SCALE"></A><FONT SIZE=5><B>3.9
+Adjusting image size</B></FONT></P>
+<P STYLE="font-style: normal">The scale of the image can be altered
+using the <FONT FACE="Courier, monospace">--scale=</FONT> option
+followed by a multiple of the default x-dimension. For example for
+PNG images a scale of 5 will increase the x-dimension to 10 pixels.
+Note that Maxicode symbols output as PNG images cannot be scaled in
+this way and that text added to a barcode in PNG images does not
+change size. 
 </P>
-<P STYLE="font-style: normal"><A NAME="OTHER"></A><FONT SIZE=5><B>3.9
+<P STYLE="font-style: normal"><A NAME="NULL"></A><FONT SIZE=5><B>3.10
+Handling NULL Characters</B></FONT></P>
+<P STYLE="font-style: normal">Some symbologies support encoding of
+the NULL character (ASCII 0) normally used to indicate the end of a
+character string. To support this functionality the <FONT FACE="Courier, monospace">--null=</FONT>
+option allows you to substitute another character for NULL. Enter the
+decimal number for the character you wish to substitute. For example
+<FONT FACE="Courier, monospace">--null=21</FONT> instructs Zint to
+treat the NAK control character as a NULL character. Values between 1
+and 128 are valid. This currently applies to Codablock-F, Code 128,
+Code 16k, Extended Code 39, Code 93, Maxicode, PDF417, MicroPDF417
+and Telepen.</P>
+<P STYLE="font-style: normal"><A NAME="OTHER"></A><FONT SIZE=5><B>3.11
 Other options</B></FONT></P>
 <P STYLE="font-style: normal">Additional options are available which
 are specific to certain symbologies. These may, for example, control

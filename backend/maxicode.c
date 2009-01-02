@@ -112,7 +112,7 @@ void maxi_bump(int set[], int character[], int bump_posn)
 	}
 }
 
-int maxi_text_process(int mode, unsigned char source[])
+int maxi_text_process(int mode, unsigned char source[], char nullchar)
 {
 	/* Format text according to Appendix A */
 	
@@ -136,8 +136,13 @@ int maxi_text_process(int mode, unsigned char source[])
 	for (i = 0; i < length; i++) {
 		/* Look up characters in table from Appendix A - this gives
 		 value and code set for most characters */
-		set[i] = maxiCodeSet[source[i]];
-		character[i] = maxiSymbolChar[source[i]];
+		if(source[i] == nullchar) {
+			set[i] = maxiCodeSet[0];
+			character[i] = maxiSymbolChar[0];
+		} else {
+			set[i] = maxiCodeSet[source[i]];
+			character[i] = maxiSymbolChar[source[i]];
+		}
 	}
 	
 	/* If a character can be represented in more than one code set,
@@ -623,7 +628,7 @@ int maxicode(struct zint_symbol *symbol, unsigned char source[])
 		maxi_codeword[0] = mode;
 	}
 	
-	i = maxi_text_process(mode, source);
+	i = maxi_text_process(mode, source, symbol->nullchar);
 	if(i == ERROR_TOO_LONG ) {
 		strcpy(symbol->errtxt, "Input data too long [574]");
 		return i;

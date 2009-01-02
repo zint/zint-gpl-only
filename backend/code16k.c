@@ -65,12 +65,18 @@ static char *C16KStartStop[8] = {"3211", "2221", "2122", "1411", "1132", "1231",
 static int C16KStartValues[16] = {0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7};
 static int C16KStopValues[16] = {0, 1, 2, 3, 4, 5, 6, 7, 4, 5, 6, 7, 0, 1, 2, 3};
 
-int parunmodd(unsigned char llyth);
+int parunmodd(unsigned char llyth, char nullchar);
 void grwp(int *indexliste);
 void dxsmooth(int *indexliste);
 
-void c16k_set_a(unsigned char source, unsigned int values[], unsigned int *bar_chars)
+void c16k_set_a(unsigned char source, unsigned int values[], unsigned int *bar_chars, char nullchar)
 {
+	if(source == nullchar) {
+		values[(*bar_chars)] = 64;
+		(*bar_chars)++;
+		return;
+	}
+	
 	if(source > 127) {
 		if(source < 160) {
 			values[(*bar_chars)] = source + 64 - 128;
@@ -164,7 +170,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	indexliste = 0;
 	indexchaine = 0;
 	
-	mode = parunmodd(source[indexchaine]);
+	mode = parunmodd(source[indexchaine], symbol->nullchar);
 	
 	for(i = 0; i < 160; i++) {
 		list[0][i] = 0;
@@ -175,7 +181,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 		while ((list[1][indexliste] == mode) && (indexchaine < input_length)) {
 			list[0][indexliste]++;
 			indexchaine++;
-			mode = parunmodd(source[indexchaine]);
+			mode = parunmodd(source[indexchaine], symbol->nullchar);
 		}
 		indexliste++;
 	} while (indexchaine < input_length);
@@ -385,7 +391,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 
 		switch(set[read])
 		{ /* Encode data characters */
-			case 'A': c16k_set_a(source[read], values, &bar_characters);
+			case 'A': c16k_set_a(source[read], values, &bar_characters, symbol->nullchar);
 				read++;
 				break;
 			case 'B': c16k_set_b(source[read], values, &bar_characters);
