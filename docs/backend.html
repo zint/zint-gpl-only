@@ -5,7 +5,7 @@
 	<TITLE>Using the API</TITLE>
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Unix)">
 	<META NAME="CREATED" CONTENT="20070730;21081900">
-	<META NAME="CHANGED" CONTENT="20081109;9211000">
+	<META NAME="CHANGED" CONTENT="20090101;16002700">
 	<STYLE TYPE="text/css">
 	<!--
 		TD P { color: #000000 }
@@ -92,8 +92,7 @@ char **argv)<BR>{<BR>&nbsp;&nbsp;&nbsp;&nbsp;struct zint_symbol
 ZBarcode_Create();<BR>&nbsp;&nbsp;&nbsp;&nbsp;ZBarcode_Encode_and_Print(my_symbol,
 argv[1]);<BR>&nbsp;&nbsp;&nbsp;&nbsp;ZBarcode_Delete(my_symbol);<BR>&nbsp;&nbsp;&nbsp;&nbsp;return
 0;<BR>}</FONT></FONT></P>
-<P><BR><BR>
-</P>
+<P>Input strings should be Unicode formatted.</P>
 <P><A NAME="OPTIONS"></A><FONT SIZE=5><B>4.3 Setting Options</B></FONT></P>
 <P>So far our application is not very useful unless we plan to only
 make Code 128 barcodes and we don't mind that they only save to
@@ -268,6 +267,34 @@ structure consists of the following variables:</P>
 				</TD>
 				<TD WIDTH=175>
 					<P ALIGN=CENTER>(automatic)</P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=151>
+					<P ALIGN=CENTER><FONT FACE="Courier">scale</FONT></P>
+				</TD>
+				<TD WIDTH=162>
+					<P ALIGN=CENTER>float</P>
+				</TD>
+				<TD WIDTH=334>
+					<P ALIGN=CENTER>Scale factor for adjusting size of image.</P>
+				</TD>
+				<TD WIDTH=175>
+					<P ALIGN=CENTER>1.0</P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=151>
+					<P ALIGN=CENTER><FONT FACE="Courier">nullchar</FONT></P>
+				</TD>
+				<TD WIDTH=162>
+					<P ALIGN=CENTER>char</P>
+				</TD>
+				<TD WIDTH=334>
+					<P ALIGN=CENTER>Character to substitute for NULL</P>
+				</TD>
+				<TD WIDTH=175>
+					<P ALIGN=CENTER>NULL</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
@@ -1024,6 +1051,17 @@ following table. For example</P>
 				</TD>
 				<TD WIDTH=366>
 					<P ALIGN=CENTER>NVE-18</P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD WIDTH=150>
+					<P ALIGN=CENTER>77</P>
+				</TD>
+				<TD WIDTH=382>
+					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_KOREAPOST</FONT></P>
+				</TD>
+				<TD WIDTH=366>
+					<P ALIGN=CENTER>Korea Post</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>

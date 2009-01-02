@@ -5,7 +5,7 @@
 	<TITLE>Two-Dimensional Symbols</TITLE>
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Unix)">
 	<META NAME="CREATED" CONTENT="20070730;21081900">
-	<META NAME="CHANGED" CONTENT="20081109;9283500">
+	<META NAME="CHANGED" CONTENT="20090101;15323500">
 	<STYLE TYPE="text/css">
 	<!--
 		TD P { color: #000000 }
@@ -47,111 +47,364 @@ for new applications. The different modes are accessed using the
 <FONT FACE="Courier, monospace">mode=</FONT> option or by setting
 <FONT FACE="Courier, monospace">option_1</FONT>.</P>
 <CENTER>
-					<TABLE WIDTH=708 BORDER=1 CELLPADDING=4 CELLSPACING=3>
-						<COL WIDTH=143>
-						<COL WIDTH=142>
-						<COL WIDTH=214>
-						<COL WIDTH=160>
-						<TR VALIGN=TOP>
-							<TD WIDTH=143 HEIGHT=20>
-								<P ALIGN=CENTER><B>Input</B></P>
-							</TD>
-							<TD WIDTH=142>
-								<P ALIGN=CENTER><B>Mode</B></P>
-							</TD>
-							<TD WIDTH=214>
-								<P ALIGN=CENTER><B>Error Correction Capacity</B></P>
-							</TD>
-							<TD WIDTH=160>
-								<P ALIGN=CENTER><B>Recovery Capacity</B></P>
-							</TD>
-						</TR>
-						<TR VALIGN=TOP>
-							<TD WIDTH=143>
-								<P ALIGN=CENTER>1 (default)</P>
-							</TD>
-							<TD WIDTH=142>
-								<P ALIGN=CENTER>ECC 200</P>
-							</TD>
-							<TD WIDTH=214>
-								<P ALIGN=CENTER>28 - 62%</P>
-							</TD>
-							<TD WIDTH=160>
-								<P ALIGN=CENTER>30 - 40%</P>
-							</TD>
-						</TR>
-						<TR VALIGN=TOP>
-							<TD WIDTH=143>
-								<P ALIGN=CENTER>2</P>
-							</TD>
-							<TD WIDTH=142>
-								<P ALIGN=CENTER>ECC 000</P>
-							</TD>
-							<TD WIDTH=214>
-								<P ALIGN=CENTER>0%</P>
-							</TD>
-							<TD WIDTH=160>
-								<P ALIGN=CENTER>0%</P>
-							</TD>
-						</TR>
-						<TR VALIGN=TOP>
-							<TD WIDTH=143>
-								<P ALIGN=CENTER>3</P>
-							</TD>
-							<TD WIDTH=142>
-								<P ALIGN=CENTER>ECC 050</P>
-							</TD>
-							<TD WIDTH=214>
-								<P ALIGN=CENTER>25%</P>
-							</TD>
-							<TD WIDTH=160>
-								<P ALIGN=CENTER>2.8%</P>
-							</TD>
-						</TR>
-						<TR VALIGN=TOP>
-							<TD WIDTH=143>
-								<P ALIGN=CENTER>4</P>
-							</TD>
-							<TD WIDTH=142>
-								<P ALIGN=CENTER>ECC 080</P>
-							</TD>
-							<TD WIDTH=214>
-								<P ALIGN=CENTER>33%</P>
-							</TD>
-							<TD WIDTH=160>
-								<P ALIGN=CENTER>5.5%</P>
-							</TD>
-						</TR>
-						<TR VALIGN=TOP>
-							<TD WIDTH=143>
-								<P ALIGN=CENTER>5</P>
-							</TD>
-							<TD WIDTH=142>
-								<P ALIGN=CENTER>ECC 100</P>
-							</TD>
-							<TD WIDTH=214>
-								<P ALIGN=CENTER>50%</P>
-							</TD>
-							<TD WIDTH=160>
-								<P ALIGN=CENTER>12.6%</P>
-							</TD>
-						</TR>
-						<TR VALIGN=TOP>
-							<TD WIDTH=143>
-								<P ALIGN=CENTER>6</P>
-							</TD>
-							<TD WIDTH=142>
-								<P ALIGN=CENTER>ECC 140</P>
-							</TD>
-							<TD WIDTH=214>
-								<P ALIGN=CENTER>75%</P>
-							</TD>
-							<TD WIDTH=160>
-								<P ALIGN=CENTER>25%</P>
-							</TD>
-						</TR>
-					</TABLE>
+	<TABLE WIDTH=708 BORDER=1 CELLPADDING=4 CELLSPACING=3>
+		<COL WIDTH=143>
+		<COL WIDTH=142>
+		<COL WIDTH=214>
+		<COL WIDTH=160>
+		<TR VALIGN=TOP>
+			<TD WIDTH=143 HEIGHT=20>
+				<P ALIGN=CENTER><B>Input</B></P>
+			</TD>
+			<TD WIDTH=142>
+				<P ALIGN=CENTER><B>Mode</B></P>
+			</TD>
+			<TD WIDTH=214>
+				<P ALIGN=CENTER><B>Error Correction Capacity</B></P>
+			</TD>
+			<TD WIDTH=160>
+				<P ALIGN=CENTER><B>Recovery Capacity</B></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=143>
+				<P ALIGN=CENTER>1 (default)</P>
+			</TD>
+			<TD WIDTH=142>
+				<P ALIGN=CENTER>ECC 200</P>
+			</TD>
+			<TD WIDTH=214>
+				<P ALIGN=CENTER>28 - 62%</P>
+			</TD>
+			<TD WIDTH=160>
+				<P ALIGN=CENTER>30 - 40%</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=143>
+				<P ALIGN=CENTER>2</P>
+			</TD>
+			<TD WIDTH=142>
+				<P ALIGN=CENTER>ECC 000</P>
+			</TD>
+			<TD WIDTH=214>
+				<P ALIGN=CENTER>0%</P>
+			</TD>
+			<TD WIDTH=160>
+				<P ALIGN=CENTER>0%</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=143>
+				<P ALIGN=CENTER>3</P>
+			</TD>
+			<TD WIDTH=142>
+				<P ALIGN=CENTER>ECC 050</P>
+			</TD>
+			<TD WIDTH=214>
+				<P ALIGN=CENTER>25%</P>
+			</TD>
+			<TD WIDTH=160>
+				<P ALIGN=CENTER>2.8%</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=143>
+				<P ALIGN=CENTER>4</P>
+			</TD>
+			<TD WIDTH=142>
+				<P ALIGN=CENTER>ECC 080</P>
+			</TD>
+			<TD WIDTH=214>
+				<P ALIGN=CENTER>33%</P>
+			</TD>
+			<TD WIDTH=160>
+				<P ALIGN=CENTER>5.5%</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=143>
+				<P ALIGN=CENTER>5</P>
+			</TD>
+			<TD WIDTH=142>
+				<P ALIGN=CENTER>ECC 100</P>
+			</TD>
+			<TD WIDTH=214>
+				<P ALIGN=CENTER>50%</P>
+			</TD>
+			<TD WIDTH=160>
+				<P ALIGN=CENTER>12.6%</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=143>
+				<P ALIGN=CENTER>6</P>
+			</TD>
+			<TD WIDTH=142>
+				<P ALIGN=CENTER>ECC 140</P>
+			</TD>
+			<TD WIDTH=214>
+				<P ALIGN=CENTER>75%</P>
+			</TD>
+			<TD WIDTH=160>
+				<P ALIGN=CENTER>25%</P>
+			</TD>
+		</TR>
+	</TABLE>
 </CENTER>
+<P><BR><BR>
+</P>
+<P>The size of the generated symbol can also be adjusted using the
+<FONT FACE="Courier, monospace">--ver=</FONT> option or by setting
+<FONT FACE="Courier, monospace">option_1</FONT> as shown in the table
+below.</P>
+<DL>
+	<DL>
+		<DL>
+			<DL>
+				<DL>
+					<DL>
+						<DL>
+							<DL>
+								<DD>
+								<TABLE WIDTH=557 BORDER=1 CELLPADDING=4 CELLSPACING=3>
+									<COL WIDTH=128>
+									<COL WIDTH=124>
+									<COL WIDTH=117>
+									<COL WIDTH=139>
+									<TR VALIGN=TOP>
+										<TH WIDTH=128>
+											<P>Input</P>
+										</TH>
+										<TH WIDTH=124>
+											<P>Symbol Size</P>
+										</TH>
+										<TH WIDTH=117>
+											<P>Input</P>
+										</TH>
+										<TH WIDTH=139>
+											<P>Symbol Size</P>
+										</TH>
+									</TR>
+									<TR VALIGN=TOP>
+										<TD WIDTH=128>
+											<P ALIGN=CENTER>1</P>
+										</TD>
+										<TD WIDTH=124>
+											<P ALIGN=CENTER>10 x 10</P>
+										</TD>
+										<TD WIDTH=117>
+											<P ALIGN=CENTER>16</P>
+										</TD>
+										<TD WIDTH=139>
+											<P ALIGN=CENTER>64 x 64</P>
+										</TD>
+									</TR>
+									<TR VALIGN=TOP>
+										<TD WIDTH=128>
+											<P ALIGN=CENTER>2</P>
+										</TD>
+										<TD WIDTH=124>
+											<P ALIGN=CENTER>12 x 12</P>
+										</TD>
+										<TD WIDTH=117>
+											<P ALIGN=CENTER>17</P>
+										</TD>
+										<TD WIDTH=139>
+											<P ALIGN=CENTER>72 x 72</P>
+										</TD>
+									</TR>
+									<TR VALIGN=TOP>
+										<TD WIDTH=128>
+											<P ALIGN=CENTER>3</P>
+										</TD>
+										<TD WIDTH=124>
+											<P ALIGN=CENTER>14 x 14</P>
+										</TD>
+										<TD WIDTH=117>
+											<P ALIGN=CENTER>18</P>
+										</TD>
+										<TD WIDTH=139>
+											<P ALIGN=CENTER>80 x 80</P>
+										</TD>
+									</TR>
+									<TR VALIGN=TOP>
+										<TD WIDTH=128>
+											<P ALIGN=CENTER>4</P>
+										</TD>
+										<TD WIDTH=124>
+											<P ALIGN=CENTER>16 x 16</P>
+										</TD>
+										<TD WIDTH=117>
+											<P ALIGN=CENTER>19</P>
+										</TD>
+										<TD WIDTH=139>
+											<P ALIGN=CENTER>88 x 88</P>
+										</TD>
+									</TR>
+									<TR VALIGN=TOP>
+										<TD WIDTH=128>
+											<P ALIGN=CENTER>5</P>
+										</TD>
+										<TD WIDTH=124>
+											<P ALIGN=CENTER>18 x 18</P>
+										</TD>
+										<TD WIDTH=117>
+											<P ALIGN=CENTER>20</P>
+										</TD>
+										<TD WIDTH=139>
+											<P ALIGN=CENTER>96 x 96</P>
+										</TD>
+									</TR>
+									<TR VALIGN=TOP>
+										<TD WIDTH=128>
+											<P ALIGN=CENTER>6</P>
+										</TD>
+										<TD WIDTH=124>
+											<P ALIGN=CENTER>20 x 20</P>
+										</TD>
+										<TD WIDTH=117>
+											<P ALIGN=CENTER>21</P>
+										</TD>
+										<TD WIDTH=139>
+											<P ALIGN=CENTER>104 x 104</P>
+										</TD>
+									</TR>
+									<TR VALIGN=TOP>
+										<TD WIDTH=128>
+											<P ALIGN=CENTER>7</P>
+										</TD>
+										<TD WIDTH=124>
+											<P ALIGN=CENTER>22 x 22</P>
+										</TD>
+										<TD WIDTH=117>
+											<P ALIGN=CENTER>22</P>
+										</TD>
+										<TD WIDTH=139>
+											<P ALIGN=CENTER>120 x 120</P>
+										</TD>
+									</TR>
+									<TR VALIGN=TOP>
+										<TD WIDTH=128>
+											<P ALIGN=CENTER>8</P>
+										</TD>
+										<TD WIDTH=124>
+											<P ALIGN=CENTER>24 x 24</P>
+										</TD>
+										<TD WIDTH=117>
+											<P ALIGN=CENTER>23</P>
+										</TD>
+										<TD WIDTH=139>
+											<P ALIGN=CENTER>132 x 132</P>
+										</TD>
+									</TR>
+									<TR VALIGN=TOP>
+										<TD WIDTH=128>
+											<P ALIGN=CENTER>9</P>
+										</TD>
+										<TD WIDTH=124>
+											<P ALIGN=CENTER>26 x 26</P>
+										</TD>
+										<TD WIDTH=117>
+											<P ALIGN=CENTER>24</P>
+										</TD>
+										<TD WIDTH=139>
+											<P ALIGN=CENTER>144 x 144</P>
+										</TD>
+									</TR>
+									<TR VALIGN=TOP>
+										<TD WIDTH=128>
+											<P ALIGN=CENTER>10</P>
+										</TD>
+										<TD WIDTH=124>
+											<P ALIGN=CENTER>32 x 32</P>
+										</TD>
+										<TD WIDTH=117>
+											<P ALIGN=CENTER>25</P>
+										</TD>
+										<TD WIDTH=139>
+											<P ALIGN=CENTER>8 x 18</P>
+										</TD>
+									</TR>
+									<TR VALIGN=TOP>
+										<TD WIDTH=128>
+											<P ALIGN=CENTER>11</P>
+										</TD>
+										<TD WIDTH=124>
+											<P ALIGN=CENTER>36 x 36</P>
+										</TD>
+										<TD WIDTH=117>
+											<P ALIGN=CENTER>26</P>
+										</TD>
+										<TD WIDTH=139>
+											<P ALIGN=CENTER>8 x 32</P>
+										</TD>
+									</TR>
+									<TR VALIGN=TOP>
+										<TD WIDTH=128>
+											<P ALIGN=CENTER>12</P>
+										</TD>
+										<TD WIDTH=124>
+											<P ALIGN=CENTER>40 x 40</P>
+										</TD>
+										<TD WIDTH=117>
+											<P ALIGN=CENTER>27</P>
+										</TD>
+										<TD WIDTH=139>
+											<P ALIGN=CENTER>12 x 26</P>
+										</TD>
+									</TR>
+									<TR VALIGN=TOP>
+										<TD WIDTH=128>
+											<P ALIGN=CENTER>13</P>
+										</TD>
+										<TD WIDTH=124>
+											<P ALIGN=CENTER>44 x 44</P>
+										</TD>
+										<TD WIDTH=117>
+											<P ALIGN=CENTER>28</P>
+										</TD>
+										<TD WIDTH=139>
+											<P ALIGN=CENTER>12 x 36</P>
+										</TD>
+									</TR>
+									<TR VALIGN=TOP>
+										<TD WIDTH=128>
+											<P ALIGN=CENTER>14</P>
+										</TD>
+										<TD WIDTH=124>
+											<P ALIGN=CENTER>48 x 48</P>
+										</TD>
+										<TD WIDTH=117>
+											<P ALIGN=CENTER>29</P>
+										</TD>
+										<TD WIDTH=139>
+											<P ALIGN=CENTER>16 x 36</P>
+										</TD>
+									</TR>
+									<TR VALIGN=TOP>
+										<TD WIDTH=128>
+											<P ALIGN=CENTER>15</P>
+										</TD>
+										<TD WIDTH=124>
+											<P ALIGN=CENTER>52 x 52</P>
+										</TD>
+										<TD WIDTH=117>
+											<P ALIGN=CENTER>30</P>
+										</TD>
+										<TD WIDTH=139>
+											<P ALIGN=CENTER>16 x 48</P>
+										</TD>
+									</TR>
+								</TABLE>
+							</DL>
+						</DL>
+					</DL>
+				</DL>
+			</DL>
+		</DL>
+	</DL>
+</DL>
 <P><BR><BR>
 </P>
 <P ALIGN=CENTER><IMG SRC="matrix.png" NAME="graphics1" ALIGN=LEFT WIDTH=44 HEIGHT=44 BORDER=0><BR CLEAR=LEFT><BR><BR>
@@ -168,82 +421,82 @@ levels of error correction are available using the <FONT FACE="Courier, monospac
 option or setting <FONT FACE="Courier, monospace">option_1</FONT> as
 shown in the following table.</P>
 <CENTER>
-							<TABLE WIDTH=715 BORDER=1 CELLPADDING=4 CELLSPACING=3>
-								<COL WIDTH=74>
-								<COL WIDTH=113>
-								<COL WIDTH=261>
-								<COL WIDTH=218>
-								<TR VALIGN=TOP>
-									<TD WIDTH=74>
-										<P ALIGN=CENTER><B>Input</B></P>
-									</TD>
-									<TD WIDTH=113>
-										<P ALIGN=CENTER><B>ECC Level</B></P>
-									</TD>
-									<TD WIDTH=261>
-										<P ALIGN=CENTER><B>Error Correction Capacity</B></P>
-									</TD>
-									<TD WIDTH=218>
-										<P ALIGN=CENTER><B>Recovery Capacity</B></P>
-									</TD>
-								</TR>
-								<TR VALIGN=TOP>
-									<TD WIDTH=74>
-										<P ALIGN=CENTER>1</P>
-									</TD>
-									<TD WIDTH=113>
-										<P ALIGN=CENTER>L (default)</P>
-									</TD>
-									<TD WIDTH=261>
-										<P ALIGN=CENTER>Approx 20% of symbol</P>
-									</TD>
-									<TD WIDTH=218>
-										<P ALIGN=CENTER>Approx 7%</P>
-									</TD>
-								</TR>
-								<TR VALIGN=TOP>
-									<TD WIDTH=74>
-										<P ALIGN=CENTER>2</P>
-									</TD>
-									<TD WIDTH=113>
-										<P ALIGN=CENTER>M</P>
-									</TD>
-									<TD WIDTH=261>
-										<P ALIGN=CENTER>Approx 37% of symbol</P>
-									</TD>
-									<TD WIDTH=218>
-										<P ALIGN=CENTER>Approx 15%</P>
-									</TD>
-								</TR>
-								<TR VALIGN=TOP>
-									<TD WIDTH=74>
-										<P ALIGN=CENTER>3</P>
-									</TD>
-									<TD WIDTH=113>
-										<P ALIGN=CENTER>Q</P>
-									</TD>
-									<TD WIDTH=261>
-										<P ALIGN=CENTER>Approx 55% of symbol</P>
-									</TD>
-									<TD WIDTH=218>
-										<P ALIGN=CENTER>Approx 25%</P>
-									</TD>
-								</TR>
-								<TR VALIGN=TOP>
-									<TD WIDTH=74>
-										<P ALIGN=CENTER>4</P>
-									</TD>
-									<TD WIDTH=113>
-										<P ALIGN=CENTER>H</P>
-									</TD>
-									<TD WIDTH=261>
-										<P ALIGN=CENTER>Approx 65% of symbol</P>
-									</TD>
-									<TD WIDTH=218>
-										<P ALIGN=CENTER>Approx 30%</P>
-									</TD>
-								</TR>
-							</TABLE>
+	<TABLE WIDTH=715 BORDER=1 CELLPADDING=4 CELLSPACING=3>
+		<COL WIDTH=74>
+		<COL WIDTH=113>
+		<COL WIDTH=261>
+		<COL WIDTH=218>
+		<TR VALIGN=TOP>
+			<TD WIDTH=74>
+				<P ALIGN=CENTER><B>Input</B></P>
+			</TD>
+			<TD WIDTH=113>
+				<P ALIGN=CENTER><B>ECC Level</B></P>
+			</TD>
+			<TD WIDTH=261>
+				<P ALIGN=CENTER><B>Error Correction Capacity</B></P>
+			</TD>
+			<TD WIDTH=218>
+				<P ALIGN=CENTER><B>Recovery Capacity</B></P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=74>
+				<P ALIGN=CENTER>1</P>
+			</TD>
+			<TD WIDTH=113>
+				<P ALIGN=CENTER>L (default)</P>
+			</TD>
+			<TD WIDTH=261>
+				<P ALIGN=CENTER>Approx 20% of symbol</P>
+			</TD>
+			<TD WIDTH=218>
+				<P ALIGN=CENTER>Approx 7%</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=74>
+				<P ALIGN=CENTER>2</P>
+			</TD>
+			<TD WIDTH=113>
+				<P ALIGN=CENTER>M</P>
+			</TD>
+			<TD WIDTH=261>
+				<P ALIGN=CENTER>Approx 37% of symbol</P>
+			</TD>
+			<TD WIDTH=218>
+				<P ALIGN=CENTER>Approx 15%</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=74>
+				<P ALIGN=CENTER>3</P>
+			</TD>
+			<TD WIDTH=113>
+				<P ALIGN=CENTER>Q</P>
+			</TD>
+			<TD WIDTH=261>
+				<P ALIGN=CENTER>Approx 55% of symbol</P>
+			</TD>
+			<TD WIDTH=218>
+				<P ALIGN=CENTER>Approx 25%</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=74>
+				<P ALIGN=CENTER>4</P>
+			</TD>
+			<TD WIDTH=113>
+				<P ALIGN=CENTER>H</P>
+			</TD>
+			<TD WIDTH=261>
+				<P ALIGN=CENTER>Approx 65% of symbol</P>
+			</TD>
+			<TD WIDTH=218>
+				<P ALIGN=CENTER>Approx 30%</P>
+			</TD>
+		</TR>
+	</TABLE>
 </CENTER>
 <P><BR><BR>
 </P>
@@ -464,35 +717,35 @@ symbol. Two options are available to change this behaviour:</P>
 setting <FONT FACE="Courier, monospace">option_2</FONT> to) a value
 between 1 and 36 according to the following table:</P>
 <CENTER>
-							<TABLE WIDTH=684 BORDER=1 CELLPADDING=4 CELLSPACING=3>
-								<COL WIDTH=184>
-								<COL WIDTH=473>
-								<TR VALIGN=TOP>
-									<TH WIDTH=184>
-										<P>Value Entered</P>
-									</TH>
-									<TH WIDTH=473>
-										<P>Symbol Generated</P>
-									</TH>
-								</TR>
-								<TR VALIGN=TOP>
-									<TD WIDTH=184>
-										<P ALIGN=CENTER>1-4</P>
-									</TD>
-									<TD WIDTH=473>
-										<P ALIGN=CENTER>Compact Aztec Code with [value] layers</P>
-									</TD>
-								</TR>
-								<TR VALIGN=TOP>
-									<TD WIDTH=184>
-										<P ALIGN=CENTER>5-36</P>
-									</TD>
-									<TD WIDTH=473>
-										<P ALIGN=CENTER>“Full-Range” Aztec Code with [value –
-										4] layers</P>
-									</TD>
-								</TR>
-							</TABLE>
+	<TABLE WIDTH=684 BORDER=1 CELLPADDING=4 CELLSPACING=3>
+		<COL WIDTH=184>
+		<COL WIDTH=473>
+		<TR VALIGN=TOP>
+			<TH WIDTH=184>
+				<P>Value Entered</P>
+			</TH>
+			<TH WIDTH=473>
+				<P>Symbol Generated</P>
+			</TH>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=184>
+				<P ALIGN=CENTER>1-4</P>
+			</TD>
+			<TD WIDTH=473>
+				<P ALIGN=CENTER>Compact Aztec Code with [value] layers</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=184>
+				<P ALIGN=CENTER>5-36</P>
+			</TD>
+			<TD WIDTH=473>
+				<P ALIGN=CENTER>“Full-Range” Aztec Code with [value – 4]
+				layers</P>
+			</TD>
+		</TR>
+	</TABLE>
 </CENTER>
 <P ALIGN=LEFT><BR><BR>
 </P>
@@ -505,50 +758,50 @@ be specified by use of the <FONT FACE="Courier, monospace">--mode=</FONT>
 switch followed by (or setting <FONT FACE="Courier, monospace">option_1</FONT>
 to) a value from the following table:</P>
 <CENTER>
-							<TABLE WIDTH=681 BORDER=1 CELLPADDING=4 CELLSPACING=3>
-								<COL WIDTH=220>
-								<COL WIDTH=434>
-								<TR VALIGN=TOP>
-									<TH WIDTH=220>
-										<P ALIGN=CENTER>Mode</P>
-									</TH>
-									<TH WIDTH=434>
-										<P ALIGN=CENTER>Error Correction Capacity</P>
-									</TH>
-								</TR>
-								<TR VALIGN=TOP>
-									<TD WIDTH=220>
-										<P ALIGN=CENTER>1</P>
-									</TD>
-									<TD WIDTH=434>
-										<P ALIGN=CENTER>&gt;10% + 3 codewords</P>
-									</TD>
-								</TR>
-								<TR VALIGN=TOP>
-									<TD WIDTH=220>
-										<P ALIGN=CENTER>2</P>
-									</TD>
-									<TD WIDTH=434>
-										<P ALIGN=CENTER>&gt;23% + 3 codewords</P>
-									</TD>
-								</TR>
-								<TR VALIGN=TOP>
-									<TD WIDTH=220>
-										<P ALIGN=CENTER>3</P>
-									</TD>
-									<TD WIDTH=434>
-										<P ALIGN=CENTER>&gt;36% + 3 codewords</P>
-									</TD>
-								</TR>
-								<TR VALIGN=TOP>
-									<TD WIDTH=220>
-										<P ALIGN=CENTER>4</P>
-									</TD>
-									<TD WIDTH=434>
-										<P ALIGN=CENTER>&gt;50% + 3 codewords</P>
-									</TD>
-								</TR>
-							</TABLE>
+	<TABLE WIDTH=681 BORDER=1 CELLPADDING=4 CELLSPACING=3>
+		<COL WIDTH=220>
+		<COL WIDTH=434>
+		<TR VALIGN=TOP>
+			<TH WIDTH=220>
+				<P ALIGN=CENTER>Mode</P>
+			</TH>
+			<TH WIDTH=434>
+				<P ALIGN=CENTER>Error Correction Capacity</P>
+			</TH>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=220>
+				<P ALIGN=CENTER>1</P>
+			</TD>
+			<TD WIDTH=434>
+				<P ALIGN=CENTER>&gt;10% + 3 codewords</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=220>
+				<P ALIGN=CENTER>2</P>
+			</TD>
+			<TD WIDTH=434>
+				<P ALIGN=CENTER>&gt;23% + 3 codewords</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=220>
+				<P ALIGN=CENTER>3</P>
+			</TD>
+			<TD WIDTH=434>
+				<P ALIGN=CENTER>&gt;36% + 3 codewords</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=220>
+				<P ALIGN=CENTER>4</P>
+			</TD>
+			<TD WIDTH=434>
+				<P ALIGN=CENTER>&gt;50% + 3 codewords</P>
+			</TD>
+		</TR>
+	</TABLE>
 </CENTER>
 <P ALIGN=LEFT><BR><BR>
 </P>

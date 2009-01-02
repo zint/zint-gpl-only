@@ -360,7 +360,7 @@ int cc_b(struct zint_symbol *symbol, unsigned char source[], int cc_width)
 	chainemc[mclength] = 920;
 	mclength++;
 	
-	byteprocess(chainemc, &mclength, data_string, 0, length, 0);
+	byteprocess(chainemc, &mclength, data_string, 0, length, 0, 0x00);
 	
 	/* Now figure out which variant of the symbol to use and load values accordingly */
 	
@@ -585,7 +585,7 @@ int cc_c(struct zint_symbol *symbol, unsigned char source[], int cc_width, int e
 	chainemc[mclength] = 920; /* CC-C identifier */
 	mclength++;
 	
-	byteprocess(chainemc, &mclength, data_string, 0, length, 0);
+	byteprocess(chainemc, &mclength, data_string, 0, length, 0, 0x00);
 	
 	chainemc[0] = mclength;
 	

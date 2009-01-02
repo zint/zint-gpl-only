@@ -46,6 +46,7 @@ struct zint_symbol {
 	char encoded_data[178][1000];
 	int row_height[155];
 	char errtxt[100];
+	char nullchar;
 };
 
 /* Tbarcode 7 codes */

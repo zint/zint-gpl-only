@@ -54,6 +54,7 @@ struct zint_symbol *ZBarcode_Create()
 		symbol->row_height[i] = 0;
 	}
 	return symbol;
+	symbol->nullchar = 0x00;
 }
 
 

@@ -57,12 +57,13 @@ static char *C128Table[107] = {"212222", "222122", "222221", "121223", "121322",
 	"411113", "411311", "113141", "114131", "311141", "411131", "211412", "211214", "211232",
 	"2331112"};
 
-int parunmodd(unsigned char llyth);
+int parunmodd(unsigned char llyth, char nullchar);
 void grwp(int *indexliste);
 void dxsmooth(int *indexliste);
 
-int a3_convert(unsigned char source) {
+int a3_convert(unsigned char source, char nullchar) {
 	/* Annex A section 3 */
+	if(source == nullchar) { return 64; }
 	if(source < 32) { return source + 64; }
 	if((source >= 32) && (source <= 127)) { return source - 32; }
 	if((source >= 128) && (source <= 159)) { return (source - 128) + 64; }
@@ -70,8 +71,13 @@ int a3_convert(unsigned char source) {
 	return (source - 128) - 32;
 }
 
-int character_subset_select(unsigned char source[], int input_position) {
+int character_subset_select(unsigned char source[], int input_position, char nullchar) {
 	/* Section 4.5.2 - Determining the Character Subset Selector in a Row */
+	if(source[input_position] == nullchar) {
+		/* NULL character */
+		return MODEA;
+	}
+	
 	if((source[input_position] >= '0') && (source[input_position + 1] <= '9')) {
 		/* Rule 1 */
 		return MODEC;
@@ -91,7 +97,7 @@ int character_subset_select(unsigned char source[], int input_position) {
 	return MODEB;
 }
 
-int data_encode_blockf(unsigned char source[], int subset_selector[], int blockmatrix[][62], int *columns_needed, int *rows_needed, int *final_mode)
+int data_encode_blockf(unsigned char source[], int subset_selector[], int blockmatrix[][62], int *columns_needed, int *rows_needed, int *final_mode, char nullchar)
 {
 	int i, input_position, input_length, current_mode, current_row, error_number;
 	int column_position, c, done, exit_status;
@@ -112,7 +118,7 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 		if(column_position == 0) {
 			/* The Beginning of a row */
 			c = (*columns_needed);
-			current_mode = character_subset_select(source, input_position);
+			current_mode = character_subset_select(source, input_position, nullchar);
 			subset_selector[current_row] = current_mode;
 		}
 		
@@ -121,15 +127,15 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 			/* Ensure that there is sufficient encodation capacity to continue (using the rules of Annex B.2). */
 			switch(current_mode) {
 				case MODEA: /* Table B1 applies */
-					if(parunmodd(source[input_position]) == ABORC) {
-						blockmatrix[current_row][column_position] = a3_convert(source[input_position]);
+					if(parunmodd(source[input_position], nullchar) == ABORC) {
+						blockmatrix[current_row][column_position] = a3_convert(source[input_position], nullchar);
 						column_position++;
 						c--;
 						input_position++;
 						done = 1;
 					}
 					
-					if((parunmodd(source[input_position]) == SHIFTB) && (c == 1)) {
+					if((parunmodd(source[input_position], nullchar) == SHIFTB) && (c == 1)) {
 						/* Needs two symbols */
 						blockmatrix[current_row][column_position] = 100; /* Code B */
 						column_position++;
@@ -161,15 +167,15 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 					}
 					break;
 				case MODEB: /* Table B2 applies */
-					if(parunmodd(source[input_position]) == ABORC) {
-						blockmatrix[current_row][column_position] = a3_convert(source[input_position]);
+					if(parunmodd(source[input_position], nullchar) == ABORC) {
+						blockmatrix[current_row][column_position] = a3_convert(source[input_position], nullchar);
 						column_position++;
 						c--;
 						input_position++;
 						done = 1;
 					}
 					
-					if((parunmodd(source[input_position]) == SHIFTA) && (c == 1)) {
+					if((parunmodd(source[input_position], nullchar) == SHIFTA) && (c == 1)) {
 						/* Needs two symbols */
 						blockmatrix[current_row][column_position] = 101; /* Code A */
 						column_position++;
@@ -201,7 +207,7 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 					}
 					break;
 				case MODEC: /* Table B3 applies */
-					if((parunmodd(source[input_position]) != ABORC) && (c == 1)) {
+					if((parunmodd(source[input_position], nullchar) != ABORC) && (c == 1)) {
 						/* Needs two symbols */
 						blockmatrix[current_row][column_position] = 101; /* Code A */
 						column_position++;
@@ -209,7 +215,7 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 						done = 1;
 					}
 					
-					if(((parunmodd(source[input_position]) == ABORC) && (parunmodd(source[input_position + 1]) != ABORC))
+					if(((parunmodd(source[input_position], nullchar) == ABORC) && (parunmodd(source[input_position + 1], nullchar) != ABORC))
 						&& (c == 1)) {
 						/* Needs two symbols */
 						blockmatrix[current_row][column_position] = 101; /* Code A */
@@ -234,7 +240,7 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 		}
 		
 		if(done == 0) {
-			if(((parunmodd(source[input_position]) == AORB) || (parunmodd(source[input_position]) == SHIFTA)) && (current_mode == MODEA)) {
+			if(((parunmodd(source[input_position], nullchar) == AORB) || (parunmodd(source[input_position], nullchar) == SHIFTA)) && (current_mode == MODEA)) {
 				/* Annex B section 1 rule 2 */
 				/* If in Code Subset A and the next data character can be encoded in Subset A encode the next
 				character. */
@@ -244,7 +250,7 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 					column_position++;
 					c--;
 				}
-				blockmatrix[current_row][column_position] = a3_convert(source[input_position]);
+				blockmatrix[current_row][column_position] = a3_convert(source[input_position], nullchar);
 				column_position++;
 				c--;
 				input_position++;
@@ -253,7 +259,7 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 		}
 		
 		if(done == 0) {
-			if(((parunmodd(source[input_position]) == AORB) || (parunmodd(source[input_position]) == SHIFTB)) && (current_mode == MODEB)) {
+			if(((parunmodd(source[input_position], nullchar) == AORB) || (parunmodd(source[input_position], nullchar) == SHIFTB)) && (current_mode == MODEB)) {
 				/* Annex B section 1 rule 3 */
 				/* If in Code Subset B and the next data character can be encoded in subset B, encode the next
 				character. */
@@ -263,7 +269,7 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 					column_position++;
 					c--;
 				}
-				blockmatrix[current_row][column_position] = a3_convert(source[input_position]);
+				blockmatrix[current_row][column_position] = a3_convert(source[input_position], nullchar);
 				column_position++;
 				c--;
 				input_position++;
@@ -272,7 +278,7 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 		}
 		
 		if(done == 0) {
-			if(((parunmodd(source[input_position]) == ABORC) && (parunmodd(source[input_position + 1]) == ABORC)) && (current_mode == MODEC)) {
+			if(((parunmodd(source[input_position], nullchar) == ABORC) && (parunmodd(source[input_position + 1], nullchar) == ABORC)) && (current_mode == MODEC)) {
 				/* Annex B section 1 rule 4 */
 				/* If in Code Subset C and the next data are 2 digits, encode them. */
 				blockmatrix[current_row][column_position] = (ctoi(source[input_position]) * 10) + ctoi(source[input_position + 1]);
@@ -284,7 +290,7 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 		}
 		
 		if(done == 0) {
-			if(((current_mode == MODEA) || (current_mode == MODEB)) && (parunmodd(source[input_position]) == ABORC)) {
+			if(((current_mode == MODEA) || (current_mode == MODEB)) && (parunmodd(source[input_position], nullchar) == ABORC)) {
 				/* Count the number of numeric digits */
 				/*  If 4 or more numeric data characters occur together when in subsets A or B:
 				a.      If there is an even number of numeric data characters, insert a Code C character before the
@@ -292,7 +298,7 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 				b.      If there is an odd number of numeric data characters, insert a Code Set C character immedi-
 				ately after the first numeric digit to change to subset C. */
 				i = 0;
-				do { i++; } while(parunmodd(source[input_position + i]) == ABORC);
+				do { i++; } while(parunmodd(source[input_position + i], nullchar) == ABORC);
 				i--;
 				
 				if(i >= 4) {
@@ -309,14 +315,14 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 						current_mode = MODEC;
 					} else {
 						/* Annex B section 1 rule 5b */
-						blockmatrix[current_row][column_position] = a3_convert(source[input_position]);
+						blockmatrix[current_row][column_position] = a3_convert(source[input_position], nullchar);
 						column_position++;
 						c--;
 						input_position++;
 					}
 					done = 1;
 				} else {
-					blockmatrix[current_row][column_position] = a3_convert(source[input_position]);
+					blockmatrix[current_row][column_position] = a3_convert(source[input_position], nullchar);
 					column_position++;
 					c--;
 					input_position++;
@@ -326,7 +332,7 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 		}
 		
 		if(done == 0) {
-			if((current_mode == MODEB) && (parunmodd(source[input_position]) == SHIFTA)) {
+			if((current_mode == MODEB) && (parunmodd(source[input_position], nullchar) == SHIFTA)) {
 				/* Annex B section 1 rule 6 */
 				/*  When in subset B and an ASCII control character occurs in the data:
 				a.   If there is a lower case character immediately following the control character, insert a Shift
@@ -343,7 +349,7 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 						column_position++;
 						c--;
 					}
-					blockmatrix[current_row][column_position] = a3_convert(source[input_position]);
+					blockmatrix[current_row][column_position] = a3_convert(source[input_position], nullchar);
 					column_position++;
 					c--;
 					input_position++;
@@ -358,7 +364,7 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 						column_position++;
 						c--;
 					}
-					blockmatrix[current_row][column_position] = a3_convert(source[input_position]);
+					blockmatrix[current_row][column_position] = a3_convert(source[input_position], nullchar);
 					column_position++;
 					c--;
 					input_position++;
@@ -369,14 +375,14 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 		}
 		
 		if(done == 0) {
-			if((current_mode == MODEA) && (parunmodd(source[input_position]) == SHIFTB)) {
+			if((current_mode == MODEA) && (parunmodd(source[input_position], nullchar) == SHIFTB)) {
 				/* Annex B section 1 rule 7 */
 				/* When in subset A and a lower case character occurs in the data:
 				a.   If following that character, a control character occurs in the data before the occurrence of
 				another lower case character, insert a Shift character before the lower case character.
 				b.   Otherwise, insert a Code B character before the lower case character to change to subset B. */
-				if((parunmodd(source[input_position + 1]) == SHIFTA) &&
-				(parunmodd(source[input_position + 2]) == SHIFTB)) {
+				if((parunmodd(source[input_position + 1], nullchar) == SHIFTA) &&
+				(parunmodd(source[input_position + 2], nullchar) == SHIFTB)) {
 					/* Annex B section 1 rule 7a */
 					blockmatrix[current_row][column_position] = 98; /* Shift */
 					column_position++;
@@ -387,7 +393,7 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 						column_position++;
 						c--;
 					}
-					blockmatrix[current_row][column_position] = a3_convert(source[input_position]);
+					blockmatrix[current_row][column_position] = a3_convert(source[input_position], nullchar);
 					column_position++;
 					c--;
 					input_position++;
@@ -402,7 +408,7 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 						column_position++;
 						c--;
 					}
-					blockmatrix[current_row][column_position] = a3_convert(source[input_position]);
+					blockmatrix[current_row][column_position] = a3_convert(source[input_position], nullchar);
 					column_position++;
 					c--;
 					input_position++;
@@ -413,8 +419,8 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 		}
 		
 		if(done == 0) {
-			if((current_mode == MODEC) && ((parunmodd(source[input_position]) != ABORC) ||
-				(parunmodd(source[input_position + 1]) != ABORC))) {
+			if((current_mode == MODEC) && ((parunmodd(source[input_position], nullchar) != ABORC) ||
+				(parunmodd(source[input_position + 1], nullchar) != ABORC))) {
 				/* Annex B section 1 rule 8 */
 				/*  When in subset C and a non-numeric character (or a single digit) occurs in the data, insert a Code
 				A or Code B character before that character, following rules 8a and 8b to determine between code
@@ -422,7 +428,7 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 				a.    If an ASCII control character (eg NUL) occurs in the data before any lower case character, use
 				Code A.
 				b.    Otherwise use Code B. */
-				if(parunmodd(source[input_position]) == SHIFTA) {
+				if(parunmodd(source[input_position], nullchar) == SHIFTA) {
 					/* Annex B section 1 rule 8a */
 					blockmatrix[current_row][column_position] = 101; /* Code A */
 					column_position++;
@@ -433,7 +439,7 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 						column_position++;
 						c--;
 					}
-					blockmatrix[current_row][column_position] = a3_convert(source[input_position]);
+					blockmatrix[current_row][column_position] = a3_convert(source[input_position], nullchar);
 					column_position++;
 					c--;
 					input_position++;
@@ -449,7 +455,7 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 						column_position++;
 						c--;
 					}
-					blockmatrix[current_row][column_position] = a3_convert(source[input_position]);
+					blockmatrix[current_row][column_position] = a3_convert(source[input_position], nullchar);
 					column_position++;
 					c--;
 					input_position++;
@@ -570,7 +576,7 @@ int codablock(struct zint_symbol *symbol, unsigned char source[])
 	estimate_codelength = 0.0;
 	last_mode = AORB; /* Codablock always starts with Code A */
 	for(i = 0; i < input_length; i++) {
-		this_mode = parunmodd(source[i]);
+		this_mode = parunmodd(source[i], symbol->nullchar);
 		if(this_mode != last_mode) {
 			estimate_codelength += 1.0;
 		}
@@ -597,7 +603,7 @@ int codablock(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	/* Encode the data */
-	error_number = data_encode_blockf(source, subset_selector, blockmatrix, &columns_needed, &rows_needed, &final_mode);
+	error_number = data_encode_blockf(source, subset_selector, blockmatrix, &columns_needed, &rows_needed, &final_mode, symbol->nullchar);
 	if(error_number > 0) {
 		if(error_number == ERROR_TOO_LONG) {
 			strcpy(symbol->errtxt, "Input data too long [743]");

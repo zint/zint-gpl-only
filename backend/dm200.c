@@ -326,8 +326,8 @@ char ecc200encode(unsigned char *t, int tl, unsigned char *s, int sl, char *enco
 								t[tp++] = 238;
 							enc = newenc;
 						}
-						t[tp++] = (v >> 8);
-						t[tp++] = (v & 0xFF);
+						t[tp++] = (int)(v / 256);
+						t[tp++] = v % 256;
 						p -= 3;
 						out[0] = out[3];
 						out[1] = out[4];
@@ -700,10 +700,10 @@ static char *encmake(int l, unsigned char *s, int *lenp, char exact)
 		if (bl && b == E_BINARY)
 			enc[p][(int)b].s += enc[p + 1][(int)b].s;
 		/*
-		 * fprintf (stderr, "%d:", p); for (e = 0; e < E_MAX; e++) fprintf \
-		 * (stderr, " %c*%d/%d", encchr[e], enc[p][e].s, enc[p][e].t); \
-		 * fprintf (stderr, "\n");
-		 */
+		fprintf (stderr, "%d:", p); for (e = 0; e < E_MAX; e++) fprintf \
+		(stderr, " %c*%d/%d", encchr[e], enc[p][e].s, enc[p][e].t); \
+		fprintf (stderr, "\n");
+		*/
 	}
 	encoding = safemalloc(l + 1);
 	p = 0;
@@ -752,6 +752,8 @@ int iec16022ecc200(unsigned char *barcode, int barcodelen, struct zint_symbol *s
 	int lend, *lenp;
 	struct ecc200matrix_s *matrix;
 	memset(binary, 0, sizeof(binary));
+	unsigned char adjusted[barcodelen];
+	int i;
 
 	lend = 0;
 	lenp = &lend;
@@ -789,6 +791,15 @@ int iec16022ecc200(unsigned char *barcode, int barcodelen, struct zint_symbol *s
 		case 30: W = 48; H = 16; break;
 		default: W = 0; H = 0; break;
 	}
+
+	/* Adjust for NULL characters */
+	for(i = 0; i < barcodelen; i++) {
+		if(barcode[i] == symbol->nullchar) {
+			adjusted[i] = 0x00;
+		} else {
+			adjusted[i] = barcode[i];
+		}
+	}
 	
 	// encoding
 	if (W) {		// known size
@@ -799,10 +810,10 @@ int iec16022ecc200(unsigned char *barcode, int barcodelen, struct zint_symbol *s
 		}
 		if (!encoding) {
 			int len;
-			char *e = encmake(barcodelen, barcode, &len, 1);
+			char *e = encmake(barcodelen, adjusted, &len, 1);
 			if (e && len != matrix->bytes) {	// try not an exact fit
 				free(e);
-				e = encmake(barcodelen, barcode, &len, 0);
+				e = encmake(barcodelen, adjusted, &len, 0);
 				if (len > matrix->bytes) {
 					strcpy(symbol->errtxt, "Cannot make barcode fit");
 					if (e) free (e);
@@ -814,21 +825,22 @@ int iec16022ecc200(unsigned char *barcode, int barcodelen, struct zint_symbol *s
 	} else {
 		// find a suitable encoding
 		if (encoding == NULL)
-			encoding = encmake(barcodelen, barcode, NULL, 1);
+			encoding = encmake(barcodelen, adjusted, NULL, 1);
 
 		if (encoding) {	// find one that fits chosen encoding
 			for (matrix = ecc200matrix; matrix->W; matrix++)
-				if (ecc200encode(binary, matrix->bytes, barcode, barcodelen, encoding, 0)) 
+				if (ecc200encode(binary, matrix->bytes, adjusted, barcodelen, encoding, 0)) {
 					break;
+				}
 		} else {
 			int len;
 			char *e;
-			e = encmake(barcodelen, barcode, &len, 1);
+			e = encmake(barcodelen, adjusted, &len, 1);
 			for (matrix = ecc200matrix;
 			     matrix->W && matrix->bytes != len; matrix++) ;
 			if (e && !matrix->W) {	// try for non exact fit
 				free(e);
-				e = encmake(barcodelen, barcode, &len, 0);
+				e = encmake(barcodelen, adjusted, &len, 0);
 				for (matrix = ecc200matrix; matrix->W && matrix->bytes < len; matrix++) ;
 			}
 			encoding = e;
@@ -840,11 +852,12 @@ int iec16022ecc200(unsigned char *barcode, int barcodelen, struct zint_symbol *s
 		W = matrix->W;
 		H = matrix->H;
 	}
-	if (!ecc200encode(binary, matrix->bytes, barcode, barcodelen, encoding, lenp)) {
+	if (!ecc200encode(binary, matrix->bytes, adjusted, barcodelen, encoding, lenp)) {
 		strcpy(symbol->errtxt, "Barcode too long");
 		free(encoding);
 		return ERROR_INVALID_OPTION;
 	}
+	
 	// ecc code
 	ecc200(binary, matrix->bytes, matrix->datablock, matrix->rsblock);
 	{			// placement
