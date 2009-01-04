@@ -1282,6 +1282,19 @@ int dmatrix(struct zint_symbol *symbol, unsigned char source[])
 	if(symbol->option_1 == 1) {
 		/* ECC 200 */
 		error_number = iec16022ecc200(source, barcodelen, symbol);
+		if((error_number != 0) && (symbol->option_2 != 0)) {
+			if(strcmp(symbol->errtxt, "Cannot make barcode fit") == 0) {
+				/* Can't fit data in the symbol size specified -
+				   use automatic symbol sizing instead */
+				symbol->option_2 = 0;
+				error_number = iec16022ecc200(source, barcodelen, symbol);
+				if(error_number == 0) {
+					/* It worked! */
+					strcpy(symbol->errtxt, "Cannot make barcode fit");
+					error_number = WARN_INVALID_OPTION;
+				}
+			}
+		}
 	} else {
 		/* ECC 000 - 140 */
 		error_number = matrix89(symbol, source);
