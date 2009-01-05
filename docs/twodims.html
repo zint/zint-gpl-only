@@ -42,10 +42,12 @@
 Acuity CiMatrix in partnership with the US DoD and NASA. The symbol
 can encode a large amount of data in a small area. Zint supports all
 versions of the standard from ISO 16022 as shown in the following
-table. ECC200 uses Reed-Solomon error correction and is recommended
-for new applications. The different modes are accessed using the
-<FONT FACE="Courier, monospace">mode=</FONT> option or by setting
-<FONT FACE="Courier, monospace">option_1</FONT>.</P>
+table. <B>Note that ECC 000 to ECC 140 are legacy standards and that
+their use is depreciated</B>. Symbols encoded using ECC 000 to ECC
+140 will probably not be readable by most barcode readers
+manufactured since the early 1990s – use ECC 200 instead. The
+different modes are accessed using the <FONT FACE="Courier, monospace">mode=</FONT>
+option or by setting <FONT FACE="Courier, monospace">option_1</FONT>.</P>
 <CENTER>
 	<TABLE WIDTH=708 BORDER=1 CELLPADDING=4 CELLSPACING=3>
 		<COL WIDTH=143>
@@ -158,253 +160,436 @@ for new applications. The different modes are accessed using the
 <FONT FACE="Courier, monospace">--ver=</FONT> option or by setting
 <FONT FACE="Courier, monospace">option_2</FONT> as shown in the table
 below.</P>
-<DL>
-	<DL>
-		<DL>
-			<DL>
-				<DL>
-					<DL>
-						<DL>
-							<DL>
-								<DD>
-								<TABLE WIDTH=557 BORDER=1 CELLPADDING=4 CELLSPACING=3>
-									<COL WIDTH=128>
-									<COL WIDTH=124>
-									<COL WIDTH=117>
-									<COL WIDTH=139>
-									<TR VALIGN=TOP>
-										<TH WIDTH=128>
-											<P>Input</P>
-										</TH>
-										<TH WIDTH=124>
-											<P>Symbol Size</P>
-										</TH>
-										<TH WIDTH=117>
-											<P>Input</P>
-										</TH>
-										<TH WIDTH=139>
-											<P>Symbol Size</P>
-										</TH>
-									</TR>
-									<TR VALIGN=TOP>
-										<TD WIDTH=128>
-											<P ALIGN=CENTER>1</P>
-										</TD>
-										<TD WIDTH=124>
-											<P ALIGN=CENTER>10 x 10</P>
-										</TD>
-										<TD WIDTH=117>
-											<P ALIGN=CENTER>16</P>
-										</TD>
-										<TD WIDTH=139>
-											<P ALIGN=CENTER>64 x 64</P>
-										</TD>
-									</TR>
-									<TR VALIGN=TOP>
-										<TD WIDTH=128>
-											<P ALIGN=CENTER>2</P>
-										</TD>
-										<TD WIDTH=124>
-											<P ALIGN=CENTER>12 x 12</P>
-										</TD>
-										<TD WIDTH=117>
-											<P ALIGN=CENTER>17</P>
-										</TD>
-										<TD WIDTH=139>
-											<P ALIGN=CENTER>72 x 72</P>
-										</TD>
-									</TR>
-									<TR VALIGN=TOP>
-										<TD WIDTH=128>
-											<P ALIGN=CENTER>3</P>
-										</TD>
-										<TD WIDTH=124>
-											<P ALIGN=CENTER>14 x 14</P>
-										</TD>
-										<TD WIDTH=117>
-											<P ALIGN=CENTER>18</P>
-										</TD>
-										<TD WIDTH=139>
-											<P ALIGN=CENTER>80 x 80</P>
-										</TD>
-									</TR>
-									<TR VALIGN=TOP>
-										<TD WIDTH=128>
-											<P ALIGN=CENTER>4</P>
-										</TD>
-										<TD WIDTH=124>
-											<P ALIGN=CENTER>16 x 16</P>
-										</TD>
-										<TD WIDTH=117>
-											<P ALIGN=CENTER>19</P>
-										</TD>
-										<TD WIDTH=139>
-											<P ALIGN=CENTER>88 x 88</P>
-										</TD>
-									</TR>
-									<TR VALIGN=TOP>
-										<TD WIDTH=128>
-											<P ALIGN=CENTER>5</P>
-										</TD>
-										<TD WIDTH=124>
-											<P ALIGN=CENTER>18 x 18</P>
-										</TD>
-										<TD WIDTH=117>
-											<P ALIGN=CENTER>20</P>
-										</TD>
-										<TD WIDTH=139>
-											<P ALIGN=CENTER>96 x 96</P>
-										</TD>
-									</TR>
-									<TR VALIGN=TOP>
-										<TD WIDTH=128>
-											<P ALIGN=CENTER>6</P>
-										</TD>
-										<TD WIDTH=124>
-											<P ALIGN=CENTER>20 x 20</P>
-										</TD>
-										<TD WIDTH=117>
-											<P ALIGN=CENTER>21</P>
-										</TD>
-										<TD WIDTH=139>
-											<P ALIGN=CENTER>104 x 104</P>
-										</TD>
-									</TR>
-									<TR VALIGN=TOP>
-										<TD WIDTH=128>
-											<P ALIGN=CENTER>7</P>
-										</TD>
-										<TD WIDTH=124>
-											<P ALIGN=CENTER>22 x 22</P>
-										</TD>
-										<TD WIDTH=117>
-											<P ALIGN=CENTER>22</P>
-										</TD>
-										<TD WIDTH=139>
-											<P ALIGN=CENTER>120 x 120</P>
-										</TD>
-									</TR>
-									<TR VALIGN=TOP>
-										<TD WIDTH=128>
-											<P ALIGN=CENTER>8</P>
-										</TD>
-										<TD WIDTH=124>
-											<P ALIGN=CENTER>24 x 24</P>
-										</TD>
-										<TD WIDTH=117>
-											<P ALIGN=CENTER>23</P>
-										</TD>
-										<TD WIDTH=139>
-											<P ALIGN=CENTER>132 x 132</P>
-										</TD>
-									</TR>
-									<TR VALIGN=TOP>
-										<TD WIDTH=128>
-											<P ALIGN=CENTER>9</P>
-										</TD>
-										<TD WIDTH=124>
-											<P ALIGN=CENTER>26 x 26</P>
-										</TD>
-										<TD WIDTH=117>
-											<P ALIGN=CENTER>24</P>
-										</TD>
-										<TD WIDTH=139>
-											<P ALIGN=CENTER>144 x 144</P>
-										</TD>
-									</TR>
-									<TR VALIGN=TOP>
-										<TD WIDTH=128>
-											<P ALIGN=CENTER>10</P>
-										</TD>
-										<TD WIDTH=124>
-											<P ALIGN=CENTER>32 x 32</P>
-										</TD>
-										<TD WIDTH=117>
-											<P ALIGN=CENTER>25</P>
-										</TD>
-										<TD WIDTH=139>
-											<P ALIGN=CENTER>8 x 18</P>
-										</TD>
-									</TR>
-									<TR VALIGN=TOP>
-										<TD WIDTH=128>
-											<P ALIGN=CENTER>11</P>
-										</TD>
-										<TD WIDTH=124>
-											<P ALIGN=CENTER>36 x 36</P>
-										</TD>
-										<TD WIDTH=117>
-											<P ALIGN=CENTER>26</P>
-										</TD>
-										<TD WIDTH=139>
-											<P ALIGN=CENTER>8 x 32</P>
-										</TD>
-									</TR>
-									<TR VALIGN=TOP>
-										<TD WIDTH=128>
-											<P ALIGN=CENTER>12</P>
-										</TD>
-										<TD WIDTH=124>
-											<P ALIGN=CENTER>40 x 40</P>
-										</TD>
-										<TD WIDTH=117>
-											<P ALIGN=CENTER>27</P>
-										</TD>
-										<TD WIDTH=139>
-											<P ALIGN=CENTER>12 x 26</P>
-										</TD>
-									</TR>
-									<TR VALIGN=TOP>
-										<TD WIDTH=128>
-											<P ALIGN=CENTER>13</P>
-										</TD>
-										<TD WIDTH=124>
-											<P ALIGN=CENTER>44 x 44</P>
-										</TD>
-										<TD WIDTH=117>
-											<P ALIGN=CENTER>28</P>
-										</TD>
-										<TD WIDTH=139>
-											<P ALIGN=CENTER>12 x 36</P>
-										</TD>
-									</TR>
-									<TR VALIGN=TOP>
-										<TD WIDTH=128>
-											<P ALIGN=CENTER>14</P>
-										</TD>
-										<TD WIDTH=124>
-											<P ALIGN=CENTER>48 x 48</P>
-										</TD>
-										<TD WIDTH=117>
-											<P ALIGN=CENTER>29</P>
-										</TD>
-										<TD WIDTH=139>
-											<P ALIGN=CENTER>16 x 36</P>
-										</TD>
-									</TR>
-									<TR VALIGN=TOP>
-										<TD WIDTH=128>
-											<P ALIGN=CENTER>15</P>
-										</TD>
-										<TD WIDTH=124>
-											<P ALIGN=CENTER>52 x 52</P>
-										</TD>
-										<TD WIDTH=117>
-											<P ALIGN=CENTER>30</P>
-										</TD>
-										<TD WIDTH=139>
-											<P ALIGN=CENTER>16 x 48</P>
-										</TD>
-									</TR>
-								</TABLE>
-							</DL>
-						</DL>
-					</DL>
-				</DL>
-			</DL>
-		</DL>
-	</DL>
-</DL>
+<P><BR><BR>
+</P>
+<TABLE WIDTH=100% BORDER=1 CELLPADDING=4 CELLSPACING=3>
+	<COL WIDTH=128*>
+	<COL WIDTH=128*>
+	<TR VALIGN=TOP>
+		<TH WIDTH=50%>
+			<P><B>ECC 200</B></P>
+		</TH>
+		<TH WIDTH=50%>
+			<P><B>ECC 000 - 140</B></P>
+		</TH>
+	</TR>
+	<TR VALIGN=TOP>
+		<TH WIDTH=50%>
+			<TABLE WIDTH=100% BORDER=1 CELLPADDING=4 CELLSPACING=3>
+				<COL WIDTH=64*>
+				<COL WIDTH=64*>
+				<COL WIDTH=64*>
+				<COL WIDTH=64*>
+				<TR VALIGN=TOP>
+					<TH WIDTH=25%>
+						<P>Input</P>
+					</TH>
+					<TH WIDTH=25%>
+						<P>Symbol Size</P>
+					</TH>
+					<TH WIDTH=25%>
+						<P>Input</P>
+					</TH>
+					<TH WIDTH=25%>
+						<P>Symbol Size</P>
+					</TH>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>1</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>10 x 10</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>16</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>64 x 64</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>2</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>12 x 12</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>17</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>72 x 72</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>3</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>14 x 14</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>18</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>80 x 80</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>4</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>16 x 16</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>19</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>88 x 88</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>5</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>18 x 18</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>20</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>96 x 96</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>6</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>20 x 20</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>21</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>104 x 104</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>7</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>22 x 22</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>22</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>120 x 120</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>8</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>24 x 24</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>23</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>132 x 132</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>9</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>26 x 26</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>24</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>144 x 144</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>10</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>32 x 32</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>25</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>8 x 18</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>11</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>36 x 36</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>26</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>8 x 32</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>12</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>40 x 40</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>27</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>12 x 26</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>13</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>44 x 44</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>28</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>12 x 36</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>14</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>48 x 48</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>29</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>16 x 36</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>15</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>52 x 52</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>30</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>16 x 48</P>
+					</TD>
+				</TR>
+			</TABLE>
+			<P><BR><BR>
+			</P>
+		</TH>
+		<TH WIDTH=50%>
+			<TABLE WIDTH=100% BORDER=1 CELLPADDING=4 CELLSPACING=3>
+				<COL WIDTH=64*>
+				<COL WIDTH=64*>
+				<COL WIDTH=64*>
+				<COL WIDTH=64*>
+				<TR VALIGN=TOP>
+					<TH WIDTH=25%>
+						<P>Input</P>
+					</TH>
+					<TH WIDTH=25%>
+						<P>Symbol Size</P>
+					</TH>
+					<TH WIDTH=25%>
+						<P>Input</P>
+					</TH>
+					<TH WIDTH=25%>
+						<P>Symbol Size</P>
+					</TH>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>1</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>7 x 7</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>12</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>29 x 29</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>2</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>9 x 9</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>13</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>31 x 31</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>3</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>11 x 11</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>14</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>33 x 33</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>4</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>13 x 13</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>15</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>35 x 35</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>5</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>15 x 15</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>16</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>37 x 37</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>6</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>17 x 17</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>17</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>39 x 39</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>7</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>19 x 19</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>18</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>41 x 41</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>8</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>21 x 21</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>19</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>43 x 43</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>9</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>23 x 23</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>20</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>45 x 45</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>10</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>25 x 25</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>21</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>47 x 47</P>
+					</TD>
+				</TR>
+				<TR VALIGN=TOP>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>11</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER>27 x 27</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER><BR>
+						</P>
+					</TD>
+					<TD WIDTH=25%>
+						<P ALIGN=CENTER><BR>
+						</P>
+					</TD>
+				</TR>
+			</TABLE>
+			<P><BR><BR>
+			</P>
+		</TH>
+	</TR>
+</TABLE>
 <P><BR><BR>
 </P>
 <P ALIGN=CENTER><IMG SRC="matrix.png" NAME="graphics1" ALIGN=LEFT WIDTH=44 HEIGHT=44 BORDER=0><BR CLEAR=LEFT><BR><BR>
