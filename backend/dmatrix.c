@@ -1072,6 +1072,9 @@ int matrix89(struct zint_symbol *symbol, unsigned char source[])
 	char randomized_stream[2210];
 	char header[20];
 	int symbol_size, hex_segment, width;
+	int error_number;
+	
+	error_number = 0;
 	
 	symbol_size = 0;
 	for(i = 0; i < input_length; i++) {
@@ -1180,10 +1183,25 @@ int matrix89(struct zint_symbol *symbol, unsigned char source[])
 	strcpy(unrandomized_stream, header);
 	concat(unrandomized_stream, protected_stream);
 	
+	/* Determine Symbol Size */
 	for(i = 20; i >= 0; i--) {
 		if(MatrixMaxCapacities[i] > strlen(unrandomized_stream)) {
 			symbol_size = i;
 		}
+	}
+	
+	if((symbol->option_2 < 0) || (symbol->option_2 > 21)) {
+		strcpy(symbol->errtxt, "Invalid symbol size");
+		error_number = WARN_INVALID_OPTION;
+		symbol->option_2 = 0;
+	}
+	
+	if(symbol->option_2 > symbol_size) {
+		symbol_size = symbol->option_2;
+	}
+	if((symbol->option_2 < symbol_size) && (symbol->option_2 != 0)) {
+		strcpy(symbol->errtxt, "Unable to fit data in specified symbol size");
+		error_number = WARN_INVALID_OPTION;
 	}
 	
 	/* Add trailer (pad bits) */
@@ -1266,7 +1284,7 @@ int matrix89(struct zint_symbol *symbol, unsigned char source[])
 	symbol->rows = width + 2;
 	symbol->width = width + 2;
 	
-	return 0;
+	return error_number;
 }
 
 int dmatrix(struct zint_symbol *symbol, unsigned char source[])
@@ -1290,7 +1308,7 @@ int dmatrix(struct zint_symbol *symbol, unsigned char source[])
 				error_number = iec16022ecc200(source, barcodelen, symbol);
 				if(error_number == 0) {
 					/* It worked! */
-					strcpy(symbol->errtxt, "Cannot make barcode fit");
+					strcpy(symbol->errtxt, "Unable to fit data in specified symbol size");
 					error_number = WARN_INVALID_OPTION;
 				}
 			}
