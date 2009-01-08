@@ -1212,7 +1212,7 @@ int matrix89(struct zint_symbol *symbol, unsigned char source[])
 	
 	/* Load master random stream */
 	strcpy(master_random_stream, "");
-	for(i = 0; i < 277; i++) {
+	for(i = 0; i < 276; i++) {
 		hex_segment = MasterRandomStream[i];
 		if(hex_segment & 0x80) { concat(master_random_stream, "1"); } else { concat(master_random_stream, "0"); }
 		if(hex_segment & 0x40) { concat(master_random_stream, "1"); } else { concat(master_random_stream, "0"); }
