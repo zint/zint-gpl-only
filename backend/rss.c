@@ -43,6 +43,7 @@
 #include "common.h"
 #include "large.h"
 #include "rss.h"
+#include "gs1.h"
 
 /**********************************************************************
 * combins(n,r): returns the number of Combinations of r selected from n:
@@ -1016,10 +1017,10 @@ int general_rules(char field[], char type[])
 	}
 }
 
-int rss_binary_string(struct zint_symbol *symbol, unsigned char source[], char binary_string[])
+int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_string[])
 { /* Handles all data encodation from section 7.2.5 of ISO/IEC 24724 */
 	int encoding_method, i, mask, j, read_posn, latch;
-	char general_field[ustrlen(source)], general_field_type[ustrlen(source)];
+	char general_field[strlen(source)], general_field_type[strlen(source)];
 	int remainder, d1, d2, value;
 	char padstring[14];
 
@@ -1029,7 +1030,7 @@ int rss_binary_string(struct zint_symbol *symbol, unsigned char source[], char b
 	/* Decide whether a compressed data field is required and if so what
 	method to use - method 2 = no compressed data field */
 	
-	if((ustrlen(source) >= 16) && ((source[0] == '0') && (source[1] == '1'))) {
+	if((strlen(source) >= 16) && ((source[0] == '0') && (source[1] == '1'))) {
 		/* (01) and other AIs */
 		encoding_method = 1;
 	} else {
@@ -1037,10 +1038,10 @@ int rss_binary_string(struct zint_symbol *symbol, unsigned char source[], char b
 		encoding_method = 2;
 	}
 	
-	if(((ustrlen(source) >= 20) && (encoding_method == 1)) && ((source[2] == '9') && (source[16] == '3'))) {
+	if(((strlen(source) >= 20) && (encoding_method == 1)) && ((source[2] == '9') && (source[16] == '3'))) {
 		/* Possibly encoding method > 2 */
 		
-		if((ustrlen(source) >= 26) && (source[17] == '1')) {
+		if((strlen(source) >= 26) && (source[17] == '1')) {
 			/* Methods 3, 7, 9, 11 and 13 */
 			
 			if(source[18] == '0') {
@@ -1058,14 +1059,14 @@ int rss_binary_string(struct zint_symbol *symbol, unsigned char source[], char b
 
 					encoding_method = 7;
 					
-					if((source[19] == '3') && (ustrlen(source) == 26)) {
+					if((source[19] == '3') && (strlen(source) == 26)) {
 						/* (01) and (3103) */
 						weight = atof(weight_str) / 1000.0;
 						
 						if(weight <= 32.767) { encoding_method = 3; }
 					}
 					
-					if(ustrlen(source) == 34){
+					if(strlen(source) == 34){
 						if((source[26] == '1') && (source[27] == '1')) {
 							/* (01), (310x) and (11) - metric weight and production date */
 							encoding_method = 7;
@@ -1090,7 +1091,7 @@ int rss_binary_string(struct zint_symbol *symbol, unsigned char source[], char b
 			}
 		}
 		
-		if((ustrlen(source) >= 26) && (source[17] == '2')) {
+		if((strlen(source) >= 26) && (source[17] == '2')) {
 			/* Methods 4, 8, 10, 12 and 14 */
 			
 			if(source[18] == '0') {
@@ -1107,7 +1108,7 @@ int rss_binary_string(struct zint_symbol *symbol, unsigned char source[], char b
 
 					encoding_method = 8;
 					
-					if(((source[19] == '2') || (source[19] == '3')) && (ustrlen(source) == 26)) {
+					if(((source[19] == '2') || (source[19] == '3')) && (strlen(source) == 26)) {
 						/* (01) and (3202)/(3203) */
 						
 						if(source[19] == '3') {
@@ -1124,7 +1125,7 @@ int rss_binary_string(struct zint_symbol *symbol, unsigned char source[], char b
 						
 					}
 					
-					if(ustrlen(source) == 34){
+					if(strlen(source) == 34){
 						if((source[26] == '1') && (source[27] == '1')) {
 							/* (01), (320x) and (11) - English weight and production date */
 							encoding_method = 8;
@@ -1166,18 +1167,18 @@ int rss_binary_string(struct zint_symbol *symbol, unsigned char source[], char b
 	switch(encoding_method) { /* Encoding method - Table 10 */
 		case 1: concat(binary_string, "1XX"); read_posn = 16; break;
 		case 2: concat(binary_string, "00XX"); read_posn = 0; break;
-		case 3: concat(binary_string, "0100"); read_posn = ustrlen(source); break;
-		case 4: concat(binary_string, "0101"); read_posn = ustrlen(source); break;
+		case 3: concat(binary_string, "0100"); read_posn = strlen(source); break;
+		case 4: concat(binary_string, "0101"); read_posn = strlen(source); break;
 		case 5: concat(binary_string, "01100XX"); read_posn = 20; break;
 		case 6: concat(binary_string, "01101XX"); read_posn = 23; break;
-		case 7: concat(binary_string, "0111000"); read_posn = ustrlen(source); break;
-		case 8: concat(binary_string, "0111001"); read_posn = ustrlen(source); break;
-		case 9: concat(binary_string, "0111010"); read_posn = ustrlen(source); break;
-		case 10: concat(binary_string, "0111011"); read_posn = ustrlen(source); break;
-		case 11: concat(binary_string, "0111100"); read_posn = ustrlen(source); break;
-		case 12: concat(binary_string, "0111101"); read_posn = ustrlen(source); break;
-		case 13: concat(binary_string, "0111110"); read_posn = ustrlen(source); break;
-		case 14: concat(binary_string, "0111111"); read_posn = ustrlen(source); break;
+		case 7: concat(binary_string, "0111000"); read_posn = strlen(source); break;
+		case 8: concat(binary_string, "0111001"); read_posn = strlen(source); break;
+		case 9: concat(binary_string, "0111010"); read_posn = strlen(source); break;
+		case 10: concat(binary_string, "0111011"); read_posn = strlen(source); break;
+		case 11: concat(binary_string, "0111100"); read_posn = strlen(source); break;
+		case 12: concat(binary_string, "0111101"); read_posn = strlen(source); break;
+		case 13: concat(binary_string, "0111110"); read_posn = strlen(source); break;
+		case 14: concat(binary_string, "0111111"); read_posn = strlen(source); break;
 	}
 	
 	/* Variable length symbol bit field is just given a place holder (XX)
@@ -1374,7 +1375,7 @@ int rss_binary_string(struct zint_symbol *symbol, unsigned char source[], char b
 			mask = mask >> 1;
 		}
 		
-		if(ustrlen(source) == 34) {
+		if(strlen(source) == 34) {
 			/* Date information is included */
 			date_str[0] = source[28];
 			date_str[1] = source[29];
@@ -1491,7 +1492,7 @@ int rss_binary_string(struct zint_symbol *symbol, unsigned char source[], char b
 	rest of the data (if any) goes into a general-purpose data compaction field */
 	
 	j = 0;
-	for(i = read_posn; i < ustrlen(source); i++) {
+	for(i = read_posn; i < strlen(source); i++) {
 		general_field[j] = source[i];
 		j++;
 	}
@@ -1838,33 +1839,15 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[])
 	int check_char, c_odd, c_even, elements[235], pattern_width, reader, writer;
 	int row, elements_in_sub, special_case_row, left_to_right;
 	int codeblocks, sub_elements[235], stack_rows, current_row, current_block;
-	char reduced[170], ai_string[4];
-	int last_ai, ai_latch, separator_row;
+	int separator_row;
+	char reduced[ustrlen(source)];
 	
 	separator_row = 0;
 	reader=0;
 
-	if(source[0] != '[') {
-		strcpy(symbol->errtxt, "Data does not start with an AI [311]");
-		return ERROR_INVALID_DATA;
-	}
+	i = gs1_verify(symbol, source, reduced);
+	if(i != 0) { return i; }
 	
-	for(i = 0; i < ustrlen(source) - 1; i++) {
-		if((source[i] == '[') && (source[i + 1] == '[')) {
-			/* Can't have nested brackets - Quit */
-			strcpy(symbol->errtxt, "Nested AI detected (two or more open brackets) [312]");
-			return ERROR_INVALID_DATA;
-		}
-	}
-	
-	for(i = 0; i < ustrlen(source) - 1; i++) {
-		if((source[i] == ']') && (source[i + 1] == ']')) {
-			/* Can't have nested brackets - Quit */
-			strcpy(symbol->errtxt, "Nested AI detected (two or more close brackets) [313]");
-			return ERROR_INVALID_DATA;
-		}
-	}
-
 	if((symbol->symbology == BARCODE_RSS_EXP_CC) || (symbol->symbology == BARCODE_RSS_EXPSTACK_CC)) {
 		/* make space for a composite separator pattern */
 		separator_row = symbol->rows;
@@ -1880,45 +1863,7 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[])
 		concat(binary_string, "0");
 	}
 	
-	/* Resolve AI data - put resulting string in 'reduced' */
-	j = 0;
-	last_ai = 0;
-	ai_latch = 1;
-	for(i = 0; i < ustrlen(source); i++) {
-		if((source[i] != '[') && (source[i] != ']')) {
-			reduced[j] = source[i];
-			j++;
-		}
-		if(source[i] == '[') {
-			/* Start of an AI string */
-			if(ai_latch == 0) {
-				reduced[j] = '[';
-				j++;
-			}
-			ai_string[0] = source[i + 1];
-			ai_string[1] = source[i + 2];
-			ai_string[2] = '\0';
-			last_ai = atoi(ai_string);
-			ai_latch = 0;
-			/* The following values from GS1 specification figure 5.3.8.2.1 - 1
-			"Element Strings with Pre-Defined Length Using Application Identifiers" */
-			if((last_ai >= 0) && (last_ai <= 4)) { ai_latch = 1; }
-			if((last_ai >= 11) && (last_ai <= 20)) { ai_latch = 1; }
-			if(last_ai == 23) { ai_latch = 1; } /* legacy support - see 5.3.8.2.2 */
-			if((last_ai >= 31) && (last_ai <= 36)) { ai_latch = 1; }
-			if(last_ai == 41) { ai_latch = 1; }
-		}
-		/* The ']' character is simply dropped from the input */
-	}
-	reduced[j] = '\0';
-	
-	/* the character '[' in the reduced string refers to the FNC1 character */
-	
-	/* Note that no attempt is made to verify that the data to be encoded does
-	actually conform to the right data length - that is required of the person or
-	program inputting the data */
-	
-	i = rss_binary_string(symbol, (unsigned char*)reduced, binary_string);
+	i = rss_binary_string(symbol, reduced, binary_string);
 	if(i != 0) {
 		return i;
 	}

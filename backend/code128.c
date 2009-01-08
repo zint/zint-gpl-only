@@ -24,6 +24,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "common.h"
+#include "gs1.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -196,12 +197,12 @@ void c128_set_c(unsigned char source_a, unsigned char source_b, char dest[], int
 int code_128(struct zint_symbol *symbol, unsigned char source[])
 { /* Handle Code 128 and NVE-18 */
 	int i, j, k, e_count, values[170], bar_characters, read, total_sum, nve_check;
-	int errornum, indexchaine, indexliste, sourcelen;
+	int error_number, indexchaine, indexliste, sourcelen;
 	char set[170], fset[170], mode, last_set, last_fset;
 	float glyph_count;
 	char dest[1000];
 	
-	errornum = 0;
+	error_number = 0;
 	strcpy(dest, "");
 	
 	sourcelen = ustrlen(source);
@@ -554,19 +555,19 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 			symbol->text[i] = ' ';
 		}
 	}
-	return errornum;
+	return error_number;
 }
 
 int ean_128(struct zint_symbol *symbol, unsigned char source[])
 { /* Handle EAN-128 (Now known as GS1-128) */
 	int i, j, e_count, values[170], bar_characters, read, total_sum;
-	int errornum, indexchaine, indexliste, ai_latch, sourcelen;
-	char set[170], mode, last_set, reduced[170], ai_string[4];
+	int error_number, indexchaine, indexliste, sourcelen;
+	char set[170], mode, last_set, reduced[ustrlen(source)];
 	float glyph_count;
 	char dest[1000];
-	int last_ai, separator_row, linkage_flag;
+	int separator_row, linkage_flag;
 
-	errornum = 0;
+	error_number = 0;
 	strcpy(dest, "");
 	linkage_flag = 0;
 	sourcelen = ustrlen(source);
@@ -587,19 +588,6 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 		strcpy(symbol->errtxt, "Input too long [161]");
 		return ERROR_TOO_LONG;
 	}
-
-	/* Detect extended ASCII characters */
-	for(i = 0; i <  sourcelen; i++) {
-		if(source[i] >=128) {
-			strcpy(symbol->errtxt, "Extended ASCII characters not supported by GS1-128 [162]");
-			return ERROR_INVALID_DATA;
-		}
-	}
-	
-	if(source[0] != '[') {
-		strcpy(symbol->errtxt, "Input string doesn't start with AI [163]");
-		return ERROR_INVALID_DATA;
-	}
 	
 	/* if part of a composite symbol make room for the separator pattern */
 	if(symbol->symbology == BARCODE_EAN128_CC) {
@@ -608,43 +596,8 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 		symbol->rows += 1;
 	}
 
-	/* Resolve AI data - put resulting string in 'reduced' */
-	j = 0;
-	last_ai = 0;
-	ai_latch = 1;
-	for(i = 0; i < sourcelen; i++) {
-		if((source[i] != '[') && (source[i] != ']')) {
-			reduced[j] = source[i];
-			j++;
-		}
-		if(source[i] == '[') {
-			/* Start of an AI string */
-			if(ai_latch == 0) {
-				reduced[j] = '[';
-				j++;
-			}
-			ai_string[0] = source[i + 1];
-			ai_string[1] = source[i + 2];
-			ai_string[2] = '\0';
-			last_ai = atoi(ai_string);
-			ai_latch = 0;
-			/* The following values from GS1 specification figure 5.3.8.2.1 - 1
-			   "Element Strings with Pre-Defined Length Using Application Identifiers" */
-			if((last_ai >= 0) && (last_ai <= 4)) { ai_latch = 1; }
-			if((last_ai >= 11) && (last_ai <= 20)) { ai_latch = 1; }
-			if(last_ai == 23) { ai_latch = 1; } /* legacy support - see 5.3.8.2.2 */
-			if((last_ai >= 31) && (last_ai <= 36)) { ai_latch = 1; }
-			if(last_ai == 41) { ai_latch = 1; }
-		}
-		/* The ']' character is simply dropped from the input */
-	}
-	reduced[j] = '\0';
-	
-	/* the character '[' in the reduced string refers to the FNC1 character */
-	
-	/* Note that no attempt is made to verify that the data to be encoded does
-	actually conform to the right data length - that is required of the person or
-	program inputting the data */
+	error_number = gs1_verify(symbol, source, reduced);
+	if(error_number != 0) { return error_number; }
 	
 	/* Decide on mode using same system as PDF417 and rules of ISO 15417 Annex E */
 	indexliste = 0;
@@ -883,7 +836,7 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 		}
 	}
 	
-	return errornum;
+	return error_number;
 }
 
 int nve_18(struct zint_symbol *symbol, unsigned char source[])
