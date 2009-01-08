@@ -45,6 +45,7 @@
 #include "large.h"
 #include "composite.h"
 #include "pdf417.h"
+#include "gs1.h"
 
 #define UINT unsigned short
 
@@ -692,13 +693,13 @@ int cc_c(struct zint_symbol *symbol, unsigned char source[], int cc_width, int e
 	return 0;	
 }
 
-int cc_binary_string(struct zint_symbol *symbol, unsigned char source[], char binary_string[], int cc_mode, int *cc_width, int *ecc, int lin_width)
+int cc_binary_string(struct zint_symbol *symbol, char source[], char binary_string[], int cc_mode, int *cc_width, int *ecc, int lin_width)
 { /* Handles all data encodation from section 5 of ISO/IEC 24723 */
 	int encoding_method, read_posn, d1, d2, value, alpha_pad;
 	int group_val, i, j, mask, ai_crop, ai_crop_posn, fnc1_latch;
 	int ai90_mode, latch, remainder, binary_length;
 	char date_str[4];
-	char general_field[ustrlen(source)], general_field_type[ustrlen(source)];
+	char general_field[strlen(source)], general_field_type[strlen(source)];
 	int target_bitsize;
 	
 	encoding_method = 1;
@@ -712,7 +713,7 @@ int cc_binary_string(struct zint_symbol *symbol, unsigned char source[], char bi
 	value = 0;
 	target_bitsize = 0;
 
-	if((source[0] == '1') && ((source[1] == '0') || (source[1] == '1') || (source[1] == '7')) && (ustrlen(source) > 8)) {
+	if((source[0] == '1') && ((source[1] == '0') || (source[1] == '1') || (source[1] == '7')) && (strlen(source) > 8)) {
 		/* Source starts (10), (11) or (17) */
 		encoding_method = 2;
 	}
@@ -781,7 +782,7 @@ int cc_binary_string(struct zint_symbol *symbol, unsigned char source[], char bi
 
 	if (encoding_method == 3) {
 		/* Encodation Method field of "11" - AI 90 */
-		char ninety[ustrlen(source)], numeric_part[4];
+		char ninety[strlen(source)], numeric_part[4];
 		int alpha, alphanum, numeric, test1, test2, test3, next_ai_posn;
 		int numeric_value, table3_letter, mask;
 		
@@ -794,7 +795,7 @@ int cc_binary_string(struct zint_symbol *symbol, unsigned char source[], char bi
 		do {
 			ninety[i] = source[i + 2];
 			i++;
-		} while ((source[i + 2] != '[') && ((i + 2) < ustrlen(source)));
+		} while ((source[i + 2] != '[') && ((i + 2) < strlen(source)));
 		ninety[i] = '\0';
 		
 		/* Find out if the AI 90 data is alphabetic or numeric or both */
@@ -1080,7 +1081,7 @@ int cc_binary_string(struct zint_symbol *symbol, unsigned char source[], char bi
 		j++;
 	}
 	
-	for(i = read_posn; i < ustrlen(source); i++) {
+	for(i = read_posn; i < strlen(source); i++) {
 		general_field[j] = source[i];
 		j++;
 	}
@@ -1671,14 +1672,14 @@ int cc_binary_string(struct zint_symbol *symbol, unsigned char source[], char bi
 
 int composite(struct zint_symbol *symbol, unsigned char source[])
 {
-	int errno, cc_mode, cc_width, ecc_level;
-	int j, last_ai, ai_latch, i, k, separator_row;
-	unsigned char reduced[3000];
-	char binary_string[10 * ustrlen(source)], ai_string[4];
+	int error_number, cc_mode, cc_width, ecc_level;
+	int j, i, k, separator_row;
+	char reduced[ustrlen(source)];
+	char binary_string[10 * ustrlen(source)];
 	struct zint_symbol *linear;
 	int top_shift, bottom_shift;
 	
-	errno = 0;
+	error_number = 0;
 	separator_row = 0;
 	
 	if(strlen(symbol->primary) == 0) {
@@ -1691,64 +1692,10 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 		return ERROR_TOO_LONG;
 	}
 	
-	if(source[0] != '[') {
-		strcpy(symbol->errtxt, "Data does not start with an AI [A6]");
-		return ERROR_INVALID_DATA;
-	}
-	
-	for(i = 0; i < ustrlen(source) - 1; i++) {
-		if((source[i] == '[') && (source[i + 1] == '[')) {
-			/* Can't have nested brackets - Quit */
-			strcpy(symbol->errtxt, "Nested AI detected (two or more open brackets) [A7]");
-			return ERROR_INVALID_DATA;
-		}
-	}
-	
-	for(i = 0; i < ustrlen(source) - 1; i++) {
-		if((source[i] == ']') && (source[i + 1] == ']')) {
-			/* Can't have nested brackets - Quit */
-			strcpy(symbol->errtxt, "Nested AI detected (two or more close brackets) [A8]");
-			return ERROR_INVALID_DATA;
-		}
-	}
-	
 	linear = ZBarcode_Create(); /* Symbol contains the 2D component and Linear contains the rest */
 	
-	/* Resolve AI data - put resulting string in 'reduced' */
-	j = 0;
-	last_ai = 0;
-	ai_latch = 1;
-	for(i = 0; i < ustrlen(source); i++) {
-		if((source[i] != '[') && (source[i] != ']')) {
-			reduced[j] = source[i];
-			j++;
-		}
-		if(source[i] == '[') {
-			/* Start of an AI string */
-			if(ai_latch == 0) {
-				reduced[j] = '[';
-				j++;
-			}
-			ai_string[0] = source[i + 1];
-			ai_string[1] = source[i + 2];
-			ai_string[2] = '\0';
-			last_ai = atoi(ai_string);
-			ai_latch = 0;
-			/* The following values from GS1 specification figure 5.3.8.2.1 - 1
-			"Element Strings with Pre-Defined Length Using Application Identifiers" */
-			if((last_ai >= 0) && (last_ai <= 4)) { ai_latch = 1; }
-			if((last_ai >= 11) && (last_ai <= 20)) { ai_latch = 1; }
-			if(last_ai == 23) { ai_latch = 1; } /* legacy support - see 5.3.8.2.2 */
-			if((last_ai >= 31) && (last_ai <= 36)) { ai_latch = 1; }
-			if(last_ai == 41) { ai_latch = 1; }
-		}
-		/* The ']' character is simply dropped from the input */
-	}
-	reduced[j] = '\0';
-	
-	/* Note that no attempt is made to verify that the data to be encoded does
-	actually conform to the right data length - that is required of the person or
-	program inputting the data */
+	error_number = gs1_verify(symbol, source, reduced);
+	if(error_number != 0) { return error_number; }
 	
 	cc_mode = symbol->option_1;
 	
@@ -1769,16 +1716,16 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	switch(symbol->symbology) {
-		case BARCODE_EANX_CC: errno = eanx(linear, (unsigned char *)symbol->primary); break;
-		case BARCODE_EAN128_CC: errno = ean_128(linear, (unsigned char *)symbol->primary); break;
-		case BARCODE_RSS14_CC: errno = rss14(linear, (unsigned char *)symbol->primary); break;
-		case BARCODE_RSS_LTD_CC: errno = rsslimited(linear, (unsigned char *)symbol->primary); break;
-		case BARCODE_RSS_EXP_CC: errno = rssexpanded(linear, (unsigned char *)symbol->primary); break;
-		case BARCODE_UPCA_CC: errno = eanx(linear, (unsigned char *)symbol->primary); break;
-		case BARCODE_UPCE_CC: errno = eanx(linear, (unsigned char *)symbol->primary); break;
-		case BARCODE_RSS14STACK_CC: errno = rss14(linear, (unsigned char *)symbol->primary); break;
-		case BARCODE_RSS14_OMNI_CC: errno = rss14(linear, (unsigned char *)symbol->primary); break;
-		case BARCODE_RSS_EXPSTACK_CC: errno = rssexpanded(linear, (unsigned char *)symbol->primary); break;
+		case BARCODE_EANX_CC: error_number = eanx(linear, (unsigned char *)symbol->primary); break;
+		case BARCODE_EAN128_CC: error_number = ean_128(linear, (unsigned char *)symbol->primary); break;
+		case BARCODE_RSS14_CC: error_number = rss14(linear, (unsigned char *)symbol->primary); break;
+		case BARCODE_RSS_LTD_CC: error_number = rsslimited(linear, (unsigned char *)symbol->primary); break;
+		case BARCODE_RSS_EXP_CC: error_number = rssexpanded(linear, (unsigned char *)symbol->primary); break;
+		case BARCODE_UPCA_CC: error_number = eanx(linear, (unsigned char *)symbol->primary); break;
+		case BARCODE_UPCE_CC: error_number = eanx(linear, (unsigned char *)symbol->primary); break;
+		case BARCODE_RSS14STACK_CC: error_number = rss14(linear, (unsigned char *)symbol->primary); break;
+		case BARCODE_RSS14_OMNI_CC: error_number = rss14(linear, (unsigned char *)symbol->primary); break;
+		case BARCODE_RSS_EXPSTACK_CC: error_number = rssexpanded(linear, (unsigned char *)symbol->primary); break;
 	}
 	
 	switch(symbol->symbology) {
@@ -1810,8 +1757,8 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 	
 	strcpy(binary_string, "");
 	
-	if(errno != 0) {
-		return errno;
+	if(error_number != 0) {
+		return error_number;
 	}
 	
 	if(cc_mode == 1) {
@@ -1841,12 +1788,12 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	switch(cc_mode) { /* Note that ecc_level is only relevant to CC-C */
-		case 1: errno = cc_a(symbol, (unsigned char*)binary_string, cc_width); break;
-		case 2: errno = cc_b(symbol, (unsigned char*)binary_string, cc_width); break;
-		case 3: errno = cc_c(symbol, (unsigned char*)binary_string, cc_width, ecc_level); break;
+		case 1: error_number = cc_a(symbol, (unsigned char*)binary_string, cc_width); break;
+		case 2: error_number = cc_b(symbol, (unsigned char*)binary_string, cc_width); break;
+		case 3: error_number = cc_c(symbol, (unsigned char*)binary_string, cc_width, ecc_level); break;
 	}
 	
-	if(errno != 0) {
+	if(error_number != 0) {
 		return ERROR_ENCODING_PROBLEM;
 	}
 	
@@ -1924,5 +1871,5 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 	
 	ZBarcode_Delete(linear);
 	
-	return errno;
+	return error_number;
 }
