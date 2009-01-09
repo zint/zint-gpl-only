@@ -112,8 +112,8 @@ int gs1_verify(struct zint_symbol *symbol, unsigned char source[], char reduced[
 			ai_string[2] = '\0';
 			last_ai = atoi(ai_string);
 			ai_latch = 0;
-			/* The following values from GS1 specification figure 5.3.8.2.1 - 1
-			"Element Strings with Pre-Defined Length Using Application Identifiers" */
+			/* The following values from "GS-1 General Specification version 8.0 issue 2, May 2008"
+			figure 5.4.8.2.1 - 1 "Element Strings with Pre-Defined Length Using Application Identifiers" */
 			if((last_ai >= 0) && (last_ai <= 4)) { ai_latch = 1; }
 			if((last_ai >= 11) && (last_ai <= 20)) { ai_latch = 1; }
 			if(last_ai == 23) { ai_latch = 1; } /* legacy support - see 5.3.8.2.2 */
