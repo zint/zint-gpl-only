@@ -21,13 +21,20 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "common.h"
+
+/* This code does some checks on the integrity of GS1 data. It is not intended
+   to be bulletproof, nor does it report very accurately what problem was found
+   or where, but should prevent some of the more common encoding errors */
 
 int gs1_verify(struct zint_symbol *symbol, unsigned char source[], char reduced[])
 {
 	int i, j, last_ai, ai_latch;
 	char ai_string[6];
 	int bracket_level, max_bracket_level, ai_length, max_ai_length, min_ai_length;
+	int ai_value[100], ai_location[100], ai_count, data_location[100], data_length[100];
+	int error_latch;
 	
 	/* Detect extended ASCII characters */
 	for(i = 0; i <  ustrlen(source); i++) {
@@ -92,6 +99,65 @@ int gs1_verify(struct zint_symbol *symbol, unsigned char source[], char reduced[
 		return ERROR_INVALID_DATA;
 	}
 	
+	ai_count = 0;
+	for(i = 1; i < ustrlen(source); i++) {
+		if(source[i - 1] == '[') {
+			ai_location[ai_count] = i;
+			j = 0;
+			do {
+				ai_string[j] = source[i + j];
+				j++;
+			} while (ai_string[j - 1] != ']');
+			ai_string[j - 1] = '\0';
+			ai_value[ai_count] = atoi(ai_string);
+			ai_count++;
+		}
+	}
+	
+	for(i = 0; i < ai_count; i++) {
+		data_location[i] = ai_location[i] + 3;
+		if(ai_value[i] >= 100) { data_location[i]++; }
+		if(ai_value[i] >= 1000) { data_location[i]++; }
+		data_length[i] = 0;
+		do {
+			data_length[i]++;
+		} while ((source[data_location[i] + data_length[i] - 1] != '[') && (source[data_location[i] + data_length[i] - 1] != '\0'));
+		data_length[i]--;
+	}
+	
+	error_latch = -1;
+	for(i = 0; i < ai_count; i++) {
+		switch (ai_value[i]) {
+			case 0: if(data_length[i] != 18) { error_latch = i; } break;
+			case 1: if(data_length[i] != 14) { error_latch = i; } break;
+			case 2: if(data_length[i] != 14) { error_latch = i; } break;
+			case 3: if(data_length[i] != 14) { error_latch = i; } break;
+			case 4: if(data_length[i] != 16) { error_latch = i; } break;
+			case 11: if(data_length[i] != 6) { error_latch = i; } break;
+			case 12: if(data_length[i] != 6) { error_latch = i; } break;
+			case 13: if(data_length[i] != 6) { error_latch = i; } break;
+			case 14: if(data_length[i] != 6) { error_latch = i; } break;
+			case 15: if(data_length[i] != 6) { error_latch = i; } break;
+			case 16: if(data_length[i] != 6) { error_latch = i; } break;
+			case 17: if(data_length[i] != 6) { error_latch = i; } break;
+			case 18: if(data_length[i] != 6) { error_latch = i; } break;
+			case 19: if(data_length[i] != 6) { error_latch = i; } break;
+			case 20: if(data_length[i] != 2) { error_latch = i; } break;
+			case 31: if(data_length[i] != 8) { error_latch = i; } break;
+			case 32: if(data_length[i] != 8) { error_latch = i; } break;
+			case 33: if(data_length[i] != 8) { error_latch = i; } break;
+			case 34: if(data_length[i] != 8) { error_latch = i; } break;
+			case 35: if(data_length[i] != 8) { error_latch = i; } break;
+			case 36: if(data_length[i] != 8) { error_latch = i; } break;
+			case 41: if(data_length[i] != 14) { error_latch = i; } break;
+		}
+	}
+	
+	if(error_latch != -1) {
+		strcpy(symbol->errtxt, "Invalid data length for AI");
+		return ERROR_INVALID_DATA;
+	}
+
 	/* Resolve AI data - put resulting string in 'reduced' */
 	j = 0;
 	last_ai = 0;
