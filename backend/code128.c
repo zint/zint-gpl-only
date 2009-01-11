@@ -187,7 +187,7 @@ void c128_set_c(unsigned char source_a, unsigned char source_b, char dest[], int
 { /* Translate Code 128 Set C characters into barcodes */
   /* This set handles numbers in a compressed form */
 	int weight;
-
+	
 	weight = (10 * ctoi(source_a)) + ctoi(source_b);
 	concat(dest, C128Table[weight]);
 	values[(*bar_chars)] = weight;
@@ -615,13 +615,7 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 			list[0][indexliste]++;
 			indexchaine++;
 			mode = parunmodd(reduced[indexchaine], 0x00);
-			if(reduced[indexchaine] == '[') {
-				if(indexchaine % 2 == 0) {
-					mode = ABORC;
-				} else {
-					mode = AORB;
-				}
-			}
+			if(reduced[indexchaine] == '[') { mode = ABORC; }
 		}
 		indexliste++;
 	} while (indexchaine < strlen(reduced));
@@ -662,6 +656,21 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 				case LATCHC: set[read] = 'C'; break;
 			}
 			read++;
+		}
+	}
+	
+	/* We have a problem with FNC1 in Code Set C to resolve */
+	for(i = 0; i < read; i++) {
+		if((set[i] == 'C') && (reduced[i] == '[')) {
+			int c_count;
+			
+			c_count = 0;
+			for(j = 0; j < i; j++) {
+				if(set[j] == 'C') { c_count++; } else { c_count = 0; }
+			}
+			if((c_count % 2) == 1) {
+				set[i - 1] = 'B';
+			}
 		}
 	}
 	
@@ -736,7 +745,7 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 			}
 		}
 		
-		if((set[i] == 'a') || (set[i] == 'b')) {
+		if((set[read] == 'a') || (set[read] == 'b')) {
 			/* Insert shift character */
 			concat(dest, C128Table[98]);
 			values[bar_characters] = 98;
@@ -746,12 +755,16 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 		if(reduced[read] != '[') {
 			switch(set[read])
 			{ /* Encode data characters */
-				case 'A': c128_set_a(reduced[read], dest, values, &bar_characters, 0x00);
-				read++;
-				break;
-				case 'B': c128_set_b(reduced[read], dest, values, &bar_characters);
-				read++;
-				break;
+				case 'A':
+				case 'a':
+					c128_set_a(reduced[read], dest, values, &bar_characters, 0x00);
+					read++;
+					break;
+				case 'B':
+				case 'b':
+					c128_set_b(reduced[read], dest, values, &bar_characters);
+					read++;
+					break;
 				case 'C': c128_set_c(reduced[read], reduced[read + 1], dest, values, &bar_characters);
 				read += 2;
 				break;
@@ -795,6 +808,11 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 		bar_characters++;
 	}
 	
+	/*for(i = 0; i < bar_characters; i++) {
+		printf("[%d] ", values[i]);
+	}
+	printf("\n");*/
+	
 	/* check digit calculation */
 	total_sum = 0;
 	for(i = 0; i < bar_characters; i++)
@@ -807,9 +825,13 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 		total_sum += values[i];
 	}
 	concat(dest, C128Table[total_sum%103]);
+	values[bar_characters] = total_sum % 103;
+	bar_characters++;
 	
 	/* Stop character */
 	concat(dest, C128Table[106]);
+	values[bar_characters] = 106;
+	bar_characters++;
 	expand(symbol, dest);
 	
 	/* Add the separator pattern for composite symbols */
