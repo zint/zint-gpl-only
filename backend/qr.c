@@ -26,16 +26,12 @@
 #ifndef NO_QR
 #include <qrencode.h>
 
-static int kanji = 0;
-
-QRcode *encode(int security, int size, const unsigned char *intext)
+QRcode *encode(int security, int size, const unsigned char *intext, int kanji)
 {
 	int version;
 	QRecLevel level;
 	QRencodeMode hint;
 	QRcode *code;
-
-	level=QR_ECLEVEL_L;
 
 	if(kanji) {
 		hint = QR_MODE_KANJI;
@@ -70,8 +66,11 @@ int qr_code(struct zint_symbol *symbol, unsigned char source[])
 	QRcode *code;
 	int errno = 0;
 	int i, j;
+	int kanji;
 	
-	code = encode(symbol->option_1, symbol->option_2, source);
+	if(symbol->input_mode == KANJI_MODE) { kanji = 1; } else { kanji = 0; }
+
+	code = encode(symbol->option_1, symbol->option_2, source, kanji);
 	if(code == NULL) {
 		strcpy(symbol->errtxt, "libqrencode failed to encode the input data [581]");
 		return ERROR_ENCODING_PROBLEM;
