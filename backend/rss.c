@@ -1845,8 +1845,11 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[])
 	separator_row = 0;
 	reader=0;
 
-	i = gs1_verify(symbol, source, reduced);
-	if(i != 0) { return i; }
+	if(symbol->input_mode != GS1_MODE) {
+		/* GS1 data has not been verified yet */
+		i = gs1_verify(symbol, source, reduced);
+		if(i != 0) { return i; }
+	}
 	
 	if((symbol->symbology == BARCODE_RSS_EXP_CC) || (symbol->symbology == BARCODE_RSS_EXPSTACK_CC)) {
 		/* make space for a composite separator pattern */

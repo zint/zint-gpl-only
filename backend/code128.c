@@ -596,8 +596,11 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 		symbol->rows += 1;
 	}
 
-	error_number = gs1_verify(symbol, source, reduced);
-	if(error_number != 0) { return error_number; }
+	if(symbol->input_mode != GS1_MODE) {
+		/* GS1 data has not been checked yet */
+		error_number = gs1_verify(symbol, source, reduced);
+		if(error_number != 0) { return error_number; }
+	}
 	
 	/* Decide on mode using same system as PDF417 and rules of ISO 15417 Annex E */
 	indexliste = 0;

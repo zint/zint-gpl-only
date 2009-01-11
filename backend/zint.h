@@ -39,6 +39,7 @@ struct zint_symbol {
 	int option_1;
 	int option_2;
 	int option_3;
+	int input_mode;
 	char text[100];
 	int rows;
 	int width;
@@ -131,6 +132,11 @@ struct zint_symbol {
 #define BARCODE_BIND		2
 #define BARCODE_BOX		4
 #define BARCODE_STDOUT		8
+
+#define DATA_MODE	0
+#define UNICODE_MODE	1
+#define GS1_MODE	2
+#define KANJI_MODE	3
 
 #define WARN_INVALID_OPTION	2
 #define ERROR_TOO_LONG		5
