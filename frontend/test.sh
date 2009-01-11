@@ -240,8 +240,8 @@ echo testing UCC/EAN-128 Composite with CC-A
 ./zint -o bar131.eps -b 131 --height=100 --mode=1 --primary="[01]03212345678906" -d "[10]1234567ABCDEFG"
 ./zint -o bar131.png -b 131 --height=100 --mode=1 --primary="[01]03212345678906" -d "[10]1234567ABCDEFG"
 echo testing UCC/EAN-128 Composite with CC-C
-./zint -o bar131a.eps -b 131 --height=100 --mode=3 --primary="[00]030123456789012340" -d "[02]130123456789093724[10]1234567ABCDEFG"
-./zint -o bar131a.png -b 131 --height=100 --mode=3 --primary="[00]030123456789012340" -d "[02]130123456789093724[10]1234567ABCDEFG"
+./zint -o bar131a.eps -b 131 --height=100 --mode=3 --primary="[00]030123456789012340" -d "[02]13012345678909[10]1234567ABCDEFG"
+./zint -o bar131a.png -b 131 --height=100 --mode=3 --primary="[00]030123456789012340" -d "[02]13012345678909[10]1234567ABCDEFG"
 echo testing RSS-14 Composite with CC-A
 ./zint -o bar132.eps -b 132 --height=100 --mode=1 --primary=361234567890 -d "[11]990102"
 ./zint -o bar132.png -b 132 --height=100 --mode=1 --primary=361234567890 -d "[11]990102"
