@@ -28,6 +28,27 @@
    to be bulletproof, nor does it report very accurately what problem was found
    or where, but should prevent some of the more common encoding errors */
 
+void itostr(char ai_string[], int ai_value)
+{
+	int thou, hund, ten, unit;
+	char temp[2];
+	
+	strcpy(ai_string, "(");
+	thou = ai_value / 1000;
+	hund = (ai_value - (1000 * thou)) / 100;
+	ten = (ai_value - ((1000 * thou) + (100 * hund))) / 10;
+	unit = ai_value - ((1000 * thou) + (100 * hund) + (10 * ten));
+	
+	temp[1] = '\0';
+	if(ai_value >= 1000) { temp[0] = itoc(thou); concat(ai_string, temp); }
+	if(ai_value >= 100) { temp[0] = itoc(hund); concat(ai_string, temp); }
+	temp[0] = itoc(ten);
+	concat(ai_string, temp);
+	temp[0] = itoc(unit);
+	concat(ai_string, temp);
+	concat(ai_string, ")");
+}
+
 int gs1_verify(struct zint_symbol *symbol, unsigned char source[], char reduced[])
 {
 	int i, j, last_ai, ai_latch;
@@ -125,36 +146,69 @@ int gs1_verify(struct zint_symbol *symbol, unsigned char source[], char reduced[
 		data_length[i]--;
 	}
 	
-	error_latch = -1;
+	error_latch = 0;
+	strcpy(ai_string, "");
 	for(i = 0; i < ai_count; i++) {
 		switch (ai_value[i]) {
-			case 0: if(data_length[i] != 18) { error_latch = i; } break;
-			case 1: if(data_length[i] != 14) { error_latch = i; } break;
-			case 2: if(data_length[i] != 14) { error_latch = i; } break;
-			case 3: if(data_length[i] != 14) { error_latch = i; } break;
-			case 4: if(data_length[i] != 16) { error_latch = i; } break;
-			case 11: if(data_length[i] != 6) { error_latch = i; } break;
-			case 12: if(data_length[i] != 6) { error_latch = i; } break;
-			case 13: if(data_length[i] != 6) { error_latch = i; } break;
-			case 14: if(data_length[i] != 6) { error_latch = i; } break;
-			case 15: if(data_length[i] != 6) { error_latch = i; } break;
-			case 16: if(data_length[i] != 6) { error_latch = i; } break;
-			case 17: if(data_length[i] != 6) { error_latch = i; } break;
-			case 18: if(data_length[i] != 6) { error_latch = i; } break;
-			case 19: if(data_length[i] != 6) { error_latch = i; } break;
-			case 20: if(data_length[i] != 2) { error_latch = i; } break;
-			case 31: if(data_length[i] != 8) { error_latch = i; } break;
-			case 32: if(data_length[i] != 8) { error_latch = i; } break;
-			case 33: if(data_length[i] != 8) { error_latch = i; } break;
-			case 34: if(data_length[i] != 8) { error_latch = i; } break;
-			case 35: if(data_length[i] != 8) { error_latch = i; } break;
-			case 36: if(data_length[i] != 8) { error_latch = i; } break;
-			case 41: if(data_length[i] != 14) { error_latch = i; } break;
+			case 0: if(data_length[i] != 18) { error_latch = 1; } break;
+			case 1: if(data_length[i] != 14) { error_latch = 1; } break;
+			case 2: if(data_length[i] != 14) { error_latch = 1; } break;
+			case 3: if(data_length[i] != 14) { error_latch = 1; } break;
+			case 4: if(data_length[i] != 16) { error_latch = 1; } break;
+			case 11: if(data_length[i] != 6) { error_latch = 1; } break;
+			case 12: if(data_length[i] != 6) { error_latch = 1; } break;
+			case 13: if(data_length[i] != 6) { error_latch = 1; } break;
+			case 14: if(data_length[i] != 6) { error_latch = 1; } break;
+			case 15: if(data_length[i] != 6) { error_latch = 1; } break;
+			case 16: if(data_length[i] != 6) { error_latch = 1; } break;
+			case 17: if(data_length[i] != 6) { error_latch = 1; } break;
+			case 18: if(data_length[i] != 6) { error_latch = 1; } break;
+			case 19: if(data_length[i] != 6) { error_latch = 1; } break;
+			case 20: if(data_length[i] != 2) { error_latch = 1; } break;
+			case 23: error_latch = 2; break;
+			case 24: error_latch = 2; break;
+			case 25: error_latch = 2; break;
+			case 39: error_latch = 2; break;
+			case 40: error_latch = 2; break;
+			case 41: error_latch = 2; break;
+			case 42: error_latch = 2; break;
+			case 70: error_latch = 2; break;
+			case 80: error_latch = 2; break;
+			case 81: error_latch = 2; break;
+		}
+		if((ai_value[i] >= 100) && (ai_value[i] <= 179)) { error_latch = 2; }
+		if((ai_value[i] >= 1000) && (ai_value[i] <= 1799)) { error_latch = 2; }
+		if((ai_value[i] >= 200) && (ai_value[i] <= 229)) { error_latch = 2; }
+		if((ai_value[i] >= 2000) && (ai_value[i] <= 2299)) { error_latch = 2; }
+		if((ai_value[i] >= 300) && (ai_value[i] <= 309)) { error_latch = 2; }
+		if((ai_value[i] >= 3000) && (ai_value[i] <= 3099)) { error_latch = 2; }
+		if((ai_value[i] >= 31) && (ai_value[i] <= 36)) { error_latch = 2; }
+		if((ai_value[i] >= 310) && (ai_value[i] <= 369)) { error_latch = 2; }
+		if((ai_value[i] >= 3100) && (ai_value[i] <= 3699)) { if(data_length[i] != 6) { error_latch = 1; } }
+		if((ai_value[i] >= 370) && (ai_value[i] <= 379)) { error_latch = 2; }
+		if((ai_value[i] >= 3700) && (ai_value[i] <= 3799)) { error_latch = 2; }
+		if((ai_value[i] >= 410) && (ai_value[i] <= 415)) { if(data_length[i] != 13) { error_latch = 1; } }
+		if((ai_value[i] >= 4100) && (ai_value[i] <= 4199)) { error_latch = 2; }
+		if((ai_value[i] >= 700) && (ai_value[i] <= 703)) { error_latch = 2; }
+		if((ai_value[i] >= 800) && (ai_value[i] <= 810)) { error_latch = 2; }
+		if((ai_value[i] >= 900) && (ai_value[i] <= 999)) { error_latch = 2; }
+		if((ai_value[i] >= 9000) && (ai_value[i] <= 9999)) { error_latch = 2; }
+		if((error_latch < 4) && (error_latch > 0)) {
+			/* error has just been detected: capture AI */
+			itostr(ai_string, ai_value[i]);
+			error_latch += 4;
 		}
 	}
 	
-	if(error_latch != -1) {
-		strcpy(symbol->errtxt, "Invalid data length for AI");
+	if(error_latch == 5) {
+		strcpy(symbol->errtxt, "Invalid data length for AI ");
+		concat(symbol->errtxt, ai_string);
+		return ERROR_INVALID_DATA;
+	}
+	
+	if(error_latch == 6) {
+		strcpy(symbol->errtxt, "Invalid AI value ");
+		concat(symbol->errtxt, ai_string);
 		return ERROR_INVALID_DATA;
 	}
 
