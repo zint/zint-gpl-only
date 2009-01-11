@@ -402,12 +402,6 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 			break;
 	}
 	bar_characters++;
-	
-	if(symbol->symbology == BARCODE_NVE18) {
-		concat(dest, C128Table[102]);
-		values[1] = 102;
-		bar_characters++;
-	}
 
 	if(fset[0] == 'F') {
 		switch(set[0]) {
@@ -845,10 +839,12 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 int nve_18(struct zint_symbol *symbol, unsigned char source[])
 {
 	/* Add check digit if encoding an NVE18 symbol */
-	int error_number, zeroes, i, nve_check, total_sum, sourcelen;
-	char localstr[20], checkstr[3];
+	int error_number, zeroes, i, j, nve_check, total_sum, sourcelen;
+	unsigned char ean128_equiv[25];
 	
+	memset(ean128_equiv, 0, 25);
 	sourcelen = ustrlen(source);
+	
 	if(sourcelen > 17) {
 		strcpy(symbol->errtxt, "Input too long [203]");
 		return ERROR_TOO_LONG;
@@ -859,34 +855,31 @@ int nve_18(struct zint_symbol *symbol, unsigned char source[])
 		strcpy(symbol->errtxt, "Invalid characters in data [202]");
 		return error_number;
 	}
-
-	strcpy(localstr, "00");
+	
+	concat((char *)ean128_equiv, "[00]");
 	zeroes = 17 - sourcelen;
-	for(i = 0; i < zeroes; i++)
-		concat(localstr, "0");
-	concat(localstr, (char *)source);
+	for(i = 0; i < zeroes; i++) {
+		j = ustrlen(ean128_equiv);
+		ean128_equiv[j] = '0';
+		ean128_equiv[j + 1] = '\0';
+	}
+	concat((char*)ean128_equiv, (char*)source);
 	
 	total_sum = 0;
-	for(i = 0; i < 19; i++)
+	for(i = sourcelen - 1; i >= 0; i--)
 	{
-		if((i % 2) == 0) {
-			total_sum +=  3 * ctoi(localstr[i]);
-		} else {
-			total_sum += ctoi(localstr[i]);
+		total_sum += ctoi(source[i]);
+		
+		if(!((i%2) == 1)) {
+			total_sum += 2 * ctoi(source[i]);
 		}
-
 	}
 	nve_check = 10 - total_sum%10;
 	if(nve_check == 10) { nve_check = 0; }
-	checkstr[1] = '\0';
-	checkstr[0] = itoc(nve_check);
-	concat(localstr, checkstr);
-	error_number = code_128(symbol, (unsigned char *)localstr);
-	for(i = 2; i <= 20; i++) {
-		localstr[i - 2] = localstr[i];
-	}
-	strcpy(symbol->text, "(00)");
-	concat(symbol->text, localstr);
+	ean128_equiv[21] = itoc(nve_check);
+	ean128_equiv[22] = '\0';
+
+	error_number = ean_128(symbol, ean128_equiv);
 	
 	return error_number;
 }
@@ -911,6 +904,7 @@ int ean_14(struct zint_symbol *symbol, unsigned char source[])
 		strcpy(symbol->errtxt, "Invalid character in data [722]");
 		return error_number;
 	}
+	
 	concat((char*)ean128_equiv, "[01]");
 	zeroes = 13 - input_length;
 	for(i = 0; i < zeroes; i++) {
