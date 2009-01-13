@@ -125,9 +125,12 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	float glyph_count;
 	int errornum, first_sum, second_sum;
 	int input_length;
+	int gs1;
 
 	errornum = 0;
 	input_length = ustrlen(source);
+	
+	if(symbol->input_mode == GS1_MODE) { gs1 = 1; } else { gs1 = 0; }
 	
 	if(input_length > 157) {
 		strcpy(symbol->errtxt, "Input too long [231]");
@@ -171,6 +174,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	indexchaine = 0;
 	
 	mode = parunmodd(source[indexchaine], symbol->nullchar);
+	if((gs1) && (source[indexchaine] == '[')) { mode = ABORC; } /* FNC1 */
 	
 	for(i = 0; i < 160; i++) {
 		list[0][i] = 0;
@@ -182,6 +186,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 			list[0][indexliste]++;
 			indexchaine++;
 			mode = parunmodd(source[indexchaine], symbol->nullchar);
+			if((gs1) && (source[indexchaine] == '[')) { mode = ABORC; } /* FNC1 */
 		}
 		indexliste++;
 	} while (indexchaine < input_length);
@@ -223,6 +228,21 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 		}
 	}
 
+	/* We have a problem with FNC1 in Code Set C to resolve */
+	for(i = 0; i < read; i++) {
+		if((set[i] == 'C') && (source[i] == '[')) {
+			int c_count;
+			
+			c_count = 0;
+			for(j = 0; j < i; j++) {
+				if(set[j] == 'C') { c_count++; } else { c_count = 0; }
+			}
+			if((c_count % 2) == 1) {
+				set[i - 1] = 'B';
+			}
+		}
+	}
+	
 	/* Make sure the data will fit in the symbol */
 	last_set = ' ';
 	last_fset = ' ';
@@ -264,7 +284,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 			}
 		}
 		
-		if(set[i] == 'C') {
+		if((set[i] == 'C') && (!((gs1) && (source[i] == '[')))) {
 			glyph_count = glyph_count + 0.5;
 		} else {
 			glyph_count = glyph_count + 1.0;
@@ -389,17 +409,23 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 			bar_characters++;
 		}
 
-		switch(set[read])
-		{ /* Encode data characters */
-			case 'A': c16k_set_a(source[read], values, &bar_characters, symbol->nullchar);
-				read++;
-				break;
-			case 'B': c16k_set_b(source[read], values, &bar_characters);
-				read++;
-				break;
-			case 'C': c16k_set_c(source[read], source[read + 1], values, &bar_characters);
-				read += 2;
-				break;
+		if(!((gs1) && (source[read] == '['))) {
+			switch(set[read])
+			{ /* Encode data characters */
+				case 'A': c16k_set_a(source[read], values, &bar_characters, symbol->nullchar);
+					read++;
+					break;
+				case 'B': c16k_set_b(source[read], values, &bar_characters);
+					read++;
+					break;
+				case 'C': c16k_set_c(source[read], source[read + 1], values, &bar_characters);
+					read += 2;
+					break;
+			}
+		} else {
+			values[bar_characters] = 102;
+			bar_characters++;
+			read++;
 		}
 	} while (read < ustrlen(source));
 
