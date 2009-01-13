@@ -689,7 +689,7 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 			}
 		}
 		
-		if(set[i] == 'C') {
+		if((set[i] == 'C') && (reduced[i] != '[')) {
 			glyph_count = glyph_count + 0.5;
 		} else {
 			glyph_count = glyph_count + 1.0;
@@ -765,9 +765,10 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 					c128_set_b(reduced[read], dest, values, &bar_characters);
 					read++;
 					break;
-				case 'C': c128_set_c(reduced[read], reduced[read + 1], dest, values, &bar_characters);
-				read += 2;
-				break;
+				case 'C':
+					c128_set_c(reduced[read], reduced[read + 1], dest, values, &bar_characters);
+					read += 2;
+					break;
 			}
 		} else {
 			concat(dest, C128Table[102]);
