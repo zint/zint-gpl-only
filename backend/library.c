@@ -200,6 +200,7 @@ int gs1_compliant(int symbology)
 		case BARCODE_RSS14STACK_CC:
 		case BARCODE_RSS14_OMNI_CC:
 		case BARCODE_RSS_EXPSTACK_CC:
+		case BARCODE_CODE16K:
 			result = 1;
 			break;
 	}
