@@ -247,3 +247,19 @@ int gs1_verify(struct zint_symbol *symbol, unsigned char source[], char reduced[
 	/* the character '[' in the reduced string refers to the FNC1 character */
 	return 0;
 }
+
+int ugs1_verify(struct zint_symbol *symbol, unsigned char source[], unsigned char reduced[])
+{
+	/* Only to keep the compiler happy */
+	char temp[ustrlen(source) + 5];
+	int error_number, i;
+	
+	error_number = gs1_verify(symbol, source, temp);
+	if(error_number != 0) { return error_number; }
+	
+	for(i = 0; i <= strlen(temp); i++) {
+		reduced[i] = (unsigned char)temp[i];
+	}
+	
+	return 0;
+}

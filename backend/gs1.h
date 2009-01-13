@@ -20,3 +20,4 @@
 */
 
 int gs1_verify(struct zint_symbol *symbol, unsigned char source[], char reduced[]);
+int ugs1_verify(struct zint_symbol *symbol, unsigned char source[], unsigned char reduced[]);
