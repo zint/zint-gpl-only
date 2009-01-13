@@ -283,7 +283,8 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source)
 			break;
 		case GS1_MODE:
 			if(gs1_compliant(symbol->symbology) == 1) {
-				ustrcpy(preprocessed, source);
+				error_number = ugs1_verify(symbol, source, preprocessed);
+				if(error_number != 0) { return error_number; }
 			} else {
 				strcpy(symbol->errtxt, "Selected symbology does not support GS1 mode");
 				return ERROR_INVALID_OPTION;

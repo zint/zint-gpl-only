@@ -290,6 +290,12 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 			glyph_count = glyph_count + 1.0;
 		}
 	}
+	
+	if((gs1) && (set[0] != 'A')) {
+		/* FNC1 can be integrated with mode character */
+		glyph_count--;
+	}
+	
 	if(glyph_count > 77.0) {
 		strcpy(symbol->errtxt, "Input too long [232]");
 		return ERROR_TOO_LONG;
@@ -306,14 +312,24 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	/* start with the mode character - Table 2 */
+	read = 0;
 	m = 0;
 	switch(set[0]) {
 		case 'A': m = 0; break;
 		case 'B': m = 1; break;
 		case 'C': m = 2; break;
 	}
-	if((set[0] == 'B') && (set[1] == 'C')) { m = 5; }
-	if(((set[0] == 'B') && (set[1] == 'B')) && (set[2] == 'C')) { m = 6; }
+	
+	if(gs1) {
+		/* Integrate FNC1 */
+		switch(set[0]) {
+			case 'B': m = 3; read = 1; break;
+			case 'C': m = 4; read = 1; break;
+		}
+	} else {
+		if((set[0] == 'B') && (set[1] == 'C')) { m = 5; }
+		if(((set[0] == 'B') && (set[1] == 'B')) && (set[2] == 'C')) { m = 6; }
+	}
 	values[bar_characters] = (7 * (rows_needed - 2)) + m; /* see 4.3.4.2 */
 	bar_characters++;
 
@@ -332,7 +348,6 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	/* Encode the data */
-	read = 0;
 	do {
 
 		if((read != 0) && (set[read] != set[read - 1]))
@@ -463,9 +478,11 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 		concat(width_pattern, "1");
 		for(i = 0; i < 5; i++) {
 			concat(width_pattern, C16KTable[values[(current_row * 5) + i]]);
+			/* printf("[%d] ", values[(current_row * 5) + i]); */
 			
 		}
 		concat(width_pattern, C16KStartStop[C16KStopValues[current_row]]);
+		/* printf("\n"); */
 
 		/* Write the information into the symbol */
 		writer = 0;
