@@ -63,6 +63,10 @@ int gs1_verify(struct zint_symbol *symbol, unsigned char source[], char reduced[
 			strcpy(symbol->errtxt, "Extended ASCII characters are not supported by GS1");
 			return ERROR_INVALID_DATA;
 		}
+		if(source[i] < 32) {
+			strcpy(symbol->errtxt, "Control characters are not supported by GS1");
+			return ERROR_INVALID_DATA;
+		}
 	}
 	
 	if(source[0] != '[') {
@@ -77,8 +81,10 @@ int gs1_verify(struct zint_symbol *symbol, unsigned char source[], char reduced[
 	max_ai_length = 0;
 	min_ai_length = 5;
 	j = 0;
+	ai_latch = 0;
 	for(i = 0; i < ustrlen(source); i++) {
 		ai_length += j;
+		if((j == 1) && ((source[i] < '0') || (source[i] > '9'))) { ai_latch = 1; }
 		if(source[i] == '[') { bracket_level++; j = 1; }
 		if(source[i] == ']') {
 			bracket_level--;
