@@ -39,6 +39,7 @@ QRcode *encode(int security, int size, const unsigned char *intext, int kanji)
 		hint = QR_MODE_8;
 	}
 
+	level = QR_ECLEVEL_L;
 	if((security >= 1) && (security <= 4)) {
 		switch (security) {
 			case 1: level = QR_ECLEVEL_L; break;
@@ -46,8 +47,6 @@ QRcode *encode(int security, int size, const unsigned char *intext, int kanji)
 			case 3: level = QR_ECLEVEL_Q; break;
 			case 4: level = QR_ECLEVEL_H; break;
 		}
-	} else {
-		level = QR_ECLEVEL_L;
 	}
 	
 	if((size >= 1) && (size <= 40)) {
