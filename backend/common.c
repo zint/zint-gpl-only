@@ -28,9 +28,7 @@
 int ustrlen(unsigned char data[]) {
 	/* Local replacement for strlen() with unsigned char strings */
 	int i;
-	
-	i = -1;
-	do { i++; } while (data[i] != '\0');
+	for (i=0;data[i];i++);
 
 	return i;
 }
