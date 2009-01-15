@@ -312,7 +312,6 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	/* start with the mode character - Table 2 */
-	read = 0;
 	m = 0;
 	switch(set[0]) {
 		case 'A': m = 0; break;
@@ -323,8 +322,8 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	if(gs1) {
 		/* Integrate FNC1 */
 		switch(set[0]) {
-			case 'B': m = 3; read = 1; break;
-			case 'C': m = 4; read = 1; break;
+			case 'B': m = 3; break;
+			case 'C': m = 4; break;
 		}
 	} else {
 		if((set[0] == 'B') && (set[1] == 'C')) { m = 5; }
@@ -347,6 +346,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 		bar_characters += 2;
 	}
 	
+	read = 0;
 	/* Encode the data */
 	do {
 
