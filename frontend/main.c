@@ -123,6 +123,7 @@ int main(int argc, char **argv)
 	rotate_angle = 0;
 	generated = 0;
 	my_symbol = ZBarcode_Create();
+	my_symbol->input_mode = UNICODE_MODE;
 
 	if(argc == 1) {
 		usage();
@@ -155,6 +156,7 @@ int main(int argc, char **argv)
 			{"primary=", 1, 0, 0},
 			{"scale=", 1, 0, 0},
 			{"null=", 1, 0, 0},
+			{"gs1", 0, 0, 0},
 			{0, 0, 0, 0}
 		};
 		c = getopt_long(argc, argv, "htb:w:d:o:i:rcmp", long_options, &option_index);
@@ -175,6 +177,9 @@ int main(int argc, char **argv)
 				if(!strcmp(long_options[option_index].name, "directpng")) {
 					my_symbol->output_options += BARCODE_STDOUT;
 					strncpy(my_symbol->outfile, "dummy.png", 10);
+				}
+				if(!strcmp(long_options[option_index].name, "gs1")) {
+					my_symbol->input_mode = GS1_MODE;
 				}
 				if(!strcmp(long_options[option_index].name, "fg=")) {
 					strncpy(my_symbol->fgcolour, optarg, 7);
