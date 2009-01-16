@@ -59,7 +59,7 @@ int gs1_verify(struct zint_symbol *symbol, unsigned char source[], char reduced[
 	
 	/* remove the following to make this code work */
 	read_this = NOW;
-	
+
 	/* BogDan... Happy New Year! I've been trying to contact you but can't get through!
 	  the message keeps bouncing back to me. I've put a message on the developers forum on SF instead */
 	
@@ -90,7 +90,7 @@ int gs1_verify(struct zint_symbol *symbol, unsigned char source[], char reduced[
 	ai_latch = 0;
 	for(i = 0; i < ustrlen(source); i++) {
 		ai_length += j;
-		if((j == 1) && ((source[i] < '0') || (source[i] > '9'))) { ai_latch = 1; }
+		if(((j == 1) && (source[i] != ']')) && ((source[i] < '0') || (source[i] > '9'))) { ai_latch = 1; }
 		if(source[i] == '[') { bracket_level++; j = 1; }
 		if(source[i] == ']') {
 			bracket_level--;
