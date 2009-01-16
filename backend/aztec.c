@@ -47,25 +47,42 @@ void insert(char binary_string[], int posn, char newbit)
 	binary_string[posn] = newbit;
 }
 
-int aztec_text_process(unsigned char source[], char binary_string[])
+int aztec_text_process(unsigned char source[], char binary_string[], int gs1)
 { /* Encode input data into a binary string */
 	int i, j, k, bytes;
 	int charmap[ustrlen(source)], typemap[ustrlen(source)], maplength;
 	int curtable, newtable, lasttable, chartype;
 	int blockmap[2][ustrlen(source)], blocks;
 
-
 	/* Lookup input string in encoding table */
+	maplength = 0;
+	if((gs1) && (i == 0)) {
+		/* Add FNC1 to beginning of GS1 messages */
+		charmap[maplength] = 0;
+		typemap[maplength] = 8;
+		maplength++;
+		charmap[maplength] = 400;
+		typemap[maplength] = 8;
+		maplength++;
+	}
 	for(i = 0; i < ustrlen(source); i++) {
 		if(source[i] > 127) {
-			charmap[i] = source[i];
-			typemap[i] = BINARY;
+			charmap[maplength] = source[i];
+			typemap[maplength] = BINARY;
 		} else {
-			charmap[i] = AztecSymbolChar[source[i]];
-			typemap[i] = AztecCodeSet[source[i]];
+			charmap[maplength] = AztecSymbolChar[source[i]];
+			typemap[maplength] = AztecCodeSet[source[i]];
 		}
+		if((gs1) && (source[i] == '[')) {
+			/* FNC1 represented by FLG(0) */
+			charmap[maplength] = 0;
+			typemap[maplength] = 8;
+			maplength++;
+			charmap[maplength] = 400;
+			typemap[maplength] = 8;
+		}
+		maplength++;
 	}
-	maplength = ustrlen(source);
 	
 	/* Look for double character encoding possibilities */
 	i = 0;
@@ -522,7 +539,11 @@ int aztec_text_process(unsigned char source[], char binary_string[])
 			case LOWER:
 			case MIXED:
 			case PUNC:
-				concat(binary_string, hexbit[charmap[i]]);
+				if(charmap[i] >= 400) {
+					concat(binary_string, tribit[charmap[i] - 400]);
+				} else {
+					concat(binary_string, hexbit[charmap[i]]);
+				}
 				break;
 			case DIGIT:
 				concat(binary_string, pentbit[charmap[i]]);
@@ -556,12 +577,13 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 	unsigned int data_part[1500], ecc_part[840];
 	unsigned char desc_data[4], desc_ecc[6];
 	int err_code, ecc_level, compact, data_length, data_maxsize, codeword_size, adjusted_length;
-	int remainder, padbits, count;
+	int remainder, padbits, count, gs1;
 	
 	memset(binary_string,0,20000);
 	memset(adjusted_string,0,20000);
 
-	err_code = aztec_text_process(source, binary_string);
+	if(symbol->input_mode == GS1_MODE) { gs1 = 1; } else { gs1 = 0; }
+	err_code = aztec_text_process(source, binary_string, gs1);
 
 	if(err_code != 0) {
 		strcpy(symbol->errtxt, "Input too long or too many extended ASCII characters [921]");
