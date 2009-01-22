@@ -382,20 +382,26 @@ char ecc200encode(unsigned char *t, int tl, unsigned char *s, int sl, char *enco
 		case 'b':	// Binary
 			{
 				int l = 0;	// how much to encode
+				int temp;
 				if (encoding) {
 					int p;
 					for (p = sp; p < sl && tolower(encoding[p]) == 'b'; p++)
 						l++;
 				}
 				t[tp++] = 231;	// base256
-				if (l < 250)
-					t[tp++] = l;
-				else {
-					t[tp++] = 249 + (l / 250);
-					t[tp++] = (l % 250);
+				if (l < 250) {
+					t[tp] = l + (((tp + 1) * 149) % 255) + 1; tp++;
+				} else {
+					t[tp] = (249 + (l / 250)) + (((tp + 1) * 149) % 255) + 1; tp++;
+					t[tp] = (l % 250) + (((tp + 1) * 149) % 255) + 1; tp++;
 				}
 				while (l-- && tp < tl) {
-					t[tp] = s[sp++] + (((tp + 1) * 149) % 255) + 1;	// see annex H
+					temp = s[sp++] + (((tp + 1) * 149) % 255) + 1;	// see annex H
+					if(temp <= 255) {
+						t[tp] = temp;
+					} else {
+						t[tp] = temp - 256;
+					}
 					tp++;
 				}
 				enc = 'a';	// reverse to ASCII at end
