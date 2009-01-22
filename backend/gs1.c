@@ -57,12 +57,6 @@ int gs1_verify(struct zint_symbol *symbol, unsigned char source[], char reduced[
 	int ai_value[100], ai_location[100], ai_count, data_location[100], data_length[100];
 	int error_latch;
 	
-	/* remove the following to make this code work */
-	read_this = NOW;
-
-	/* BogDan... Happy New Year! I've been trying to contact you but can't get through!
-	  the message keeps bouncing back to me. I've put a message on the developers forum on SF instead */
-	
 	/* Detect extended ASCII characters */
 	for(i = 0; i <  ustrlen(source); i++) {
 		if(source[i] >=128) {
