@@ -83,6 +83,8 @@ void usage(void)
 		"  --primary=STRING      (Maxicode and Composite) Structured primary message.\n"
 		"  --mode=NUMBER         (Maxicode and Composite) Set encoding mode.\n"
 		"  --null=NUMBER         Character to represent NULL.\n"
+		"  --gs1                 Treat input as GS1 data\n"
+		"  --kanji               Treat input as Kanji characters\n"
 	, ZINT_VERSION);
 }
 
@@ -157,6 +159,7 @@ int main(int argc, char **argv)
 			{"scale=", 1, 0, 0},
 			{"null=", 1, 0, 0},
 			{"gs1", 0, 0, 0},
+			{"kanji", 0, 0, 0},
 			{0, 0, 0, 0}
 		};
 		c = getopt_long(argc, argv, "htb:w:d:o:i:rcmp", long_options, &option_index);
@@ -180,6 +183,9 @@ int main(int argc, char **argv)
 				}
 				if(!strcmp(long_options[option_index].name, "gs1")) {
 					my_symbol->input_mode = GS1_MODE;
+				}
+				if(!strcmp(long_options[option_index].name, "kanji")) {
+					my_symbol->input_mode = KANJI_MODE;
 				}
 				if(!strcmp(long_options[option_index].name, "fg=")) {
 					strncpy(my_symbol->fgcolour, optarg, 7);
