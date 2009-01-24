@@ -97,9 +97,9 @@ int character_subset_select(unsigned char source[], int input_position, char nul
 	return MODEB;
 }
 
-int data_encode_blockf(unsigned char source[], int subset_selector[], int blockmatrix[][62], int *columns_needed, int *rows_needed, int *final_mode, char nullchar)
+int data_encode_blockf(unsigned char source[], int subset_selector[], int blockmatrix[][62], int *columns_needed, int *rows_needed, int *final_mode, char nullchar, int gs1)
 {
-	int i, input_position, input_length, current_mode, current_row, error_number;
+	int i, j, input_position, input_length, current_mode, current_row, error_number;
 	int column_position, c, done, exit_status;
 	
 	error_number = 0;
@@ -120,122 +120,138 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 			c = (*columns_needed);
 			current_mode = character_subset_select(source, input_position, nullchar);
 			subset_selector[current_row] = current_mode;
+			if((current_row == 0) && gs1) {
+				/* Section 4.4.7.1 */
+				blockmatrix[current_row][column_position] = 102; /* FNC1 */
+				column_position++;
+				c--;
+			}
 		}
 		
-		if(c <= 2) {
-			/* Annex B section 1 rule 1 */
-			/* Ensure that there is sufficient encodation capacity to continue (using the rules of Annex B.2). */
-			switch(current_mode) {
-				case MODEA: /* Table B1 applies */
-					if(parunmodd(source[input_position], nullchar) == ABORC) {
-						blockmatrix[current_row][column_position] = a3_convert(source[input_position], nullchar);
-						column_position++;
-						c--;
-						input_position++;
-						done = 1;
-					}
-					
-					if((parunmodd(source[input_position], nullchar) == SHIFTB) && (c == 1)) {
-						/* Needs two symbols */
-						blockmatrix[current_row][column_position] = 100; /* Code B */
-						column_position++;
-						c--;
-						done = 1;
-					}
-					
-					if((source[input_position] >= 244) && (done == 0)) {
-						/* Needs three symbols */
-						blockmatrix[current_row][column_position] = 100; /* Code B */
-						column_position++;
-						c--;
-						if(c == 1) {
-							blockmatrix[current_row][column_position] = 101; /* Code A */
+		if(gs1 && (source[input_position] == '[')) {
+			blockmatrix[current_row][column_position] = 102; /* FNC1 */
+			column_position++;
+			c--;
+			input_position++;
+			done = 1;
+		}
+		
+		if(done == 0) {
+			if(c <= 2) {
+				/* Annex B section 1 rule 1 */
+				/* Ensure that there is sufficient encodation capacity to continue (using the rules of Annex B.2). */
+				switch(current_mode) {
+					case MODEA: /* Table B1 applies */
+						if(parunmodd(source[input_position], nullchar) == ABORC) {
+							blockmatrix[current_row][column_position] = a3_convert(source[input_position], nullchar);
 							column_position++;
 							c--;
+							input_position++;
+							done = 1;
 						}
-						done = 1;
-					}
-					
-					if((source[input_position] >= 128) && (done == 0)) {
-						/* Needs two symbols */
-						if(c == 1) {
+						
+						if((parunmodd(source[input_position], nullchar) == SHIFTB) && (c == 1)) {
+							/* Needs two symbols */
 							blockmatrix[current_row][column_position] = 100; /* Code B */
 							column_position++;
 							c--;
 							done = 1;
 						}
-					}
-					break;
-				case MODEB: /* Table B2 applies */
-					if(parunmodd(source[input_position], nullchar) == ABORC) {
-						blockmatrix[current_row][column_position] = a3_convert(source[input_position], nullchar);
-						column_position++;
-						c--;
-						input_position++;
-						done = 1;
-					}
-					
-					if((parunmodd(source[input_position], nullchar) == SHIFTA) && (c == 1)) {
-						/* Needs two symbols */
-						blockmatrix[current_row][column_position] = 101; /* Code A */
-						column_position++;
-						c--;
-						done = 1;
-					}
-					
-					if(((source[input_position] >= 128) && (source[input_position] <= 159)) && (done == 0)) {
-						/* Needs three symbols */
-						blockmatrix[current_row][column_position] = 101; /* Code A */
-						column_position++;
-						c--;
-						if(c == 1) {
+						
+						if((source[input_position] >= 244) && (done == 0)) {
+							/* Needs three symbols */
 							blockmatrix[current_row][column_position] = 100; /* Code B */
 							column_position++;
 							c--;
+							if(c == 1) {
+								blockmatrix[current_row][column_position] = 101; /* Code A */
+								column_position++;
+								c--;
+							}
+							done = 1;
 						}
-						done = 1;
-					}
-					
-					if((source[input_position] >= 160) && (done == 0)) {
-						/* Needs two symbols */
-						if(c == 1) {
+						
+						if((source[input_position] >= 128) && (done == 0)) {
+							/* Needs two symbols */
+							if(c == 1) {
+								blockmatrix[current_row][column_position] = 100; /* Code B */
+								column_position++;
+								c--;
+								done = 1;
+							}
+						}
+						break;
+					case MODEB: /* Table B2 applies */
+						if(parunmodd(source[input_position], nullchar) == ABORC) {
+							blockmatrix[current_row][column_position] = a3_convert(source[input_position], nullchar);
+							column_position++;
+							c--;
+							input_position++;
+							done = 1;
+						}
+						
+						if((parunmodd(source[input_position], nullchar) == SHIFTA) && (c == 1)) {
+							/* Needs two symbols */
 							blockmatrix[current_row][column_position] = 101; /* Code A */
 							column_position++;
 							c--;
 							done = 1;
 						}
-					}
-					break;
-				case MODEC: /* Table B3 applies */
-					if((parunmodd(source[input_position], nullchar) != ABORC) && (c == 1)) {
-						/* Needs two symbols */
-						blockmatrix[current_row][column_position] = 101; /* Code A */
-						column_position++;
-						c--;
-						done = 1;
-					}
-					
-					if(((parunmodd(source[input_position], nullchar) == ABORC) && (parunmodd(source[input_position + 1], nullchar) != ABORC))
-						&& (c == 1)) {
-						/* Needs two symbols */
-						blockmatrix[current_row][column_position] = 101; /* Code A */
-						column_position++;
-						c--;
-						done = 1;
-					}
-					
-					if(source[input_position] >= 128) {
-						/* Needs three symbols */
-						blockmatrix[current_row][column_position] = 101; /* Code A */
-						column_position++;
-						c--;
-						if(c == 1) {
-							blockmatrix[current_row][column_position] = 100; /* Code B */
+						
+						if(((source[input_position] >= 128) && (source[input_position] <= 159)) && (done == 0)) {
+							/* Needs three symbols */
+							blockmatrix[current_row][column_position] = 101; /* Code A */
 							column_position++;
 							c--;
+							if(c == 1) {
+								blockmatrix[current_row][column_position] = 100; /* Code B */
+								column_position++;
+								c--;
+							}
+							done = 1;
 						}
-					}
-					break;
+						
+						if((source[input_position] >= 160) && (done == 0)) {
+							/* Needs two symbols */
+							if(c == 1) {
+								blockmatrix[current_row][column_position] = 101; /* Code A */
+								column_position++;
+								c--;
+								done = 1;
+							}
+						}
+						break;
+					case MODEC: /* Table B3 applies */
+						if((parunmodd(source[input_position], nullchar) != ABORC) && (c == 1)) {
+							/* Needs two symbols */
+							blockmatrix[current_row][column_position] = 101; /* Code A */
+							column_position++;
+							c--;
+							done = 1;
+						}
+						
+						if(((parunmodd(source[input_position], nullchar) == ABORC) && (parunmodd(source[input_position + 1], nullchar) != ABORC))
+							&& (c == 1)) {
+							/* Needs two symbols */
+							blockmatrix[current_row][column_position] = 101; /* Code A */
+							column_position++;
+							c--;
+							done = 1;
+						}
+						
+						if(source[input_position] >= 128) {
+							/* Needs three symbols */
+							blockmatrix[current_row][column_position] = 101; /* Code A */
+							column_position++;
+							c--;
+							if(c == 1) {
+								blockmatrix[current_row][column_position] = 100; /* Code B */
+								column_position++;
+								c--;
+							}
+						}
+						break;
+				}
 			}
 		}
 		
@@ -290,7 +306,7 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 		}
 		
 		if(done == 0) {
-			if(((current_mode == MODEA) || (current_mode == MODEB)) && (parunmodd(source[input_position], nullchar) == ABORC)) {
+			if(((current_mode == MODEA) || (current_mode == MODEB)) && ((parunmodd(source[input_position], nullchar) == ABORC) || (gs1 && (source[input_position] == '[')))) {
 				/* Count the number of numeric digits */
 				/*  If 4 or more numeric data characters occur together when in subsets A or B:
 				a.      If there is an even number of numeric data characters, insert a Code C character before the
@@ -298,7 +314,12 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 				b.      If there is an odd number of numeric data characters, insert a Code Set C character immedi-
 				ately after the first numeric digit to change to subset C. */
 				i = 0;
-				do { i++; } while(parunmodd(source[input_position + i], nullchar) == ABORC);
+				j = 0;
+				do {
+					i++;
+					if(gs1 && (source[input_position + j] == '[')) { i++; }
+					j++;
+				} while((parunmodd(source[input_position + j], nullchar) == ABORC) || (gs1 && (source[input_position + j] == '[')));
 				i--;
 				
 				if(i >= 4) {
@@ -562,6 +583,7 @@ int codablock(struct zint_symbol *symbol, unsigned char source[])
 	int subset_selector[44], row_indicator[44], row_check[44];
 	long int k1_sum, k2_sum;
 	int k1_check, k2_check;
+	int gs1;
 	
 	error_number = 0;
 	input_length = ustrlen(source);
@@ -571,6 +593,8 @@ int codablock(struct zint_symbol *symbol, unsigned char source[])
 		strcpy(symbol->errtxt, "Input data too long [741]");
 		return ERROR_TOO_LONG;
 	}
+	
+	if(symbol->input_mode == GS1_MODE) { gs1 = 1; } else { gs1 = 0; }
 	
 	/* Make a guess at how many characters will be needed to encode the data */
 	estimate_codelength = 0.0;
@@ -603,7 +627,7 @@ int codablock(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	/* Encode the data */
-	error_number = data_encode_blockf(source, subset_selector, blockmatrix, &columns_needed, &rows_needed, &final_mode, symbol->nullchar);
+	error_number = data_encode_blockf(source, subset_selector, blockmatrix, &columns_needed, &rows_needed, &final_mode, symbol->nullchar, gs1);
 	if(error_number > 0) {
 		if(error_number == ERROR_TOO_LONG) {
 			strcpy(symbol->errtxt, "Input data too long [743]");

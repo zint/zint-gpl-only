@@ -6,6 +6,7 @@
  * 
  * (c) 2004 Adrian Kennard, Andrews & Arnold Ltd
  * (c) 2006 Stefan Schmidt <stefan@datenfreihafen.org>
+ * (c) 2009 Robin Stuart <robin@zint.org.uk>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -230,7 +231,7 @@ static void ecc200(unsigned char *binary, int bytes, int datablock, int rsblock)
  * necessary padding to tl
  */
 
-char ecc200encode(unsigned char *t, int tl, unsigned char *s, int sl, char *encoding, int *lenp)
+char ecc200encode(unsigned char *t, int tl, unsigned char *s, int sl, char *encoding, int *lenp, int gs1)
 {
 	char enc = 'a';		// start in ASCII encoding mode
 	int tp = 0, sp = 0;
@@ -239,6 +240,8 @@ char ecc200encode(unsigned char *t, int tl, unsigned char *s, int sl, char *enco
 		return 0;
 	}
 
+	if(gs1) { t[tp++] = 232; } /* FNC1 */
+	
 	// do the encoding
 	while (sp < sl && tp < tl) {
 		char newenc = enc;	// suggest new encoding
@@ -291,18 +294,23 @@ char ecc200encode(unsigned char *t, int tl, unsigned char *s, int sl, char *enco
 							out[(int)p++] = 0;
 							out[(int)p++] = c;
 						} else {
-							w = strchr(s2, c);
-							if (w) {	// shift 2
+							if(gs1 && (c == '[')) {
 								out[(int)p++] = 1;
-								out[(int)p++] = (w - s2);
+								out[(int)p++] = 27; /* FNC1 */
 							} else {
-								w = strchr(s3, c);
-								if (w) {
-									out[(int)p++]  = 2;
-									out[(int)p++] = (w - s3);
+								w = strchr(s2, c);
+								if (w) {	// shift 2
+									out[(int)p++] = 1;
+									out[(int)p++] = (w - s2);
 								} else {
-									fprintf (stderr, "Could not encode 0x%02X, should not happen\n", c);
-									return 0;
+									w = strchr(s3, c);
+									if (w) {
+										out[(int)p++]  = 2;
+										out[(int)p++] = (w - s3);
+									} else {
+										fprintf (stderr, "Could not encode 0x%02X, should not happen\n", c);
+										return 0;
+									}
 								}
 							}
 						}
@@ -373,11 +381,17 @@ char ecc200encode(unsigned char *t, int tl, unsigned char *s, int sl, char *enco
 			if (sl - sp >= 2 && isdigit(s[sp]) && isdigit(s[sp + 1])) {
 				t[tp++] = (s[sp] - '0') * 10 + s[sp + 1] - '0' + 130;
 				sp += 2;
-			} else if (s[sp] > 127) {
-				t[tp++] = 235;
-				t[tp++] = s[sp++] - 127;
-			} else
-				t[tp++] = s[sp++] + 1;
+			} else {
+				if (gs1 && (s[sp] == '[')) {
+					t[tp++] = 232; /* FNC1 */
+				} else {
+					if (s[sp] > 127) {
+						t[tp++] = 235;
+						t[tp++] = s[sp++] - 127;
+					} else
+						t[tp++] = s[sp++] + 1;
+				}
+			}
 			break;
 		case 'b':	// Binary
 			{
@@ -476,7 +490,7 @@ unsigned char switchcost[E_MAX][E_MAX] = {
  * otherwise free the result and try again with exact=0
  */
 
-static char *encmake(int l, unsigned char *s, int *lenp, char exact)
+static char *encmake(int l, unsigned char *s, int *lenp, char exact, int gs1)
 {
 	char *encoding = 0;
 	int p = l;
@@ -628,7 +642,7 @@ static char *encmake(int l, unsigned char *s, int *lenp, char exact)
 		}
 		// EDIFACT
 		sl = bl = 0;
-		if (s[p + 0] >= 32 && s[p + 0] <= 94) {	// can encode 1
+		if ((s[p + 0] >= 32 && s[p + 0] <= 94) && (!(gs1 && (s[p + 0] == '[')))) {	// can encode 1
 			char bs = 0;
 			if (p + 1 == l && (!bl || bl < 2)) {
 				bl = 2;
@@ -642,7 +656,7 @@ static char *encmake(int l, unsigned char *s, int *lenp, char exact)
 						bl = t;
 						b = e;
 					}
-			if (p + 1 < l && s[p + 1] >= 32 && s[p + 1] <= 94) {	// can encode 2
+				if ((p + 1 < l && s[p + 1] >= 32 && s[p + 1] <= 94) && (!(gs1 && (s[p + 1] == '[')))) { // can encode 2
 				if (p + 2 == l && (!bl || bl < 2)) {
 					bl = 3;
 					bs = 2;
@@ -655,7 +669,7 @@ static char *encmake(int l, unsigned char *s, int *lenp, char exact)
 							bl = t;
 							b = e;
 						}
-				if (p + 2 < l && s[p + 2] >= 32 && s[p + 2] <= 94) {	// can encode 3
+					if ((p + 2 < l && s[p + 2] >= 32 && s[p + 2] <= 94) && (!(gs1 && (s[p + 2] == '[')))) { // can encode 3
 					if (p + 3 == l && (!bl || bl < 3)) {
 						bl = 3;
 						bs = 3;
@@ -668,7 +682,7 @@ static char *encmake(int l, unsigned char *s, int *lenp, char exact)
 								bl = t;
 								b = e;
 							}
-					if (p + 4 < l && s[p + 3] >= 32 && s[p + 3] <= 94) {	// can encode 4
+						if ((p + 4 < l && s[p + 3] >= 32 && s[p + 3] <= 94) && (!(gs1 && (s[p + 3] == '[')))) { // can encode 4
 						if (p + 4 == l && (!bl || bl < 3)) {
 							bl = 3;
 							bs = 4;
@@ -759,10 +773,12 @@ int iec16022ecc200(unsigned char *barcode, int barcodelen, struct zint_symbol *s
 	struct ecc200matrix_s *matrix;
 	memset(binary, 0, sizeof(binary));
 	unsigned char adjusted[barcodelen];
-	int i;
+	int i, gs1;
 
 	lend = 0;
 	lenp = &lend;
+	
+	if(symbol->input_mode == GS1_MODE) { gs1 = 1; } else { gs1 = 0; }
 	
 	switch(symbol->option_2) {
 		case 1: W = 10; H = 10; break;
@@ -816,10 +832,10 @@ int iec16022ecc200(unsigned char *barcode, int barcodelen, struct zint_symbol *s
 		}
 		if (!encoding) {
 			int len;
-			char *e = encmake(barcodelen, adjusted, &len, 1);
+			char *e = encmake(barcodelen, adjusted, &len, 1, gs1);
 			if (e && len != matrix->bytes) {	// try not an exact fit
 				free(e);
-				e = encmake(barcodelen, adjusted, &len, 0);
+				e = encmake(barcodelen, adjusted, &len, 0, gs1);
 				if (len > matrix->bytes) {
 					strcpy(symbol->errtxt, "Cannot make barcode fit");
 					if (e) free (e);
@@ -831,22 +847,22 @@ int iec16022ecc200(unsigned char *barcode, int barcodelen, struct zint_symbol *s
 	} else {
 		// find a suitable encoding
 		if (encoding == NULL)
-			encoding = encmake(barcodelen, adjusted, NULL, 1);
+			encoding = encmake(barcodelen, adjusted, NULL, 1, gs1);
 
 		if (encoding) {	// find one that fits chosen encoding
 			for (matrix = ecc200matrix; matrix->W; matrix++)
-				if (ecc200encode(binary, matrix->bytes, adjusted, barcodelen, encoding, 0)) {
+				if (ecc200encode(binary, matrix->bytes, adjusted, barcodelen, encoding, 0, gs1)) {
 					break;
 				}
 		} else {
 			int len;
 			char *e;
-			e = encmake(barcodelen, adjusted, &len, 1);
+			e = encmake(barcodelen, adjusted, &len, 1, gs1);
 			for (matrix = ecc200matrix;
 			     matrix->W && matrix->bytes != len; matrix++) ;
 			if (e && !matrix->W) {	// try for non exact fit
 				free(e);
-				e = encmake(barcodelen, adjusted, &len, 0);
+				e = encmake(barcodelen, adjusted, &len, 0, gs1);
 				for (matrix = ecc200matrix; matrix->W && matrix->bytes < len; matrix++) ;
 			}
 			encoding = e;
@@ -858,7 +874,7 @@ int iec16022ecc200(unsigned char *barcode, int barcodelen, struct zint_symbol *s
 		W = matrix->W;
 		H = matrix->H;
 	}
-	if (!ecc200encode(binary, matrix->bytes, adjusted, barcodelen, encoding, lenp)) {
+	if (!ecc200encode(binary, matrix->bytes, adjusted, barcodelen, encoding, lenp, gs1)) {
 		strcpy(symbol->errtxt, "Barcode too long");
 		free(encoding);
 		return ERROR_INVALID_OPTION;
