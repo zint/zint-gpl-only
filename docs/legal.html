@@ -176,11 +176,14 @@ NVE-18, PZN, Data Matrix, Maxicode and QR Code)</P>
 bcTester. Added Aztec Runes, Micro QR Code and Data Matrix ECC
 000-140. Updated e-mail information. 18/11/2008</P>
 <P>v2.1 – Reinstated Korea Post barcodes, harmonised bind and box
-options, moved Unicode handling into backend, added size options to
+options, moved Unicode handling into backend and added input_mode
+option, added size options to
 Data Matrix, added NULL character handling for Codablock-F, Code 128,
-Code 16k, Extended Code 39, Code 93, Telepen, Maxicode, PDF417 and
-MicroPDF417. Added scale and direct to <FONT FACE="Courier, monospace">stdout</FONT>
-options.</P>
+Code 16k, Extended Code 39, Code 93, Telepen, Maxicode, Data Matrix ECC 200,
+PDF417 and MicroPDF417. Added GS1 processing for Data Matrix ECC 200,
+Code 16k, Codablock-F and Aztec Code. Added scale and direct to
+<FONT FACE="Courier, monospace">stdout</FONT> options. Correction
+to Data Matrix ECC 200 Base 256 encoding.</P>
 <P><A NAME="CREDITS"></A><FONT SIZE=5><B>6.4 Sources of Information</B></FONT></P>
 <P>Below is a list of some of the sources used in rough chronological
 order:</P>
@@ -250,6 +253,7 @@ symbology specification</P>
 identification and data capture techniques – Aztec Code bar code
 symbology specification</P>
 <P>Uniform Symbology Specification – Codablock F</P>
+<P>GS1 General Specifications Version 8.0</P>
 <P ALIGN=LEFT><BR><BR>
 </P>
 <P ALIGN=LEFT>[1] Some of the third party code in this library was
@@ -288,7 +292,5 @@ copyright holder. R. Stuart 9/3/2008</P>
 		</TD>
 	</TR>
 </TABLE>
-<P><BR><BR>
-</P>
 </BODY>
 </HTML>
