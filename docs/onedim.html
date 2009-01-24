@@ -3,19 +3,6 @@
 <HEAD>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
 	<TITLE>One-Dimensional Symbols</TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Unix)">
-	<META NAME="CREATED" CONTENT="20070730;21081900">
-	<META NAME="CHANGED" CONTENT="20090101;17585200">
-	<STYLE TYPE="text/css">
-	<!--
-		TD P { color: #000000 }
-		H1 { color: #000000 }
-		P { color: #000000 }
-		TH P { color: #000000 }
-		A:link { color: #0000ff }
-		A:visited { color: #840084 }
-	-->
-	</STYLE>
 </HEAD>
 <BODY LANG="en-GB" TEXT="#000000" LINK="#0000ff" VLINK="#840084" BGCOLOR="#ffffff" DIR="LTR">
 <TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0 STYLE="page-break-before: always">
@@ -39,14 +26,12 @@
 <P>One-Dimensional Symbols are what most people associate with the
 term <I>barcode</I>. They consist of a number of bars and a number of
 spaces of differing widths.</P>
-<P><BR><BR>
-</P>
 <P><A NAME="CODE11"></A><FONT SIZE=5><B>5.1.1 Code 11</B></FONT></P>
 <P>Developed by Intermec in 1977, Code 11 is similar to Code 2 of 5
 Matrix and is primarily used in telecommunications. The symbol can
 encode any length string consisting of the digits 0-9 and the dash
 character (-). One modulo-11 check digit is calculated.</P>
-<P ALIGN=CENTER><IMG SRC="code11.png" NAME="graphics1" ALIGN=LEFT WIDTH=190 HEIGHT=118 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P ALIGN=CENTER><IMG SRC="code11.png" NAME="graphics1" ALIGN=LEFT WIDTH=190 HEIGHT=118 BORDER=0><BR CLEAR=LEFT>
 </P>
 <P><A NAME="CODE25"></A><FONT SIZE=5><B>5.1.2 Code 2 of 5</B></FONT></P>
 <P>Code 2 of 5 is a family of one-dimensional symbols, 8 of which are
@@ -89,7 +74,7 @@ Identcode</B></FONT></P>
 <P>Identcode is based on Interleaved Code 2 of 5 and is used by
 Deutsche Post for mailing purposes. Identcode requires an 11-digit
 numerical input and includes a check digit.</P>
-<P ALIGN=CENTER><IMG SRC="itf14.png" NAME="graphics2" ALIGN=LEFT WIDTH=382 HEIGHT=150 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P ALIGN=CENTER><IMG SRC="itf14.png" NAME="graphics2" ALIGN=LEFT WIDTH=382 HEIGHT=150 BORDER=0><BR CLEAR=LEFT>
 </P>
 <P><A NAME="UPC"></A><FONT SIZE=5><B>5.1.3 Universal Product Code (EN
 797)</B></FONT></P>
@@ -120,7 +105,7 @@ number stating with the digit 1. For example:</P>
 <P><FONT FACE="Courier, monospace"><FONT SIZE=2>my_symbol-&gt;symbology
 = BARCODE_UPCE;<BR>error = ZBarcode_Encode_and_Print(my_symbol,
 &quot;1123456&quot;);</FONT></FONT></P>
-<P><IMG SRC="upca.png" NAME="graphics3" ALIGN=LEFT WIDTH=288 HEIGHT=118 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P><IMG SRC="upca.png" NAME="graphics3" ALIGN=LEFT WIDTH=288 HEIGHT=118 BORDER=0><BR CLEAR=LEFT>
 </P>
 <P><A NAME="EAN"></A><FONT SIZE=5><B>5.1.4 European Article Number
 (EN 797)</B></FONT></P>
@@ -151,14 +136,14 @@ The relevant check digit needs to be present in the input data and
 will be verified before the symbol is generated. In addition EAN-2
 and EAN-5 add-on symbols can be added using the + symbol as with UPC
 symbols.</P>
-<P><IMG SRC="ean13.png" NAME="graphics4" ALIGN=LEFT WIDTH=288 HEIGHT=118 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P><IMG SRC="ean13.png" NAME="graphics4" ALIGN=LEFT WIDTH=288 HEIGHT=118 BORDER=0><BR CLEAR=LEFT>
 </P>
 <P><A NAME="PLESSEY"></A><FONT SIZE=5><B>5.1.5 Plessey</B></FONT></P>
 <P>Also known as Plessey Code, this symbology was developed by the
 Plessey Company Ltd. in the UK. The symbol can encode any length data
 consisting of digits (0-9) or letters A-F and includes a CRC check
 digit.</P>
-<P ALIGN=CENTER><IMG SRC="plessey.png" NAME="graphics5" ALIGN=LEFT WIDTH=390 HEIGHT=118 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P ALIGN=CENTER><IMG SRC="plessey.png" NAME="graphics5" ALIGN=LEFT WIDTH=390 HEIGHT=118 BORDER=0><BR CLEAR=LEFT>
 </P>
 <P><A NAME="MSI"></A><FONT SIZE=5><B>5.1.6 MSI Plessey</B></FONT></P>
 <P>Based on Plessey and developed by MSE Data Corporation, MSI
@@ -168,66 +153,62 @@ the –<FONT FACE="Courier, monospace">ver=</FONT> switch. Any length
 numeric (digits 0-9) input can be encoded. The table below shows the
 options available:</P>
 <CENTER>
-	<TABLE WIDTH=817 BORDER=1 CELLPADDING=4 CELLSPACING=3>
-		<COL WIDTH=276>
-		<COL WIDTH=514>
+	<TABLE WIDTH=60% BORDER=1 CELLPADDING=4 CELLSPACING=3>
 		<THEAD>
 			<TR VALIGN=TOP>
-				<TH WIDTH=276>
+				<TH>
 					<P>Value of <FONT FACE="Courier, monospace">option_2</FONT></P>
 				</TH>
-				<TH WIDTH=514>
+				<TH>
 					<P>Check Digits</P>
 				</TH>
 			</TR>
 		</THEAD>
 		<TBODY>
 			<TR VALIGN=TOP>
-				<TD WIDTH=276>
+				<TD>
 					<P ALIGN=CENTER>0</P>
 				</TD>
-				<TD WIDTH=514>
+				<TD>
 					<P ALIGN=CENTER>None</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=276>
+				<TD>
 					<P ALIGN=CENTER>1</P>
 				</TD>
-				<TD WIDTH=514>
+				<TD>
 					<P ALIGN=CENTER>Modulo-10</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=276>
+				<TD>
 					<P ALIGN=CENTER>2</P>
 				</TD>
-				<TD WIDTH=514>
+				<TD>
 					<P ALIGN=CENTER>Modulo-10 &amp; Modulo-10</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=276>
+				<TD>
 					<P ALIGN=CENTER>3</P>
 				</TD>
-				<TD WIDTH=514>
+				<TD>
 					<P ALIGN=CENTER>Modulo-11</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=276>
+				<TD>
 					<P ALIGN=CENTER>4</P>
 				</TD>
-				<TD WIDTH=514>
+				<TD>
 					<P ALIGN=CENTER>Modulo-11 &amp; Modulo-10</P>
 				</TD>
 			</TR>
 		</TBODY>
 	</TABLE>
 </CENTER>
-<P><BR><BR>
-</P>
-<P ALIGN=CENTER><IMG SRC="msi.png" NAME="graphics6" ALIGN=LEFT WIDTH=230 HEIGHT=118 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P ALIGN=CENTER><IMG SRC="msi.png" NAME="graphics6" ALIGN=LEFT WIDTH=230 HEIGHT=118 BORDER=0><BR CLEAR=LEFT>
 </P>
 <P><A NAME="TELEPEN"></A><FONT SIZE=5><B>5.1.7 Telepen</B></FONT></P>
 <P><A NAME="TELEPENASCII"></A><FONT SIZE=4><B>5.1.7.1 Telepen Alpha</B></FONT></P>
@@ -240,7 +221,7 @@ symbol. Data can consist of pairs of numbers or pairs consisting of a
 numerical digit followed an X character. For example: 466333 and
 466X33 are valid codes whereas 46X333 is not (the digit pair “X3”
 is not valid). Includes a modulo-127 check digit.</P>
-<P ALIGN=CENTER><IMG SRC="telepen.png" NAME="graphics7" ALIGN=LEFT WIDTH=320 HEIGHT=118 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P ALIGN=CENTER><IMG SRC="telepen.png" NAME="graphics7" ALIGN=LEFT WIDTH=320 HEIGHT=118 BORDER=0><BR CLEAR=LEFT>
 </P>
 <P><A NAME="CODE39"></A><FONT SIZE=5><B>5.1.8 Code 39</B></FONT></P>
 <P><A NAME="CODE39STAND"></A><FONT SIZE=4><B>5.1.8.1 Standard Code 39
@@ -275,7 +256,7 @@ Standard Code 39 and adds a modulo-43 check digit.</P>
 (Ministero della Sanità) for encoding pharmacode data on
 pharmaceutical products. Requires a numeric input up to 8 digits in
 length. Check digit is added by Zint.</P>
-<P ALIGN=CENTER><IMG SRC="code39.png" NAME="graphics8" ALIGN=LEFT WIDTH=206 HEIGHT=118 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P ALIGN=CENTER><IMG SRC="code39.png" NAME="graphics8" ALIGN=LEFT WIDTH=206 HEIGHT=118 BORDER=0><BR CLEAR=LEFT>
 </P>
 <P><A NAME="CODABAR"></A><FONT SIZE=5><B>5.1.9 Codabar (EN 798)</B></FONT></P>
 <P>Also known as NW-7, Monarch, ABC Codabar, USD-4, Ames Code and
@@ -286,13 +267,13 @@ Codabar can encode any length string starting and ending with the
 letters A-D and containing between these letters the numbers 0-9,
 dash (-), dollar ($), colon (:), slash (/), full stop (.) or plus
 (+). No check digit is generated.</P>
-<P ALIGN=CENTER><IMG SRC="codabar.png" NAME="graphics9" ALIGN=LEFT WIDTH=164 HEIGHT=118 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P ALIGN=CENTER><IMG SRC="codabar.png" NAME="graphics9" ALIGN=LEFT WIDTH=164 HEIGHT=118 BORDER=0><BR CLEAR=LEFT>
 </P>
 <P><A NAME="PHARMA"></A><FONT SIZE=5><B>5.1.10 Pharmacode</B></FONT></P>
 <P>Developed by Laetus, Pharmacode One-Track is used for the
 identification of pharmaceuticals. The symbology is able to encode
 whole numbers between 3 and 131070.</P>
-<P ALIGN=LEFT><IMG SRC="pharma.png" NAME="graphics10" ALIGN=LEFT WIDTH=116 HEIGHT=100 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P ALIGN=LEFT><IMG SRC="pharma.png" NAME="graphics10" ALIGN=LEFT WIDTH=116 HEIGHT=100 BORDER=0><BR CLEAR=LEFT>
 </P>
 <P><A NAME="CODE128"></A><FONT SIZE=5><B>5.1.11 Code 128</B></FONT></P>
 <P><A NAME="CODE128STAND"></A><FONT SIZE=4><B>5.1.11.1 Standard Code
@@ -332,7 +313,7 @@ GTIN check digit and AI (01) are added by Zint.</FONT></P>
 <P>A variation of Code 128 the Nummber der Versandeinheit standard
 includes both modulo-10 and modulo-103 check digits. NVE-18 requires
 a 17 digit numerical input.</P>
-<P ALIGN=CENTER><IMG SRC="code128.png" NAME="graphics11" ALIGN=LEFT WIDTH=246 HEIGHT=118 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P ALIGN=CENTER><IMG SRC="code128.png" NAME="graphics11" ALIGN=LEFT WIDTH=246 HEIGHT=118 BORDER=0><BR CLEAR=LEFT>
 </P>
 <P ALIGN=LEFT><A NAME="DATABAR"></A><FONT SIZE=5><B>5.1.12 GS1
 DataBar (ISO 24724)</B></FONT></P>
@@ -378,22 +359,14 @@ C</A>). </SPAN><FONT SIZE=3><SPAN STYLE="font-weight: medium">The
 following is an example of a valid DataBar Expanded input</SPAN></FONT></P>
 <P ALIGN=LEFT STYLE="font-weight: medium"><FONT FACE="Courier, monospace"><FONT SIZE=2>zint
 --barcode=31 -d &quot;[01]98898765432106[3202]012345[15]991231&quot;</FONT></FONT></P>
-<P ALIGN=LEFT><IMG SRC="databar.png" NAME="graphics12" ALIGN=LEFT WIDTH=302 HEIGHT=118 BORDER=0><BR CLEAR=LEFT><BR><BR>
+<P ALIGN=LEFT><IMG SRC="databar.png" NAME="graphics12" ALIGN=LEFT WIDTH=302 HEIGHT=118 BORDER=0><BR CLEAR=LEFT>
 </P>
 <P ALIGN=LEFT><A NAME="KOREA"></A><FONT SIZE=5><B>5.1.13 Korea Post
 Barcode</B></FONT></P>
 <P ALIGN=LEFT>The Korean Postal Barcode is used to encode a six-digit
 number and includes one check digit.</P>
-<P><IMG SRC="korea.png" NAME="korea post" ALIGN=LEFT WIDTH=334 HEIGHT=118 BORDER=0><BR><BR>
+<P><IMG SRC="korea.png" NAME="korea post" ALIGN=LEFT WIDTH=334 HEIGHT=118 BORDER=0><BR CLEAR=LEFT>
 </P>
-<P ALIGN=LEFT><BR><BR>
-</P>
-<P ALIGN=LEFT><BR><BR>
-</P>
-<P ALIGN=LEFT>[1] Zint requires input data to be encoded in UTF-8
-format. <B>Note this now applies to both frontend and backend input
-text</B>. Extended ASCII characters may not display properly in EPS
-due to the restrictions of the EPS format.</P>
 <HR>
 <TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0>
 	<TR VALIGN=TOP>
@@ -419,7 +392,5 @@ due to the restrictions of the EPS format.</P>
 		</TD>
 	</TR>
 </TABLE>
-<P><BR><BR>
-</P>
 </BODY>
 </HTML>
