@@ -3,19 +3,6 @@
 <HEAD>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
 	<TITLE>Using the Front End</TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Unix)">
-	<META NAME="CREATED" CONTENT="20070730;21081900">
-	<META NAME="CHANGED" CONTENT="20081109;9200500">
-	<STYLE TYPE="text/css">
-	<!--
-		TD P { color: #000000 }
-		H1 { color: #000000 }
-		P { color: #000000 }
-		TH P { color: #000000 }
-		A:link { color: #0000ff }
-		A:visited { color: #840084 }
-	-->
-	</STYLE>
 </HEAD>
 <BODY LANG="en-GB" TEXT="#000000" LINK="#0000ff" VLINK="#840084" BGCOLOR="#ffffff" DIR="LTR">
 <TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0 STYLE="page-break-before: always">
@@ -40,629 +27,619 @@
 as PNG images or as encapsulated Post Script (EPS) files. This page
 describes how to encode data using the command line front end
 program.</P>
-<P><BR><BR>
-</P>
 <P><A NAME="INPUT"></A><FONT SIZE=5><B>3.1 Inputting data</B></FONT> 
 </P>
-<P STYLE="font-style: normal">The data to encode can be entered at
+<P>The data to encode can be entered at
 the command line using the -d option, for example:</P>
-<P STYLE="font-style: normal"><FONT FACE="Courier, monospace"><FONT SIZE=2>zint
+<P><FONT FACE="Courier, monospace"><FONT SIZE=2>zint
 -d 'This Text'</FONT></FONT></P>
-<P STYLE="font-style: normal">This will encode the text <I>This Text</I>.
+<P>This will encode the text <I>This Text</I>.
 Zint will use the default symbology, Code 128, and output to the
 default file out.png in the current directory. 
 </P>
-<P><BR><BR>
-</P>
-<P STYLE="font-style: normal"><A NAME="OUTPUT"></A><FONT SIZE=5><B>3.2
+<P><A NAME="OUTPUT"></A><FONT SIZE=5><B>3.2
 Directing Output</B></FONT></P>
-<P STYLE="font-style: normal">Output can be directed to a file other
+<P>Output can be directed to a file other
 than the default using the -o switch. For example:</P>
-<P STYLE="font-style: normal"><FONT FACE="Courier, monospace"><FONT SIZE=2>zint
+<P><FONT FACE="Courier, monospace"><FONT SIZE=2>zint
 -o here.png -d 'This Text'</FONT></FONT></P>
-<P STYLE="font-style: normal">draws a Code 128 barcode in the file
+<P>draws a Code 128 barcode in the file
 here.png. If an encapsulated Post Script file is needed simply append
 the file name with .eps:</P>
-<P STYLE="font-style: normal"><FONT FACE="Courier, monospace"><FONT SIZE=2>zint
+<P><FONT FACE="Courier, monospace"><FONT SIZE=2>zint
 -o there.eps -d 'This Text'</FONT></FONT></P>
 <P>Output can also be directed to stdout using the --<FONT FACE="Courier, monospace">directeps</FONT>
 and --<FONT FACE="Courier, monospace">directpng</FONT> switches for
 EPS and PNG output respectively.</P>
-<P><BR><BR>
-</P>
-<P STYLE="font-style: normal"><A NAME="BARTYPE"></A><FONT SIZE=5><B>3.3
+<P><A NAME="BARTYPE"></A><FONT SIZE=5><B>3.3
 Selecting barcode type</B></FONT></P>
-<P STYLE="font-style: normal">Selecting which type of barcode you
+<P>Selecting which type of barcode you
 wish to produce (i.e. which symbology to use) can be done at the
 command line using the -b or --barcode= switch followed by the
 appropriate integer value in the following table.</P>
-<P ALIGN=JUSTIFY STYLE="page-break-before: always"><BR><BR>
-</P>
 <CENTER>
-	<TABLE WIDTH=809 BORDER=1 CELLPADDING=4 CELLSPACING=3>
-		<COL WIDTH=139>
-		<COL WIDTH=643>
+	<TABLE WIDTH=60% BORDER=1>
 		<THEAD>
-			<TR VALIGN=TOP>
-				<TH WIDTH=139>
-					<P>ID</P>
+			<TR>
+				<TH>
+					<P>Numeric Value</P>
 				</TH>
-				<TH WIDTH=643>
+				<TH>
 					<P>Barcode Name</P>
 				</TH>
 			</TR>
 		</THEAD>
 		<TBODY>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>1</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Code 11</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>2</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Standard Code 2 of 5</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>3</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Interleaved 2 of 5</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>4</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Code 2 of 5 IATA</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>6</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Code 2 of 5 Data Logic</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>7</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Code 2 of 5 Industrial</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>8</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Code 3 of 9 (Code 39)</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>9</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Extended Code 3 of 9 (Code 39+)</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>13</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>EAN</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>16</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>GS1-128 (UCC.EAN-128)</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>18</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Codabar</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>20</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Code 128 (automatic subset switching)</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>21</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Deutshe Post Leitcode</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>22</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Deutshe Post Identcode</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>23</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Code 16K</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>25</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Code 93</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>28</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Flattermarken</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>29</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>GS1 DataBar-14</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>30</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>GS1 DataBar Limited</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>31</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>GS1 DataBar Extended</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>32</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Telepen Alpha</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>34</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>UPC A</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>37</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>UPC E</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>40</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>PostNet</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>47</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>MSI Plessey</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>49</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>FIM</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>50</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>LOGMARS</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>51</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Pharmacode One-Track</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>52</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>PZN</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>53</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Pharmacode Two-Track</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>55</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>PDF417</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>56</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>PDF417 Truncated</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>57</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Maxicode</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>58</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>QR Code</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>60</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Code 128 (Subset B)</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>63</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Australia Post Standard Customer</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>66</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Australia Post Reply Paid</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>67</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Australia Post Routing</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>68</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Australia Post Redirection</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>69</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>ISBN (EAN-13 with verification stage)</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>70</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Royal Mail 4 State (RM4SCC)</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>71</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Data Matrix</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>72</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>EAN-14</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>74</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Codablock-F</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>75</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>NVE-18</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>77</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Korea Post</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>79</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>GS1 DataBar-14 Stacked</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>80</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>GS1 DataBar-14 Stacked Omnidirectional</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>81</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>GS1 DataBar Expanded Stacked</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>82</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>PLANET</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>84</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>MicroPDF417</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>85</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>USPS OneCode</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>86</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Plessey Code</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>87</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Telepen Numeric</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>89</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>ITF-14</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>90</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Dutch Post KIX Code</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>92</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Aztec Code</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>93</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>DAFT Code</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>97</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Micro QR Code</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>128</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Aztec Runes</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>129</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Code 32</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>130</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Composite Symbol with EAN linear component</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>131</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Composite Symbol with GS1-128 linear component</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>132</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Composite Symbol with GS1 DataBar-14 linear
 					component</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>133</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Composite Symbol with GS1 DataBar Limited
 					component</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>134</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Composite Symbol with GS1 DataBar Extended
 					component</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>135</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Composite Symbol with UPC A linear component</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>136</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Composite Symbol with UPC E linear component</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>137</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Composite Symbol with GS1 DataBar-14 Stacked
 					component</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>138</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Composite Symbol with GS1 DataBar-14 Stacked
 					Omnidirectional component</P>
 				</TD>
 			</TR>
-			<TR VALIGN=TOP>
-				<TD WIDTH=139>
+			<TR>
+				<TD>
 					<P ALIGN=CENTER>139</P>
 				</TD>
-				<TD WIDTH=643>
+				<TD>
 					<P ALIGN=CENTER>Composite Symbol with GS1 DataBar Expanded
 					Stacked component</P>
 				</TD>
@@ -670,8 +647,6 @@ appropriate integer value in the following table.</P>
 		</TBODY>
 	</TABLE>
 </CENTER>
-<P ALIGN=JUSTIFY><BR><BR>
-</P>
 <P><A NAME="HEIGHT"></A><FONT SIZE=5><B>3.4 Adjusting height</B></FONT></P>
 <P>The height of the symbol can be adjusted using the --height
 switch. For example:</P>
@@ -679,37 +654,31 @@ switch. For example:</P>
 'This Text'</FONT></FONT></P>
 <P>specifies a symbol height of 100 times the <I>x-resolution</I> of
 the symbol.</P>
-<P><BR><BR>
-</P>
-<P STYLE="font-style: normal"><A NAME="WHITESPACE"></A><FONT SIZE=5><B>3.5
+<P><A NAME="WHITESPACE"></A><FONT SIZE=5><B>3.5
 Adjusting whitespace</B></FONT></P>
-<P STYLE="font-style: normal">The amount of whitespace to the left
+<P>The amount of whitespace to the left
 and right of the generated barcode can be altered using the -w
 switch. For example:</P>
-<P STYLE="font-style: normal"><FONT FACE="Courier, monospace"><FONT SIZE=2>zint
+<P><FONT FACE="Courier, monospace"><FONT SIZE=2>zint
 -w 10 -d 'This Text'</FONT></FONT></P>
-<P STYLE="font-style: normal">specifies a whitespace width of 10
+<P>specifies a whitespace width of 10
 times the <I>x-resolution</I> of the symbol.</P>
-<P><BR><BR>
-</P>
-<P STYLE="font-style: normal"><A NAME="BOUNDARY"></A><FONT SIZE=5><B>3.6
+<P><A NAME="BOUNDARY"></A><FONT SIZE=5><B>3.6
 Adding boundary bars and boxes</B></FONT></P>
-<P STYLE="font-style: normal">Zint allows the symbol to be bound with
+<P>Zint allows the symbol to be bound with
 'boundary bars' using the option --bind. These bars help to prevent
 misreading of the symbol by corrupting a scan if the scanning beam
 strays off the top or bottom of the symbol. Zint can also put a
 border right around the symbol and its whitespace with the --box
 option. This option is automatically chosen for ITF-14 symbols.</P>
-<P STYLE="font-style: normal">The width of the boundary or box can be
+<P>The width of the boundary or box can be
 specified using the --border switch. For example:</P>
-<P STYLE="font-style: normal"><FONT FACE="Courier, monospace"><FONT SIZE=2>zint
+<P><FONT FACE="Courier, monospace"><FONT SIZE=2>zint
 --box --border=10 -d 'This'</FONT></FONT></P>
-<P STYLE="font-style: normal">gives a box with a width 10 times the
+<P>gives a box with a width 10 times the
 <I>x-resolution</I> of the symbol.</P>
-<TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0>
-	<COL WIDTH=128*>
-	<COL WIDTH=128*>
-	<TR VALIGN=TOP>
+<TABLE WIDTH=100% BORDER=0>
+	<TR>
 		<TD WIDTH=50%>
 			<P ALIGN=CENTER><IMG SRC="border.png" NAME="graphics2" ALT="bound symbol" ALIGN=MIDDLE WIDTH=238 HEIGHT=138 BORDER=0></P>
 		</TD>
@@ -718,33 +687,29 @@ specified using the --border switch. For example:</P>
 		</TD>
 	</TR>
 </TABLE>
-<P><BR><BR>
-</P>
-<P STYLE="font-style: normal"><A NAME="COLOUR"></A><FONT SIZE=5><B>3.7
+<P><A NAME="COLOUR"></A><FONT SIZE=5><B>3.7
 Using colour</B></FONT></P>
-<P STYLE="font-style: normal">The default colours of a symbol are a
+<P>The default colours of a symbol are a
 black symbol on a white background. Zint allows you to change this.
 The -r switch allows the default colours to be inverted so that a
 white symbol is shown on a black background. For example the command</P>
-<P STYLE="font-style: normal"><FONT FACE="Courier, monospace"><FONT SIZE=2>zint
+<P><FONT FACE="Courier, monospace"><FONT SIZE=2>zint
 -r -d 'This'</FONT></FONT></P>
-<P STYLE="font-style: normal">gives an inverted Code 128 symbol. This
+<P>gives an inverted Code 128 symbol. This
 is not practical for most symbologies but white-on-black is allowed
 by the Data Matrix and Aztec Code symbology specifications.</P>
-<P STYLE="font-style: normal">For more specific needs the foreground
+<P>For more specific needs the foreground
 and background colours can be specified using the <FONT FACE="Courier, monospace">--fg=</FONT>
 and <FONT FACE="Courier, monospace">--bg=</FONT> options followed by
 a number in RGB hexadecimal notation (the same system used in HTML).
 For example the command 
 </P>
-<P STYLE="font-style: normal"><FONT FACE="Courier, monospace"><FONT SIZE=2>zint
+<P><FONT FACE="Courier, monospace"><FONT SIZE=2>zint
 --fg=004700 -d 'This'</FONT></FONT></P>
-<P STYLE="font-style: normal">alters the symbol to a dark green as
+<P>alters the symbol to a dark green as
 shown below.</P>
-<TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0>
-	<COL WIDTH=128*>
-	<COL WIDTH=128*>
-	<TR VALIGN=TOP>
+<TABLE WIDTH=100% BORDER=0>
+	<TR>
 		<TD WIDTH=50%>
 			<P ALIGN=CENTER><IMG SRC="green.png" NAME="graphics3" ALT="symbol with green ink" ALIGN=BOTTOM WIDTH=238 HEIGHT=138 BORDER=0></P>
 		</TD>
@@ -753,51 +718,39 @@ shown below.</P>
 		</TD>
 	</TR>
 </TABLE>
-<P><BR><BR>
-</P>
-<P STYLE="font-style: normal"><A NAME="ROTATE"></A><FONT SIZE=5><B>3.8
+<P><A NAME="ROTATE"></A><FONT SIZE=5><B>3.8
 Rotating the Symbol</B></FONT></P>
-<P STYLE="font-style: normal; font-weight: medium"><FONT SIZE=3>The
+<P>The
 symbol can be rotated through four orientations using the <FONT FACE="Courier, monospace">--rotate=</FONT>
 option followed by the angle of rotation as shown below. This option
-is only available with PNG output.</FONT></P>
-<DL>
-	<DL>
-		<DL>
-			<DD>
-			<TABLE WIDTH=1008 BORDER=1 CELLPADDING=4 CELLSPACING=3>
-				<COL WIDTH=501>
-				<COL WIDTH=480>
-				<TR VALIGN=TOP>
-					<TD WIDTH=501>
-						<P ALIGN=CENTER><IMG SRC="bar38n.png" NAME="graphics5" ALIGN=BOTTOM WIDTH=200 HEIGHT=118 BORDER=0>
-						<BR><FONT FACE="Courier, monospace"><FONT SIZE=3>--rotate=0</FONT></FONT><FONT SIZE=3>
-						(default)</FONT></P>
-					</TD>
-					<TD WIDTH=480>
-						<P ALIGN=CENTER><IMG SRC="bar38u.png" NAME="graphics6" ALIGN=BOTTOM WIDTH=200 HEIGHT=118 BORDER=0>
-						<BR><FONT FACE="Courier, monospace"><FONT SIZE=3>--rotate=180</FONT></FONT></P>
-					</TD>
-				</TR>
-				<TR VALIGN=TOP>
-					<TD WIDTH=501>
-						<P ALIGN=CENTER><IMG SRC="bar38l.png" NAME="graphics7" ALIGN=BOTTOM WIDTH=118 HEIGHT=200 BORDER=0>
-						<BR><FONT FACE="Courier, monospace"><FONT SIZE=3>--rotate=270</FONT></FONT></P>
-					</TD>
-					<TD WIDTH=480>
-						<P ALIGN=CENTER><IMG SRC="bar38r.png" NAME="graphics8" ALIGN=BOTTOM WIDTH=118 HEIGHT=200 BORDER=0>
-						<BR><FONT FACE="Courier, monospace"><FONT SIZE=3>--rotate=90</FONT></FONT></P>
-					</TD>
-				</TR>
-			</TABLE>
-		</DL>
-	</DL>
-</DL>
-<P><BR><BR>
-</P>
-<P STYLE="font-style: normal"><A NAME="SCALE"></A><FONT SIZE=5><B>3.9
+is only available with PNG output.</P>
+
+<TABLE WIDTH=100% BORDER=1>
+	<TR>
+		<TD>
+			<P ALIGN=CENTER><IMG SRC="bar38n.png" NAME="graphics5" WIDTH=200 HEIGHT=118 BORDER=0>
+			<BR><FONT FACE="Courier, monospace"><FONT SIZE=3>--rotate=0</FONT></FONT><FONT SIZE=3>
+			(default)</FONT></P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER><IMG SRC="bar38u.png" NAME="graphics6" WIDTH=200 HEIGHT=118 BORDER=0>
+			<BR><FONT FACE="Courier, monospace"><FONT SIZE=3>--rotate=180</FONT></FONT></P>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<P ALIGN=CENTER><IMG SRC="bar38l.png" NAME="graphics7" WIDTH=118 HEIGHT=200 BORDER=0>
+			<BR><FONT FACE="Courier, monospace"><FONT SIZE=3>--rotate=270</FONT></FONT></P>
+		</TD>
+		<TD>
+			<P ALIGN=CENTER><IMG SRC="bar38r.png" NAME="graphics8" WIDTH=118 HEIGHT=200 BORDER=0>
+			<BR><FONT FACE="Courier, monospace"><FONT SIZE=3>--rotate=90</FONT></FONT></P>
+		</TD>
+	</TR>
+</TABLE>
+<P><A NAME="SCALE"></A><FONT SIZE=5><B>3.9
 Adjusting image size</B></FONT></P>
-<P STYLE="font-style: normal">The scale of the image can be altered
+<P>The scale of the image can be altered
 using the <FONT FACE="Courier, monospace">--scale=</FONT> option
 followed by a multiple of the default x-dimension. For example for
 PNG images a scale of 5 will increase the x-dimension to 10 pixels.
@@ -805,29 +758,38 @@ Note that Maxicode symbols output as PNG images cannot be scaled in
 this way and that text added to a barcode in PNG images does not
 change size. 
 </P>
-<P STYLE="font-style: normal"><A NAME="NULL"></A><FONT SIZE=5><B>3.10
+<P><A NAME="NULL"></A><FONT SIZE=5><B>3.10
 Handling NULL Characters</B></FONT></P>
-<P STYLE="font-style: normal">Some symbologies support encoding of
+<P>Some symbologies support encoding of
 the NULL character (ASCII 0) normally used to indicate the end of a
 character string. To support this functionality the <FONT FACE="Courier, monospace">--null=</FONT>
 option allows you to substitute another character for NULL. Enter the
 decimal number for the character you wish to substitute. For example
 <FONT FACE="Courier, monospace">--null=21</FONT> instructs Zint to
 treat the NAK control character as a NULL character. Values between 1
-and 128 are valid. This currently applies to Codablock-F, Code 128,
-Code 16k, Extended Code 39, Code 93, Maxicode, PDF417, MicroPDF417
-and Telepen.</P>
-<P STYLE="font-style: normal"><A NAME="OTHER"></A><FONT SIZE=5><B>3.11
+and 128 are valid. This applies to Codablock-F, Code 128,
+Code 16k, Extended Code 39, Code 93, Maxicode, PDF417, MicroPDF417,
+Data Matrix (ECC 200 only) and Telepen.</P>
+<P><A NAME="INMODE"></A><FONT SIZE=5><B>3.11
+Input modes</B></FONT></P>
+<P>GS1 data can be encoded in a number of symbologies. Application
+identifiers are enclosed in [square brackets] followed by the data to
+be encoded (see 5.1.12.3). To encode GS1 data use
+<FONT FACE="Courier, monospace">--gs1</FONT>. GS1 mode is assumed
+(and doesn't need to be set) for EAN-128, DataBar and Composite symbologies
+but is also available for Code 16k, Codablock-F, Data Matrix (ECC 200 only),
+and Aztec Code.</P>
+<P>QR Code can encode Kaji characters. This can be accessed using the
+<FONT FACE="Courier, monospace">--kanji</FONT> option.</P>
+<P><A NAME="OTHER"></A><FONT SIZE=5><B>3.12
 Other options</B></FONT></P>
-<P STYLE="font-style: normal">Additional options are available which
+<P>Additional options are available which
 are specific to certain symbologies. These may, for example, control
 the quantity of error correction data or the size of the symbol.
 These options are discussed in section 5 of this guide.</P>
-<P><BR><BR>
-</P>
 <HR>
 <TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0>
-	<TR VALIGN=TOP>
+	<TR>
 		<TD WIDTH=33% HEIGHT=5>
 			<P ALIGN=LEFT><A HREF="installing.html">Prev</A></P>
 		</TD>
@@ -838,7 +800,7 @@ These options are discussed in section 5 of this guide.</P>
 			<P ALIGN=RIGHT><A HREF="backend.html">Next</A></P>
 		</TD>
 	</TR>
-	<TR VALIGN=TOP>
+	<TR>
 		<TD WIDTH=33%>
 			<P ALIGN=LEFT>Installation</P>
 		</TD>
@@ -850,7 +812,5 @@ These options are discussed in section 5 of this guide.</P>
 		</TD>
 	</TR>
 </TABLE>
-<P><BR><BR>
-</P>
 </BODY>
 </HTML>

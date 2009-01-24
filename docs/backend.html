@@ -3,22 +3,9 @@
 <HEAD>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
 	<TITLE>Using the API</TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Unix)">
-	<META NAME="CREATED" CONTENT="20070730;21081900">
-	<META NAME="CHANGED" CONTENT="20090101;16002700">
-	<STYLE TYPE="text/css">
-	<!--
-		TD P { color: #000000 }
-		H1 { color: #000000 }
-		P { color: #000000 }
-		TH P { color: #000000 }
-		A:link { color: #0000ff }
-		A:visited { color: #840084 }
-	-->
-	</STYLE>
 </HEAD>
 <BODY LANG="en-GB" TEXT="#000000" LINK="#0000ff" VLINK="#840084" BGCOLOR="#ffffff" DIR="LTR">
-<TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0 STYLE="page-break-before: always">
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0>
 	<TR>
 		<TH COLSPAN=3>
 			<P ALIGN=CENTER>Zint Barcode Generator</P>
@@ -42,18 +29,16 @@ Barcode</A> package. This allows easy migration from GNU Barcode to
 <I>Zint</I>. <I>Zint</I>, however, uses none of the same function
 names or option names as <I>GNU Barcode</I>. This allows you to use
 both packages in your application without conflict if you wish.</P>
-<P><BR><BR>
-</P>
-<P STYLE="font-style: normal"><A NAME="CREATE"></A><FONT SIZE=5><B>4.1
+<P><A NAME="CREATE"></A><FONT SIZE=5><B>4.1
 Creating and Deleting Symbols</B></FONT></P>
-<P STYLE="font-style: normal">The symbols manipulated by Zint are
+<P>The symbols manipulated by Zint are
 held in a <FONT FACE="Courier, monospace">zint_symbol</FONT>
 structure defined in <FONT FACE="Courier, monospace">zint.h</FONT>.
 These symbols are created with the <FONT FACE="Courier, monospace">ZBarcode_Create()</FONT>
 function and deleted using the <FONT FACE="Courier, monospace">ZBarcode_Delete()</FONT>
 function. For example the following code creates and then deletes a
 symbol:</P>
-<P STYLE="font-style: normal"><FONT FACE="Courier, monospace"><FONT SIZE=2>#include
+<P><FONT FACE="Courier, monospace"><FONT SIZE=2>#include
 &lt;stdio.h&gt;<BR>#include &lt;zint.h&gt;<BR><BR>int
 main()<BR>{<BR>&nbsp;&nbsp;&nbsp;&nbsp;struct zint_symbol
 *my_symbol;<BR><BR>&nbsp;&nbsp;&nbsp;&nbsp;my_symbol =
@@ -66,8 +51,6 @@ created!\n&quot;);<BR>&nbsp;&nbsp;&nbsp;&nbsp;}<BR>&nbsp;&nbsp;&nbsp;&nbsp;ZBarc
 <I>libzint</I> library using the -lzint option:</P>
 <P><FONT FACE="Courier, monospace"><FONT SIZE=2>gcc -o simple
 simple.c -lzint</FONT></FONT></P>
-<P><BR><BR>
-</P>
 <P><A NAME="ENCODE"></A><FONT SIZE=5><B>4.2 Encoding and Saving to
 File</B></FONT></P>
 <P>To encode data in a barcode use the <FONT FACE="Courier, monospace">ZBarcode_Encode()</FONT>
@@ -102,307 +85,314 @@ be altered. The way this is done is by altering the contents of the
 the creation and encoding stages. The <FONT FACE="Courier, monospace">zint_symbol</FONT>
 structure consists of the following variables:</P>
 <CENTER>
-	<TABLE WIDTH=871 BORDER=1 CELLPADDING=4 CELLSPACING=3>
-		<COL WIDTH=151>
-		<COL WIDTH=162>
-		<COL WIDTH=334>
-		<COL WIDTH=175>
+	<TABLE WIDTH=80% BORDER=1>
 		<THEAD>
 			<TR VALIGN=TOP>
-				<TH WIDTH=151>
+				<TH>
 					<P>Variable Name</P>
 				</TH>
-				<TH WIDTH=162>
+				<TH>
 					<P>Type</P>
 				</TH>
-				<TH WIDTH=334>
+				<TH>
 					<P>Meaning</P>
 				</TH>
-				<TH WIDTH=175>
+				<TH>
 					<P>Default Value</P>
 				</TH>
 			</TR>
 		</THEAD>
 		<TBODY>
 			<TR VALIGN=TOP>
-				<TD WIDTH=151>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">symbology</FONT></P>
 				</TD>
-				<TD WIDTH=162>
+				<TD>
 					<P ALIGN=CENTER>integer</P>
 				</TD>
-				<TD WIDTH=334>
+				<TD>
 					<P ALIGN=CENTER>Symbology to use (see section 4.5).</P>
 				</TD>
-				<TD WIDTH=175>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_CODE128</FONT></P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=151>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">height</FONT></P>
 				</TD>
-				<TD WIDTH=162>
+				<TD>
 					<P ALIGN=CENTER>integer</P>
 				</TD>
-				<TD WIDTH=334>
+				<TD>
 					<P ALIGN=CENTER>Symbol height. [1]</P>
 				</TD>
-				<TD WIDTH=175>
+				<TD>
 					<P ALIGN=CENTER>50</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=151>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">whitespace_width</FONT></P>
 				</TD>
-				<TD WIDTH=162>
+				<TD>
 					<P ALIGN=CENTER>integer</P>
 				</TD>
-				<TD WIDTH=334>
+				<TD>
 					<P ALIGN=CENTER>Whitespace width.</P>
 				</TD>
-				<TD WIDTH=175>
+				<TD>
 					<P ALIGN=CENTER>0</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=151>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">boder_width</FONT></P>
 				</TD>
-				<TD WIDTH=162>
+				<TD>
 					<P ALIGN=CENTER>integer</P>
 				</TD>
-				<TD WIDTH=334>
+				<TD>
 					<P ALIGN=CENTER>Border width.</P>
 				</TD>
-				<TD WIDTH=175>
+				<TD>
 					<P ALIGN=CENTER>0</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=151>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">output_options</FONT></P>
 				</TD>
-				<TD WIDTH=162>
+				<TD>
 					<P ALIGN=CENTER>integer</P>
 				</TD>
-				<TD WIDTH=334>
+				<TD>
 					<P ALIGN=CENTER>Binding or box parameters (see section 4.6). [2]</P>
 				</TD>
-				<TD WIDTH=175>
+				<TD>
 					<P ALIGN=CENTER>(none)</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=151>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">fgcolour</FONT></P>
 				</TD>
-				<TD WIDTH=162>
+				<TD>
 					<P ALIGN=CENTER>character string</P>
 				</TD>
-				<TD WIDTH=334>
+				<TD>
 					<P ALIGN=CENTER>Foreground (ink) colour as RGB hexadecimal
 					string. Must be 6 characters followed by terminating \0
 					character.</P>
 				</TD>
-				<TD WIDTH=175>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">&quot;000000&quot;</FONT></P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=151>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">bgcolour</FONT></P>
 				</TD>
-				<TD WIDTH=162>
+				<TD>
 					<P ALIGN=CENTER>character string</P>
 				</TD>
-				<TD WIDTH=334>
+				<TD>
 					<P ALIGN=CENTER>Background (paper) colour as RGB hexadecimal
 					string. Must be 6 characters followed by terminating \0
 					character.</P>
 				</TD>
-				<TD WIDTH=175>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">&quot;ffffff&quot;</FONT></P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=151>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">outfile</FONT></P>
 				</TD>
-				<TD WIDTH=162>
+				<TD>
 					<P ALIGN=CENTER>character string</P>
 				</TD>
-				<TD WIDTH=334>
+				<TD>
 					<P ALIGN=CENTER>Contains the name of the file to output a
 					resulting barcode symbol to. Must end in .PNG or .EPS</P>
 				</TD>
-				<TD WIDTH=175>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">&quot;out.png&quot;</FONT></P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=151>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">option_1</FONT></P>
 				</TD>
-				<TD WIDTH=162>
+				<TD>
 					<P ALIGN=CENTER>integer</P>
 				</TD>
-				<TD WIDTH=334>
+				<TD>
 					<P ALIGN=CENTER>Symbology specific options.</P>
 				</TD>
-				<TD WIDTH=175>
+				<TD>
 					<P ALIGN=CENTER>(automatic)</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=151>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">option_2</FONT></P>
 				</TD>
-				<TD WIDTH=162>
+				<TD>
 					<P ALIGN=CENTER>integer</P>
 				</TD>
-				<TD WIDTH=334>
+				<TD>
 					<P ALIGN=CENTER>Symbology specific options.</P>
 				</TD>
-				<TD WIDTH=175>
+				<TD>
 					<P ALIGN=CENTER>(automatic)</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=151>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">scale</FONT></P>
 				</TD>
-				<TD WIDTH=162>
+				<TD>
 					<P ALIGN=CENTER>float</P>
 				</TD>
-				<TD WIDTH=334>
+				<TD>
 					<P ALIGN=CENTER>Scale factor for adjusting size of image.</P>
 				</TD>
-				<TD WIDTH=175>
+				<TD>
 					<P ALIGN=CENTER>1.0</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=151>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">nullchar</FONT></P>
 				</TD>
-				<TD WIDTH=162>
+				<TD>
 					<P ALIGN=CENTER>char</P>
 				</TD>
-				<TD WIDTH=334>
+				<TD>
 					<P ALIGN=CENTER>Character to substitute for NULL</P>
 				</TD>
-				<TD WIDTH=175>
+				<TD>
 					<P ALIGN=CENTER>NULL</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=151>
+				<TD>
+					<P ALIGN=CENTER><FONT FACE="Courier">input_mode</FONT></P>
+				</TD>
+				<TD>
+					<P ALIGN=CENTER>integer</P>
+				</TD>
+				<TD>
+					<P ALIGN=CENTER>Set encoding of input data (see 4.8)</P>
+				</TD>
+				<TD>
+					<P ALIGN=CENTER><FONT FACE="Courier">BINARY_MODE</FONT></P>
+				</TD>
+			<TR VALIGN=TOP>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">primary</FONT></P>
 				</TD>
-				<TD WIDTH=162>
+				<TD>
 					<P ALIGN=CENTER>character string</P>
 				</TD>
-				<TD WIDTH=334>
+				<TD>
 					<P ALIGN=CENTER>Primary message data for more complex symbols.</P>
 				</TD>
-				<TD WIDTH=175>
+				<TD>
 					<P ALIGN=CENTER>NULL</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=151>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">text</FONT></P>
 				</TD>
-				<TD WIDTH=162>
+				<TD>
 					<P ALIGN=CENTER>character string</P>
 				</TD>
-				<TD WIDTH=334>
+				<TD>
 					<P ALIGN=CENTER>Human readable text, which usually consists of
 					the input data plus one or more check digits.</P>
 				</TD>
-				<TD WIDTH=175>
+				<TD>
 					<P ALIGN=CENTER>NULL</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=151>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">rows</FONT></P>
 				</TD>
-				<TD WIDTH=162>
+				<TD>
 					<P ALIGN=CENTER>integer</P>
 				</TD>
-				<TD WIDTH=334>
+				<TD>
 					<P ALIGN=CENTER>Number of rows used by the symbol or, if using
 					barcode stacking, the row to be used by the next symbol.</P>
 				</TD>
-				<TD WIDTH=175>
+				<TD>
 					<P ALIGN=CENTER>(output only)</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=151>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">width</FONT></P>
 				</TD>
-				<TD WIDTH=162>
+				<TD>
 					<P ALIGN=CENTER>integer</P>
 				</TD>
-				<TD WIDTH=334>
+				<TD>
 					<P ALIGN=CENTER>Width of the generated symbol.</P>
 				</TD>
-				<TD WIDTH=175>
+				<TD>
 					<P ALIGN=CENTER>(output only)</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=151>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">encoding_data</FONT></P>
 				</TD>
-				<TD WIDTH=162>
+				<TD>
 					<P ALIGN=CENTER>array of character strings</P>
 				</TD>
-				<TD WIDTH=334>
+				<TD>
 					<P ALIGN=CENTER>Representation of the encoded data.</P>
 				</TD>
-				<TD WIDTH=175>
+				<TD>
 					<P ALIGN=CENTER>(output only)</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=151>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">row_height</FONT></P>
 				</TD>
-				<TD WIDTH=162>
+				<TD>
 					<P ALIGN=CENTER>array of integers</P>
 				</TD>
-				<TD WIDTH=334>
+				<TD>
 					<P ALIGN=CENTER>Representation of the height of a row.</P>
 				</TD>
-				<TD WIDTH=175>
+				<TD>
 					<P ALIGN=CENTER>(output only)</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=151>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">errtxt</FONT></P>
 				</TD>
-				<TD WIDTH=162>
+				<TD>
 					<P ALIGN=CENTER>character string</P>
 				</TD>
-				<TD WIDTH=334>
+				<TD>
 					<P ALIGN=CENTER>Error message in the event that an error
 					occurred.</P>
 				</TD>
-				<TD WIDTH=175>
+				<TD>
 					<P ALIGN=CENTER>(output only)</P>
 				</TD>
 			</TR>
 		</TBODY>
 	</TABLE>
 </CENTER>
-<P><BR><BR>
-</P>
 <P>To alter these values use the syntax shown in the example below.
 This code has the same result as the previous example except the
 output is now taller and plotted in green.</P>
@@ -415,100 +405,98 @@ ZBarcode_Create();<BR>&nbsp;&nbsp;&nbsp;&nbsp;strcpy(my_symbol-&gt;fgcolour,
 = 400;<BR>&nbsp;&nbsp;&nbsp;&nbsp;ZBarcode_Encode_and_Print(my_symbol,
 argv[1]);<BR>&nbsp;&nbsp;&nbsp;&nbsp;ZBarcode_Delete(my_symbol);<BR>&nbsp;&nbsp;&nbsp;&nbsp;return
 0;<BR>}</FONT></FONT></P>
-<P><BR><BR>
-</P>
 <P><A NAME="ERRORS"></A><FONT SIZE=5><B>4.4 Handling Errors</B></FONT></P>
 <P>If errors occur during encoding an integer value is passed back to
 the calling application. In addition the <FONT FACE="Courier">errtxt</FONT>
 value is used to give a message detailing the nature of the error.
 The errors generated by Zint are given in the table below:</P>
 <CENTER>
-	<TABLE WIDTH=810 BORDER=1 CELLPADDING=4 CELLSPACING=3>
+	<TABLE WIDTH=80% BORDER=1>
 		<COL WIDTH=270>
 		<COL WIDTH=513>
 		<THEAD>
 			<TR VALIGN=TOP>
-				<TH WIDTH=270>
+				<TH>
 					<P>Return Value</P>
 				</TH>
-				<TH WIDTH=513>
+				<TH>
 					<P>Meaning</P>
 				</TH>
 			</TR>
 		</THEAD>
 		<TBODY>
 			<TR VALIGN=TOP>
-				<TD WIDTH=270>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">WARN_INVALID_OPTION</FONT></P>
 				</TD>
-				<TD WIDTH=513>
+				<TD>
 					<P ALIGN=CENTER>One of the values in <FONT FACE="Courier, monospace">zint_struct</FONT>
 					was set incorrectly but Zint has made a guess at what it should
 					have been and generated a barcode accordingly.</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=270>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">ERROR_TOO_LONG</FONT></P>
 				</TD>
-				<TD WIDTH=513>
+				<TD>
 					<P ALIGN=CENTER>The input data is too long or too short for the
 					selected symbology. No symbol has been generated.</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=270>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">ERROR_INVALID_DATA</FONT></P>
 				</TD>
-				<TD WIDTH=513>
+				<TD>
 					<P ALIGN=CENTER>The data to be encoded includes characters which
 					are not permitted by the selected symbology (e.g. alphabetic
 					characters in an EAN symbol). No symbol has been generated.</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=270>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">ERROR_INVALID_CHECK</FONT></P>
 				</TD>
-				<TD WIDTH=513>
+				<TD>
 					<P ALIGN=CENTER>An ISBN with an incorrect check digit has been
 					entered. No symbol has been generated.</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=270>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">ERROR_INVALID_OPTION</FONT></P>
 				</TD>
-				<TD WIDTH=513>
+				<TD>
 					<P ALIGN=CENTER>One of the values in <FONT FACE="Courier, monospace">zint_struct</FONT>
 					was set incorrectly and Zint was unable to guess what it should
 					have been. No symbol has been generated.</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=270>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">ERROR_ENCODING_PROBLEM</FONT></P>
 				</TD>
-				<TD WIDTH=513>
+				<TD>
 					<P ALIGN=CENTER>A problem has occurred during encoding of the
 					data. This should never happen. Please contact the developer if
 					you encounter this error.</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=270>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">ERROR_FILE_ACCESS</FONT></P>
 				</TD>
-				<TD WIDTH=513>
+				<TD>
 					<P ALIGN=CENTER>Zint was unable to open the requested output
 					file. This is usually a file permissions problem.</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=270>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">ERROR_MEMORY</FONT></P>
 				</TD>
-				<TD WIDTH=513>
+				<TD>
 					<P ALIGN=CENTER>Zint ran out of memory. This should only be a
 					problem with legacy systems.</P>
 				</TD>
@@ -516,8 +504,6 @@ The errors generated by Zint are given in the table below:</P>
 		</TBODY>
 	</TABLE>
 </CENTER>
-<P><BR><BR>
-</P>
 <P>To catch errors use an integer variable as shown in the code
 below:</P>
 <P><FONT FACE="Courier, monospace"><FONT SIZE=2>#include
@@ -540,8 +526,6 @@ otherwise carry on with the rest of the application
 <P>This code will exit with the appropriate message:</P>
 <P><FONT FACE="Courier, monospace"><FONT SIZE=2>error: malformed
 foreground colour target</FONT></FONT></P>
-<P><BR><BR>
-</P>
 <P><A NAME="SYMBOL"></A><FONT SIZE=5><B>4.5 Specifying a Symbology</B></FONT></P>
 <P>Symbologies can be specified by number or by name as shown in the
 following table. For example</P>
@@ -551,796 +535,793 @@ following table. For example</P>
 <P><FONT FACE="Courier, monospace"><FONT SIZE=2>symbol-&gt;symbology
 = 50;</FONT></FONT></P>
 <CENTER>
-	<TABLE WIDTH=936 BORDER=1 CELLPADDING=4 CELLSPACING=3>
-		<COL WIDTH=150>
-		<COL WIDTH=382>
-		<COL WIDTH=366>
+	<TABLE WIDTH=80% BORDER=1>
 		<THEAD>
 			<TR VALIGN=TOP>
-				<TH WIDTH=150>
+				<TH>
 					<P>Numeric Value</P>
 				</TH>
-				<TH WIDTH=382>
+				<TH>
 					<P>Name</P>
 				</TH>
-				<TH WIDTH=366>
+				<TH>
 					<P>Symbology</P>
 				</TH>
 			</TR>
 		</THEAD>
 		<TBODY>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>1</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_CODE11</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Code 11</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>2</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_C25MATRIX</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Standard Code 2 of 5</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>3</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_C25INTER</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Interleaved 2 of 5</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>4</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_C25IATA</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Code 2 of 5 IATA</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>6</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_C25LOGIC</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Code 2 of 5 Data Logic</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>7</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_C25IND</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Code 2 of 5 Industrial</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>8</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_CODE39</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Code 3 of 9 (Code 39)</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>9</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_EXCODE39</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Extended Code 3 of 9 (Code 39+)</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>13</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_EANX</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>EAN</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>16</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_EAN128</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>GS1-128</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>18</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_CODABAR</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Codabar</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>20</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_CODE128</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Code 128 (automatic subset switching)</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>21</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_DPLEIT</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Deutshe Post Leitcode</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>22</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_DPIDENT</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Deutshe Post Identcode</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>23</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_CODE16K</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Code 16K</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>25</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_CODE93</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Code 93</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>28</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_FLAT</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Flattermarken</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>29</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_RSS14</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>GS1 DataBar-14</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>30</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_RSS_LTD</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>GS1 DataBar Limited</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>31</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_RSS_EXP</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>GS1 DataBar Expanded</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>32</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_TELEPEN</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Telepen Alpha</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>34</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_UPCA</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>UPC A</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>37</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_UPCE</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>UPC E</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>40</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_POSTNET</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>PostNet</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>47</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_MSI_PLESSEY</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>MSI Plessey</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>49</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_FIM</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>FIM</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>50</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_LOGMARS</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>LOGMARS</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>51</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_PHARMA</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Pharmacode One-Track</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>52</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_PZN</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>PZN</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>53</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_PHARMA_TWO</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Pharmacode Two-Track</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>55</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_PDF417</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>PDF417</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>56</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_PDF417TRUNC</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>PDF417 Truncated</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>57</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_MAXICODE</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Maxicode</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>58</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_QRCODE</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>QR Code</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>60</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_CODE128B</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Code 128 (Subset B)</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>63</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_AUSPOST</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Australia Post Standard Customer</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>66</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_AUSREPLY</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Australia Post Reply Paid</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>67</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_AUSROUTE</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Australia Post Routing</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>68</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_AUSREDIRECT</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Australia Post Redirection</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>69</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_ISBNX</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>ISBN (EAN-13 with verification stage)</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>70</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_RM4SCC</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Royal Mail 4 State (RM4SCC)</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>71</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_DATAMATRIX</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Data Matrix</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>72</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_EAN14</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>EAN-14</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>75</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_NVE18</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>NVE-18</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>77</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_KOREAPOST</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Korea Post</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>79</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_RSS14STACK</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>GS1 DataBar-14 Stacked</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>80</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_RSS14STACK_OMNI</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>GS1 DataBar-14 Stacked Omnidirectional</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>81</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_RSS_EXPSTACK</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>GS1 DataBar Expanded Stacked</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>82</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_PLANET</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>PLANET</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>84</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_MICROPDF417</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>MicroPDF417</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>85</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_ONECODE</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>USPS OneCode</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>86</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_PLESSEY</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Plessey Code</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>87</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_TELEPEN_NUM</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Telepen Numeric</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>89</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_ITF14</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>ITF-14</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>90</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_KIX</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Dutch Post KIX Code</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>92</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_AZTEC</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Aztec Code</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>93</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_DAFT</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>DAFT Code</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>97</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_MICROQR</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Micro QR Code</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>128</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_AZRUNE</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Aztec Runes</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>129</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_CODE32</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Code 32</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>130</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_EANX_CC</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Composite Symbol with EAN linear component</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>131</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_EAN128_CC</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Composite Symbol with GS1-128 linear component</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>132</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_RSS14_CC</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Composite Symbol with GS1 DataBar-14 linear
 					component</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>133</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_RSS_LTD_CC</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Composite Symbol with GS1 DataBar Limited
 					component</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>134</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_RSS_EXP_CC</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Composite Symbol with GS1 DataBar Extended
 					component</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>135</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_UPCA_CC</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Composite Symbol with UPC A linear component</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>136</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_UPCE_CC</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Composite Symbol with UPC E linear component</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>137</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_RSS14STACK_CC</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Composite Symbol with GS1 DataBar-14 Stacked
 					component</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>138</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_RSS14_OMNI_CC</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Composite Symbol with GS1 DataBar-14 Stacked
 					Omnidirectional component</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=150>
+				<TD>
 					<P ALIGN=CENTER>139</P>
 				</TD>
-				<TD WIDTH=382>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier">BARCODE_RSS_EXPSTACK_CC</FONT></P>
 				</TD>
-				<TD WIDTH=366>
+				<TD>
 					<P ALIGN=CENTER>Composite Symbol with GS1 DataBar Expanded
 					Stacked component</P>
 				</TD>
@@ -1348,8 +1329,6 @@ following table. For example</P>
 		</TBODY>
 	</TABLE>
 </CENTER>
-<P ALIGN=JUSTIFY><BR><BR>
-</P>
 <P><A NAME="BOXES"></A><FONT SIZE=5><B>4.6 Adding Boxes and Boundary
 Bars</B></FONT></P>
 <P>Boxes and boundary bars are handled using the <FONT FACE="Courier">output_options</FONT>
@@ -1357,50 +1336,46 @@ variable in the <FONT FACE="Courier">zint_symbol</FONT> structure. To
 use this option simply assign a value to the <FONT FACE="Courier">output_options</FONT>
 variable from the following table [2].</P>
 <CENTER>
-	<TABLE WIDTH=801 BORDER=1 CELLPADDING=4 CELLSPACING=3>
-		<COL WIDTH=211>
-		<COL WIDTH=563>
+	<TABLE WIDTH=60% BORDER=1>
 		<THEAD>
 			<TR VALIGN=TOP>
-				<TH WIDTH=211>
+				<TH>
 					<P>Value</P>
 				</TH>
-				<TH WIDTH=563>
+				<TH>
 					<P>Effect</P>
 				</TH>
 			</TR>
 		</THEAD>
 		<TBODY>
 			<TR VALIGN=TOP>
-				<TD WIDTH=211>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">0</FONT></P>
 				</TD>
-				<TD WIDTH=563>
+				<TD>
 					<P ALIGN=CENTER>No box or boundary bars.</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=211>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_BIND</FONT></P>
 				</TD>
-				<TD WIDTH=563>
+				<TD>
 					<P ALIGN=CENTER>Boundary bars above and below the symbol and
 					between rows if stacking multiple symbols.</P>
 				</TD>
 			</TR>
 			<TR VALIGN=TOP>
-				<TD WIDTH=211>
+				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BARCODE_BOX</FONT></P>
 				</TD>
-				<TD WIDTH=563>
+				<TD>
 					<P ALIGN=CENTER>Add a box surrounding the symbol and whitespace.</P>
 				</TD>
 			</TR>
 		</TBODY>
 	</TABLE>
 </CENTER>
-<P><BR><BR>
-</P>
 <P><A NAME="ROTATE"></A><FONT SIZE=5><B>4.7 Rotating the Symbol</B></FONT></P>
 <P>Rotating the output is done using the
 <FONT FACE="Courier, monospace">ZBarcode_Encode_and_Print_Rotated()</FONT>
@@ -1411,11 +1386,63 @@ clockwise. For example the following code generates a symbol rotated
 by 90 degrees. Only PNG output can be rotated in this way.</P>
 <P>&nbsp;&nbsp;&nbsp;&nbsp;<FONT FACE="Courier, monospace"><FONT SIZE=2>error
 = ZBarcode_Encode_and_Print_Rotated(my_symbol, argv[1], 90);</FONT></FONT></P>
+<P><A NAME="INMODE"></A><FONT SIZE=5><B>4.8 Setting the Input Mode</B></FONT></P>
+<P>The way in which the input data is encoded can be set using the
+<FONT FACE="Courier, monospace">input_mode</FONT> property. Valid values
+are shown in the table below.</P>
+<CENTER>
+	<TABLE WIDTH=60% BORDER=1>
+		<THEAD>
+			<TR VALIGN=TOP>
+				<TH>
+					<P>Value</P>
+				</TH>
+				<TH>
+					<P>Effect</P>
+				</TH>
+			</TR>
+		</THEAD>
+		<TBODY>
+			<TR VALIGN=TOP>
+				<TD>
+					<P ALIGN=CENTER><FONT FACE="Courier, monospace">BINARY_MODE</FONT></P>
+				</TD>
+				<TD>
+					<P ALIGN=CENTER>Uses full ASCII range interpreted as Latin-1 or binary data.</P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD>
+					<P ALIGN=CENTER><FONT FACE="Courier, monospace">UNICODE_MODE</FONT></P>
+				</TD>
+				<TD>
+					<P ALIGN=CENTER>Uses pre-formatted UTF-8 input.</P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD>
+					<P ALIGN=CENTER><FONT FACE="Courier, monospace">GS1_MODE</FONT></P>
+				</TD>
+				<TD>
+					<P ALIGN=CENTER>Encodes GS1 data using FNC1 characters.</P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD>
+					<P ALIGN=CENTER><FONT FACE="Courier, monospace">KANJI_MODE</FONT></P>
+				</TD>
+				<TD>
+					<P ALIGN=CENTER>Encodes Kanji characters in QR Code.</P>
+				</TD>
+			</TR>
+		</TBODY>
+	</TABLE>
+</CENTER>
 <P><BR><BR>
 </P>
 <P>[1] This value is ignored for Australia Post 4-State Barcodes,
 PostNet, PLANET, USPS OneCode, RM4SCC, PDF417, Data Matrix, Maxicode,
-QR Code and GS1 DataBar-14 Stacked - all of which have a fixed
+QR Code, GS1 DataBar-14 Stacked, PDF417 and MicroPDF417 - all of which have a fixed
 height.</P>
 <P>[2] This value is ignored for Code 16k and ITF-14 symbols.</P>
 <HR>
@@ -1443,7 +1470,5 @@ height.</P>
 		</TD>
 	</TR>
 </TABLE>
-<P><BR><BR>
-</P>
 </BODY>
 </HTML>

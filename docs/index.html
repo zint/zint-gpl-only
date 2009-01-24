@@ -3,25 +3,11 @@
 <HEAD>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
 	<TITLE>Zint Barcode Generator</TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Unix)">
-	<META NAME="CREATED" CONTENT="20070802;10154800">
-	<META NAME="CHANGED" CONTENT="20081118;8433800">
-	<STYLE TYPE="text/css">
-	<!--
-		TD P { color: #000000 }
-		H3 { color: #000000 }
-		H1 { color: #000000 }
-		P { color: #000000 }
-		DT { color: #000000 }
-		A:link { color: #0000ff }
-		A:visited { color: #840084 }
-	-->
-	</STYLE>
 </HEAD>
 <BODY LANG="en-GB" TEXT="#000000" LINK="#0000ff" VLINK="#840084" BGCOLOR="#ffffff" DIR="LTR">
 <H1>Zint Barcode Generator</H1>
-<H3>by Robin Stuart <SPAN STYLE="font-weight: medium">&lt;robin@zint.org.uk&gt;</SPAN></H3>
-<P>Version 2.0, 18<SUP>th</SUP> November 2008</P>
+<P><FONT SIZE=4>by Robin Stuart &lt;robin@zint.org.uk&gt;</FONT></P>
+<P>Version 2.1, 24<SUP>th</SUP> January 2009</P>
 <P>This document is a guide to Zint, the <I>libzint</I> library and
 the barcode symbologies supported by them.</P>
 <HR>
@@ -54,7 +40,7 @@ the barcode symbologies supported by them.</P>
 		3.5 <A HREF="frontend.html#WHITESPACE">Adjusting Whitespace</A> 
 		</DT><DT>
 		3.6 <A HREF="frontend.html#BOUNDARY">Adding Boundary Bars and Boxes</A>
-				</DT><DT>
+		</DT><DT>
 		3.7 <A HREF="frontend.html#COLOUR">Using Colour</A> 
 		</DT><DT>
 		3.8 <A HREF="frontend.html#ROTATE">Rotating the Symbol</A> 
@@ -63,7 +49,9 @@ the barcode symbologies supported by them.</P>
 		</DT><DT>
 		3.10 <A HREF="frontend.html#NULL">Handling NULL Characters</A>
 		</DT><DT>
-		3.11 <A HREF="frontend.html#OTHER">Other Options</A> 
+		3.11 <A HREF="frontend.html#INMODE">Input Mode</A>
+		</DT><DT>
+		3.12 <A HREF="frontend.html#OTHER">Other Options</A> 
 		</DT></DL>
 	<DT>
 	4. <A HREF="backend.html">Using the API</A> 
@@ -80,8 +68,10 @@ the barcode symbologies supported by them.</P>
 		4.5 <A HREF="backend.html#SYMBOL">Specifying a Symbology</A> 
 		</DT><DT>
 		4.6 <A HREF="backend.html#BOXES">Adding Boxes and Boundary Bars</A>
-				</DT><DT>
-		4.7 <A HREF="backend.html#ROTATE">Rotating the Symbol</A> 
+		</DT><DT>
+		4.7 <A HREF="backend.html#ROTATE">Rotating the Symbol</A>
+		</DT><DT>
+		4.8 <A HREF="backend.html#INMODE">Setting the Input Mode</A>
 		</DT></DL>
 	<DT>
 	5. <A HREF="symbologies.html">Types of Symbol</A> 
@@ -313,10 +303,7 @@ the barcode symbologies supported by them.</P>
 		C.2 <A HREF="appxc.html#FIELDS">Fixed Length Fields</A> 
 		</DT></DL>
 </DL>
-<P>
-&nbsp;</P>
 <HR>
-<P>&nbsp;</P>
 <TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0>
 	<TR VALIGN=TOP>
 		<TD WIDTH=33%>
@@ -341,7 +328,5 @@ the barcode symbologies supported by them.</P>
 		</TD>
 	</TR>
 </TABLE>
-<P><BR><BR>
-</P>
 </BODY>
 </HTML>
