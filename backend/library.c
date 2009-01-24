@@ -202,6 +202,8 @@ int gs1_compliant(int symbology)
 		case BARCODE_RSS_EXPSTACK_CC:
 		case BARCODE_CODE16K:
 		case BARCODE_AZTEC:
+		case BARCODE_DATAMATRIX:
+		case BARCODE_CODABLOCKF:
 			result = 1;
 			break;
 	}
