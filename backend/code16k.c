@@ -229,7 +229,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	}
 
 	/* We have a problem with FNC1 in Code Set C to resolve */
-	for(i = 0; i < read; i++) {
+	for(i = 0; i < input_length; i++) {
 		if((set[i] == 'C') && (source[i] == '[')) {
 			int c_count;
 			
