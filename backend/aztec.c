@@ -1021,6 +1021,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 	/* Now add the symbol descriptor */
 	memset(desc_data,0,4);
 	memset(desc_ecc,0,6);
+	memset(descriptor,0,42);
 
 	if(compact) {
 		/* The first 2 bits represent the number of layers minus 1 */
