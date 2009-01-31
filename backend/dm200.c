@@ -628,6 +628,10 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 			}
 		}
 		
+		if(tp > 1558) {
+			return 0;
+		}
+		
 	} /* while */
 	
 	/* Empty buffers */
@@ -750,7 +754,7 @@ int data_matrix_200(struct zint_symbol *symbol, unsigned char source[])
 {
 	int inputlen, i;
 	inputlen = ustrlen(source);
-	unsigned char binary[inputlen * 2];
+	unsigned char binary[2000];
 	int binlen;
 	int symbolsize, optionsize, calcsize;
 	int taillength, error_number = 0;
@@ -760,8 +764,8 @@ int data_matrix_200(struct zint_symbol *symbol, unsigned char source[])
 	
 	binlen = dm200encode(symbol, source, binary, &last_mode);
 	if(binlen == 0) {
-		strcpy(symbol->errtxt, "Could not encode data (should never happen)");
-		return ERROR_ENCODING_PROBLEM;
+		strcpy(symbol->errtxt, "Data too long to fit in symbol");
+		return ERROR_TOO_LONG;
 	}
 	
 	if((symbol->option_2 >= 1) && (symbol->option_2 <= 30)) {
@@ -833,7 +837,6 @@ int data_matrix_200(struct zint_symbol *symbol, unsigned char source[])
 			}
 			//fprintf (stderr, "\n");
 		}
-		
 		for(y = H - 1; y >= 0; y--) {
 			int x;
 			for(x = 0; x < W; x++) {
