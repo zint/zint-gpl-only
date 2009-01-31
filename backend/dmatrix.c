@@ -21,9 +21,10 @@
 
 #include <string.h>
 #include <stdio.h>
-#include "dm200.h"
 #include "dmatrix.h"
 #include "common.h"
+
+int data_matrix_200(struct zint_symbol *symbol, unsigned char source[]);
 
 #define B11SET " 0123456789"
 #define B27SET " ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -1289,30 +1290,11 @@ int matrix89(struct zint_symbol *symbol, unsigned char source[])
 
 int dmatrix(struct zint_symbol *symbol, unsigned char source[])
 {
-	int barcodelen;
 	int error_number;
 	
-	barcodelen = ustrlen(source);
-	if((symbol->option_1 < 1) || (symbol->option_1 > 6)) {
-		symbol->option_1 = 1;
-	}
-	
-	if(symbol->option_1 == 1) {
+	if(symbol->option_1 <= 1) {
 		/* ECC 200 */
-		error_number = iec16022ecc200(source, barcodelen, symbol);
-		if((error_number != 0) && (symbol->option_2 != 0)) {
-			if(strcmp(symbol->errtxt, "Cannot make barcode fit") == 0) {
-				/* Can't fit data in the symbol size specified -
-				   use automatic symbol sizing instead */
-				symbol->option_2 = 0;
-				error_number = iec16022ecc200(source, barcodelen, symbol);
-				if(error_number == 0) {
-					/* It worked! */
-					strcpy(symbol->errtxt, "Unable to fit data in specified symbol size");
-					error_number = WARN_INVALID_OPTION;
-				}
-			}
-		}
+		error_number = data_matrix_200(symbol, source);
 	} else {
 		/* ECC 000 - 140 */
 		error_number = matrix89(symbol, source);
