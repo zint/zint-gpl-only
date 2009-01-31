@@ -1,28 +1,31 @@
-/** 
- *
- * IEC16022 bar code generation
- * Adrian Kennard, Andrews & Arnold Ltd
- * with help from Cliff Hones on the RS coding
- * 
- * (c) 2004 Adrian Kennard, Andrews & Arnold Ltd
- * (c) 2006 Stefan Schmidt <stefan@datenfreihafen.org>
- * (c) 2009 Robin Stuart <robin@zint.org.uk>
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
- *
- */
+/* dm200.c Handles Data Matrix ECC 200 symbols */
+
+/*
+    libzint - the open source barcode library
+    Copyright (C) 2009 Robin Stuart <robin@zint.org.uk>
+    
+    developed from and including some functions from:
+	IEC16022 bar code generation
+	Adrian Kennard, Andrews & Arnold Ltd
+	with help from Cliff Hones on the RS coding
+ 
+	(c) 2004 Adrian Kennard, Andrews & Arnold Ltd
+	(c) 2006 Stefan Schmidt <stefan@datenfreihafen.org>
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,45 +34,6 @@
 #include "reedsol.h"
 #include "common.h"
 #include "dm200.h"
-
-static struct ecc200matrix_s {
-	int H, W;
-	int FH, FW;
-	int bytes;
-	int datablock, rsblock;
-} ecc200matrix[] = {
-	{10, 10, 10, 10, 3, 3, 5},
-	{12, 12, 12, 12, 5, 5, 7},
-	{8, 18, 8, 18, 5, 5, 7},
-	{14, 14, 14, 14, 8, 8, 10},
-	{8, 32, 8, 16, 10, 10, 11},
-	{16, 16, 16, 16, 12, 12, 12},
-	{12, 26, 12, 26, 16, 16, 14},
-	{18, 18, 18, 18, 18, 18, 14},
-	{20, 20, 20, 20, 22, 22, 18},
-	{12, 36, 12, 18, 22, 22, 18},
-	{22, 22, 22, 22, 30, 30, 20},
-	{16, 36, 16, 18, 32, 32, 24},
-	{24, 24, 24, 24, 36, 36, 24},
-	{26, 26, 26, 26, 44, 44, 28},
-	{16, 48, 16, 24, 49, 49, 28},
-	{32, 32, 16, 16, 62, 62, 36},
-	{36, 36, 18, 18, 86, 86, 42},
-	{40, 40, 20, 20, 114, 114, 48},
-	{44, 44, 22, 22, 144, 144, 56},
-	{48, 48, 24, 24, 174, 174, 68},
-	{52, 52, 26, 26, 204, 102, 42},
-	{64, 64, 16, 16, 280, 140, 56},
-	{72, 72, 18, 18, 368, 92, 36},
-	{80, 80, 20, 20, 456, 114, 48},
-	{88, 88, 22, 22, 576, 144, 56},
-	{96, 96, 24, 24, 696, 174, 68},
-	{104, 104, 26, 26, 816, 136, 56},
-	{120, 120, 20, 20, 1050, 175, 68},
-	{132, 132, 22, 22, 1304, 163, 62},
-	{144, 144, 24, 24, 1558, 156, 62}, /* 156*4+155*2 */
-	{0}
-};
 
  // simple checked response malloc
 static void *safemalloc(int n)
@@ -225,689 +189,647 @@ static void ecc200(unsigned char *binary, int bytes, int datablock, int rsblock)
 	rs_free();
 }
 
-/*
- * perform encoding for ecc200, source s len sl, to target t len tl, using 
- * optional encoding control string e return 1 if OK, 0 if failed. Does all 
- * necessary padding to tl
- */
-
-char ecc200encode(unsigned char *t, int tl, unsigned char *s, int sl, char *encoding, int *lenp, int gs1)
+float dmroundup(float input)
 {
-	char enc = 'a';		// start in ASCII encoding mode
-	int tp = 0, sp = 0;
-	if (strlen(encoding) < sl) {
-		fprintf(stderr, "Encoding string too short\n");
-		return 0;
-	}
-
-	if(gs1) { t[tp++] = 232; } /* FNC1 */
+	float fraction, output;
 	
-	// do the encoding
-	while (sp < sl && tp < tl) {
-		char newenc = enc;	// suggest new encoding
-		if ((tl - tp <= 1 && (enc == 'c' || enc == 't')) || (tl - tp <= 2  && enc == 'x'))
-			enc = 'a';	// auto revert to ASCII
-		newenc = tolower(encoding[sp]);
-		switch (newenc) {	// encode character
-		case 'c':	// C40
-		case 't':	// Text
-		case 'x':	// X12
-			{
-				char out[6];
-				int p = 0;
-				const char *e=0,
-				    *s2 = "!\"#$%&'()*+,-./:;<=>?@[\\]_",
-				    *s3 = 0;
-				if (newenc == 'c') {
-					e = " 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-					s3 = "`abcdefghijklmnopqrstuvwxyz{|}~\177";
-				}
-				if (newenc == 't') {
-					e = " 0123456789abcdefghijklmnopqrstuvwxyz";
-					s3 = "`ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~\177";
-				}
-				if (newenc == 'x')
-					e = " 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ\r*>";
-				if (!e)
-					break;
-				do {
-					unsigned char c = s[sp++];
-					char *w;
-					if (c & 0x80) {
-						if (newenc == 'x') {
-							fprintf(stderr, "Cannot encode char 0x%02X in X12\n", c);
-							return 0;
-						}
-						c &= 0x7f;
-						out[(int)p++] = 1;
-						out[(int)p++] = 30;
-					}
-					w = strchr(e, c);
-					if (w)
-						out[(int)p++] = ((w - e) + 3) % 40;
-					else {
-						if (newenc == 'x') {
-							fprintf(stderr, "Cannot encode char 0x%02X in X12\n", c);
-							return 0;
-						}
-						if (c < 32) {	// shift 1
-							out[(int)p++] = 0;
-							out[(int)p++] = c;
-						} else {
-							if(gs1 && (c == '[')) {
-								out[(int)p++] = 1;
-								out[(int)p++] = 27; /* FNC1 */
-							} else {
-								w = strchr(s2, c);
-								if (w) {	// shift 2
-									out[(int)p++] = 1;
-									out[(int)p++] = (w - s2);
-								} else {
-									w = strchr(s3, c);
-									if (w) {
-										out[(int)p++]  = 2;
-										out[(int)p++] = (w - s3);
-									} else {
-										fprintf (stderr, "Could not encode 0x%02X, should not happen\n", c);
-										return 0;
-									}
-								}
-							}
-						}
-					}
-					if (p == 2 && tp + 2 <= tl && sp == sl)
-						out[(int)p++] = 0;	// shift 1 pad at end
-					while (p >= 3) {
-						int v =
-						    out[0] * 1600 +
-						    out[1] * 40 + out[2] + 1;
-						if (enc != newenc) {
-							if (enc == 'c' || enc == 't' || enc == 'x')
-								t[tp++] = 254;	// escape C40/text/X12
-							else if (enc == 'x')
-								t[tp++] = 0x7C;	// escape EDIFACT
-							if (newenc == 'c')
-								t[tp++] = 230;
-							if (newenc == 't')
-								t[tp++] = 239;
-							if (newenc == 'x')
-								t[tp++] = 238;
-							enc = newenc;
-						}
-						t[tp++] = (int)(v / 256);
-						t[tp++] = v % 256;
-						p -= 3;
-						out[0] = out[3];
-						out[1] = out[4];
-						out[2] = out[5];
-					}
-				}
-				while (p && sp < sl);
-			}
-			break;
-		case 'e':	// EDIFACT
-			{
-				unsigned char out[4], p = 0;
-				if (enc != newenc) {	// can only be from C40/Text/X12
-					t[tp++] = 254;
-					enc = 'a';
-				}
-				while (sp < sl && tolower(encoding[sp]) == 'e' && p < 4)
-					out[p++] = s[sp++];
-				if (p < 4) {
-					out[p++] = 0x1F;
-					enc = 'a';
-				}	// termination
-				t[tp] = ((s[0] & 0x3F) << 2);
-				t[tp++] |= ((s[1] & 0x30) >> 4);
-				t[tp] = ((s[1] & 0x0F) << 4);
-				if (p == 2)
-					tp++;
-				else {
-					t[tp++] |= ((s[2] & 0x3C) >> 2);
-					t[tp] = ((s[2] & 0x03) << 6);
-					t[tp++] |= (s[3] & 0x3F);
-				}
-			}
-			break;
-		case 'a':	// ASCII
-			if (enc != newenc) {
-				if (enc == 'c' || enc == 't' || enc == 'x')
-					t[tp++] = 254;	// escape C40/text/X12
-				else
-					t[tp++] = 0x7C;	// escape EDIFACT
-			}
-			enc = 'a';
-			if (sl - sp >= 2 && isdigit(s[sp]) && isdigit(s[sp + 1])) {
-				t[tp++] = (s[sp] - '0') * 10 + s[sp + 1] - '0' + 130;
-				sp += 2;
-			} else {
-				if (gs1 && (s[sp] == '[')) {
-					t[tp++] = 232; /* FNC1 */
-				} else {
-					if (s[sp] > 127) {
-						t[tp++] = 235;
-						t[tp++] = s[sp++] - 127;
-					} else
-						t[tp++] = s[sp++] + 1;
-				}
-			}
-			break;
-		case 'b':	// Binary
-			{
-				int l = 0;	// how much to encode
-				int temp;
-				if (encoding) {
-					int p;
-					for (p = sp; p < sl && tolower(encoding[p]) == 'b'; p++)
-						l++;
-				}
-				t[tp++] = 231;	// base256
-				if (l < 250) {
-					t[tp] = l + (((tp + 1) * 149) % 255) + 1; tp++;
-				} else {
-					t[tp] = (249 + (l / 250)) + (((tp + 1) * 149) % 255) + 1; tp++;
-					t[tp] = (l % 250) + (((tp + 1) * 149) % 255) + 1; tp++;
-				}
-				while (l-- && tp < tl) {
-					temp = s[sp++] + (((tp + 1) * 149) % 255) + 1;	// see annex H
-					if(temp <= 255) {
-						t[tp] = temp;
-					} else {
-						t[tp] = temp - 256;
-					}
-					tp++;
-				}
-				enc = 'a';	// reverse to ASCII at end
-			}
-			break;
-		default:
-			fprintf(stderr, "Unknown encoding %c\n", newenc);
-			return 0;	// failed
-		}
-	}
-	if (lenp)
-		*lenp = tp;
-	if (tp < tl && enc != 'a') {
-		if (enc == 'c' || enc == 'x' || enc == 't')
-			t[tp++] = 254;	// escape X12/C40/Text
-		else
-			t[tp++] = 0x7C;	// escape EDIFACT
-	}
-	if (tp < tl)
-		t[tp++] = 129;	// pad
-	while (tp < tl) {	// more padding
-		int v = 129 + (((tp + 1) * 149) % 253) + 1;	// see Annex H
-		if (v > 254)
-			v -= 254;
-		t[tp++] = v;
-	}
-	if (tp > tl || sp < sl)
-		return 0;	// did not fit
-	/*
-	 * for (tp = 0; tp < tl; tp++) fprintf (stderr, "%02X ", t[tp]); \
-	 * fprintf (stderr, "\n");
-	 */
-	return 1;		// OK 
+	fraction = input - (int)input;
+	if(fraction > 0.01) { output = (input - fraction) + 1.0; }
+	
+	return output;
 }
 
-// Auto encoding format functions
-static char encchr[] = "ACTXEB";
-
-enum {
-	E_ASCII,
-	E_C40,
-	E_TEXT,
-	E_X12,
-	E_EDIFACT,
-	E_BINARY,
-	E_MAX
-};
-
-unsigned char switchcost[E_MAX][E_MAX] = {
-	{0, 1, 1, 1, 1, 2},	// From E_ASCII
-	{1, 0, 2, 2, 2, 3},	// From E_C40
-	{1, 2, 0, 2, 2, 3},	// From E_TEXT
-	{1, 2, 2, 0, 2, 3},	// From E_X12
-	{1, 2, 2, 2, 0, 3},	// From E_EDIFACT
-	{0, 1, 1, 1, 1, 0},	// From E_BINARY
-};
-
-/*
- * Creates a encoding list (malloc)
- * returns encoding string
- * if lenp not null, target len stored
- * if error, null returned
- * if exact specified, then assumes shortcuts applicable for exact fit 
- * in target
- * 1. No unlatch to return to ASCII for last encoded byte after C40 or 
- * Text or X12
- * 2. No unlatch to return to ASCII for last 1 or 2 encoded bytes after 
- * EDIFACT
- * 3. Final C40 or text encoding exactly in last 2 bytes can have a shift 
- * 0 to pad to make a tripple
- * Only use the encoding from an exact request if the len matches the target, 
- * otherwise free the result and try again with exact=0
- */
-
-static char *encmake(int l, unsigned char *s, int *lenp, char exact, int gs1)
+int istwodigits(unsigned char source[], int position)
 {
-	char *encoding = 0;
-	int p = l;
-	int e;
-	struct {
-		// number of bytes of source that can be encoded in a row at this point
-		// using this encoding mode
-		short s;
-		// number of bytes of target generated encoding from this point to end if
-		// already in this encoding mode
-		short t;
-	} enc[MAXBARCODE][E_MAX];
-	memset(&enc, 0, sizeof(enc));
-	if (!l)
-		return "";	// no length
-	if (l > MAXBARCODE)
-		return 0;	// not valid
-	while (p--) {
-		char  sub;
-		int b = 0, sl, tl, bl, t;
-		// consider each encoding from this point
-		// ASCII
-		sl = tl = 1;
-		if (isdigit(s[p]) && p + 1 < l && isdigit(s[p + 1]))
-			sl = 2;	// double digit
-		else if (s[p] & 0x80)
-			tl = 2;	// high shifted
-		bl = 0;
-		if (p + sl < l)
-			for (e = 0; e < E_MAX; e++)
-				if (enc[p + sl][(int)e].t && ((t = enc[p + sl][(int)e].t + switchcost[E_ASCII][(int)e]) < bl || !bl)) {
-					bl = t;
-					b = e;
-				}
-		enc[p][E_ASCII].t = tl + bl;
-		enc[p][E_ASCII].s = sl;
-		if (bl && b == E_ASCII)
-			enc[p][(int)b].s += enc[p + sl][(int)b].s;
-		// C40
-		sub = tl = sl = 0;
-		do {
-			unsigned char c = s[p + sl++];
-			if (c & 0x80) {	// shift + upper
-				sub += 2;
-				c &= 0x7F;
-			}
-			if (c != ' ' && !isdigit(c) && !isupper(c))
-				sub++;	// shift
-			sub++;
-			while (sub >= 3) {
-				sub -= 3;
-				tl += 2;
-			}
-		} while (sub && p + sl < l);
-		if (exact && sub == 2 && p + sl == l) {
-			// special case, can encode last block with shift 0 at end (Is this 
-			// valid when not end of target buffer?)
-			sub = 0;
-			tl += 2;
-		}
-		if (!sub) {	// can encode C40
-			bl = 0;
-			if (p + sl < l)
-				for (e = 0; e < E_MAX; e++)
-					if (enc[p + sl][(int)e].t && ((t = enc[p + sl][(int)e].t + switchcost[E_C40][(int)e]) < bl || !bl)) {
-						bl = t;
-						b = e;
-					}
-			if (exact && enc[p + sl][E_ASCII].t == 1 && 1 < bl) {
-				// special case, switch to ASCII for last bytes
-				bl = 1;
-				b = E_ASCII;
-			}
-			enc[p][E_C40].t = tl + bl;
-			enc[p][E_C40].s = sl;
-			if (bl && b == E_C40)
-				enc[p][(int)b].s += enc[p + sl][(int)b].s;
-		}
-		// Text
-		sub = tl = sl = 0;
-		do {
-			unsigned char c = s[p + sl++];
-			if (c & 0x80) {	// shift + upper
-				sub += 2;
-				c &= 0x7F;
-			}
-			if (c != ' ' && !isdigit(c) && !islower(c))
-				sub++;	// shift
-			sub++;
-			while (sub >= 3) {
-				sub -= 3;
-				tl += 2;
-			}
-		} while (sub && p + sl < l);
-		if (exact && sub == 2 && p + sl == l) {
-			// special case, can encode last block with shift 0 at end (Is this 
-			// valid when not end of target buffer?)
-			sub = 0;
-			tl += 2;
-		}
-		if (!sub && sl) {	// can encode Text
-			bl = 0;
-			if (p + sl < l)
-				for (e = 0; e < E_MAX; e++)
-					if (enc[p + sl][(int)e].t && ((t = enc[p + sl][(int)e].t + switchcost[E_TEXT][(int)e]) < bl || !bl)) {
-						bl = t;
-						b = e;
-					}
-			if (exact && enc[p + sl][E_ASCII].t == 1 && 1 < bl) {	// special case, switch to ASCII for last bytes
-				bl = 1;
-				b = E_ASCII;
-			}
-			enc[p][E_TEXT].t = tl + bl;
-			enc[p][E_TEXT].s = sl;
-			if (bl && b == E_TEXT)
-				enc[p][(int)b].s += enc[p + sl][(int)b].s;
-		}
-		// X12
-		sub = tl = sl = 0;
-		do {
-			unsigned char c = s[p + sl++];
-			if (c != 13 && c != '*' && c != '>' && c != ' ' && !isdigit(c) && !isupper(c)) {
-				sl = 0;
-				break;
-			}
-			sub++;
-			while (sub >= 3) {
-				sub -= 3;
-				tl += 2;
-			}
-		} while (sub && p + sl < l);
-		if (!sub && sl) {	// can encode X12
-			bl = 0;
-			if (p + sl < l)
-				for (e = 0; e < E_MAX; e++)
-					if (enc[p + sl][(int)e].t && ((t = enc[p + sl][(int)e].t + switchcost[E_X12][(int)e]) < bl || !bl)) {
-						bl = t;
-						b = e;
-					}
-			if (exact && enc[p + sl][E_ASCII].t == 1 && 1 < bl) {
-				// special case, switch to ASCII for last bytes
-				bl = 1;
-				b = E_ASCII;
-			}
-			enc[p][E_X12].t = tl + bl;
-			enc[p][E_X12].s = sl;
-			if (bl && b == E_X12)
-				enc[p][(int)b].s += enc[p + sl][(int)b].s;
-		}
-		// EDIFACT
-		sl = bl = 0;
-		if ((s[p + 0] >= 32 && s[p + 0] <= 94) && (!(gs1 && (s[p + 0] == '[')))) {	// can encode 1
-			char bs = 0;
-			if (p + 1 == l && (!bl || bl < 2)) {
-				bl = 2;
-				bs = 1;
-			} else
-				for (e = 0; e < E_MAX; e++)
-					if (e != E_EDIFACT && enc[p + 1][(int)e].t && ((t = 2 + enc[p + 1][(int)e].t + switchcost[E_ASCII][(int)e]) < bl || !bl))
-					// E_ASCII as allowed for unlatch
-					{
-						bs = 1;
-						bl = t;
-						b = e;
-					}
-				if ((p + 1 < l && s[p + 1] >= 32 && s[p + 1] <= 94) && (!(gs1 && (s[p + 1] == '[')))) { // can encode 2
-				if (p + 2 == l && (!bl || bl < 2)) {
-					bl = 3;
-					bs = 2;
-				} else
-					for (e = 0; e < E_MAX; e++)
-						if (e != E_EDIFACT && enc[p + 2][(int)e].t && ((t = 3 + enc[p + 2][(int)e].t + switchcost[E_ASCII][(int)e]) < bl || !bl))
-						// E_ASCII as allowed for unlatch
-						{
-							bs = 2;
-							bl = t;
-							b = e;
-						}
-					if ((p + 2 < l && s[p + 2] >= 32 && s[p + 2] <= 94) && (!(gs1 && (s[p + 2] == '[')))) { // can encode 3
-					if (p + 3 == l && (!bl || bl < 3)) {
-						bl = 3;
-						bs = 3;
-					} else
-						for (e = 0; e < E_MAX; e++)
-							if (e != E_EDIFACT && enc[p + 3][(int)e].t && ((t = 3 + enc[p + 3][(int)e].t + switchcost [E_ASCII][(int)e]) < bl || !bl))
-							// E_ASCII as allowed for unlatch
-							{
-								bs = 3;
-								bl = t;
-								b = e;
-							}
-						if ((p + 4 < l && s[p + 3] >= 32 && s[p + 3] <= 94) && (!(gs1 && (s[p + 3] == '[')))) { // can encode 4
-						if (p + 4 == l && (!bl || bl < 3)) {
-							bl = 3;
-							bs = 4;
-						} else {
-							for (e = 0; e < E_MAX; e++)
-								if (enc[p + 4][(int)e].t && ((t = 3 + enc[p + 4][(int)e].t + switchcost [E_EDIFACT][(int)e]) < bl || !bl)) {
-									bs = 4;
-									bl = t;
-									b = e;
-								}
-							if (exact && enc[p + 4][E_ASCII].t && enc[p + 4][E_ASCII].t <= 2 && (t = 3 + enc[p + 4][E_ASCII].t) < bl) {
-								// special case, switch to ASCII for last 1 ot two bytes
-								bs = 4;
-								bl = t;
-								b = E_ASCII;
-							}
-						}
-					}
-				}
-			}
-			enc[p][E_EDIFACT].t = bl;
-			enc[p][E_EDIFACT].s = bs;
-			if (bl && b == E_EDIFACT)
-				enc[p][(int)b].s += enc[p + bs][(int)b].s;
-		}
-		// Binary
-		bl = 0;
-		for (e = 0; e < E_MAX; e++)
-			if (enc[p + 1][(int)e].t && ((t = enc[p + 1][(int)e].t + switchcost[E_BINARY][(int)e] + ((e == E_BINARY && enc[p + 1][(int)e].t == 249) ? 1 : 0)) < bl || !bl)) {
-				bl = t;
-				b = e;
-			}
-		enc[p][E_BINARY].t = 1 + bl;
-		enc[p][E_BINARY].s = 1;
-		if (bl && b == E_BINARY)
-			enc[p][(int)b].s += enc[p + 1][(int)b].s;
-		/*
-		fprintf (stderr, "%d:", p); for (e = 0; e < E_MAX; e++) fprintf \
-		(stderr, " %c*%d/%d", encchr[e], enc[p][e].s, enc[p][e].t); \
-		fprintf (stderr, "\n");
-		*/
-	}
-	encoding = safemalloc(l + 1);
-	p = 0;
-	{
-		int cur = E_ASCII;	// starts ASCII
-		while (p < l) {
-			int t, m = 0, b = 0;
-			for (e = 0; e < E_MAX; e++)
-				if (enc[p][(int)e].t && (((t = enc[p][(int)e].t + switchcost[(int)cur][(int)e]) < m) || ((t == m && e == cur) || !m))) {
-					b = e;
-					m = t;
-				}
-			cur = b;
-			m = enc[p][(int)b].s;
-			if (!p && lenp)
-				*lenp = enc[p][(int)b].t;
-			while (p < l && m--)
-				encoding[p++] = encchr[(int)b];
+	if((source[position] >= '0') && (source[position] <= '9')) {
+		if((source[position + 1] >= '0') && (source[position + 1] <= '9')) {
+			return 1;
 		}
 	}
-	encoding[p] = 0;
-	return encoding;
+	
+	return 0;
 }
 
-/*
- * Main encoding function
- * Returns the grid (malloced) containing the matrix. L corner at 0,0.
- * Takes suggested size in *Wptr, *Hptr, or 0,0. Fills in actual size.
- * Takes barcodelen and barcode to be encoded
- * Note, if *encodingptr is null, then fills with auto picked (malloced) 
- * encoding
- * If lenp not null, then the length of encoded data before any final 
- * unlatch or pad is stored
- * If maxp not null, then the max storage of this size code is stored
- * If eccp not null, then the number of ecc bytes used in this size is 
- * stored
- * Returns 0 on error (writes to stderr with details).
- */
-
-int iec16022ecc200(unsigned char *barcode, int barcodelen, struct zint_symbol *symbol)
+int isx12(unsigned char source)
 {
-	unsigned char binary[3000];	// encoded raw data and ecc to place in barcode
-	int W = 0, H = 0;
-	char *encoding = 0;
-	unsigned char *grid = 0;
-	int lend, *lenp;
-	struct ecc200matrix_s *matrix;
-	memset(binary, 0, sizeof(binary));
-	unsigned char adjusted[barcodelen];
-	int i, gs1;
+	if(source == 13) { return 1; }
+	if(source == 42) { return 1; }
+	if(source == 62) { return 1; }
+	if(source == 32) { return 1; }
+	if((source >= '0') && (source <= '9')) { return 1; }
+	if((source >= 'A') && (source <= 'Z')) { return 1; }
+	
+	return 0;
+}
 
-	lend = 0;
-	lenp = &lend;
+void dminsert(char binary_string[], int posn, char newbit)
+{ /* Insert a character into the middle of a string at position posn */
+	int i, end;
+	
+	end = strlen(binary_string);
+	for(i = end; i > posn; i--) {
+		binary_string[i] = binary_string[i - 1];
+	}
+	binary_string[posn] = newbit;
+}
+
+void insert_value(unsigned char binary_stream[], int posn, int streamlen, char newbit)
+{
+	int i;
+	
+	for(i = streamlen; i > posn; i--) {
+		binary_stream[i] = binary_stream[i - 1];
+	}
+	binary_stream[posn] = newbit;
+}
+
+int look_ahead_test(unsigned char source[], int sourcelen, int position, int current_mode, int gs1)
+{
+	/* A custom version of the 'look ahead test' from Annex P */
+	/* This version is deliberately very reluctant to end a data stream with EDIFACT encoding */
+	
+	float ascii_count, c40_count, text_count, x12_count, edf_count, b256_count, best_count;
+	int sp, done, best_scheme;
+	char reduced_char;
+	
+	/* step (j) */
+	if(current_mode == DM_ASCII) {
+		ascii_count = 0.0;
+		c40_count = 1.0;
+		text_count = 1.0;
+		x12_count = 1.0;
+		edf_count = 1.0;
+		b256_count = 1.25;
+	} else {
+		ascii_count = 1.0;
+		c40_count = 2.0;
+		text_count = 2.0;
+		x12_count = 2.0;
+		edf_count = 2.0;
+		b256_count = 2.25;
+	}
+	
+	switch(current_mode) {
+		case DM_C40: c40_count = 0.0; break;
+		case DM_TEXT: text_count = 0.0; break;
+		case DM_X12: x12_count = 0.0; break;
+		case DM_EDIFACT: edf_count = 0.0; break;
+		case DM_BASE256: b256_count = 0.0; break;
+	}
+	
+	for(sp = position; (sp < sourcelen) && (sp <= (position + 8)); sp++) {
+		
+		if(source[sp] <= 127) { reduced_char = source[sp]; } else { reduced_char = source[sp] - 127; }
+		
+		if((source[sp] >= '0') && (source[sp] <= '9')) { ascii_count += 0.5; } else { ascii_count += 1.0; }
+		if(source[sp] > 127) { ascii_count += 1.0; }
+		
+		done = 0;
+		if(reduced_char == ' ') { c40_count += (2.0 / 3.0); done = 1; }
+		if((reduced_char >= '0') && (reduced_char <= '9')) { c40_count += (2.0 / 3.0); done = 1; }
+		if((reduced_char >= 'A') && (reduced_char <= 'Z')) { c40_count += (2.0 / 3.0); done = 1; }
+		if(source[sp] > 127) { c40_count += (4.0 / 3.0); }
+		if(done == 0) { c40_count += (4.0 / 3.0); }
+		
+		done = 0;
+		if(reduced_char == ' ') { text_count += (2.0 / 3.0); done = 1; }
+		if((reduced_char >= '0') && (reduced_char <= '9')) { text_count += (2.0 / 3.0); done = 1; }
+		if((reduced_char >= 'a') && (reduced_char <= 'z')) { text_count += (2.0 / 3.0); done = 1; }
+		if(source[sp] > 127) { text_count += (4.0 / 3.0); }
+		if(done == 0) { text_count += (4.0 / 3.0); }
+		
+		if(isx12(source[sp])) { x12_count += (2.0 / 3.0); } else { x12_count += 4.0; }
+		
+		/* step (p) */
+		done = 0;
+		if((source[sp] >= ' ') && (source[sp] <= '^')) { edf_count += (3.0 / 4.0); } else { edf_count += 4.0; }
+		if(gs1 && (source[sp] == '[')) { edf_count += 4.0; }
+		if(sp >= (sourcelen - 5)) { edf_count += 4.0; } /* MMmmm fudge! */
+		
+		/* step (q) */
+		if(gs1 && (source[sp] == '[')) { b256_count += 4.0; } else { b256_count += 1.0; }
+		
+		/*printf("lat a%.2f c%.2f t%.2f x%.2f e%.2f b%.2f\n", ascii_count, c40_count, text_count, x12_count, edf_count, b256_count);*/
+		
+	}
+	
+	/* Round up all the counts to round numbers */
+	
+	best_count = ascii_count;
+	best_scheme = DM_ASCII;
+	
+	if(b256_count <= best_count) {
+		best_count = b256_count;
+		best_scheme = DM_BASE256;
+	}
+	
+	if(edf_count <= best_count) {
+		best_count = edf_count;
+		best_scheme = DM_EDIFACT;
+	}
+	
+	if(text_count <= best_count) {
+		best_count = text_count;
+		best_scheme = DM_TEXT;
+	}
+	
+	if(x12_count <= best_count) {
+		best_count = x12_count;
+		best_scheme = DM_X12;
+	}
+	
+	if(c40_count <= best_count) {
+		best_count = c40_count;
+		best_scheme = DM_C40;
+	}
+	
+	return best_scheme;
+}
+
+int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned char target[], int *last_mode)
+{
+	/* Encodes data using ASCII, C40, Text, X12, EDIFACT or Base 256 modes as appropriate */
+	/* Supports encoding FNC1 in supporting systems */
+	
+	int sp, tp, i, gs1;
+	int current_mode, next_mode;
+	int inputlen = ustrlen(source);
+	int c40_buffer[6], c40_p;
+	int text_buffer[6], text_p;
+	int x12_buffer[6], x12_p;
+	int edifact_buffer[8], edifact_p;
+	char binary[2 * inputlen];
+	
+	sp = 0;
+	tp = 0;
+	memset(c40_buffer, 0, 6);
+	c40_p = 0;
+	memset(text_buffer, 0, 6);
+	text_p = 0;
+	memset(x12_buffer, 0, 6);
+	x12_p = 0;
+	memset(edifact_buffer, 0, 8);
+	edifact_p = 0;
+	strcpy(binary, "");
+	
+	if(symbol->nullchar != 0x00) {
+		for(i = 0; i < inputlen; i++) {
+			if(source[i] == symbol->nullchar) {
+				source[i] = 0x00;
+			}
+		}
+	}
+	
+	/* step (a) */
+	current_mode = DM_ASCII;
+	next_mode = DM_ASCII;
 	
 	if(symbol->input_mode == GS1_MODE) { gs1 = 1; } else { gs1 = 0; }
 	
-	switch(symbol->option_2) {
-		case 1: W = 10; H = 10; break;
-		case 2: W = 12; H = 12; break;
-		case 3: W = 14; H = 14; break;
-		case 4: W = 16; H = 16; break;
-		case 5: W = 18; H = 18; break;
-		case 6: W = 20; H = 20; break;
-		case 7: W = 22; H = 22; break;
-		case 8: W = 24; H = 24; break;
-		case 9: W = 26; H = 26; break;
-		case 10: W = 32; H = 32; break;
-		case 11: W = 36; H = 36; break;
-		case 12: W = 40; H = 40; break;
-		case 13: W = 44; H = 44; break;
-		case 14: W = 48; H = 48; break;
-		case 15: W = 52; H = 52; break;
-		case 16: W = 64; H = 64; break;
-		case 17: W = 72; H = 72; break;
-		case 18: W = 80; H = 80; break;
-		case 19: W = 88; H = 88; break;
-		case 20: W = 96; H = 96; break;
-		case 21: W = 104; H = 104; break;
-		case 22: W = 120; H = 120; break;
-		case 23: W = 132; H = 132; break;
-		case 24: W = 144; H = 144; break;
-		case 25: W = 18; H = 8; break;
-		case 26: W = 32; H = 8; break;
-		case 27: W = 26; H = 12; break;
-		case 28: W = 36; H = 12; break;
-		case 29: W = 36; H = 16; break;
-		case 30: W = 48; H = 16; break;
-		default: W = 0; H = 0; break;
+	if(gs1) { target[tp] = 232; tp++; } /* FNC1 */
+	
+	while (sp < inputlen) {
+		
+		current_mode = next_mode;
+		
+		/* step (b) - ASCII encodation */
+		if(current_mode == DM_ASCII) {
+			next_mode = DM_ASCII;
+			
+			if(istwodigits(source, sp) && ((sp + 1) != inputlen)) {
+				target[tp] = (10 * ctoi(source[sp])) + ctoi(source[sp + 1]) + 130;
+				tp++; concat(binary, " ");
+				sp += 2;
+			} else {
+				next_mode = look_ahead_test(source, inputlen, sp, current_mode, gs1);
+				
+				if(next_mode != DM_ASCII) {
+					switch(next_mode) {
+						case DM_C40: target[tp] = 230; tp++; concat(binary, " "); break;
+						case DM_TEXT: target[tp] = 239; tp++; concat(binary, " "); break;
+						case DM_X12: target[tp] = 238; tp++; concat(binary, " "); break;
+						case DM_EDIFACT: target[tp] = 240; tp++; concat(binary, " "); break;
+						case DM_BASE256: target[tp] = 231; tp++; concat(binary, " "); break;
+					}
+				} else {
+					if(source[sp] > 127) {
+						target[tp] = 235;
+						tp++;
+						target[tp] = (source[sp] - 128) + 1;
+						tp++; concat(binary, "  ");
+					} else {
+						if(gs1 && (source[sp] == '[')) {
+							target[tp] = 232; /* FNC1 */
+						} else {
+							target[tp] = source[sp] + 1;
+						}
+						tp++; 
+						concat(binary, " ");
+					}
+					sp++;
+				}
+			}
+			
+		}
+		
+		/* step (c) C40 encodation */
+		if(current_mode == DM_C40) {
+			int shift_set, value;
+			
+			next_mode = DM_C40;
+			if(c40_p == 0) {
+				next_mode = look_ahead_test(source, inputlen, sp, current_mode, gs1);
+			}
+			
+			if(next_mode != DM_C40) {
+				target[tp] = 254; tp++; /* Unlatch */
+			} else {
+				if(source[sp] > 127) {
+					c40_buffer[c40_p] = 1; c40_p++;
+					c40_buffer[c40_p] = 30; c40_p++; /* Upper Shift */
+					shift_set = c40_shift[source[sp] - 128];
+					value = c40_value[source[sp] - 128];
+				} else {
+					shift_set = c40_shift[source[sp]];
+					value = c40_value[source[sp]];
+				}
+				
+				if(gs1 && (source[sp] == '[')) {
+					shift_set = 2;
+					value = 27; /* FNC1 */
+				}
+				
+				if(shift_set != 0) {
+					c40_buffer[c40_p] = shift_set - 1; c40_p++;
+				}
+				c40_buffer[c40_p] = value; c40_p++;
+				
+				if(c40_p >= 3) {
+					int iv;
+					
+					iv = (1600 * c40_buffer[0]) + (40 * c40_buffer[1]) + (c40_buffer[2]) + 1;
+					target[tp] = iv / 256; tp++;
+					target[tp] = iv % 256; tp++;
+					concat(binary, "  ");
+					
+					c40_buffer[0] = c40_buffer[3];
+					c40_buffer[1] = c40_buffer[4];
+					c40_buffer[2] = c40_buffer[5];
+					c40_buffer[3] = 0;
+					c40_buffer[4] = 0;
+					c40_buffer[5] = 0;
+					c40_p -= 3;
+				}
+				sp++;
+			}
+		}
+		
+		/* step (d) Text encodation */
+		if(current_mode == DM_TEXT) {
+			int shift_set, value;
+			
+			next_mode = DM_TEXT;
+			if(text_p == 0) {
+				next_mode = look_ahead_test(source, inputlen, sp, current_mode, gs1);
+			}
+			
+			if(next_mode != DM_TEXT) {
+				target[tp] = 254; tp++; /* Unlatch */
+			} else {
+				if(source[sp] > 127) {
+					text_buffer[text_p] = 1; text_p++;
+					text_buffer[text_p] = 30; text_p++; /* Upper Shift */
+					shift_set = text_shift[source[sp] - 128];
+					value = text_value[source[sp] - 128];
+				} else {
+					shift_set = text_shift[source[sp]];
+					value = text_value[source[sp]];
+				}
+				
+				if(gs1 && (source[sp] == '[')) {
+					shift_set = 2;
+					value = 27; /* FNC1 */
+				}
+				
+				if(shift_set != 0) {
+					text_buffer[text_p] = shift_set - 1; text_p++;
+				}
+				text_buffer[text_p] = value; text_p++;
+				
+				if(text_p >= 3) {
+					int iv;
+					
+					iv = (1600 * text_buffer[0]) + (40 * text_buffer[1]) + (text_buffer[2]) + 1;
+					target[tp] = iv / 256; tp++;
+					target[tp] = iv % 256; tp++;
+					concat(binary, "  ");
+					
+					text_buffer[0] = text_buffer[3];
+					text_buffer[1] = text_buffer[4];
+					text_buffer[2] = text_buffer[5];
+					text_buffer[3] = 0;
+					text_buffer[4] = 0;
+					text_buffer[5] = 0;
+					text_p -= 3;
+				}
+				sp++;
+			}
+		}
+		
+		/* step (e) X12 encodation */
+		if(current_mode == DM_X12) {
+			int value;
+			
+			next_mode = DM_X12;
+			if(text_p == 0) {
+				next_mode = look_ahead_test(source, inputlen, sp, current_mode, gs1);
+			}
+			
+			if(next_mode != DM_X12) {
+				target[tp] = 254; tp++; /* Unlatch */
+			} else {
+				if(source[sp] == 13) { value = 0; }
+				if(source[sp] == '*') { value = 1; }
+				if(source[sp] == '>') { value = 2; }
+				if(source[sp] == ' ') { value = 3; }
+				if((source[sp] >= '0') && (source[sp] <= '9')) { value = (source[sp] - '0') + 4; }
+				if((source[sp] >= 'A') && (source[sp] <= 'Z')) { value = (source[sp] - 'A') + 14; }
+				
+				x12_buffer[x12_p] = value; x12_p++;
+				
+				if(x12_p >= 3) {
+					int iv;
+					
+					iv = (1600 * x12_buffer[0]) + (40 * x12_buffer[1]) + (x12_buffer[2]) + 1;
+					target[tp] = iv / 256; tp++;
+					target[tp] = iv % 256; tp++;
+					concat(binary, "  ");
+					
+					x12_buffer[0] = x12_buffer[3];
+					x12_buffer[1] = x12_buffer[4];
+					x12_buffer[2] = x12_buffer[5];
+					x12_buffer[3] = 0;
+					x12_buffer[4] = 0;
+					x12_buffer[5] = 0;
+					x12_p -= 3;
+				}
+				sp++;
+			}
+		}
+		
+		/* step (f) EDIFACT encodation */
+		if(current_mode == DM_EDIFACT) {
+			int value;
+			
+			next_mode = DM_EDIFACT;
+			if(edifact_p == 3) {
+				next_mode = look_ahead_test(source, inputlen, sp, current_mode, gs1);
+			}
+			
+			if(next_mode != DM_EDIFACT) {
+				edifact_buffer[edifact_p] = 31; edifact_p++;
+			} else {
+				if((source[sp] >= '@') && (source[sp] <= '^')) { value = source[sp] - '@'; }
+				if((source[sp] >= ' ') && (source[sp] <= '?')) { value = source[sp]; }
+				
+				edifact_buffer[edifact_p] = value; edifact_p++;
+				sp++;
+			}
+				
+			if(edifact_p >= 4) {
+				target[tp] = (edifact_buffer[0] << 2) + ((edifact_buffer[1] & 0x30) >> 4); tp++;
+				target[tp] = ((edifact_buffer[1] & 0x0f) << 4) + ((edifact_buffer[2] & 0x3c) >> 2); tp++;
+				target[tp] = ((edifact_buffer[2] & 0x03) << 6) + edifact_buffer[3]; tp++;
+				concat(binary, "   ");
+				
+				edifact_buffer[0] = edifact_buffer[4];
+				edifact_buffer[1] = edifact_buffer[5];
+				edifact_buffer[2] = edifact_buffer[6];
+				edifact_buffer[3] = edifact_buffer[7];
+				edifact_buffer[4] = 0;
+				edifact_buffer[5] = 0;
+				edifact_buffer[6] = 0;
+				edifact_buffer[7] = 0;
+				edifact_p -= 4;
+			}
+		}
+		
+		/* step (g) Base 256 encodation */
+		if(current_mode == DM_BASE256) {
+			next_mode = look_ahead_test(source, inputlen, sp, current_mode, gs1);
+			
+			if(next_mode == DM_BASE256) {
+				target[tp] = source[sp];
+				tp++;
+				sp++;
+				concat(binary, "b");
+			} else {
+				next_mode = DM_ASCII;
+			}
+		}
+		
+	} /* while */
+	
+	/* Empty buffers */
+	if(c40_p == 2) {
+		target[tp] = 254; tp++; /* unlatch */
+		target[tp] = source[inputlen - 1] + 1; tp++;
+		target[tp] = source[inputlen] + 1; tp++;
+		concat(binary, "  ");
+		current_mode = DM_ASCII;
 	}
-
-	/* Adjust for NULL characters */
-	for(i = 0; i < barcodelen; i++) {
-		if(barcode[i] == symbol->nullchar) {
-			adjusted[i] = 0x00;
-		} else {
-			adjusted[i] = barcode[i];
+	if(c40_p == 1) {
+		target[tp] = 254; tp++; /* unlatch */
+		target[tp] = source[inputlen] + 1; tp++;
+		concat(binary, " ");
+		current_mode = DM_ASCII;
+	}
+	
+	if(text_p == 2) {
+		target[tp] = 254; tp++; /* unlatch */
+		target[tp] = source[inputlen - 1] + 1; tp++;
+		target[tp] = source[inputlen] + 1; tp++;
+		concat(binary, "  ");
+		current_mode = DM_ASCII;
+	}
+	if(text_p == 1) {
+		target[tp] = 254; tp++; /* unlatch */
+		target[tp] = source[inputlen] + 1; tp++;
+		concat(binary, " ");
+		current_mode = DM_ASCII;
+	}
+	
+	if(x12_p == 2) {
+		target[tp] = 254; tp++; /* unlatch */
+		target[tp] = source[inputlen - 1] + 1; tp++;
+		target[tp] = source[inputlen] + 1; tp++;
+		concat(binary, "  ");
+		current_mode = DM_ASCII;
+	}
+	if(x12_p == 1) {
+		target[tp] = 254; tp++; /* unlatch */
+		target[tp] = source[inputlen] + 1; tp++;
+		concat(binary, " ");
+		current_mode = DM_ASCII;
+	}
+	
+	/* Add length and randomising algorithm to b256 */
+	i = 0;
+	while (i < tp) {
+		if(binary[i] == 'b') {
+			if((i == 0) || ((i != 0) && (binary[i - 1] != 'b'))) {
+				/* start of binary data */
+				int binary_count; /* length of b256 data */
+				
+				for(binary_count = 0; binary[binary_count + i] == 'b'; binary_count++);
+				
+				if(binary_count <= 249) {
+					dminsert(binary, i, 'b');
+					insert_value(target, i, tp, binary_count); tp++;
+				} else {
+					dminsert(binary, i, 'b');
+					dminsert(binary, i + 1, 'b');
+					insert_value(target, i, tp, (binary_count / 250) + 249); tp++;
+					insert_value(target, i + 1, tp, binary_count % 250); tp++;
+				}
+			}
+		}
+		i++;
+	}
+	
+	for(i = 0; i < tp; i++) {
+		if(binary[i] == 'b') {
+			int prn, temp;
+			
+			prn = ((149 * (i + 1)) % 255) + 1;
+			temp = target[i] + prn;
+			if (temp <= 255) { target[i] = temp; } else { target[i] = temp - 256; }
 		}
 	}
 	
-	// encoding
-	if (W) {		// known size
-		for (matrix = ecc200matrix; matrix->W && (matrix->W != W || matrix->H != H); matrix++) ;
-		if (!matrix->W) {
-			strcpy(symbol->errtxt, "Invalid size");
-			return ERROR_INVALID_OPTION;
-		}
-		if (!encoding) {
-			int len;
-			char *e = encmake(barcodelen, adjusted, &len, 1, gs1);
-			if (e && len != matrix->bytes) {	// try not an exact fit
-				free(e);
-				e = encmake(barcodelen, adjusted, &len, 0, gs1);
-				if (len > matrix->bytes) {
-					strcpy(symbol->errtxt, "Cannot make barcode fit");
-					if (e) free (e);
-					return ERROR_INVALID_OPTION;
-				}
-			}
-			encoding = e;
-		}
-	} else {
-		// find a suitable encoding
-		if (encoding == NULL)
-			encoding = encmake(barcodelen, adjusted, NULL, 1, gs1);
-
-		if (encoding) {	// find one that fits chosen encoding
-			for (matrix = ecc200matrix; matrix->W; matrix++)
-				if (ecc200encode(binary, matrix->bytes, adjusted, barcodelen, encoding, 0, gs1)) {
-					break;
-				}
-		} else {
-			int len;
-			char *e;
-			e = encmake(barcodelen, adjusted, &len, 1, gs1);
-			for (matrix = ecc200matrix;
-			     matrix->W && matrix->bytes != len; matrix++) ;
-			if (e && !matrix->W) {	// try for non exact fit
-				free(e);
-				e = encmake(barcodelen, adjusted, &len, 0, gs1);
-				for (matrix = ecc200matrix; matrix->W && matrix->bytes < len; matrix++) ;
-			}
-			encoding = e;
-		}
-		if (!matrix->W) {
-			strcpy(symbol->errtxt, "Cannot find suitable size, barcode too long");
-			return ERROR_INVALID_OPTION;
-		}
-		W = matrix->W;
-		H = matrix->H;
+	/*
+	for(i = 0; i < tp; i++){
+		printf("%02X ", target[i]);
 	}
-	if (!ecc200encode(binary, matrix->bytes, adjusted, barcodelen, encoding, lenp, gs1)) {
-		strcpy(symbol->errtxt, "Barcode too long");
-		free(encoding);
-		return ERROR_INVALID_OPTION;
+	printf("\n");
+	*/
+	
+	*(last_mode) = current_mode;
+	return tp;
+}
+
+void add_tail(unsigned char target[], int tp, int tail_length, int last_mode)
+{
+	/* adds unlatch and pad bits */
+	int i, prn, temp;
+	
+	switch(last_mode) {
+		case DM_C40:
+		case DM_TEXT:
+		case DM_X12:
+			target[tp] = 254; tp++; /* Unlatch */
+			tail_length--;
+	}
+	
+	for(i = tail_length; i > 0; i--) {
+		if(i == tail_length) {
+			target[tp] = 129; tp++; /* Pad */
+		} else {
+			prn = ((149 * (tp + 1)) % 253) + 1;
+			temp = 129 + prn;
+			if(temp <= 254) {
+				target[tp] = temp; tp++;
+			} else {
+				target[tp] = temp - 254; tp++;
+			}
+		}
+	}
+}
+
+int data_matrix_200(struct zint_symbol *symbol, unsigned char source[])
+{
+	int inputlen, i;
+	inputlen = ustrlen(source);
+	unsigned char binary[inputlen * 2];
+	int binlen;
+	int symbolsize, optionsize, calcsize;
+	int taillength, error_number = 0;
+	int H, W, FH, FW, datablock, bytes, rsblock;
+	int last_mode;
+	unsigned char *grid = 0;
+	
+	binlen = dm200encode(symbol, source, binary, &last_mode);
+	if(binlen == 0) {
+		strcpy(symbol->errtxt, "Could not encode data (should never happen)");
+		return ERROR_ENCODING_PROBLEM;
+	}
+	
+	if((symbol->option_2 >= 1) && (symbol->option_2 <= 30)) {
+		optionsize = intsymbol[symbol->option_2 - 1];
+	} else {
+		optionsize = -1;
+	}
+	
+	for(i = 0; i < 30; i++) {
+		if(matrixbytes[i] < binlen) {
+			calcsize = i;
+		}
+	}
+	calcsize++;
+	
+	if(calcsize <= optionsize) {
+		symbolsize = optionsize;
+	} else {
+		symbolsize = calcsize;
+		if(optionsize != -1) {
+			/* flag an error */
+			error_number = WARN_INVALID_OPTION;
+			strcpy(symbol->errtxt, "Data does not fit in selected symbol size");
+		}
+	}
+	
+	H = matrixH[symbolsize];
+	W = matrixW[symbolsize];
+	FH = matrixFH[symbolsize];
+	FW = matrixFW[symbolsize];
+	bytes = matrixbytes[symbolsize];
+	datablock = matrixdatablock[symbolsize];
+	rsblock = matrixrsblock[symbolsize];
+	
+	taillength = bytes - binlen;
+	
+	if(taillength != 0) {
+		add_tail(binary, binlen, taillength, last_mode);
 	}
 	
 	// ecc code
-	ecc200(binary, matrix->bytes, matrix->datablock, matrix->rsblock);
+	ecc200(binary, bytes, datablock, rsblock);
 	{			// placement
 		int x, y, NC, NR, *places;
-		NC = W - 2 * (W / matrix->FW);
-		NR = H - 2 * (H / matrix->FH);
+		NC = W - 2 * (W / FW);
+		NR = H - 2 * (H / FH);
 		places = safemalloc(NC * NR * sizeof(int));
 		ecc200placement(places, NR, NC);
 		grid = safemalloc(W * H);
 		memset(grid, 0, W * H);
-		for (y = 0; y < H; y += matrix->FH) {
+		for (y = 0; y < H; y += FH) {
 			for (x = 0; x < W; x++)
 				grid[y * W + x] = 1;
 			for (x = 0; x < W; x += 2)
-				grid[(y + matrix->FH - 1) * W + x] = 1;
+				grid[(y + FH - 1) * W + x] = 1;
 		}
-		for (x = 0; x < W; x += matrix->FW) {
+		for (x = 0; x < W; x += FW) {
 			for (y = 0; y < H; y++)
 				grid[y * W + x] = 1;
 			for (y = 0; y < H; y += 2)
-				grid[y * W + x + matrix->FW - 1] = 1;
+				grid[y * W + x + FW - 1] = 1;
 		}
 		for (y = 0; y < NR; y++) {
 			for (x = 0; x < NC; x++) {
 				int v = places[(NR - y - 1) * NC + x];
 				//fprintf (stderr, "%4d", v);
 				if (v == 1 || (v > 7 && (binary[(v >> 3) - 1] & (1 << (v & 7)))))
-					grid[(1 + y + 2 * (y / (matrix->FH - 2))) * W + 1 + x + 2 * (x / (matrix->FW - 2))] = 1;
+					grid[(1 + y + 2 * (y / (FH - 2))) * W + 1 + x + 2 * (x / (FW - 2))] = 1;
 			}
 			//fprintf (stderr, "\n");
 		}
@@ -928,6 +850,6 @@ int iec16022ecc200(unsigned char *barcode, int barcodelen, struct zint_symbol *s
 	
 	symbol->rows = H;
 	symbol->width = W;
-	free(encoding);
-	return 0;
+	
+	return error_number;
 }
