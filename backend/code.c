@@ -223,7 +223,7 @@ int c39(struct zint_symbol *symbol, unsigned char source[])
 	/* Stop character */
 	concat (dest, "121121211");
 	
-	if(symbol->symbology == BARCODE_LOGMARS) {
+	if((symbol->symbology == BARCODE_LOGMARS) || (symbol->symbology == BARCODE_HIBC_39)) {
 		/* LOGMARS uses wider 'wide' bars than normal Code 39 */
 		for(i = 0; i < strlen(dest); i++) {
 			if(dest[i] == '2') {

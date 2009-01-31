@@ -114,6 +114,15 @@ struct zint_symbol {
 #define BARCODE_DAFT		93
 #define BARCODE_MICROQR		97
 
+/* Tbarcode 9 codes */
+#define BARCODE_HIBC_128	98
+#define BARCODE_HIBC_39		99
+#define BARCODE_HIBC_DM		102
+#define BARCODE_HIBC_QR		104
+#define BARCODE_HIBC_PDF	106
+#define BARCODE_HIBC_MICPDF	108
+#define BARCODE_HIBC_BLOCKF	110
+
 /* Zint specific */
 #define BARCODE_AZRUNE		128
 #define BARCODE_CODE32		129

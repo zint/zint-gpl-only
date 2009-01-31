@@ -703,6 +703,7 @@ int ps_plot(struct zint_symbol *symbol)
 
 	switch(symbol->symbology) {
 		case BARCODE_CODABLOCKF:
+		case BARCODE_HIBC_BLOCKF:
 			fprintf(feps, "TE\n");
 			fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
 			fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", symbol->border_width * scaler, textoffset * scaler, xoffset * scaler, symbol->width * scaler);
