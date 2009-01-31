@@ -232,6 +232,27 @@ echo testing DAFT Code
 echo testing Micro QR Code
 ./zint -o bar97.eps -b 97 -d "MicroQR Code"
 ./zint -o bar97.png -b 97 -d "MicroQR Code"
+echo testing HIBC LIC 128
+./zint -o bar98.eps -b 98 -d "A99912345/9901510X3"
+./zint -o bar98.png -b 98 -d "A99912345/9901510X3"
+echo testing HIBC LIC 39
+./zint -o bar99.eps -b 99 -d "A123BJC5D6E71"
+./zint -o bar99.png -b 99 -d "A123BJC5D6E71"
+echo testing HIBC LIC Data Matrix
+./zint -o bar102.eps -b 102 -d "A99912345/9901510X3"
+./zint -o bar102.png -b 102 -d "A99912345/9901510X3"
+echo testing HIBC LIC QR-Code
+./zint -o bar104.eps -b 104 -d "A99912345/9901510X3"
+./zint -o bar104.png -b 104 -d "A99912345/9901510X3"
+echo testing HIBC LIC PDF417
+./zint -o bar106.eps -b 106 -d "A99912345/9901510X3"
+./zint -o bar106.png -b 106 -d "A99912345/9901510X3"
+echo testing HIBC LIC MicroPDF417
+./zint -o bar108.eps -b 108 -d "A99912345/9901510X3"
+./zint -o bar108.png -b 108 -d "A99912345/9901510X3"
+echo testing HIBC LIC Codablock F
+./zint -o bar110.eps -b 110 -d "A99912345/9901510X3"
+./zint -o bar110.png -b 110 -d "A99912345/9901510X3"
 echo testing Aztec Runes
 ./zint -o bar128.eps -b 128 -d 125
 ./zint -o bar128.png -b 128 -d 125

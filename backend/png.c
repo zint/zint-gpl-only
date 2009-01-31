@@ -777,7 +777,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 	
 	/* Put boundary bars or box around symbol */
 	if(((symbol->output_options & BARCODE_BOX) != 0) || ((symbol->output_options & BARCODE_BIND) != 0)) {
-		if(symbol->symbology != BARCODE_CODABLOCKF) {
+		if((symbol->symbology != BARCODE_CODABLOCKF) && (symbol->symbology != BARCODE_HIBC_BLOCKF)) {
 			/* boundary bars */
 			draw_bar(pixelbuf, 0, (symbol->width + xoffset + xoffset) * scaler, textoffset * scaler, symbol->border_width * scaler, image_width, image_height);
 			draw_bar(pixelbuf, 0, (symbol->width + xoffset + xoffset) * scaler, (textoffset + symbol->height + symbol->border_width) * scaler, symbol->border_width * scaler, image_width, image_height);

@@ -24,6 +24,8 @@
 #include "common.h"
 #include "gs1.h"
 
+#define HIBCSET	"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%"
+
 struct zint_symbol *ZBarcode_Create()
 {
 	struct zint_symbol *symbol;
@@ -139,6 +141,91 @@ void error_tag(char error_string[], int error_number)
 		concat(error_string, error_buffer);
 	}
 }
+
+int hibc(struct zint_symbol *symbol, unsigned char source[])
+{
+	int counter, srclen, error_number, i;
+	char to_process[40], temp[3], check_digit;
+	
+	srclen = ustrlen(source);
+	strcpy(temp, "");
+	
+	to_upper(source);
+	if(srclen > 36) {
+		strcpy(symbol->errtxt, "Data too long for HIBC LIC");
+		return ERROR_TOO_LONG;
+	}
+	error_number = is_sane(HIBCSET , source);
+	if(error_number == ERROR_INVALID_DATA) {
+		strcpy(symbol->errtxt, "Invalid characters in data [082]");
+		return error_number;
+	}
+	
+	strcpy(to_process, "+");
+	counter = 41;
+	for(i = 0; i < ustrlen(source); i++) {
+		counter += posn(HIBCSET, source[i]);
+	}
+	counter = counter % 43;
+	
+	if(counter < 10) {
+		check_digit = itoc(counter);
+	} else {
+		if(counter < 36) {
+			check_digit = (counter - 10) + 'A';
+		} else {
+			switch(counter) {
+				case 36: check_digit = '-'; break;
+				case 37: check_digit = '.'; break;
+				case 38: check_digit = ' '; break;
+				case 39: check_digit = '$'; break;
+				case 40: check_digit = '/'; break;
+				case 41: check_digit = '+'; break;
+				case 42: check_digit = 37; break;
+				default: check_digit = ' '; break; /* Keep compiler happy */
+			}
+		}
+	}
+	
+	temp[0] = check_digit;
+	temp[1] = '\0';
+	
+	concat(to_process, (char *)source);
+	concat(to_process, temp);
+	
+	switch(symbol->symbology) {
+		case BARCODE_HIBC_128:
+			error_number = code_128(symbol, (unsigned char *)to_process);
+			strcpy(symbol->text, "*");
+			concat(symbol->text, to_process);
+			concat(symbol->text, "*");
+			break;
+		case BARCODE_HIBC_39:
+			error_number = c39(symbol, (unsigned char *)to_process);
+			strcpy(symbol->text, "*");
+			concat(symbol->text, to_process);
+			concat(symbol->text, "*");
+			break;
+		case BARCODE_HIBC_DM:
+			error_number = dmatrix(symbol, (unsigned char *)to_process);
+			break;
+		case BARCODE_HIBC_QR:
+			error_number = qr_code(symbol, (unsigned char *)to_process);
+			break;
+		case BARCODE_HIBC_PDF:
+			error_number = pdf417enc(symbol, (unsigned char *)to_process);
+			break;
+		case BARCODE_HIBC_MICPDF:
+			error_number = micro_pdf417(symbol, (unsigned char *)to_process);
+			break;
+		case BARCODE_HIBC_BLOCKF:
+			error_number = codablock(symbol, (unsigned char *)to_process);
+			break;
+	}
+	
+	return error_number;
+}
+
 
 int eci_process(struct zint_symbol *symbol, unsigned char source[], unsigned char preprocessed[])
 {
@@ -265,7 +352,14 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source)
 	if(symbol->symbology == 88) { symbol->symbology = BARCODE_EAN128; }
 	if(symbol->symbology == 91) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128 [Z09]"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
 	if((symbol->symbology >= 94) && (symbol->symbology <= 96)) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128 [Z10]"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
-	if((symbol->symbology >= 98) && (symbol->symbology <= 127)) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128 [Z10]"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
+	if(symbol->symbology == 100) { symbol->symbology = BARCODE_HIBC_128; }
+	if(symbol->symbology == 101) { symbol->symbology = BARCODE_HIBC_39; }
+	if(symbol->symbology == 103) { symbol->symbology = BARCODE_HIBC_DM; }
+	if(symbol->symbology == 105) { symbol->symbology = BARCODE_HIBC_QR; }
+	if(symbol->symbology == 107) { symbol->symbology = BARCODE_HIBC_PDF; }
+	if(symbol->symbology == 109) { symbol->symbology = BARCODE_HIBC_MICPDF; }
+	if(symbol->symbology == 111) { symbol->symbology = BARCODE_HIBC_BLOCKF; }
+	if((symbol->symbology >= 112) && (symbol->symbology <= 127)) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128 [Z10]"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
 	/* Everything from 128 up is Zint-specific */
 	if(symbol->symbology >= 140) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128 [Z11]"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
 
@@ -385,6 +479,13 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source)
 		case BARCODE_MICROQR: error_number = microqr(symbol, preprocessed); break;
 		case BARCODE_AZRUNE: error_number = aztec_runes(symbol, preprocessed); break;
 		case BARCODE_KOREAPOST: error_number = korea_post(symbol, preprocessed); break;
+		case BARCODE_HIBC_128: error_number = hibc(symbol, preprocessed); break;
+		case BARCODE_HIBC_39: error_number = hibc(symbol, preprocessed); break;
+		case BARCODE_HIBC_DM: error_number = hibc(symbol, preprocessed); break;
+		case BARCODE_HIBC_QR: error_number = hibc(symbol, preprocessed); break;
+		case BARCODE_HIBC_PDF: error_number = hibc(symbol, preprocessed); break;
+		case BARCODE_HIBC_MICPDF: error_number = hibc(symbol, preprocessed); break;
+		case BARCODE_HIBC_BLOCKF: error_number = hibc(symbol, preprocessed); break;
 	}
 	if(error_number == 0) {
 		error_number = error_buffer;
