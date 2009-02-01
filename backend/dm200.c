@@ -309,7 +309,7 @@ int look_ahead_test(unsigned char source[], int sourcelen, int position, int cur
 		/* step (q) */
 		if(gs1 && (source[sp] == '[')) { b256_count += 4.0; } else { b256_count += 1.0; }
 		
-		/*printf("lat a%.2f c%.2f t%.2f x%.2f e%.2f b%.2f\n", ascii_count, c40_count, text_count, x12_count, edf_count, b256_count);*/
+		printf("lat a%.2f c%.2f t%.2f x%.2f e%.2f b%.2f\n", ascii_count, c40_count, text_count, x12_count, edf_count, b256_count);
 		
 	}
 	
@@ -711,12 +711,12 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 		}
 	}
 	
-	/*
+	
 	for(i = 0; i < tp; i++){
 		printf("%02X ", target[i]);
 	}
 	printf("\n");
-	*/
+	
 	
 	*(last_mode) = current_mode;
 	return tp;
@@ -774,6 +774,7 @@ int data_matrix_200(struct zint_symbol *symbol, unsigned char source[])
 		optionsize = -1;
 	}
 	
+	calcsize = 0;
 	for(i = 0; i < 30; i++) {
 		if(matrixbytes[i] < binlen) {
 			calcsize = i;
