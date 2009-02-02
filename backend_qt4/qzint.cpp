@@ -348,7 +348,7 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 				if (m_zintSymbol->encoded_data[r][c]=='1')
 				{
 					qreal col=(qreal)c*(maxi_width+1)+(r%2)*((maxi_width+1)/2);
-					qreal row=(qreal)r*(maxi_width+1);
+					qreal row=(qreal)r*(maxi_width+1)*0.868;
 					QPainterPath pt;
 					pt.moveTo(col+maxi_width/2, 	row);
 					pt.lineTo(col+maxi_width, 	row+maxi_diagonal/4);
@@ -364,9 +364,9 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 		p.setWidth(maxi_width);
 		painter.setPen(p);
 		const qreal w=maxi_width+1;
-		painter.drawEllipse(QPointF((qreal)m_zintSymbol->width/2*w,(qreal)m_zintSymbol->height/2*w),w,w);
-		painter.drawEllipse(QPointF((qreal)m_zintSymbol->width/2*w,(qreal)m_zintSymbol->height/2*w),w+w*1.5,w+w*1.5);
-		painter.drawEllipse(QPointF((qreal)m_zintSymbol->width/2*w,(qreal)m_zintSymbol->height/2*w),w+w*3,w+w*3);
+		painter.drawEllipse(QPointF(14.5*w,16.5*w*0.868),w,w);
+		painter.drawEllipse(QPointF(14.5*w,16.5*w*0.868),w+w*1.5,w+w*1.5);
+		painter.drawEllipse(QPointF(14.5*w,16.5*w*0.868),w+w*3,w+w*3);
 		painter.restore();
 	}
 	else
