@@ -77,6 +77,7 @@ public:
 		EAN14		=72,
 		CODABLOCKF	=74,
 		NVE18		=75,
+		KOREAPOST	=77,
 		RSS14STACK	=79,
 		RSS14STACK_OMNI	=80,
 		RSS_EXPSTACK	=81,
@@ -91,6 +92,15 @@ public:
 		KIX		=90,
 		AZTEC		=92,
 		MICROQR		=97,
+
+		/* Tbarcode 9 codes */
+		HIBC_128	=98,
+		HIBC_39		=99,
+		HIBC_DM		=102,
+		HIBC_QR		=104,
+		HIBC_PDF	=106,
+		HIBC_MICPDF	=108,
+		HIBC_BLOCKF	=110,
 		
 		/* Zint specific */
 		AZRUNE		=128,
