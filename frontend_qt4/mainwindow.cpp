@@ -27,22 +27,24 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 {
 	char bstyle_text[][40] = {
 		"Code 11", "Code 2 of 5 Matrix", "Code 2 of 5 Interleaved", "IATA Code 2 of 5",
-  "Code 2 of 5 Data Logic", "Code 2 of 5 Industrial", "Code 39", "Extended Code 39",
-  "EAN", "EAN-128", "Codabar", "Code 128", "DP Leitcode", "DP Identcode",
-  "Code 16k", "Code 93", "Flattermarken", "Databar",
-  "Databar Limited", "Databar Expanded", "Telepen", "UPC-A", "UPC-E",
-  "Postnet", "MSI Plessey", "FIM", "LOGMARS", "Pharmacode", "PZN",
-  "Pharmacode 2-track", "PDF417", "PDF417 Truncated", "Maxicode",
-  "QR Code", "Code 128 Subset B", "Auspost Standard", "Auspost Reply",
-  "Auspost Route", "Auspost Redirect", "ISBN", "Royal Mail 4-state",
-  "Data Matrix", "EAN-14", "Codablock-F", "NVE-18", "Databar Stacked",
-  "Databar Stacked Omni", "Databar Expanded Stacked", "PLANET",
-  "MicroPDF417", "USPS One Code", "UK Plessey", "Telepen Numeric",
-  "ITF-14", "Dutch Post KIX", "Aztec Code", "Micro QR Code", "Aztec Runes",
-  "Code 32", "Composite EAN", "Composite EAN-128", "Composite Databar",
-  "Composite Databar Limited", "Composite Databar Expanded",
-  "Composite UPC-A", "Composite UPC-E", "Composite Databar Stacked",
-  "Composite Databar Stacked Omni", "Composite Databar Expanded Stacked"
+		"Code 2 of 5 Data Logic", "Code 2 of 5 Industrial", "Code 39", "Extended Code 39",
+		"EAN", "EAN-128", "Codabar", "Code 128", "DP Leitcode", "DP Identcode",
+		"Code 16k", "Code 93", "Flattermarken", "Databar",
+		"Databar Limited", "Databar Expanded", "Telepen", "UPC-A", "UPC-E",
+		"Postnet", "MSI Plessey", "FIM", "LOGMARS", "Pharmacode", "PZN",
+		"Pharmacode 2-track", "PDF417", "PDF417 Truncated", "Maxicode",
+		"QR Code", "Code 128 Subset B", "Auspost Standard", "Auspost Reply",
+		"Auspost Route", "Auspost Redirect", "ISBN", "Royal Mail 4-state",
+		"Data Matrix", "EAN-14", "Codablock-F", "NVE-18", "Korea Post", "Databar Stacked",
+		"Databar Stacked Omni", "Databar Expanded Stacked", "PLANET",
+		"MicroPDF417", "USPS One Code", "UK Plessey", "Telepen Numeric",
+		"ITF-14", "Dutch Post KIX", "Aztec Code", "Micro QR Code", 
+		"HIBC Code 128", "HIBC Code 39", "HIBC Data Matrix", "HIBC QR Code",
+		"HIBC PDF417", "HIBC MicroPDF417", "HIBC Codablock-F", "Aztec Runes",
+		"Code 32", "Composite EAN", "Composite EAN-128", "Composite Databar",
+		"Composite Databar Limited", "Composite Databar Expanded",
+		"Composite UPC-A", "Composite UPC-E", "Composite Databar Stacked",
+		"Composite Databar Stacked Omni", "Composite Databar Expanded Stacked"
 	};
 	setupUi(this);
 	view->setScene(new QGraphicsScene);
