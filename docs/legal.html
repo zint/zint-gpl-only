@@ -3,20 +3,6 @@
 <HEAD>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
 	<TITLE>Legal and Version Information</TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.4  (Unix)">
-	<META NAME="CREATED" CONTENT="20070730;21081900">
-	<META NAME="CHANGED" CONTENT="20090101;17540500">
-	<STYLE TYPE="text/css">
-	<!--
-		TD P { color: #000000 }
-		H1 { color: #000000 }
-		P { color: #000000 }
-		TH P { color: #000000 }
-		A:link { color: #0000ff }
-		A:visited { color: #840084 }
-	-->
-	</STYLE>
-</HEAD>
 <BODY LANG="en-GB" TEXT="#000000" LINK="#0000ff" VLINK="#840084" BGCOLOR="#ffffff" DIR="LTR">
 <TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0 STYLE="page-break-before: always">
 	<TR>
@@ -38,9 +24,9 @@
 <H1>6. Legal and Version Information</H1>
 <P><A NAME="LICENSE"></A><FONT SIZE=5><B>6.1 License</B></FONT></P>
 <P><IMG SRC="gplv3-127x51.png" NAME="graphics1" ALIGN=RIGHT WIDTH=127 HEIGHT=51 BORDER=0>Zint
-and <I>libzint</I> are Copyright © 2008 Robin Stuart &amp; BogDan
+and <I>libzint</I> are Copyright © 2009 Robin Stuart &amp; BogDan
 Vatra and are distributed under the terms of the <A HREF="http://www.gnu.org/copyleft/gpl.html">GNU
-General Public License</A> version 3 [1]. See the file <FONT FACE="Courier">COPYING</FONT>
+General Public License</A> version 3. See the file <FONT FACE="Courier">COPYING</FONT>
 for more information. The following terms form part of the GPL:</P>
 <P><FONT FACE="Courier">This program is free software; you can
 redistribute it and/or modify it under the terms of the GNU General
@@ -50,7 +36,7 @@ version 3 of the License, or (at your option) any later version.</FONT></P>
 it will be useful, but WITHOUT ANY WARRANTY; without even the implied
 warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
 the GNU General Public License for more details.</FONT></P>
-<P>Data Matrix code is Copyright © 2004 Adrian Kennard, Andrews &amp;
+<P>Some Data Matrix code is Copyright © 2004 Adrian Kennard, Andrews &amp;
 Arnold Ltd and © 2006 Stefan Schmidt, used under the terms of the
 GNU General Public Licence.</P>
 <P>Reed-Solomon code is Copyright © 2004 Cliff Hones, used under the
@@ -180,10 +166,12 @@ options, moved Unicode handling into backend and added input_mode
 option, added size options to
 Data Matrix, added NULL character handling for Codablock-F, Code 128,
 Code 16k, Extended Code 39, Code 93, Telepen, Maxicode, Data Matrix ECC 200,
-PDF417 and MicroPDF417. Added GS1 processing for Data Matrix ECC 200,
+PDF417 and MicroPDF417. Added GS1 support for
 Code 16k, Codablock-F and Aztec Code. Added scale and direct to
-<FONT FACE="Courier, monospace">stdout</FONT> options. Correction
-to Data Matrix ECC 200 Base 256 encoding.</P>
+<FONT FACE="Courier, monospace">stdout</FONT> options. Rebult
+Data Matrix ECC 200 encoding algorithms to support NULL encoding and
+GS1 data encoding. 31/1/2009</P>
+<P>v2.1.1 - Minor Data Matrix bugfix and added HIBC options. 10/2/2009</P>
 <P><A NAME="CREDITS"></A><FONT SIZE=5><B>6.4 Sources of Information</B></FONT></P>
 <P>Below is a list of some of the sources used in rough chronological
 order:</P>
@@ -252,21 +240,12 @@ symbology specification</P>
 <P>ISO/IEC 24778:2008 Information technology – Automatic
 identification and data capture techniques – Aztec Code bar code
 symbology specification</P>
-<P>Uniform Symbology Specification – Codablock F</P>
+<P>Uniform Symbology Specification – Codablock F (AIM Europe, 1995)</P>
 <P>GS1 General Specifications Version 8.0</P>
+<P>ANSI/HIBC 2.2-2006 - The Health Industry Bar Code (HIBC)
+Supplier Labeling Standard</P>
 <P ALIGN=LEFT><BR><BR>
 </P>
-<P ALIGN=LEFT>[1] Some of the third party code in this library was
-distributed under the terms of <A HREF="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html">version
-2 of the GNU Public Licence</A> with the option of using a later
-version. For the purpose of Zint as a whole package I have chosen to
-take this option and redistribute the code under version 3 of the
-licence. This decision takes effect from version 1.5.5 of the code
-and does not affect the licence of previously released versions of
-the code. Some third party source code files, however, are included
-in Zint as verbatim (unaltered) copies and therefore the right to
-change the license terms remains exclusively with the original
-copyright holder. R. Stuart 9/3/2008</P>
 <HR>
 <TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0>
 	<TR VALIGN=TOP>
