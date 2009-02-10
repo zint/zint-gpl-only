@@ -201,6 +201,7 @@ int hibc(struct zint_symbol *symbol, unsigned char source[])
 			concat(symbol->text, "*");
 			break;
 		case BARCODE_HIBC_39:
+			symbol->option_2 = 0;
 			error_number = c39(symbol, (unsigned char *)to_process);
 			strcpy(symbol->text, "*");
 			concat(symbol->text, to_process);
