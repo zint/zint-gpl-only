@@ -124,6 +124,7 @@ int png_handle(struct zint_symbol *symbol, int rotate_angle);
 #endif
 
 extern int ps_plot(struct zint_symbol *symbol);
+extern int svg_plot(struct zint_symbol *symbol);
 
 void error_tag(char error_string[], int error_number)
 {
@@ -515,9 +516,13 @@ int ZBarcode_Print(struct zint_symbol *symbol)
 			if(!(strcmp(output, "EPS"))) {
 				error_number = ps_plot(symbol);
 			} else {
-				strcpy(symbol->errtxt, "Unknown output format [Z20]");
-				error_tag(symbol->errtxt, ERROR_INVALID_OPTION);
-				return ERROR_INVALID_OPTION;
+				if(!(strcmp(output, "SVG"))) {
+					error_number = svg_plot(symbol);
+				} else {
+					strcpy(symbol->errtxt, "Unknown output format [Z20]");
+					error_tag(symbol->errtxt, ERROR_INVALID_OPTION);
+					return ERROR_INVALID_OPTION;
+				}
 			}
 #ifndef NO_PNG
 		}

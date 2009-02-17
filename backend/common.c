@@ -149,3 +149,18 @@ int is_stackable(int symbology) {
 	return 0;
 }
 
+int roundup(float input)
+{
+	float remainder;
+	int integer_part;
+	
+	integer_part = (int)input;
+	remainder = input - integer_part;
+	
+	if(remainder > 0.1) {
+		integer_part++;
+	}
+	
+	return integer_part;
+}
+
