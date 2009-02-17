@@ -30,21 +30,6 @@
    the formatting rules for EAN and UPC symbols as set out in EN 797:1995 - the
    down side of this support is that the code is now vertually unreadable! */
 
-int roundup(float input)
-{
-	float remainder;
-	int integer_part;
-	
-	integer_part = (int)input;
-	remainder = input - integer_part;
-	
-	if(remainder > 0.1) {
-		integer_part++;
-	}
-	
-	return integer_part;
-}
-
 int ps_plot(struct zint_symbol *symbol)
 {
 	int i, block_width, latch, r, this_row;
@@ -713,7 +698,7 @@ int ps_plot(struct zint_symbol *symbol)
 				fprintf(feps, "TE\n");
 				fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
 				for(r = 1; r < symbol->rows; r++) {
-					fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", 2.0, ((r * row_height) + textoffset + yoffset - 1) * scaler, (xoffset + 11) * scaler, (symbol->width - 24) * scaler);
+					fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", 2.0 * scaler, ((r * row_height) + textoffset + yoffset - 1) * scaler, (xoffset + 11) * scaler, (symbol->width - 24) * scaler);
 				}
 			}
 			break;
@@ -727,7 +712,7 @@ int ps_plot(struct zint_symbol *symbol)
 					fprintf(feps, "TE\n");
 					fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
 					for(r = 1; r < symbol->rows; r++) {
-						fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", 2.0, ((r * row_height) + textoffset + yoffset - 1) * scaler, xoffset * scaler, symbol->width * scaler);
+						fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", 2.0 * scaler, ((r * row_height) + textoffset + yoffset - 1) * scaler, xoffset * scaler, symbol->width * scaler);
 					}
 				}
 			}
