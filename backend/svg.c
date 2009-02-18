@@ -183,7 +183,13 @@ int svg_plot(struct zint_symbol *symbol)
 		fprintf(fsvg, "   <desc>Zint Generated Symbol\n");
 	}
 	fprintf(fsvg, "   </desc>\n");
-	fprintf(fsvg, "\n   <g id=\"barcode\" fill=\"black\">\n");
+	fprintf(fsvg, "\n   <g id=\"barcode\" fill=\"#%s\">\n", symbol->fgcolour);
+
+	if(symbol->symbology != BARCODE_MAXICODE) {
+		fprintf(fsvg, "      <rect x=\"0\" y=\"0\" width=\"%d\" height=\"%d\" fill=\"#%s\" />\n", roundup((symbol->width + xoffset + xoffset) * scaler), roundup((symbol->height + textoffset + yoffset + yoffset) * scaler), symbol->bgcolour);
+	} else {
+		fprintf(fsvg, "      <rect x=\"0\" y=\"0\" width=\"%d\" height=\"%d\" fill=\"#%s\" />\n", roundup((74.0 + xoffset + xoffset) * scaler), roundup((72.0 + yoffset + yoffset) * scaler), symbol->bgcolour);
+	}
 
 	if(symbol->symbology == BARCODE_MAXICODE) {
 		/* Maxicode uses hexagons */
@@ -200,12 +206,12 @@ int svg_plot(struct zint_symbol *symbol)
 			fprintf(fsvg, "      <rect x=\"%.2f\" y=\"%.2f\" width=\"%.2f\" height=\"%.2f\" />\n", 0.0, 0.0, symbol->border_width * scaler, (72.0 + (2 * symbol->border_width)) * scaler);
 			fprintf(fsvg, "      <rect x=\"%.2f\" y=\"%.2f\" width=\"%.2f\" height=\"%.2f\" />\n", (74.0 + xoffset + xoffset - symbol->border_width) * scaler, 0.0, symbol->border_width * scaler, (72.0 + (2 * symbol->border_width)) * scaler);
 		}
-		fprintf(fsvg, "      <circle cx=\"%.2f\" cy=\"%.2f\" r=\"%.2f\" fill=\"black\" />\n", (35.76 + xoffset) * scaler, (35.60 + yoffset) * scaler, 10.85 * scaler);
-		fprintf(fsvg, "      <circle cx=\"%.2f\" cy=\"%.2f\" r=\"%.2f\" fill=\"white\" />\n", (35.76 + xoffset) * scaler, (35.60 + yoffset) * scaler, 8.97 * scaler);
-		fprintf(fsvg, "      <circle cx=\"%.2f\" cy=\"%.2f\" r=\"%.2f\" fill=\"black\" />\n", (35.76 + xoffset) * scaler, (35.60 + yoffset) * scaler, 7.10 * scaler);
-		fprintf(fsvg, "      <circle cx=\"%.2f\" cy=\"%.2f\" r=\"%.2f\" fill=\"white\" />\n", (35.76 + xoffset) * scaler, (35.60 + yoffset) * scaler, 5.22 * scaler);
-		fprintf(fsvg, "      <circle cx=\"%.2f\" cy=\"%.2f\" r=\"%.2f\" fill=\"black\" />\n", (35.76 + xoffset) * scaler, (35.60 + yoffset) * scaler, 3.31 * scaler);
-		fprintf(fsvg, "      <circle cx=\"%.2f\" cy=\"%.2f\" r=\"%.2f\" fill=\"white\" />\n", (35.76 + xoffset) * scaler, (35.60 + yoffset) * scaler, 1.43 * scaler);
+		fprintf(fsvg, "      <circle cx=\"%.2f\" cy=\"%.2f\" r=\"%.2f\" fill=\"#%s\" />\n", (35.76 + xoffset) * scaler, (35.60 + yoffset) * scaler, 10.85 * scaler, symbol->fgcolour);
+		fprintf(fsvg, "      <circle cx=\"%.2f\" cy=\"%.2f\" r=\"%.2f\" fill=\"#%s\" />\n", (35.76 + xoffset) * scaler, (35.60 + yoffset) * scaler, 8.97 * scaler, symbol->bgcolour);
+		fprintf(fsvg, "      <circle cx=\"%.2f\" cy=\"%.2f\" r=\"%.2f\" fill=\"#%s\" />\n", (35.76 + xoffset) * scaler, (35.60 + yoffset) * scaler, 7.10 * scaler, symbol->fgcolour);
+		fprintf(fsvg, "      <circle cx=\"%.2f\" cy=\"%.2f\" r=\"%.2f\" fill=\"#%s\" />\n", (35.76 + xoffset) * scaler, (35.60 + yoffset) * scaler, 5.22 * scaler, symbol->bgcolour);
+		fprintf(fsvg, "      <circle cx=\"%.2f\" cy=\"%.2f\" r=\"%.2f\" fill=\"#%s\" />\n", (35.76 + xoffset) * scaler, (35.60 + yoffset) * scaler, 3.31 * scaler, symbol->fgcolour);
+		fprintf(fsvg, "      <circle cx=\"%.2f\" cy=\"%.2f\" r=\"%.2f\" fill=\"#%s\" />\n", (35.76 + xoffset) * scaler, (35.60 + yoffset) * scaler, 1.43 * scaler, symbol->bgcolour);
 		for(r = 0; r < symbol->rows; r++) {
 			for(i = 0; i < symbol->width; i++) {
 				if(symbol->encoded_data[r][i] == '1') {
@@ -269,7 +275,7 @@ int svg_plot(struct zint_symbol *symbol)
 					block_width++;
 				} while (symbol->encoded_data[this_row][i + block_width] == symbol->encoded_data[this_row][i]);
 				if((addon_latch == 0) && (r == 0) && (i > main_width)) {
-					addon_text_posn = row_posn + row_height - 8.0;
+					addon_text_posn = 9.0;
 					addon_latch = 1;
 				} 
 				if(latch == 1) { 
@@ -309,60 +315,38 @@ int svg_plot(struct zint_symbol *symbol)
 				for(i = 0; i < 4; i++) {
 					textpart[i] = symbol->text[i];
 				}
-				/* textpart[4] = '\0';
-				fprintf(fsvg, "TE\n");
-				fprintf(fsvg, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-				fprintf(fsvg, "matrix currentmatrix\n");
-				fprintf(fsvg, "/Helvetica findfont\n");
-				fprintf(fsvg, "%.2f scalefont setfont\n", 11.0 * scaler);
+				textpart[4] = '\0';
 				textpos = 17;
-				fprintf(fsvg, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, 0.50 * scaler);
-				fprintf(fsvg, " (%s) stringwidth\n", textpart);
-				fprintf(fsvg, "pop\n");
-				fprintf(fsvg, "-2 div 0 rmoveto\n");
-				fprintf(fsvg, " (%s) show\n", textpart);
-				fprintf(fsvg, "setmatrix\n");
+				fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", (textpos + xoffset) * scaler, (symbol->height + textoffset) * scaler);
+				fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 11.0 * scaler, symbol->fgcolour);
+				fprintf(fsvg, "         %s\n", textpart);
+				fprintf(fsvg, "      </text>\n");
 				for(i = 0; i < 4; i++) {
 					textpart[i] = symbol->text[i + 4];
 				}
 				textpart[4] = '\0';
-				fprintf(fsvg, "matrix currentmatrix\n");
-				fprintf(fsvg, "/Helvetica findfont\n");
-				fprintf(fsvg, "%.2f scalefont setfont\n", 11.0 * scaler);
 				textpos = 50;
-				fprintf(fsvg, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, 0.5 * scaler);
-				fprintf(fsvg, " (%s) stringwidth\n", textpart);
-				fprintf(fsvg, "pop\n");
-				fprintf(fsvg, "-2 div 0 rmoveto\n");
-				fprintf(fsvg, " (%s) show\n", textpart);
-				fprintf(fsvg, "setmatrix\n");
+				fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", (textpos + xoffset) * scaler, (symbol->height + textoffset) * scaler);
+				fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 11.0 * scaler, symbol->fgcolour);
+				fprintf(fsvg, "         %s\n", textpart);
+				fprintf(fsvg, "      </text>\n");
 				textdone = 1;
 				switch(strlen(addon)) {
 					case 2:	
-						fprintf(fsvg, "matrix currentmatrix\n");
-						fprintf(fsvg, "/Helvetica findfont\n");
-						fprintf(fsvg, "%.2f scalefont setfont\n", 11.0 * scaler);
 						textpos = symbol->width + xoffset - 10;
-						fprintf(fsvg, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
-						fprintf(fsvg, " (%s) stringwidth\n", addon);
-						fprintf(fsvg, "pop\n");
-						fprintf(fsvg, "-2 div 0 rmoveto\n");
-						fprintf(fsvg, " (%s) show\n", addon);
-						fprintf(fsvg, "setmatrix\n");
+						fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", textpos * scaler, addon_text_posn * scaler);
+						fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 11.0 * scaler, symbol->fgcolour);
+						fprintf(fsvg, "         %s\n", addon);
+						fprintf(fsvg, "      </text>\n");
 						break;
 					case 5:
-						fprintf(fsvg, "matrix currentmatrix\n");
-						fprintf(fsvg, "/Helvetica findfont\n");
-						fprintf(fsvg, "%.2f scalefont setfont\n", 11.0 * scaler);
 						textpos = symbol->width + xoffset - 23;
-						fprintf(fsvg, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
-						fprintf(fsvg, " (%s) stringwidth\n", addon);
-						fprintf(fsvg, "pop\n");
-						fprintf(fsvg, "-2 div 0 rmoveto\n");
-						fprintf(fsvg, " (%s) show\n", addon);
-						fprintf(fsvg, "setmatrix\n");
+						fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", textpos * scaler, addon_text_posn * scaler);
+						fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 11.0 * scaler, symbol->fgcolour);
+						fprintf(fsvg, "         %s\n", addon);
+						fprintf(fsvg, "      </text>\n");
 						break;
-				} */
+				}
 
 				break;
 			case 13: /* EAN 13 */
@@ -376,74 +360,47 @@ int svg_plot(struct zint_symbol *symbol)
 				fprintf(fsvg, "      <rect x=\"%.2f\" y=\"%.2f\" width=\"%.2f\" height=\"%.2f\" />\n", (94 + xoffset) * scaler, row_posn, scaler, 5.0 * scaler); 
 				textpart[0] = symbol->text[0];
 				textpart[1] = '\0';
-				/*fprintf(fsvg, "TE\n");
-				fprintf(fsvg, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-				fprintf(fsvg, "matrix currentmatrix\n");
-				fprintf(fsvg, "/Helvetica findfont\n");
-				fprintf(fsvg, "%.2f scalefont setfont\n", 11.0 * scaler);
 				textpos = -7;
-				fprintf(fsvg, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, 0.50 * scaler);
-				fprintf(fsvg, " (%s) stringwidth\n", textpart);
-				fprintf(fsvg, "pop\n");
-				fprintf(fsvg, "-2 div 0 rmoveto\n");
-				fprintf(fsvg, " (%s) show\n", textpart);
-				fprintf(fsvg, "setmatrix\n");
+				fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", (textpos + xoffset) * scaler, (symbol->height + textoffset) * scaler);
+				fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 11.0 * scaler, symbol->fgcolour);
+				fprintf(fsvg, "         %s\n", textpart);
+				fprintf(fsvg, "      </text>\n");
 				for(i = 0; i < 6; i++) {
 					textpart[i] = symbol->text[i + 1];
 				}
 				textpart[6] = '\0';
-				fprintf(fsvg, "matrix currentmatrix\n");
-				fprintf(fsvg, "/Helvetica findfont\n");
-				fprintf(fsvg, "%.2f scalefont setfont\n", 11.0 * scaler);
 				textpos = 24;
-				fprintf(fsvg, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, 0.50 * scaler);
-				fprintf(fsvg, " (%s) stringwidth\n", textpart);
-				fprintf(fsvg, "pop\n");
-				fprintf(fsvg, "-2 div 0 rmoveto\n");
-				fprintf(fsvg, " (%s) show\n", textpart);
-				fprintf(fsvg, "setmatrix\n");
+				fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", (textpos + xoffset) * scaler, (symbol->height + textoffset) * scaler);
+				fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 11.0 * scaler, symbol->fgcolour);
+				fprintf(fsvg, "         %s\n", textpart);
+				fprintf(fsvg, "      </text>\n");
 				for(i = 0; i < 6; i++) {
 					textpart[i] = symbol->text[i + 7];
 				}
 				textpart[6] = '\0';
-				fprintf(fsvg, "matrix currentmatrix\n");
-				fprintf(fsvg, "/Helvetica findfont\n");
-				fprintf(fsvg, "%.2f scalefont setfont\n", 11.0 * scaler);
 				textpos = 71;
-				fprintf(fsvg, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, 0.5 * scaler);
-				fprintf(fsvg, " (%s) stringwidth\n", textpart);
-				fprintf(fsvg, "pop\n");
-				fprintf(fsvg, "-2 div 0 rmoveto\n");
-				fprintf(fsvg, " (%s) show\n", textpart);
-				fprintf(fsvg, "setmatrix\n");
+				fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", (textpos + xoffset) * scaler, (symbol->height + textoffset) * scaler);
+				fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 11.0 * scaler, symbol->fgcolour);
+				fprintf(fsvg, "         %s\n", textpart);
+				fprintf(fsvg, "      </text>\n");
 				textdone = 1;
 				switch(strlen(addon)) {
 					case 2:	
-						fprintf(fsvg, "matrix currentmatrix\n");
-						fprintf(fsvg, "/Helvetica findfont\n");
-						fprintf(fsvg, "%.2f scalefont setfont\n", 11.0 * scaler);
 						textpos = symbol->width + xoffset - 10;
-						fprintf(fsvg, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
-						fprintf(fsvg, " (%s) stringwidth\n", addon);
-						fprintf(fsvg, "pop\n");
-						fprintf(fsvg, "-2 div 0 rmoveto\n");
-						fprintf(fsvg, " (%s) show\n", addon);
-						fprintf(fsvg, "setmatrix\n");
+						fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", textpos * scaler, addon_text_posn * scaler);
+						fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 11.0 * scaler, symbol->fgcolour);
+						fprintf(fsvg, "         %s\n", addon);
+						fprintf(fsvg, "      </text>\n");
 						break;
 					case 5:
-						fprintf(fsvg, "matrix currentmatrix\n");
-						fprintf(fsvg, "/Helvetica findfont\n");
-						fprintf(fsvg, "%.2f scalefont setfont\n", 11.0 * scaler);
 						textpos = symbol->width + xoffset - 23;
-						fprintf(fsvg, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
-						fprintf(fsvg, " (%s) stringwidth\n", addon);
-						fprintf(fsvg, "pop\n");
-						fprintf(fsvg, "-2 div 0 rmoveto\n");
-						fprintf(fsvg, " (%s) show\n", addon);
-						fprintf(fsvg, "setmatrix\n");
+						fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", textpos * scaler, addon_text_posn * scaler);
+						fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 11.0 * scaler, symbol->fgcolour);
+						fprintf(fsvg, "         %s\n", addon);
+						fprintf(fsvg, "      </text>\n");
 						break;
 				}
-				break; */
+				break;
 
 		}
 	}	
@@ -489,85 +446,53 @@ int svg_plot(struct zint_symbol *symbol)
 		} while (i < 96 + comp_offset);
 		textpart[0] = symbol->text[0];
 		textpart[1] = '\0';
-		/*fprintf(fsvg, "TE\n");
-		fprintf(fsvg, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-		fprintf(fsvg, "matrix currentmatrix\n");
-		fprintf(fsvg, "/Helvetica findfont\n");
-		fprintf(fsvg, "%.2f scalefont setfont\n", 8.0 * scaler);
 		textpos = -5;
-		fprintf(fsvg, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, 0.5 * scaler);
-		fprintf(fsvg, " (%s) stringwidth\n", textpart);
-		fprintf(fsvg, "pop\n");
-		fprintf(fsvg, "-2 div 0 rmoveto\n");
-		fprintf(fsvg, " (%s) show\n", textpart);
-		fprintf(fsvg, "setmatrix\n");
+				fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", (textpos + xoffset) * scaler, (symbol->height + textoffset) * scaler);
+				fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 8.0 * scaler, symbol->fgcolour);
+				fprintf(fsvg, "         %s\n", textpart);
+				fprintf(fsvg, "      </text>\n");
 		for(i = 0; i < 5; i++) {
 			textpart[i] = symbol->text[i + 1];
 		}
 		textpart[5] = '\0';
-		fprintf(fsvg, "matrix currentmatrix\n");
-		fprintf(fsvg, "/Helvetica findfont\n");
-		fprintf(fsvg, "%.2f scalefont setfont\n", 11.0 * scaler);
 		textpos = 27;
-		fprintf(fsvg, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, 0.5 * scaler);
-		fprintf(fsvg, " (%s) stringwidth\n", textpart);
-		fprintf(fsvg, "pop\n");
-		fprintf(fsvg, "-2 div 0 rmoveto\n");
-		fprintf(fsvg, " (%s) show\n", textpart);
-		fprintf(fsvg, "setmatrix\n");
+		fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", (textpos + xoffset) * scaler, (symbol->height + textoffset) * scaler);
+		fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 11.0 * scaler, symbol->fgcolour);
+		fprintf(fsvg, "         %s\n", textpart);
+		fprintf(fsvg, "      </text>\n");
 		for(i = 0; i < 5; i++) {
 			textpart[i] = symbol->text[i + 6];
 		}
 		textpart[6] = '\0';
-		fprintf(fsvg, "matrix currentmatrix\n");
-		fprintf(fsvg, "/Helvetica findfont\n");
-		fprintf(fsvg, "%.2f scalefont setfont\n", 11.0 * scaler);
 		textpos = 68;
-		fprintf(fsvg, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, 0.5 * scaler);
-		fprintf(fsvg, " (%s) stringwidth\n", textpart);
-		fprintf(fsvg, "pop\n");
-		fprintf(fsvg, "-2 div 0 rmoveto\n");
-		fprintf(fsvg, " (%s) show\n", textpart);
-		fprintf(fsvg, "setmatrix\n");
+		fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", (textpos + xoffset) * scaler, (symbol->height + textoffset) * scaler);
+		fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 11.0 * scaler, symbol->fgcolour);
+		fprintf(fsvg, "         %s\n", textpart);
+		fprintf(fsvg, "      </text>\n");
 		textpart[0] = symbol->text[11];
 		textpart[1] = '\0';
-		fprintf(fsvg, "matrix currentmatrix\n");
-		fprintf(fsvg, "/Helvetica findfont\n");
-		fprintf(fsvg, "%.2f scalefont setfont\n", 8.0 * scaler);
 		textpos = 100;
-		fprintf(fsvg, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, 0.5 * scaler);
-		fprintf(fsvg, " (%s) stringwidth\n", textpart);
-		fprintf(fsvg, "pop\n");
-		fprintf(fsvg, "-2 div 0 rmoveto\n");
-		fprintf(fsvg, " (%s) show\n", textpart);
-		fprintf(fsvg, "setmatrix\n");
+		fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", (textpos + xoffset) * scaler, (symbol->height + textoffset) * scaler);
+		fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 8.0 * scaler, symbol->fgcolour);
+		fprintf(fsvg, "         %s\n", textpart);
+		fprintf(fsvg, "      </text>\n");
 		textdone = 1;
 		switch(strlen(addon)) {
 			case 2:	
-				fprintf(fsvg, "matrix currentmatrix\n");
-				fprintf(fsvg, "/Helvetica findfont\n");
-				fprintf(fsvg, "%.2f scalefont setfont\n", 11.0 * scaler);
 				textpos = symbol->width + xoffset - 10;
-				fprintf(fsvg, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
-				fprintf(fsvg, " (%s) stringwidth\n", addon);
-				fprintf(fsvg, "pop\n");
-				fprintf(fsvg, "-2 div 0 rmoveto\n");
-				fprintf(fsvg, " (%s) show\n", addon);
-				fprintf(fsvg, "setmatrix\n");
+				fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", textpos * scaler, addon_text_posn * scaler);
+				fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 11.0 * scaler, symbol->fgcolour);
+				fprintf(fsvg, "         %s\n", addon);
+				fprintf(fsvg, "      </text>\n");
 				break;
 			case 5:
-				fprintf(fsvg, "matrix currentmatrix\n");
-				fprintf(fsvg, "/Helvetica findfont\n");
-				fprintf(fsvg, "%.2f scalefont setfont\n", 11.0 * scaler);
 				textpos = symbol->width + xoffset - 23;
-				fprintf(fsvg, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
-				fprintf(fsvg, " (%s) stringwidth\n", addon);
-				fprintf(fsvg, "pop\n");
-				fprintf(fsvg, "-2 div 0 rmoveto\n");
-				fprintf(fsvg, " (%s) show\n", addon);
-				fprintf(fsvg, "setmatrix\n");
+				fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", textpos * scaler, addon_text_posn * scaler);
+				fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 11.0 * scaler, symbol->fgcolour);
+				fprintf(fsvg, "         %s\n", addon);
+				fprintf(fsvg, "      </text>\n");
 				break;
-		} */
+		}
 
 	}	
 
@@ -580,71 +505,44 @@ int svg_plot(struct zint_symbol *symbol)
 		fprintf(fsvg, "      <rect x=\"%.2f\" y=\"%.2f\" width=\"%.2f\" height=\"%.2f\" />\n", (50 + xoffset) * scaler, row_posn, scaler, 5.0 * scaler);
 		textpart[0] = symbol->text[0];
 		textpart[1] = '\0';
-		/* fprintf(fsvg, "TE\n");
-		fprintf(fsvg, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-		fprintf(fsvg, "matrix currentmatrix\n");
-		fprintf(fsvg, "/Helvetica findfont\n");
-		fprintf(fsvg, "%.2f scalefont setfont\n", 8.0 * scaler);
 		textpos = -5;
-		fprintf(fsvg, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, 0.5 * scaler);
-		fprintf(fsvg, " (%s) stringwidth\n", textpart);
-		fprintf(fsvg, "pop\n");
-		fprintf(fsvg, "-2 div 0 rmoveto\n");
-		fprintf(fsvg, " (%s) show\n", textpart);
-		fprintf(fsvg, "setmatrix\n");
+		fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", (textpos + xoffset) * scaler, (symbol->height + textoffset) * scaler);
+		fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 8.0 * scaler, symbol->fgcolour);
+		fprintf(fsvg, "         %s\n", textpart);
+		fprintf(fsvg, "      </text>\n");
 		for(i = 0; i < 6; i++) {
 			textpart[i] = symbol->text[i + 1];
 		}
 		textpart[6] = '\0';
-		fprintf(fsvg, "matrix currentmatrix\n");
-		fprintf(fsvg, "/Helvetica findfont\n");
-		fprintf(fsvg, "%.2f scalefont setfont\n", 11.0 * scaler);
 		textpos = 24;
-		fprintf(fsvg, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, 0.5 * scaler);
-		fprintf(fsvg, " (%s) stringwidth\n", textpart);
-		fprintf(fsvg, "pop\n");
-		fprintf(fsvg, "-2 div 0 rmoveto\n");
-		fprintf(fsvg, " (%s) show\n", textpart);
-		fprintf(fsvg, "setmatrix\n");
+		fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", (textpos + xoffset) * scaler, (symbol->height + textoffset) * scaler);
+		fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 11.0 * scaler, symbol->fgcolour);
+		fprintf(fsvg, "         %s\n", textpart);
+		fprintf(fsvg, "      </text>\n");
 		textpart[0] = symbol->text[7];
 		textpart[1] = '\0';
-		fprintf(fsvg, "matrix currentmatrix\n");
-		fprintf(fsvg, "/Helvetica findfont\n");
-		fprintf(fsvg, "%.2f scalefont setfont\n", 8.0 * scaler);
 		textpos = 55;
-		fprintf(fsvg, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, 0.5 * scaler);
-		fprintf(fsvg, " (%s) stringwidth\n", textpart);
-		fprintf(fsvg, "pop\n");
-		fprintf(fsvg, "-2 div 0 rmoveto\n");
-		fprintf(fsvg, " (%s) show\n", textpart);
-		fprintf(fsvg, "setmatrix\n");
+		fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", (textpos + xoffset) * scaler, (symbol->height + textoffset) * scaler);
+		fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 8.0 * scaler, symbol->fgcolour);
+		fprintf(fsvg, "         %s\n", textpart);
+		fprintf(fsvg, "      </text>\n");
 		textdone = 1;
 		switch(strlen(addon)) {
 			case 2:	
-				fprintf(fsvg, "matrix currentmatrix\n");
-				fprintf(fsvg, "/Helvetica findfont\n");
-				fprintf(fsvg, "%.2f scalefont setfont\n", 11.0 * scaler);
 				textpos = symbol->width + xoffset - 10;
-				fprintf(fsvg, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
-				fprintf(fsvg, " (%s) stringwidth\n", addon);
-				fprintf(fsvg, "pop\n");
-				fprintf(fsvg, "-2 div 0 rmoveto\n");
-				fprintf(fsvg, " (%s) show\n", addon);
-				fprintf(fsvg, "setmatrix\n");
+				fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", textpos * scaler, addon_text_posn * scaler);
+				fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 11.0 * scaler, symbol->fgcolour);
+				fprintf(fsvg, "         %s\n", addon);
+				fprintf(fsvg, "      </text>\n");
 				break;
 			case 5:
-				fprintf(fsvg, "matrix currentmatrix\n");
-				fprintf(fsvg, "/Helvetica findfont\n");
-				fprintf(fsvg, "%.2f scalefont setfont\n", 11.0 * scaler);
 				textpos = symbol->width + xoffset - 23;
-				fprintf(fsvg, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
-				fprintf(fsvg, " (%s) stringwidth\n", addon);
-				fprintf(fsvg, "pop\n");
-				fprintf(fsvg, "-2 div 0 rmoveto\n");
-				fprintf(fsvg, " (%s) show\n", addon);
-				fprintf(fsvg, "setmatrix\n");
+				fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", textpos * scaler, addon_text_posn * scaler);
+				fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 11.0 * scaler, symbol->fgcolour);
+				fprintf(fsvg, "         %s\n", addon);
+				fprintf(fsvg, "      </text>\n");
 				break;
-		} */
+		}
 
 	}
 
@@ -687,20 +585,13 @@ int svg_plot(struct zint_symbol *symbol)
 	}
 	
 	/* Put the human readable text at the bottom */
-	/* if((textdone == 0) && (strlen(symbol->text) != 0)) {
-		fprintf(fsvg, "TE\n");
-		fprintf(fsvg, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-		fprintf(fsvg, "matrix currentmatrix\n");
-		fprintf(fsvg, "/Helvetica findfont\n");
-		fprintf(fsvg, "%.2f scalefont setfont\n", 8.0 * scaler);
+	if((textdone == 0) && (strlen(symbol->text) != 0)) {
 		textpos = symbol->width / 2.0;
-		fprintf(fsvg, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, 1.67 * scaler);
-		fprintf(fsvg, " (%s) stringwidth\n", symbol->text);
-		fprintf(fsvg, "pop\n");
-		fprintf(fsvg, "-2 div 0 rmoveto\n");
-		fprintf(fsvg, " (%s) show\n", symbol->text);
-		fprintf(fsvg, "setmatrix\n");
-	} */
+		fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", (textpos + xoffset) * scaler, (symbol->height + textoffset) * scaler);
+		fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 8.0 * scaler, symbol->fgcolour);
+		fprintf(fsvg, "         %s\n", symbol->text);
+		fprintf(fsvg, "      </text>\n");
+	}
 	fprintf(fsvg, "   </g>\n");
 	fprintf(fsvg, "</svg>\n");
 	
