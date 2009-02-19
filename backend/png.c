@@ -426,6 +426,38 @@ int maxi_png_plot(struct zint_symbol *symbol, int rotate_angle)
 	return error_number;
 }
 
+void to_latin1(unsigned char source[], unsigned char preprocessed[])
+{
+	int j, i, next, input_length;
+	
+	input_length = ustrlen(source);
+	
+	j = 0;
+	i = 0;
+	do {
+		if(source[i] < 128) {
+			preprocessed[j] = source[i];
+			j++;
+			next = i + 1;
+		} else {
+			if(source[i] == 0xC2) {
+				preprocessed[j] = source[i + 1];
+				j++;
+				next = i + 2;
+			}
+			if(source[i] == 0xC3) {
+				preprocessed[j] = source[i + 1] + 64;
+				j++;
+				next = i + 2;
+			}
+		}
+		i = next;
+	} while(i < input_length);
+	preprocessed[j] = '\0';
+	
+	return;
+}
+
 int png_plot(struct zint_symbol *symbol, int rotate_angle)
 {
 	int textdone, main_width, comp_offset, large_bar_count;
@@ -438,7 +470,11 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 	float row_height, row_posn;
 	int error_number;
 	int scaler = (int)(2 * symbol->scale);
+	int default_text_posn;
+	unsigned char local_text[ustrlen(symbol->text)];
 	
+	to_latin1(symbol->text, local_text);
+
 	textdone = 0;
 	main_width = symbol->width;
 	strcpy(addon, "");
@@ -470,7 +506,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 
 	/* Certain symbols need whitespace otherwise characters get chopped off the sides */
 	if (((symbol->symbology == BARCODE_EANX) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_EANX_CC)) {
-		switch(strlen(symbol->text)) {
+		switch(ustrlen(local_text)) {
 			case 13: /* EAN 13 */
 			case 16:
 			case 19:
@@ -501,9 +537,9 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 	latch = 0;
 	r = 0;
 	/* Isolate add-on text */
-	for(i = 0; i < strlen(symbol->text); i++) {
+	for(i = 0; i < ustrlen(local_text); i++) {
 		if (latch == 1) {
-			addon[r] = symbol->text[i];
+			addon[r] = local_text[i];
 			r++;
 		}
 		if (symbol->text[i] == '+') {
@@ -512,7 +548,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 	}
 	addon[r] = '\0';
 	
-	if(strcmp(symbol->text, "")) {
+	if(ustrlen(local_text) != 0) {
 		textoffset = 9;
 	} else {
 		textoffset = 0;
@@ -531,6 +567,12 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 		}
 	}
 	
+	if(((symbol->output_options & BARCODE_BOX) != 0) || ((symbol->output_options & BARCODE_BIND) != 0)) {
+		default_text_posn = image_height - 17;
+	} else {
+		default_text_posn = image_height - 17 - symbol->border_width - symbol->border_width;
+	}
+
 	/* Plot the body of the symbol to the pixel buffer */
 	for(r = 0; r < symbol->rows; r++) {
 		this_row = symbol->rows - r - 1; /* invert r otherwise plots upside down */
@@ -587,7 +629,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 
 	if (((symbol->symbology == BARCODE_EANX) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_EANX_CC)) {
 		/* guard bar extensions and text formatting for EAN8 and EAN13 */
-		switch(strlen(symbol->text)) {
+		switch(ustrlen(local_text)) {
 			case 8: /* EAN-8 */
 			case 11:
 			case 14:
@@ -602,13 +644,14 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 				}
 				textpart[4] = '\0';
 				textpos = scaler * (17 + xoffset);
-				draw_string(pixelbuf, textpart, textpos, (image_height - 17), image_width, image_height);
+				
+				draw_string(pixelbuf, textpart, textpos, default_text_posn, image_width, image_height);
 				for(i = 0; i < 4; i++) {
 					textpart[i] = symbol->text[i + 4];
 				}
 				textpart[4] = '\0';
 				textpos = scaler * (50 + xoffset);
-				draw_string(pixelbuf, textpart, textpos, (image_height - 17), image_width, image_height);
+				draw_string(pixelbuf, textpart, textpos, default_text_posn, image_width, image_height);
 				textdone = 1;
 				switch(strlen(addon)) {
 					case 2:	
@@ -635,19 +678,19 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 				textpart[0] = symbol->text[0];
 				textpart[1] = '\0';
 				textpos = scaler * (-7 + xoffset);
-				draw_string(pixelbuf, textpart, textpos, (image_height - 17), image_width, image_height);
+				draw_string(pixelbuf, textpart, textpos, default_text_posn, image_width, image_height);
 				for(i = 0; i < 6; i++) {
 					textpart[i] = symbol->text[i + 1];
 				}
 				textpart[6] = '\0';
 				textpos = scaler * (24 + xoffset);
-				draw_string(pixelbuf, textpart, textpos, (image_height - 17), image_width, image_height);
+				draw_string(pixelbuf, textpart, textpos, default_text_posn, image_width, image_height);
 				for(i = 0; i < 6; i++) {
 					textpart[i] = symbol->text[i + 7];
 				}
 				textpart[6] = '\0';
 				textpos = scaler * (71 + xoffset);
-				draw_string(pixelbuf, textpart, textpos, (image_height - 17), image_width, image_height);
+				draw_string(pixelbuf, textpart, textpos, default_text_posn, image_width, image_height);
 				textdone = 1;
 				switch(strlen(addon)) {
 					case 2:	
@@ -706,23 +749,23 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 		textpart[0] = symbol->text[0];
 		textpart[1] = '\0';
 		textpos = scaler * (-5 + xoffset);
-		draw_string(pixelbuf, textpart, textpos, (image_height - 17), image_width, image_height);
+		draw_string(pixelbuf, textpart, textpos, default_text_posn, image_width, image_height);
 		for(i = 0; i < 5; i++) {
 			textpart[i] = symbol->text[i + 1];
 		}
 		textpart[5] = '\0';
 		textpos = scaler * (27 + xoffset);
-		draw_string(pixelbuf, textpart, textpos, (image_height - 17), image_width, image_height);
+		draw_string(pixelbuf, textpart, textpos, default_text_posn, image_width, image_height);
 		for(i = 0; i < 5; i++) {
 			textpart[i] = symbol->text[i + 6];
 		}
 		textpart[6] = '\0';
 		textpos = scaler * (68 + xoffset);
-		draw_string(pixelbuf, textpart, textpos, (image_height - 17), image_width, image_height);
+		draw_string(pixelbuf, textpart, textpos, default_text_posn, image_width, image_height);
 		textpart[0] = symbol->text[11];
 		textpart[1] = '\0';
 		textpos = scaler * (100 + xoffset);
-		draw_string(pixelbuf, textpart, textpos, (image_height - 17), image_width, image_height);
+		draw_string(pixelbuf, textpart, textpos, default_text_posn, image_width, image_height);
 		textdone = 1;
 		switch(strlen(addon)) {
 			case 2:	
@@ -748,17 +791,17 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 		textpart[0] = symbol->text[0];
 		textpart[1] = '\0';
 		textpos = scaler * (-5 + xoffset);
-		draw_string(pixelbuf, textpart, textpos, (image_height - 17), image_width, image_height);
+		draw_string(pixelbuf, textpart, textpos, default_text_posn, image_width, image_height);
 		for(i = 0; i < 6; i++) {
 			textpart[i] = symbol->text[i + 1];
 		}
 		textpart[6] = '\0';
 		textpos = scaler * (24 + xoffset);
-		draw_string(pixelbuf, textpart, textpos, (image_height - 17), image_width, image_height);
+		draw_string(pixelbuf, textpart, textpos, default_text_posn, image_width, image_height);
 		textpart[0] = symbol->text[7];
 		textpart[1] = '\0';
 		textpos = scaler * (55 + xoffset);
-		draw_string(pixelbuf, textpart, textpos, (image_height - 17), image_width, image_height);
+		draw_string(pixelbuf, textpart, textpos, default_text_posn, image_width, image_height);
 		textdone = 1;
 		switch(strlen(addon)) {
 			case 2:	
@@ -809,9 +852,9 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 	}
 	
 	/* Put the human readable text at the bottom */
-	if((textdone == 0) && (strlen(symbol->text) != 0)) {
+	if((textdone == 0) && (ustrlen(local_text) != 0)) {
 		textpos = (image_width / 2);
-		draw_string(pixelbuf, symbol->text, textpos, (image_height - 17), image_width, image_height);
+		draw_string(pixelbuf, (char*)local_text, textpos, default_text_posn, image_width, image_height);
 	}
 
 	error_number=png_to_file(symbol, image_height, image_width, pixelbuf, rotate_angle);

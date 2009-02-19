@@ -543,8 +543,8 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 	/* Stop character */
 	concat(dest, C128Table[106]);
 	expand(symbol, dest);
-	strcpy(symbol->text, (char*)source);
-	for(i = 0; i < strlen(symbol->text); i++) {
+	ustrcpy(symbol->text, source);
+	for(i = 0; i < ustrlen(symbol->text); i++) {
 		if(symbol->text[i] == symbol->nullchar) {
 			symbol->text[i] = ' ';
 		}

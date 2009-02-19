@@ -197,16 +197,16 @@ int hibc(struct zint_symbol *symbol, unsigned char source[])
 	switch(symbol->symbology) {
 		case BARCODE_HIBC_128:
 			error_number = code_128(symbol, (unsigned char *)to_process);
-			strcpy(symbol->text, "*");
-			concat(symbol->text, to_process);
-			concat(symbol->text, "*");
+			ustrcpy(symbol->text, (unsigned char*)"*");
+			uconcat(symbol->text, (unsigned char*)to_process);
+			uconcat(symbol->text, (unsigned char*)"*");
 			break;
 		case BARCODE_HIBC_39:
 			symbol->option_2 = 0;
 			error_number = c39(symbol, (unsigned char *)to_process);
-			strcpy(symbol->text, "*");
-			concat(symbol->text, to_process);
-			concat(symbol->text, "*");
+			ustrcpy(symbol->text, (unsigned char*)"*");
+			uconcat(symbol->text, (unsigned char*)to_process);
+			uconcat(symbol->text, (unsigned char*)"*");
 			break;
 		case BARCODE_HIBC_DM:
 			error_number = dmatrix(symbol, (unsigned char *)to_process);
@@ -298,16 +298,6 @@ int gs1_compliant(int symbology)
 	}
 	
 	return result;
-}
-
-void ustrcpy(unsigned char dest[], unsigned char source[]) {
-	int i;
-	
-	i = 0;
-	do {
-		dest[i] = source[i];
-		i++;
-	} while (source[i - 1] != '\0');
 }
 
 int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source)
@@ -488,6 +478,10 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source)
 		case BARCODE_HIBC_PDF: error_number = hibc(symbol, preprocessed); break;
 		case BARCODE_HIBC_MICPDF: error_number = hibc(symbol, preprocessed); break;
 		case BARCODE_HIBC_BLOCKF: error_number = hibc(symbol, preprocessed); break;
+	}
+	
+	if((symbol->symbology == BARCODE_CODE128) || (symbol->symbology == BARCODE_CODE128B)) {
+		ustrcpy(symbol->text, source);
 	}
 	if(error_number == 0) {
 		error_number = error_buffer;

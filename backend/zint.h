@@ -40,7 +40,7 @@ struct zint_symbol {
 	int option_2;
 	int option_3;
 	int input_mode;
-	char text[100];
+	unsigned char text[100];
 	int rows;
 	int width;
 	char primary[100];

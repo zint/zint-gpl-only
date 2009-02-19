@@ -95,7 +95,7 @@ int telepen(struct zint_symbol *symbol, unsigned char source[])
 	concat(dest, TeleTable['z']);
 	
 	expand(symbol, dest);
-	strcpy(symbol->text, (char*)source);
+	ustrcpy(symbol->text, source);
 	return error_number;
 }
 
@@ -168,7 +168,7 @@ int telepen_num(struct zint_symbol *symbol, unsigned char source[])
 	concat((char*)dest, TeleTable['z']);
 	
 	expand(symbol, (char*)dest);
-	strcpy(symbol->text, (char*)local_source);
+	ustrcpy(symbol->text, local_source);
 	return error_number;
 }
 

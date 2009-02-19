@@ -1866,7 +1866,7 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 		symbol->width += top_shift;
 	}
 	symbol->rows += linear->rows;
-	strcpy(symbol->text, linear->text);
+	ustrcpy(symbol->text, (unsigned char *)linear->text);
 
 	
 	ZBarcode_Delete(linear);

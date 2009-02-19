@@ -423,7 +423,7 @@ int rss14(struct zint_symbol *symbol, unsigned char source[])
 		check_digit = 0;
 		
 		/* Calculate check digit from Annex A and place human readable text */
-		strcpy(symbol->text, "(01)");
+		ustrcpy(symbol->text, (unsigned char*)"(01)");
 		for(i = 0; i < 14; i++) {
 			hrt[i] = '0';
 		}
@@ -446,7 +446,7 @@ int rss14(struct zint_symbol *symbol, unsigned char source[])
 		if (check_digit == 10) { check_digit = 0; }
 		hrt[13] = itoc(check_digit);
 	
-		concat(symbol->text, hrt);
+		uconcat(symbol->text, (unsigned char*)hrt);
 	}
 	
 	if((symbol->symbology == BARCODE_RSS14STACK) || (symbol->symbology == BARCODE_RSS14STACK_CC)) {
@@ -872,7 +872,7 @@ int rsslimited(struct zint_symbol *symbol, unsigned char source[])
 	check_digit = 0;
 	count = 0;
 	
-	strcpy(symbol->text, "(01)");
+	ustrcpy(symbol->text, (unsigned char*)"(01)");
 	for(i = 0; i < 14; i++) {
 		hrt[i] = '0';
 	}
@@ -896,7 +896,7 @@ int rsslimited(struct zint_symbol *symbol, unsigned char source[])
 	hrt[13] = itoc(check_digit);
 	hrt[14] = '\0';
 	
-	concat(symbol->text, hrt);
+	uconcat(symbol->text, (unsigned char*)hrt);
 	
 	return error_number;
 }

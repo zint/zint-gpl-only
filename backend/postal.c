@@ -55,7 +55,7 @@ int postnet(struct zint_symbol *symbol, unsigned char source[], char dest[])
 {
 	/* Handles the PostNet system used for Zip codes in the US */
 	unsigned int i, sum, check_digit;
-	int error_number, h;
+	int error_number;
 	
 	error_number = 0;
 
@@ -84,11 +84,6 @@ int postnet(struct zint_symbol *symbol, unsigned char source[], char dest[])
 
 	/* stop character */
 	concat (dest, "L");
-	
-	h = ustrlen(source);
-	source[h] = itoc(check_digit);
-	source[h + 1] = '\0';
-	strcpy(symbol->text, "");
 	
 	return error_number;
 }
@@ -131,7 +126,7 @@ int planet(struct zint_symbol *symbol, unsigned char source[], char dest[])
 {
 	/* Handles the PLANET  system used for item tracking in the US */
 	unsigned int i, sum, check_digit;
-	int error_number, h;
+	int error_number;
 	
 	error_number = 0;
 	
@@ -160,11 +155,6 @@ int planet(struct zint_symbol *symbol, unsigned char source[], char dest[])
 
 	/* stop character */
 	concat (dest, "L");
-	
-	h = ustrlen(source);
-	source[h] = itoc(check_digit);
-	source[h + 1] = '\0';
-	strcpy(symbol->text, "");
 
 	return error_number;
 }
@@ -241,7 +231,7 @@ int korea_post(struct zint_symbol *symbol, unsigned char source[])
 	}
 	lookup(NESET, KoreaTable, localstr[6], dest);
 	expand(symbol, dest);
-	strcpy(symbol->text, localstr);
+	ustrcpy(symbol->text, (unsigned char*)localstr);
 	return error_number;
 }
 
@@ -269,7 +259,6 @@ int fim(struct zint_symbol *symbol, unsigned char source[])
 	lookup(BESET, FIMTable, source[0], dest);
 	
 	expand(symbol, dest);
-	strcpy(symbol->text, "");
 	return error_number;
 }
 
@@ -314,7 +303,7 @@ int royal_plot(struct zint_symbol *symbol, unsigned char source[])
 	char height_pattern[200], check;
 	unsigned int loopey;
 	int writer;
-	int error_number, h;
+	int error_number;
 	strcpy(height_pattern, "");
 
 	error_number = 0;
@@ -351,11 +340,6 @@ int royal_plot(struct zint_symbol *symbol, unsigned char source[])
 	symbol->row_height[2] = 4;
 	symbol->rows = 3;
 	symbol->width = writer - 1;
-	
-	h = ustrlen(source);
-	source[h] = check;
-	source[h + 1] = '\0';
-	strcpy(symbol->text, "");
 	
 	return error_number;
 }
@@ -417,8 +401,6 @@ int kix_code(struct zint_symbol *symbol, unsigned char source[])
 	symbol->rows = 3;
 	symbol->width = writer - 1;
 	
-	strcpy(symbol->text, "");
-	
 	return error_number;
 }
 
@@ -468,8 +450,6 @@ int daft_code(struct zint_symbol *symbol, unsigned char source[])
 	symbol->rows = 3;
 	symbol->width = writer - 1;
 	
-	strcpy(symbol->text, "");
-	
 	return 0;
 }
 
@@ -496,7 +476,6 @@ int flattermarken(struct zint_symbol *symbol, unsigned char source[])
 		lookup(NESET, FlatTable, source[loop], dest);
 	}
 	
-	expand(symbol, dest);
-	strcpy(symbol->text, "");	
+	expand(symbol, dest);	
 	return error_number;
 }

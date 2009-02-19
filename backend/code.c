@@ -147,8 +147,8 @@ int code_11(struct zint_symbol *symbol, unsigned char source[])
 
 	expand(symbol, dest);
 
-	strcpy(symbol->text, (char*)source);
-	concat(symbol->text, checkstr);
+	ustrcpy(symbol->text, source);
+	uconcat(symbol->text, (unsigned char*)checkstr);
 	return error_number;
 }
 
@@ -235,11 +235,11 @@ int c39(struct zint_symbol *symbol, unsigned char source[])
 	expand(symbol, dest);
 	
 	if(symbol->symbology == BARCODE_CODE39) {
-		strcpy(symbol->text, "*");
-		concat(symbol->text, (char*)source);
-		concat(symbol->text, "*");
+		ustrcpy(symbol->text, (unsigned char*)"*");
+		uconcat(symbol->text, source);
+		uconcat(symbol->text, (unsigned char*)"*");
 	} else {
-		strcpy(symbol->text, (char*)source);
+		ustrcpy(symbol->text, source);
 	}
 	return error_number;
 }
@@ -287,8 +287,8 @@ int pharmazentral(struct zint_symbol *symbol, unsigned char source[])
 	}
 	concat(localstr, checkstr);
 	error_number = c39(symbol, (unsigned char *)localstr);
-	strcpy(symbol->text, "PZN");
-	concat(symbol->text, localstr);
+	ustrcpy(symbol->text, (unsigned char *)"PZN");
+	uconcat(symbol->text, (unsigned char *)localstr);
 	return error_number;
 }
 
@@ -336,8 +336,8 @@ int ec39(struct zint_symbol *symbol, unsigned char source[])
 	/* Then sends the buffer to the C39 function */
 	error_number = c39(symbol, buffer);
 	
-	strcpy(symbol->text, (char*)source);
-	for(i = 0; i < strlen(symbol->text); i++) {
+	ustrcpy(symbol->text, source);
+	for(i = 0; i < ustrlen(symbol->text); i++) {
 		if(symbol->text[i] == symbol->nullchar) {
 			symbol->text[i] = ' ';
 		}
@@ -458,8 +458,8 @@ int c93(struct zint_symbol *symbol, unsigned char source[])
 	source[h + 1] = set_copy[k];
 	source[h + 2] = '\0';
 	expand(symbol, dest);
-	strcpy(symbol->text, (char*)source);
-	for(i = 0; i < strlen(symbol->text); i++) {
+	ustrcpy(symbol->text, source);
+	for(i = 0; i < ustrlen(symbol->text); i++) {
 		if(symbol->text[i] == symbol->nullchar) {
 			symbol->text[i] = ' ';
 		}

@@ -29,7 +29,9 @@
 #include "zint.h"
 
 int ustrlen(unsigned char source[]);
+void ustrcpy(unsigned char target[], unsigned char source[]);
 void concat(char dest[], char source[]);
+void uconcat(unsigned char dest[], unsigned char source[]);
 int ctoi(char source);
 char itoc(int source);
 void to_upper(unsigned char source[]);
@@ -39,3 +41,4 @@ int posn(char set_string[], char data);
 void expand(struct zint_symbol *symbol, char data[]);
 int is_stackable(int symbology);
 int roundup(float input);
+
