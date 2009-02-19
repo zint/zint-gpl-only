@@ -192,10 +192,10 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	} while (indexchaine < input_length);
 	
 	dxsmooth(&indexliste);
-
+	
 	/* Resolve odd length LATCHC blocks */
 	if((list[1][0] == LATCHC) && ((list[0][0] % 2) == 1)) {
-		for(i = 1; i <= indexliste; i++) {
+		for(i = indexliste; i > 0; i--) {
 			list[0][i] = list[0][i - 1];
 			list[1][i] = list[1][i - 1];
 		}
@@ -443,7 +443,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 			read++;
 		}
 	} while (read < ustrlen(source));
-
+	
 	pads_needed = 5 - ((bar_characters + 2) % 5);
 	if(pads_needed == 5) {
 		pads_needed = 0;
