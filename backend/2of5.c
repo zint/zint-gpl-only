@@ -65,7 +65,7 @@ int matrix_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	concat (dest, "41111");
 	
 	expand(symbol, dest);
-	strcpy(symbol->text, (char*)source);
+	ustrcpy(symbol->text, source);
 	return error_number;
 }
 
@@ -99,7 +99,7 @@ int industrial_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	concat (dest, "31113");
 	
 	expand(symbol, dest);
-	strcpy(symbol->text, (char*)source);
+	ustrcpy(symbol->text, source);
 	return error_number;
 }
 
@@ -132,7 +132,7 @@ int iata_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	concat (dest, "311");
 	
 	expand(symbol, dest);
-	strcpy(symbol->text, (char*)source);
+	ustrcpy(symbol->text, source);
 	return error_number;
 }
 
@@ -166,7 +166,7 @@ int logic_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	concat (dest, "311");
 	
 	expand(symbol, dest);
-	strcpy(symbol->text, (char*)source);
+	ustrcpy(symbol->text, source);
 	return error_number;
 }
 
@@ -234,7 +234,7 @@ int interleaved_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	concat (dest, "311");
 	
 	expand(symbol, dest);
-	strcpy(symbol->text, (char*)source);
+	ustrcpy(symbol->text, source);
 	return error_number;
 
 }
@@ -287,7 +287,7 @@ int itf14(struct zint_symbol *symbol, unsigned char source[])
 	checkstr[1] = '\0';
 	concat(localstr, checkstr);
 	error_number = interleaved_two_of_five(symbol, (unsigned char *)localstr);
-	strcpy(symbol->text, localstr);
+	ustrcpy(symbol->text, (unsigned char*)localstr);
 	return error_number;
 }
 
@@ -332,7 +332,7 @@ int dpleit(struct zint_symbol *symbol, unsigned char source[])
 	checkstr[1] = '\0';
 	concat(localstr, checkstr);
 	error_number = interleaved_two_of_five(symbol, (unsigned char *)localstr);
-	strcpy(symbol->text, localstr);
+	ustrcpy(symbol->text, (unsigned char*)localstr);
 	return error_number;
 }
 
@@ -375,6 +375,6 @@ int dpident(struct zint_symbol *symbol, unsigned char source[])
 	checkstr[1] = '\0';
 	concat(localstr, checkstr);
 	error_number = interleaved_two_of_five(symbol, (unsigned char *)localstr);
-	strcpy(symbol->text, localstr);
+	ustrcpy(symbol->text, (unsigned char*)localstr);
 	return error_number;
 }

@@ -33,6 +33,17 @@ int ustrlen(unsigned char data[]) {
 	return i;
 }
 
+void ustrcpy(unsigned char target[], unsigned char source[]) {
+	/* Local replacement for strcpy() with unsigned char strings */
+	int i, len;
+
+	len = ustrlen(source);
+	for(i = 0; i < len; i++) {
+		target[i] = source[i];
+	}
+	target[i] = '\0';
+}
+
 void concat(char dest[], char source[])
 { /* Concatinates dest[] with the contents of source[], copying /0 as well */
 	unsigned int i, j;
@@ -41,6 +52,16 @@ void concat(char dest[], char source[])
 	for(i = 0; i <= strlen(source); i++) {
 		dest[i + j] = source[i]; }
 }
+
+void uconcat(unsigned char dest[], unsigned char source[])
+{ /* Concatinates dest[] with the contents of source[], copying /0 as well */
+	unsigned int i, j;
+
+	j = ustrlen(dest);
+	for(i = 0; i <= ustrlen(source); i++) {
+		dest[i + j] = source[i]; }
+}
+
 
 int ctoi(char source)
 { /* Converts a character 0-9 to its equivalent integer value */

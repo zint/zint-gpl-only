@@ -93,7 +93,7 @@ int plessey(struct zint_symbol *symbol, unsigned char source[])
 	concat(dest, "331311313");
 	
 	expand(symbol, dest);
-	strcpy(symbol->text, (char*)source);
+	ustrcpy(symbol->text, source);
 	free(checkptr);
 	return error_number;
 }
@@ -130,7 +130,7 @@ int msi_plessey(struct zint_symbol *symbol, unsigned char source[])
 	concat (dest, "121");
 	
 	expand(symbol, dest);
-	strcpy(symbol->text, (char*)source);
+	ustrcpy(symbol->text, source);
 	return error_number;
 }
 
@@ -228,7 +228,7 @@ int msi_plessey_mod10(struct zint_symbol *symbol, unsigned char source[])
 	source[h] = itoc(pump);
 	source[h + 1] = '\0';
 	expand(symbol, dest);
-	strcpy(symbol->text, (char*)source);
+	ustrcpy(symbol->text, source);
 	return error_number;
 }
 
@@ -383,7 +383,7 @@ int msi_plessey_mod1010(struct zint_symbol *symbol, unsigned char source[])
 	source[h + 1] = itoc(chwech);
 	source[h + 2] = '\0';
 	expand(symbol, dest);
-	strcpy(symbol->text, (char*)source);
+	ustrcpy(symbol->text, source);
 	return error_number;
 }
 
@@ -453,7 +453,7 @@ int msi_plessey_mod11(struct zint_symbol *symbol, unsigned char source[])
 	concat (dest, "121");
 	
 	expand(symbol, dest);
-	strcpy(symbol->text, (char*)source);
+	ustrcpy(symbol->text, source);
 	return error_number;
 }
 
@@ -579,7 +579,7 @@ int msi_plessey_mod1110(struct zint_symbol *symbol, unsigned char source[])
 	source[h + 1] = '\0';
 
 	expand(symbol, dest);
-	strcpy(symbol->text, (char*)source);
+	ustrcpy(symbol->text, source);
 	return error_number;
 }
 

@@ -99,7 +99,7 @@ void upca(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	gtin[length] = upc_check(gtin);
 	gtin[length + 1] = '\0';
 	upca_draw(gtin, dest);
-	strcpy(symbol->text, gtin);
+	ustrcpy(symbol->text, (unsigned char*)gtin);
 }
 
 void upce(struct zint_symbol *symbol, unsigned char source[], char dest[])
@@ -209,7 +209,7 @@ void upce(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	
 	hrt[7] = check_digit;
 	hrt[8] = '\0';
-	strcpy(symbol->text, hrt);
+	ustrcpy(symbol->text, (unsigned char*)hrt);
 }
 
 
@@ -348,7 +348,7 @@ void ean13(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	/* stop character */
 	concat (dest, "111");
 	
-	strcpy(symbol->text, gtin);
+	ustrcpy(symbol->text, (unsigned char*)gtin);
 }
 
 void ean8(struct zint_symbol *symbol, unsigned char source[], char dest[])
@@ -362,7 +362,7 @@ void ean8(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	gtin[length] = upc_check(gtin);
 	gtin[length + 1] = '\0';
 	upca_draw(gtin, dest);
-	strcpy(symbol->text, gtin);
+	ustrcpy(symbol->text, (unsigned char*)gtin);
 }
 
 char isbn13_check(unsigned char source[]) /* For ISBN(13) only */
@@ -557,8 +557,8 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 		case BARCODE_EANX:
 			switch(ustrlen(first_part))
 			{
-				case 2: add_on(first_part, (char*)dest, 0); strcpy(symbol->text, (char*)first_part); break;
-				case 5: add_on(first_part, (char*)dest, 0); strcpy(symbol->text, (char*)first_part); break;
+				case 2: add_on(first_part, (char*)dest, 0); ustrcpy(symbol->text, first_part); break;
+				case 5: add_on(first_part, (char*)dest, 0); ustrcpy(symbol->text, first_part); break;
 				case 7: ean8(symbol, first_part, (char*)dest); break;
 				case 12: ean13(symbol, first_part, (char*)dest); break;
 				default: strcpy(symbol->errtxt, "Invalid length input [133]"); return ERROR_TOO_LONG; break;
@@ -656,13 +656,13 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 		case 0: break;
 		case 2:
 			add_on(second_part, (char*)dest, 1);
-			concat(symbol->text, "+");
-			concat(symbol->text, (char*)second_part);
+			uconcat(symbol->text, (unsigned char*)"+");
+			uconcat(symbol->text, second_part);
 			break;
 		case 5:
 			add_on(second_part, (char*)dest, 1);
-			concat(symbol->text, "+");
-			concat(symbol->text, (char*)second_part);
+			uconcat(symbol->text, (unsigned char*)"+");
+			uconcat(symbol->text, second_part);
 			break;
 		default:
 			strcpy(symbol->errtxt, "Invalid length input [139]");

@@ -96,7 +96,7 @@ int pharma_one(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	expand(symbol, dest);
-	strcpy(symbol->text, "");
+
 	return error_number;
 }
 
@@ -190,7 +190,7 @@ int pharma_two(struct zint_symbol *symbol, unsigned char source[])
 	symbol->rows = 2;
 	symbol->width = writer - 1;
 	
-	strcpy(symbol->text, "");
+
 	return error_number;
 }
 
@@ -235,7 +235,7 @@ int codabar(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	expand(symbol, dest);
-	strcpy(symbol->text, (char*)source);
+	ustrcpy(symbol->text, source);
 	return error_number;
 }
 
@@ -315,8 +315,8 @@ int code32(struct zint_symbol *symbol, unsigned char source[])
 	if(error_number != 0) { return error_number; }
 	
 	/* Override the normal text output with the Pharmacode number */
-	strcpy(symbol->text, "A");
-	concat(symbol->text, localstr);
+	ustrcpy(symbol->text, (unsigned char*)"A");
+	uconcat(symbol->text, (unsigned char*)localstr);
 	
 	return error_number;
 }
