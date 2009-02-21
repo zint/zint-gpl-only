@@ -29,6 +29,7 @@
 #define NUMERIC		1
 #define ALPHANUM	2
 #define BYTE		3
+#define KANJI		4
 
 #define QRSET	"0123456789ABCDEFGHIJKLNMOPQRSTUVWXYZ $%*+-./:"
 
@@ -154,6 +155,42 @@ void qrbyte_encode(char binary[], unsigned char source[])
 	}
 	
 	return;
+}
+
+int qrkanji_encode(char binary[], unsigned char source[])
+{ /* Assumes input is in Shift-JIS format */
+	int i, len, h, val, count;
+	
+	len = ustrlen(source);
+	count = 0;
+	
+	for(i=0; i<len; i+=2) {
+		val = (source[i] << 8) | source[i+1];
+		if(val <= 0x9ffc) {
+			val -= 0x8140;
+		} else {
+			val -= 0xc140;
+		}
+		h = (val >> 8) * 0xc0;
+		val = (val & 0xff) + h;
+
+		if(val & 0x1000) { concat(binary, "1"); } else { concat(binary, "0"); }
+		if(val & 0x800) { concat(binary, "1"); } else { concat(binary, "0"); }
+		if(val & 0x400) { concat(binary, "1"); } else { concat(binary, "0"); }
+		if(val & 0x200) { concat(binary, "1"); } else { concat(binary, "0"); }
+		if(val & 0x100) { concat(binary, "1"); } else { concat(binary, "0"); }
+		if(val & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
+		if(val & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
+		if(val & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
+		if(val & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
+		if(val & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
+		if(val & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
+		if(val & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
+		if(val & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
+		count++;
+	}
+	
+	return count;
 }
 
 void versionm1(char binary_data[], unsigned char source[])
@@ -357,6 +394,7 @@ void versionm3(char binary_data[], unsigned char source[], int char_system, int 
 	int bits_total, bits_left, remainder;
 	int data_codewords, ecc_codewords;
 	unsigned char data_blocks[12], ecc_blocks[9];
+	int sjis_count;
 	
 	input_length = ustrlen(source);
 	latch = 0;
@@ -368,19 +406,31 @@ void versionm3(char binary_data[], unsigned char source[], int char_system, int 
 	if(char_system == NUMERIC) { concat(binary_data, "00"); }
 	if(char_system == ALPHANUM) { concat(binary_data, "01"); }
 	if(char_system == BYTE) { concat(binary_data, "10"); }
+	if(char_system == KANJI) { concat(binary_data, "11"); }
 	
 	/* Character count indicator */
-	if(char_system == NUMERIC) {
-		if(input_length & 0x10) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+	if(char_system == KANJI) {
+		concat(binary_data, "XXX"); /* Place holder */
+	} else {
+		if(char_system == NUMERIC) {
+			if(input_length & 0x10) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		}
+		if(input_length & 0x08) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(input_length & 0x04) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(input_length & 0x02) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(input_length & 0x01) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
 	}
-	if(input_length & 0x08) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-	if(input_length & 0x04) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-	if(input_length & 0x02) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-	if(input_length & 0x01) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
 	
 	if(char_system == NUMERIC) { qrnumeric_encode(binary_data, source); }
 	if(char_system == ALPHANUM) { qralpha_encode(binary_data, source); }
 	if(char_system == BYTE) { qrbyte_encode(binary_data, source); }
+	if(char_system == KANJI) { sjis_count = qrkanji_encode(binary_data, source); }
+	
+	if(char_system == KANJI) {
+		if(sjis_count & 0x04) { binary_data[2] = '1'; } else { binary_data[2] = '0'; }
+		if(sjis_count & 0x02) { binary_data[3] = '1'; } else { binary_data[3] = '0'; }
+		if(sjis_count & 0x01) { binary_data[4] = '1'; } else { binary_data[4] = '0'; }
+	}
 	
 	/* Add terminator */
 	bits_left = bits_total - strlen(binary_data);
@@ -483,6 +533,7 @@ void versionm4(char binary_data[], unsigned char source[], int char_system, int 
 	int bits_total, bits_left, remainder;
 	int data_codewords, ecc_codewords;
 	unsigned char data_blocks[17], ecc_blocks[15];
+	int sjis_count;
 	
 	input_length = ustrlen(source);
 	latch = 0;
@@ -495,20 +546,33 @@ void versionm4(char binary_data[], unsigned char source[], int char_system, int 
 	if(char_system == NUMERIC) { concat(binary_data, "000"); }
 	if(char_system == ALPHANUM) { concat(binary_data, "001"); }
 	if(char_system == BYTE) { concat(binary_data, "010"); }
+	if(char_system == KANJI) { concat(binary_data, "011"); }
 	
 	/* Character count indicator */
-	if(char_system == NUMERIC) {
-		if(input_length & 0x20) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+	if(char_system == KANJI) {
+		concat(binary_data, "XXXX"); /* Place holder */
+	} else {
+		if(char_system == NUMERIC) {
+			if(input_length & 0x20) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		}
+		if(input_length & 0x10) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(input_length & 0x08) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(input_length & 0x04) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(input_length & 0x02) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(input_length & 0x01) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
 	}
-	if(input_length & 0x10) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-	if(input_length & 0x08) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-	if(input_length & 0x04) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-	if(input_length & 0x02) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-	if(input_length & 0x01) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
 	
 	if(char_system == NUMERIC) { qrnumeric_encode(binary_data, source); }
 	if(char_system == ALPHANUM) { qralpha_encode(binary_data, source); }
 	if(char_system == BYTE) { qrbyte_encode(binary_data, source); }
+	if(char_system == KANJI) { sjis_count = qrkanji_encode(binary_data, source); }
+	
+	if(char_system == KANJI) {
+		if(sjis_count & 0x08) { binary_data[3] = '1'; } else { binary_data[3] = '0'; }
+		if(sjis_count & 0x04) { binary_data[4] = '1'; } else { binary_data[4] = '0'; }
+		if(sjis_count & 0x02) { binary_data[5] = '1'; } else { binary_data[5] = '0'; }
+		if(sjis_count & 0x01) { binary_data[6] = '1'; } else { binary_data[6] = '0'; }
+	}
 	
 	/* Add terminator */
 	bits_left = bits_total - strlen(binary_data);
@@ -598,6 +662,7 @@ int microqr(struct zint_symbol *symbol, unsigned char source[])
 	symbol_size = 0;
 	if(is_sane(QRSET, source) == 0) { char_system = ALPHANUM; }
 	if(is_sane(NESET, source) == 0) { char_system = NUMERIC; }
+	if(symbol->input_mode == KANJI_MODE) { char_system = KANJI; }
 	width = 0;
 	format = 0;
 	
@@ -620,6 +685,7 @@ int microqr(struct zint_symbol *symbol, unsigned char source[])
 				case NUMERIC: if(input_length > 35) latch = 1; break;
 				case ALPHANUM: if(input_length > 21) latch = 1; break;
 				case BYTE: if(input_length > 15) latch = 1; break;
+				case KANJI: if(input_length > 18) latch = 1; break;
 			}
 			break;
 		case 2: /* ECC Level M */
@@ -627,6 +693,7 @@ int microqr(struct zint_symbol *symbol, unsigned char source[])
 				case NUMERIC: if(input_length > 30) latch = 1; break;
 				case ALPHANUM: if(input_length > 18) latch = 1; break;
 				case BYTE: if(input_length > 13) latch = 1; break;
+				case KANJI: if(input_length > 16) latch = 1; break;
 			}
 			break;
 		case 3: /* ECC Level Q */
@@ -635,6 +702,7 @@ int microqr(struct zint_symbol *symbol, unsigned char source[])
 				case NUMERIC: if(input_length > 21) latch = 1; break;
 				case ALPHANUM: if(input_length > 13) latch = 1; break;
 				case BYTE: if(input_length > 9) latch = 1; break;
+				case KANJI: if(input_length > 10) latch = 1; break;
 			}
 			break;
 	}
@@ -663,6 +731,9 @@ int microqr(struct zint_symbol *symbol, unsigned char source[])
 					symbol_size = 4;
 					if(input_length <= 9) { symbol_size = 3; }
 					break;
+				case KANJI:
+					symbol_size = 4;
+					if(input_length <= 12) { symbol_size = 3; }
 			}
 		} else { /* ECC Level M */
 			switch(char_system) {
@@ -680,6 +751,9 @@ int microqr(struct zint_symbol *symbol, unsigned char source[])
 					symbol_size = 4;
 					if(input_length <= 7) { symbol_size = 3; }
 					break;
+				case KANJI:
+					symbol_size = 4;
+					if(input_length <= 8) { symbol_size = 3; }
 			}
 		}
 	}
