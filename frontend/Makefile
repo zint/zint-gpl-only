@@ -22,7 +22,7 @@ zint: main.c
 .PHONY: install uninstall clean dist
 
 clean:
-	rm -f zint *.o *.a *~ *.png *.eps *.log
+	rm -f zint *.o *.a *~ *.png *.eps *.svg *.log
 
 install:
 	install -D -p  zint $(DESTDIR)$(bindir)/zint
