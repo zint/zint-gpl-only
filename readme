@@ -108,11 +108,6 @@ Research
 	* Italian Postal Code
 	* Japanese Postal Code
 
-Programming
------------
-	Some things which need to be added to the library:
-	* Micro QR Code currently does not support Kanji character encoding
-
 Coming Soon
 -----------
 	Features which it is hoped will appear in this library soon:
