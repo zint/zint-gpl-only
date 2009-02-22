@@ -144,6 +144,7 @@ int main(int argc, char **argv)
 			{"box", 0, 0, 0},
 			{"directeps", 0, 0, 0},
 			{"directpng", 0, 0, 0},
+			{"directsvg", 0, 0, 0},
 			{"barcode=", 1, 0, 'b'},
 			{"height=", 1, 0, 0},
 			{"whitesp=", 1, 0, 'w'},
@@ -184,6 +185,10 @@ int main(int argc, char **argv)
 				if(!strcmp(long_options[option_index].name, "directpng")) {
 					my_symbol->output_options += BARCODE_STDOUT;
 					strncpy(my_symbol->outfile, "dummy.png", 10);
+				}
+				if(!strcmp(long_options[option_index].name, "directsvg")) {
+					my_symbol->output_options += BARCODE_STDOUT;
+					strncpy(my_symbol->outfile, "dummy.svg", 10);
 				}
 				if(!strcmp(long_options[option_index].name, "gs1")) {
 					my_symbol->input_mode = GS1_MODE;
