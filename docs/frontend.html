@@ -24,7 +24,8 @@
 <HR>
 <H1>3. Using the Front End</H1>
 <P STYLE="font-style: normal">Zint can be used to generate barcodes
-as PNG images or as encapsulated Post Script (EPS) files. This page
+as PNG images, encapsulated Post Script (EPS) or Scalable Vector
+Graphics (SVG) files. This page
 describes how to encode data using the command line front end
 program.</P>
 <P><A NAME="INPUT"></A><FONT SIZE=5><B>3.1 Inputting data</B></FONT> 
@@ -48,9 +49,12 @@ here.png. If an encapsulated Post Script file is needed simply append
 the file name with .eps:</P>
 <P><FONT FACE="Courier, monospace"><FONT SIZE=2>zint
 -o there.eps -d 'This Text'</FONT></FONT></P>
-<P>Output can also be directed to stdout using the --<FONT FACE="Courier, monospace">directeps</FONT>
-and --<FONT FACE="Courier, monospace">directpng</FONT> switches for
-EPS and PNG output respectively.</P>
+<P>Scalable Vector Graphics representations of symbols can be generated
+with the suffix ".svg". Output can also be directed to stdout using the
+<FONT FACE="Courier, monospace">--directeps</FONT>,
+<FONT FACE="Courier, monospace">--directpng</FONT> and
+<FONT FACE="Courier, monospace">--directsvg</FONT> switches for
+EPS, PNG and SVG output respectively.</P>
 <P><A NAME="BARTYPE"></A><FONT SIZE=5><B>3.3
 Selecting barcode type</B></FONT></P>
 <P>Selecting which type of barcode you
@@ -836,14 +840,26 @@ be encoded (see 5.1.12.3). To encode GS1 data use
 (and doesn't need to be set) for EAN-128, DataBar and Composite symbologies
 but is also available for Code 16k, Codablock-F, Data Matrix (ECC 200 only),
 and Aztec Code.</P>
-<P>QR Code can encode Kaji characters. This can be accessed using the
-<FONT FACE="Courier, monospace">--kanji</FONT> option.</P>
+<P>The QR Code and MicroQR Code standards have a "Kanji mode" for encoding
+Japanese chacters. The standards assume that the input is encoded using the
+Shift-JIS system. To access this functionality directly use the
+<FONT FACE="Courier, monospace">--sjis</FONT> option. Note that only
+double-byte characters are supported. The presence of single byte characters
+will cause the data to become corrupted. This functionality can also be
+accessed from environments which use Unicode encoding by using the
+<FONT FACE="Courier, monospace">--kanji</FONT> option. When this option is
+invoked Zint attempts to convert Unicode data to Shift-JIS before encoding
+in a barcode symbol. If a Unicode character is not supported then the error
+message is output.[1]</P>
 <P><A NAME="OTHER"></A><FONT SIZE=5><B>3.12
 Other options</B></FONT></P>
 <P>Additional options are available which
 are specific to certain symbologies. These may, for example, control
 the quantity of error correction data or the size of the symbol.
 These options are discussed in section 5 of this guide.</P>
+<P>[1] Only Unicode and Shift-JIS inputs can be encoded by Zint directly.
+Apple Macintosh Japanese, EUC-JP, ISO-2022-JP and Windows-932 standards
+are not supported.</P>
 <HR>
 <TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0>
 	<TR>
