@@ -214,7 +214,7 @@ structure consists of the following variables:</P>
 				</TD>
 				<TD>
 					<P ALIGN=CENTER>Contains the name of the file to output a
-					resulting barcode symbol to. Must end in .PNG or .EPS</P>
+					resulting barcode symbol to. Must end in .png, .eps or .svg</P>
 				</TD>
 				<TD>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">&quot;out.png&quot;</FONT></P>
@@ -308,11 +308,11 @@ structure consists of the following variables:</P>
 					<P ALIGN=CENTER><FONT FACE="Courier">text</FONT></P>
 				</TD>
 				<TD>
-					<P ALIGN=CENTER>character string</P>
+					<P ALIGN=CENTER>unsigned character string</P>
 				</TD>
 				<TD>
 					<P ALIGN=CENTER>Human readable text, which usually consists of
-					the input data plus one or more check digits.</P>
+					the input data plus one or more check digits. Uses UTF-8 formatting.</P>
 				</TD>
 				<TD>
 					<P ALIGN=CENTER>NULL</P>
@@ -1509,7 +1509,15 @@ are shown in the table below.</P>
 					<P ALIGN=CENTER><FONT FACE="Courier, monospace">KANJI_MODE</FONT></P>
 				</TD>
 				<TD>
-					<P ALIGN=CENTER>Encodes Kanji characters in QR Code.</P>
+					<P ALIGN=CENTER>Encodes Kanji characters in QR Code. (Converts UTF-8 to Shift-JIS)</P>
+				</TD>
+			</TR>
+			<TR VALIGN=TOP>
+				<TD>
+					<P ALIGN=CENTER><FONT FACE="Courier, monospace">SJIS_MODE</FONT></P>
+				</TD>
+				<TD>
+					<P ALIGN=CENTER>Encodes Kanji characters in QR Code. (Assumes Shift-JIS input)</P>
 				</TD>
 			</TR>
 		</TBODY>
