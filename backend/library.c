@@ -23,6 +23,7 @@
 #include <string.h>
 #include "common.h"
 #include "gs1.h"
+#include "sjis.h"
 
 #define HIBCSET	"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%"
 
@@ -269,6 +270,81 @@ int eci_process(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 	return 0;
 }
 
+int unicode2shift_jis(struct zint_symbol *symbol, unsigned char source[], unsigned char preprocessed[])
+{ /* QR Code supports compression of Shift-JIS data using "Kanji" mode - this function
+	attempts to convert Unicode characters to Shift-JIS to allow this */
+	int bpos, jpos, len, error_number, i;
+	int next;
+	unsigned long int uval, jval;
+	
+	len = ustrlen(source);
+	
+	bpos = 0;
+	jpos = 0;
+	error_number = 0;
+	next = 0;
+	
+	do {
+		uval = 0;
+		jval = 0;
+		
+		if(source[bpos] <= 0x7f) {
+			/* 1 byte mode */
+			uval = source[bpos];
+			next = bpos + 1;
+		}
+		
+		if((source[bpos] >= 0x80) && (source[bpos] <= 0xbf)) {
+			strcpy(symbol->errtxt, "Corrupt Unicode data");
+			return ERROR_INVALID_DATA;
+		}
+		
+		if((source[bpos] >= 0xc0) && (source[bpos] <= 0xc1)) {
+			strcpy(symbol->errtxt, "Overlong encoding not supported");
+			return ERROR_INVALID_DATA;
+		}
+		
+		if((source[bpos] >= 0xc2) && (source[bpos] <= 0xdf)) {
+			/* 2 byte mode */
+			uval = ((source[bpos] & 0x1f) << 6) + (source[bpos + 1] & 0x3f);
+			next = bpos + 2;
+		}
+		
+		if((source[bpos] >= 0xe0) && (source[bpos] <= 0xef)) {
+			/* 3 byte mode */
+			uval = ((source[bpos] & 0x0f) << 12) + ((source[bpos + 1] & 0x3f) << 6) + (source[bpos + 2] & 0x3f);
+			next = bpos + 3;
+		}
+		
+		if(source[bpos] >= 0xf0) {
+			strcpy(symbol->errtxt, "Unicode sequences of more than 3 bytes not supported");
+			return ERROR_INVALID_DATA;
+		}
+		
+		for(i = 0; i < 6843; i++) {
+			if(sjis_lookup[i * 2] == uval) {
+				jval = sjis_lookup[(i * 2) + 1];
+			}
+		}
+		
+		if(jval == 0) {
+			strcpy(symbol->errtxt, "Invalid Shift JIS character");
+			return ERROR_INVALID_DATA;
+		}
+		
+		preprocessed[jpos] = (jval & 0xff00) >> 8;
+		preprocessed[jpos + 1] = (jval & 0xff);
+		
+		/* printf("Unicode value U+%04X = Shift JIS value 0x%04X\n", uval, jval); */
+		
+		jpos += 2;
+		bpos = next;
+		
+	} while(bpos < len);
+	
+	return error_number;
+}
+
 int gs1_compliant(int symbology)
 {
 	/* Returns 1 if symbology supports GS1 data */
@@ -380,11 +456,20 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source)
 			}
 			break;
 		case KANJI_MODE:
-			if(symbol->symbology != BARCODE_QRCODE) {
+			if((symbol->symbology != BARCODE_QRCODE) && (symbol->symbology != BARCODE_MICROQR)) {
 				strcpy(symbol->errtxt, "Selected symbology does not support Kanji mode");
 				return ERROR_INVALID_OPTION;
 			}
-			ustrcpy(preprocessed, source); break;
+			error_number = unicode2shift_jis(symbol, source, preprocessed);
+			if(error_number != 0) { return error_number; }
+			break;
+		case SJIS_MODE:
+			if((symbol->symbology != BARCODE_QRCODE) && (symbol->symbology != BARCODE_MICROQR)) {
+				strcpy(symbol->errtxt, "Selected symbology does not support Kanji mode");
+				return ERROR_INVALID_OPTION;
+			}
+			ustrcpy(preprocessed, source);
+			break;
 	}
 	
 	if(symbol->symbology == BARCODE_CODE16K) {

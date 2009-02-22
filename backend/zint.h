@@ -146,6 +146,7 @@ struct zint_symbol {
 #define UNICODE_MODE	1
 #define GS1_MODE	2
 #define KANJI_MODE	3
+#define SJIS_MODE	4
 
 #define WARN_INVALID_OPTION	2
 #define ERROR_TOO_LONG		5
