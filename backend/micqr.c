@@ -663,6 +663,7 @@ int microqr(struct zint_symbol *symbol, unsigned char source[])
 	if(is_sane(QRSET, source) == 0) { char_system = ALPHANUM; }
 	if(is_sane(NESET, source) == 0) { char_system = NUMERIC; }
 	if(symbol->input_mode == KANJI_MODE) { char_system = KANJI; }
+	if(symbol->input_mode == SJIS_MODE) { char_system = KANJI; }
 	width = 0;
 	format = 0;
 	

@@ -67,7 +67,7 @@ int qr_code(struct zint_symbol *symbol, unsigned char source[])
 	int i, j;
 	int kanji;
 	
-	if(symbol->input_mode == KANJI_MODE) { kanji = 1; } else { kanji = 0; }
+	if((symbol->input_mode == KANJI_MODE) || (symbol->input_mode == SJIS_MODE)) { kanji = 1; } else { kanji = 0; }
 
 	code = encode(symbol->option_1, symbol->option_2, source, kanji);
 	if(code == NULL) {
