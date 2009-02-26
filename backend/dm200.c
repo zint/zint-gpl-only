@@ -637,42 +637,42 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 	/* Empty buffers */
 	if(c40_p == 2) {
 		target[tp] = 254; tp++; /* unlatch */
+		target[tp] = source[inputlen - 2] + 1; tp++;
 		target[tp] = source[inputlen - 1] + 1; tp++;
-		target[tp] = source[inputlen] + 1; tp++;
 		concat(binary, "  ");
 		current_mode = DM_ASCII;
 	}
 	if(c40_p == 1) {
 		target[tp] = 254; tp++; /* unlatch */
-		target[tp] = source[inputlen] + 1; tp++;
+		target[tp] = source[inputlen - 1] + 1; tp++;
 		concat(binary, " ");
 		current_mode = DM_ASCII;
 	}
 	
 	if(text_p == 2) {
 		target[tp] = 254; tp++; /* unlatch */
+		target[tp] = source[inputlen - 2] + 1; tp++;
 		target[tp] = source[inputlen - 1] + 1; tp++;
-		target[tp] = source[inputlen] + 1; tp++;
 		concat(binary, "  ");
 		current_mode = DM_ASCII;
 	}
 	if(text_p == 1) {
 		target[tp] = 254; tp++; /* unlatch */
-		target[tp] = source[inputlen] + 1; tp++;
+		target[tp] = source[inputlen - 1] + 1; tp++;
 		concat(binary, " ");
 		current_mode = DM_ASCII;
 	}
 	
 	if(x12_p == 2) {
 		target[tp] = 254; tp++; /* unlatch */
+		target[tp] = source[inputlen - 2] + 1; tp++;
 		target[tp] = source[inputlen - 1] + 1; tp++;
-		target[tp] = source[inputlen] + 1; tp++;
 		concat(binary, "  ");
 		current_mode = DM_ASCII;
 	}
 	if(x12_p == 1) {
 		target[tp] = 254; tp++; /* unlatch */
-		target[tp] = source[inputlen] + 1; tp++;
+		target[tp] = source[inputlen - 1] + 1; tp++;
 		concat(binary, " ");
 		current_mode = DM_ASCII;
 	}
