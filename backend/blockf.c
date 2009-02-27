@@ -17,6 +17,8 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+    
+    Includes bugfix thanks to rens.dol@gmail.com
 */
 
 #include <string.h>
@@ -678,7 +680,10 @@ int codablock(struct zint_symbol *symbol, unsigned char source[])
 			row_indicator[i] = i + 42;
 		} else {
 			/* Code A or B */
-			row_indicator[i] = i + 10;
+			if( i < 7 )
+				row_indicator[i] = i + 10;
+			else
+				row_indicator[i] = i + 20;
 		}
 	}
 	
@@ -697,12 +702,12 @@ int codablock(struct zint_symbol *symbol, unsigned char source[])
 	for(i = 0; i < rows_needed; i++) {
 		int writer, flip_flop;
 		
-		/*printf("row %d: ",i);
+		printf("row %d: ",i);
 		printf("103 %d %d [", subset_selector[i], row_indicator[i]);
 		for(j = 0; j < columns_needed; j++) {
 			printf("%d ",blockmatrix[i][j]);
 		}
-		printf("] %d 106\n", row_check[i]);*/
+		printf("] %d 106\n", row_check[i]);
 		
 		strcpy(row_pattern, "");
 		/* Start character */
