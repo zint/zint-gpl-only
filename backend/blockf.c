@@ -680,7 +680,7 @@ int codablock(struct zint_symbol *symbol, unsigned char source[])
 			row_indicator[i] = i + 42;
 		} else {
 			/* Code A or B */
-			if( i < 7 )
+			if( i < 6 )
 				row_indicator[i] = i + 10;
 			else
 				row_indicator[i] = i + 20;
