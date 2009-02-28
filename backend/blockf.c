@@ -18,7 +18,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
     
-    Includes bugfix thanks to rens.dol@gmail.com
+    Includes bugfixes thanks to rens.dol@gmail.com
 */
 
 #include <string.h>
@@ -641,8 +641,13 @@ int codablock(struct zint_symbol *symbol, unsigned char source[])
 	k1_sum = 0;
 	k2_sum = 0;
 	for(i = 0; i < input_length; i++) {
-		k1_sum += (i + 1) * source[i];
-		k2_sum += i * source[i];
+		if(gs1 && source[i] == '[') {
+			k1_sum += (i + 1) * 29; /* GS */
+			k2_sum += i * 29;
+		} else {
+			k1_sum += (i + 1) * source[i];
+			k2_sum += i * source[i];
+		}
 	}
 	k1_check = k1_sum % 86;
 	k2_check = k2_sum % 86;
@@ -701,14 +706,14 @@ int codablock(struct zint_symbol *symbol, unsigned char source[])
 	/* Resolve the data into patterns and place in symbol structure */
 	for(i = 0; i < rows_needed; i++) {
 		int writer, flip_flop;
-		
+		/*
 		printf("row %d: ",i);
 		printf("103 %d %d [", subset_selector[i], row_indicator[i]);
 		for(j = 0; j < columns_needed; j++) {
 			printf("%d ",blockmatrix[i][j]);
 		}
 		printf("] %d 106\n", row_check[i]);
-		
+		*/
 		strcpy(row_pattern, "");
 		/* Start character */
 		concat(row_pattern, C128Table[103]); /* Always Start A */
