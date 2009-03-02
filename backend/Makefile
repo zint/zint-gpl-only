@@ -7,7 +7,7 @@
 # make clean		cleans up a previous compilation and any object or editor files
 #
 
-ZINT_VERSION:=-DZINT_VERSION=\"2.1.1\"
+ZINT_VERSION:=-DZINT_VERSION=\"2.1.2\"
 
 
 CC := gcc
@@ -41,7 +41,7 @@ libzint: code.c code128.c 2of5.c upcean.c medical.c telepen.c plessey.c postal.c
 	$(CC) -Wall -fPIC $(CFLAGS) $(ZINT_VERSION) -c $(POSTAL)
 	$(CC) -Wall -fPIC $(DEFINES) $(CFLAGS) $(ZINT_VERSION) -c $(TWODIM)
 	$(CC) -Wall -fPIC $(CFLAGS) $(ZINT_VERSION) -c $(COMMON)
-	$(CC) $(CFLAGS) $(ZINT_VERSION) -shared -Wl,-soname,libzint.so -o libzint.so.2.0.0 $(INCLUDE) $(COMMON_OBJ) $(ONEDIM_OBJ) $(TWODIM_OBJ) $(POSTAL_OBJ) $(LIBS)
+	$(CC) $(CFLAGS) $(ZINT_VERSION) -shared -Wl,-soname,libzint.so -o libzint.so.2.1.2 $(INCLUDE) $(COMMON_OBJ) $(ONEDIM_OBJ) $(TWODIM_OBJ) $(POSTAL_OBJ) $(LIBS)
 	ln -s libzint.so.* libzint.so
 
 .PHONY: install uninstall clean dist
@@ -53,7 +53,7 @@ install:
 	install -D -p --mode=0644 zint.h $(DESTDIR)$(includedir)/zint.h
 
 uninstall:
-	rm $(DESTDIR)$(libdir)libzint.*
+	rm $(DESTDIR)$(libdir)/libzint.*
 	rm $(DESTDIR)$(includedir)/zint.h
 
 clean:

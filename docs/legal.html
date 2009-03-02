@@ -172,6 +172,10 @@ Code 16k, Codablock-F and Aztec Code. Added scale and direct to
 Data Matrix ECC 200 encoding algorithms to support NULL encoding and
 GS1 data encoding. 31/1/2009</P>
 <P>v2.1.1 - Minor Data Matrix bugfix and added HIBC options. 10/2/2009</P>
+<P>v2.1.2 - Added SVG output option. Improved Japanese character support
+including Unicode &gt; Shift-JIS capability. Bugfixes for Data Matrix
+(missing characters at end of string) and Codablock-F (K1/K2 check digit
+and row indicators above row 6). 1/3/2009</P>
 <P><A NAME="CREDITS"></A><FONT SIZE=5><B>6.4 Sources of Information</B></FONT></P>
 <P>Below is a list of some of the sources used in rough chronological
 order:</P>
@@ -188,8 +192,8 @@ RM4SCC specification</A></P>
 to Printing the 4-State Barcode' and bcsample source code</P>
 <P>Plessey algorithm from <A HREF="http://ar.linux.it/pub/barcode">GNU-Barcode
 v0.98</A> by Leonid A. Broukhis</P>
-<P><A HREF="http://www.gs1uk.org/EANUCC/WORD_Files/word.html">GS1
-General Specifications v 7.0</A></P>
+<P><A HREF="www.gs1uk.org/downloads/standards/GS1%20General%20%20Specifications.pdf">GS1
+General Specifications v 8.0 Issue 2</A></P>
 <P><A HREF="http://www.linpng.org/pub/png/book/">PNG: The Definitive
 Guide</A> and wpng source code by Greg Reolofs</P>
 <P>PDF417 specification and pdf417 source code by <A HREF="http://grandzebu.net/index.php">Grand
@@ -203,6 +207,8 @@ Postal Service Specification USPS-B-3200</A></P>
 <P>Adobe Systems Incorporated Encapsulated PostScript File Format
 Specification</P>
 <P><A HREF="http://www.bsi-global.com/">BSI Online</A> Library</P>
+<P><A HREF="http://sourceforge.net/projects/libdmtx">Libdmtx</A> Data Matrix
+decoding library</P>
 <P><A NAME="STANDARD"></A><FONT SIZE=5><B>6.5 Standard Compliance</B></FONT></P>
 <P>Zint was developed to provide compliance with the following
 British and international standards: 
