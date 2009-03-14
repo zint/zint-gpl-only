@@ -95,6 +95,7 @@ postal.c:
 	DAFT Code
 	Flattermarken
 	Korean Postal Code
+	Japanese Postal Code
 
 qr.c:
 	QR Code (libqrencode)

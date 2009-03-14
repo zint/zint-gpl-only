@@ -25,7 +25,11 @@
 #include "common.h"
 
 #define BESET	"ABCD"
+#define DAFTSET	"DAFT"
 #define KRSET "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+#define KASUTSET "1234567890-abcdefgh"
+#define CHKASUTSET "0123456789-abcdefgh"
+#define SHKASUTSET "1234567890-ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 /* PostNet number encoding table - In this table L is long as S is short */
 static char *PNTable[10] = {"LLSSS", "SSSLL", "SSLSL", "SSLLS", "SLSSL", "SLSLS", "SLLSS", "LSSSL",
@@ -50,6 +54,9 @@ static char *FlatTable[10] = {"0504", "18", "0117", "0216", "0315", "0414", "051
 
 static char *KoreaTable[10] = {"1313150613", "0713131313", "0417131313", "1506131313",
 	"0413171313", "17171313", "1315061313", "0413131713", "17131713", "13171713"};
+	
+static char *JapanTable[19] = {"114", "132", "312", "123", "141", "321", "213", "231", "411", "144",
+	"414", "324", "342", "234", "432", "243", "423", "441", "111"};
 	
 int postnet(struct zint_symbol *symbol, unsigned char source[], char dest[])
 {
@@ -411,16 +418,22 @@ int daft_code(struct zint_symbol *symbol, unsigned char source[])
 	int input_length;
 	char height_pattern[100], local_source[55];
 	unsigned int loopey;
-	int writer, i;
+	int writer, i, error_number;
 	strcpy(height_pattern, "");
 	
+	error_number = 0;
 	input_length = ustrlen(source);
 	strcpy(local_source, (char*)source);
 	if(input_length > 50) {
-		strcpy(symbol->errtxt, "Input too long [931]");
+		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	to_upper((unsigned char*)local_source);
+	error_number = is_sane(DAFTSET, (unsigned char*)local_source);
+	if(error_number == ERROR_INVALID_DATA) {
+		strcpy(symbol->errtxt, "Invalid characters in data");
+		return error_number;
+	}
 	
 	for (i = 0; i < input_length; i++) {
 		if(local_source[i] == 'D') { concat(height_pattern, "2"); }
@@ -450,7 +463,7 @@ int daft_code(struct zint_symbol *symbol, unsigned char source[])
 	symbol->rows = 3;
 	symbol->width = writer - 1;
 	
-	return 0;
+	return error_number;
 }
 
 int flattermarken(struct zint_symbol *symbol, unsigned char source[])
@@ -477,5 +490,100 @@ int flattermarken(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	expand(symbol, dest);	
+	return error_number;
+}
+
+int japan_post(struct zint_symbol *symbol, unsigned char source[])
+{ /* Japanese Postal Code (Kasutama Barcode) */
+	int input_length, error_number;
+	char pattern[65];
+	int writer, loopey, inter_posn, i, inter_length, sum, check;
+	char check_char;
+
+	input_length = ustrlen(source);
+	inter_length = input_length * 2;
+	if(inter_length < 20) { inter_length = 20; }
+	char inter[inter_length];
+	char local_source[input_length];
+	inter_posn = 0;
+	error_number = 0;
+	
+	strcpy(local_source, (char*)source);
+	to_upper((unsigned char*)local_source);
+	error_number = is_sane(SHKASUTSET, (unsigned char*)local_source);
+	if(error_number == ERROR_INVALID_DATA) {
+		strcpy(symbol->errtxt, "Invalid characters in data");
+		return error_number;
+	}
+
+	for(i = 0; i < (inter_length * 2); i++) {
+		inter[i] = 'd'; /* Pad character CC4 */
+	}
+
+	for(i = 0; i < input_length; i++) {
+		if(((local_source[i] >= '0') && (local_source[i] <= '9')) || (local_source[i] == '-')) {
+			inter[inter_posn] = local_source[i];
+			inter_posn++;
+		} else {
+			if((local_source[i] >= 'A') && (local_source[i] <= 'J')) {
+				inter[inter_posn] = 'a';
+				inter[inter_posn + 1] = local_source[i] - 'A' + '0';
+				inter_posn += 2;
+			}
+			if((local_source[i] >= 'K') && (local_source[i] <= 'T')) {
+				inter[inter_posn] = 'b';
+				inter[inter_posn + 1] = local_source[i] - 'K' + '0';
+				inter_posn += 2;
+			}
+			if((local_source[i] >= 'U') && (local_source[i] <= 'Z')) {
+				inter[inter_posn] = 'c';
+				inter[inter_posn + 1] = local_source[i] - 'U' + '0';
+				inter_posn += 2;
+			}
+		}
+	}
+	
+	strcpy(pattern, "13"); /* Start */
+	
+	sum = 0;
+	for(i = 0; i < 20; i++) {
+		concat(pattern, JapanTable[posn(KASUTSET, inter[i])]);
+		sum += posn(CHKASUTSET, inter[i]);
+		/* printf("%c (%d)\n", inter[i], posn(CHKASUTSET, inter[i])); */
+	}
+	
+	/* Calculate check digit */
+	check = 19 - (sum % 19);
+	if(check == 19) { check = 0; }
+	if(check <= 9) { check_char = check + '0'; }
+	if(check == 10) { check_char = '-'; }
+	if(check >= 11) { check_char = (check - 11) + 'a'; }
+	concat(pattern, JapanTable[posn(KASUTSET, check_char)]);
+	/* printf("check %c (%d)\n", check_char, check); */
+	
+	concat(pattern, "31"); /* Stop */
+	
+	/* Resolve pattern to 4-state symbols */
+	writer = 0;
+	for(loopey = 0; loopey < strlen(pattern); loopey++)
+	{
+		if((pattern[loopey] == '2') || (pattern[loopey] == '1'))
+		{
+			symbol->encoded_data[0][writer] = '1';
+		}
+		symbol->encoded_data[1][writer] = '1';
+		if((pattern[loopey] == '3') || (pattern[loopey] == '1'))
+		{
+			symbol->encoded_data[2][writer] = '1';
+		}
+		writer += 2;
+	}
+	
+	symbol->row_height[0] = 2;
+	symbol->row_height[1] = 2;
+	symbol->row_height[2] = 2;
+	symbol->rows = 3;
+	symbol->width = writer - 1;
+	
 	return error_number;
 }
