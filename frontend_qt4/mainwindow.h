@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2008 by BogDan Vatra                                    *
- *   bogdan@licentia.eu                                                    *
+ *   Copyright (C) 2008 by BogDan Vatra <bogdan@licentia.eu>               *
+ *   Copyright (C) 2009 by Robin Stuart <robin@zint.org.uk>                *
  *                                                                         *
  *   This program is free software: you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -32,89 +32,64 @@ class MainWindow : public QWidget, private Ui::mainWindow
 public:
 	enum BarcodeTypes
 	{
-		CODE11		=1,
-		C25MATRIX	=2,
-		C25INTER	=3,
-		C25IATA		=4,
-		C25LOGIC	=6,
-		C25IND		=7,
-		CODE39		=8,
-		EXCODE39	=9,
-		EANX		=13,
-		EAN128		=16,
-		CODABAR		=18,
-		CODE128		=20,
-		DPLEIT		=21,
-		DPIDENT		=22,
-		CODE16K		=23,
-		CODE93		=25,
-		FLAT		=28,
-		RSS14		=29,
-		RSS_LTD		=30,
-		RSS_EXP		=31,
-		TELEPEN		=32,
-		UPCA		=34,
-		UPCE		=37,
-		POSTNET		=40,
-		MSI_PLESSEY	=47,
-		FIM		=49,
-		LOGMARS		=50,
-		PHARMA		=51,
-		PZN		=52,
-		PHARMA_TWO	=53,
-		PDF417		=55,
-		PDF417TRUNC	=56,
-		MAXICODE	=57,
-		QRCODE		=58,
-		CODE128B	=60,
 		AUSPOST		=63,
 		AUSREPLY	=66,
 		AUSROUTE	=67,
 		AUSREDIRECT	=68,
-		ISBNX		=69,
-		RM4SCC		=70,
-		DATAMATRIX	=71,
-		EAN14		=72,
+		AZTEC		=92,
+		AZRUNE		=128,
+		CODE11		=1,
+		CODE128		=20,
+		CODE16K		=23,
+		C25LOGIC	=6,
+		C25IATA		=4,
+		C25IND		=7,
+		C25INTER	=3,
+		C25MATRIX	=2,
+		CODE32		=129,
+		CODE39		=8,
+		EXCODE39	=9,
+		CODE93		=25,
+		CODABAR		=18,
 		CODABLOCKF	=74,
-		NVE18		=75,
-		KOREAPOST	=77,
+		RSS14		=29,
+		RSS_EXP		=31,
+		RSS_EXPSTACK	=81,
+		RSS_LTD		=30,
 		RSS14STACK	=79,
 		RSS14STACK_OMNI	=80,
-		RSS_EXPSTACK	=81,
-		PLANET		=82,
-		MICROPDF417	=84,
-		ONECODE		=85,
-		PLESSEY		=86,
-		
-		/* Tbarcode 8 codes */
-		TELEPEN_NUM	=87,
-		ITF14		=89,
+		DATAMATRIX	=71,
+		DPIDENT		=22,
+		DPLEIT		=21,
 		KIX		=90,
-		AZTEC		=92,
+		EAN14		=72,
+		EANX		=13,
+		FIM		=49,
+		FLAT		=28,
+		ITF14		=89,
+		ISBNX		=69,
+		JAPANPOST	=76,
+		KOREAPOST	=77,
+		LOGMARS		=50,
+		MAXICODE	=57,
+		MICROPDF417	=84,
 		MICROQR		=97,
-
-		/* Tbarcode 9 codes */
-		HIBC_128	=98,
-		HIBC_39		=99,
-		HIBC_DM		=102,
-		HIBC_QR		=104,
-		HIBC_PDF	=106,
-		HIBC_MICPDF	=108,
-		HIBC_BLOCKF	=110,
-		
-		/* Zint specific */
-		AZRUNE		=128,
-		CODE32		=129,
-		EANX_CC		=130,
-		EAN128_CC	=131,
-		RSS14_CC	=132,
-		RSS_LTD_CC	=133,
-		RSS_EXP_CC	=134,
-		UPCA_CC		=135,
-		UPCE_CC		=136,
-		RSS14STACK_CC	=137,
-		RSS14_OMNI_CC	=138,
-		RSS_EXPSTACK_CC	=139
+		MSI_PLESSEY	=47,
+		NVE18		=75,
+		PDF417		=55,
+		PHARMA		=51,
+		PHARMA_TWO	=53,
+		PZN		=52,
+		PLANET		=82,
+		POSTNET		=40,
+		QRCODE		=58,
+		RM4SCC		=70,
+		TELEPEN		=32,
+		TELEPEN_NUM	=87,
+		PLESSEY		=86,
+		UPCA		=34,
+		UPCE		=37,
+		ONECODE		=85
 	};
 
 public:
@@ -122,14 +97,20 @@ public:
 	~MainWindow();
 
 public slots:
-	void on_generate_clicked();
+	void update_preview();
+	void change_options();
 	void on_fgcolor_clicked();
 	void on_bgcolor_clicked();
-	void on_zoomIn_clicked();
-	void on_zoomOut_clicked();
-	void on_rotateAc_clicked();
-	void on_rotateC_clicked();
-	void on_reset_clicked();
+	void composite_enable();
+	void composite_ean_check();
+	void aztec_size();
+	void aztec_errorcorrect();
+	void datamatrix_options();
+	void qr_size();
+	void qr_errorcorrect();
+	void mqr_size();
+	void mqr_errorcorrect();
+	void maxi_primary();
 
 private:
 	QColor m_fgcolor,m_bgcolor;

@@ -33,8 +33,8 @@ QZint::QZint()
 	m_fgColor=Qt::black;
 	m_bgColor=Qt::white;
 	m_zintSymbol=0;
-	m_excode39SymbologyNumber=m_code39SymbologyNumber=m_msiSymbologyNumber=0;
 	m_error=0;
+	m_input_mode = UNICODE_MODE;
 }
 
 QZint::~QZint()
@@ -57,24 +57,8 @@ void QZint::encode()
 	m_zintSymbol->whitespace_width=0;
 	m_zintSymbol->border_width=m_boderWidth;
 	m_zintSymbol->option_1=m_securityLevel;
-	switch (m_symbol)
-	{
-		case BARCODE_MSI_PLESSEY:
-			m_zintSymbol->option_2=m_msiSymbologyNumber;
-			break;
-
-		case BARCODE_CODE39:
-			m_zintSymbol->option_2=m_code39SymbologyNumber;
-			break;
-		
-		case BARCODE_EXCODE39:
-			m_zintSymbol->option_2=m_excode39SymbologyNumber;
-			break;
-
-		default:
-			m_zintSymbol->option_2=m_width;
-			break;
-	}
+	m_zintSymbol->input_mode = m_input_mode;
+	m_zintSymbol->option_2=m_width;
 	m_zintSymbol->option_3=m_pdf417CodeWords;
 	QByteArray bstr=m_text.toAscii();
 	QByteArray pstr=m_primaryMessage.left(99).toAscii();
@@ -94,6 +78,11 @@ int  QZint::symbol()
 void QZint::setSymbol(int symbol)
 {
 	m_symbol=symbol;
+}
+
+void QZint::setInputMode(int input_mode)
+{
+	m_input_mode = input_mode;
 }
 
 QString QZint::text()
@@ -199,33 +188,6 @@ int QZint::mode()
 void QZint::setMode(int securityLevel)
 {
 	m_securityLevel=securityLevel;
-}
-
-int QZint::msiExtraSymbology()
-{
-	return m_msiSymbologyNumber;
-}
-void QZint::setMsiExtraSymbology(int msiSymbologyNumber)
-{
-	m_msiSymbologyNumber=msiSymbologyNumber;
-}
-
-int  QZint::code39ExtraSymbology()
-{
-	return m_code39SymbologyNumber;
-}
-void QZint::setCode39ExtraSymbology(int m_code39SymbologyNumber)
-{
-	m_code39SymbologyNumber=m_code39SymbologyNumber;
-}
-
-int QZint::excode39ExtraSymbology()
-{
-	return m_excode39SymbologyNumber;
-}
-void QZint::setExcode39ExtraSymbology(int excode39SymbologyNumber)
-{
-	m_excode39SymbologyNumber=excode39SymbologyNumber;
 }
 
 void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode mode)
