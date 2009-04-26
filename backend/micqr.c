@@ -2,7 +2,7 @@
 
 /*
     libzint - the open source barcode library
-    Copyright (C) 2008 Robin Stuart <robin@zint.org.uk>
+    Copyright (C) 2009 Robin Stuart <robin@zint.org.uk>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -713,6 +713,12 @@ int microqr(struct zint_symbol *symbol, unsigned char source[])
 		return ERROR_TOO_LONG;
 	}
 	
+	symbol_size = symbol->option_2;
+	
+	if((symbol_size < 0) || (symbol_size > 4)) {
+		symbol_size = 0;
+	}
+
 	/* Decide symbol size */
 	if(symbol_size == 0) {
 		if(symbol->option_1 == 1) { /* ECC Level L */
