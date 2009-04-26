@@ -20,8 +20,8 @@
 BarcodeItem::BarcodeItem()
 		: QGraphicsItem()
 {
-	w=400;
-	h=400;
+	w=550;
+	h=230;
 }
 
 

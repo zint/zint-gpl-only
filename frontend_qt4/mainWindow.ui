@@ -5,574 +5,2434 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>873</width>
-    <height>748</height>
+    <width>619</width>
+    <height>559</height>
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Zint Qt fontend</string>
+   <string>Zint Barcode Studio</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" >
-   <item row="0" column="0" >
-    <widget class="QPushButton" name="zoomIn" >
-     <property name="toolTip" >
-      <string>Ctrl++</string>
+  <widget class="QComboBox" name="bstyle" >
+   <property name="geometry" >
+    <rect>
+     <x>92</x>
+     <y>299</y>
+     <width>511</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lblSymbology" >
+   <property name="geometry" >
+    <rect>
+     <x>4</x>
+     <y>300</y>
+     <width>72</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>&amp;Symbology:</string>
+   </property>
+   <property name="alignment" >
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+   </property>
+   <property name="buddy" >
+    <cstring>bstyle</cstring>
+   </property>
+  </widget>
+  <widget class="QTabWidget" name="tabMain" >
+   <property name="enabled" >
+    <bool>true</bool>
+   </property>
+   <property name="geometry" >
+    <rect>
+     <x>12</x>
+     <y>331</y>
+     <width>595</width>
+     <height>217</height>
+    </rect>
+   </property>
+   <property name="currentIndex" >
+    <number>0</number>
+   </property>
+   <widget class="QWidget" name="tabGeneral" >
+    <property name="geometry" >
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>591</width>
+      <height>191</height>
+     </rect>
+    </property>
+    <attribute name="title" >
+     <string>General</string>
+    </attribute>
+    <widget class="QGroupBox" name="grpData" >
+     <property name="geometry" >
+      <rect>
+       <x>9</x>
+       <y>3</y>
+       <width>574</width>
+       <height>55</height>
+      </rect>
      </property>
-     <property name="text" >
-      <string>Zoom in</string>
+     <property name="title" >
+      <string>Data to Encode</string>
      </property>
-     <property name="shortcut" >
-      <string>Ctrl++</string>
-     </property>
+     <widget class="QLineEdit" name="txtData" >
+      <property name="geometry" >
+       <rect>
+        <x>13</x>
+        <y>21</y>
+        <width>548</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Your Data Here!</string>
+      </property>
+     </widget>
     </widget>
-   </item>
-   <item row="0" column="1" >
-    <widget class="QPushButton" name="zoomOut" >
-     <property name="toolTip" >
-      <string>Ctrl+-</string>
+    <widget class="QGroupBox" name="grpComposite" >
+     <property name="enabled" >
+      <bool>true</bool>
      </property>
-     <property name="text" >
-      <string>Zoom out</string>
+     <property name="geometry" >
+      <rect>
+       <x>9</x>
+       <y>67</y>
+       <width>575</width>
+       <height>115</height>
+      </rect>
      </property>
-     <property name="shortcut" >
-      <string>Ctrl+-</string>
+     <property name="title" >
+      <string>Composite Code</string>
      </property>
-    </widget>
-   </item>
-   <item row="0" column="2" >
-    <spacer name="horizontalSpacer_4" >
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0" >
-      <size>
-       <width>85</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="0" column="3" colspan="2" >
-    <widget class="QPushButton" name="reset" >
-     <property name="toolTip" >
-      <string>Ctrl+0</string>
-     </property>
-     <property name="text" >
-      <string>Reset</string>
-     </property>
-     <property name="shortcut" >
-      <string>Ctrl+0</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="5" >
-    <spacer name="horizontalSpacer_3" >
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0" >
-      <size>
-       <width>76</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="0" column="6" >
-    <widget class="QPushButton" name="rotateAc" >
-     <property name="toolTip" >
-      <string>Ctrl+Left</string>
-     </property>
-     <property name="text" >
-      <string>Rotate anticlockwise</string>
-     </property>
-     <property name="shortcut" >
-      <string>Ctrl+Left</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="7" >
-    <widget class="QPushButton" name="rotateC" >
-     <property name="toolTip" >
-      <string>Ctrl+Right</string>
-     </property>
-     <property name="text" >
-      <string>Rotate clockwise</string>
-     </property>
-     <property name="shortcut" >
-      <string>Ctrl+Right</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0" colspan="8" >
-    <widget class="QGraphicsView" name="view" />
-   </item>
-   <item row="2" column="0" colspan="4" >
-    <layout class="QHBoxLayout" name="horizontalLayout_2" >
-     <item>
-      <widget class="QLabel" name="label" >
-       <property name="text" >
-        <string>Type:</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="bstyle" />
-     </item>
-    </layout>
-   </item>
-   <item row="2" column="4" colspan="4" >
-    <layout class="QHBoxLayout" name="horizontalLayout_12" >
-     <item>
-      <widget class="QLabel" name="label_7" >
-       <property name="text" >
-        <string>Aspect ratio:</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="aspectRatio" >
-       <item>
-        <property name="text" >
-         <string>Ignore aspect ratio</string>
-        </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>Keep aspect ratio</string>
-        </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>Center (no scalling)</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="3" column="0" colspan="4" >
-    <layout class="QHBoxLayout" name="horizontalLayout_3" >
-     <item>
-      <widget class="QLabel" name="label_3" >
-       <property name="text" >
-        <string>Height:</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="heightb" >
-       <property name="maximum" >
-        <number>300</number>
-       </property>
-       <property name="value" >
-        <number>50</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="3" column="4" colspan="4" >
-    <layout class="QHBoxLayout" name="horizontalLayout_7" >
-     <item>
-      <widget class="QLabel" name="label_11" >
-       <property name="text" >
-        <string>Item Width:</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="iwidth" >
-       <property name="minimum" >
-        <number>10</number>
-       </property>
-       <property name="maximum" >
-        <number>1000</number>
-       </property>
-       <property name="singleStep" >
-        <number>5</number>
-       </property>
-       <property name="value" >
-        <number>400</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="4" column="0" colspan="4" >
-    <layout class="QHBoxLayout" name="horizontalLayout_5" >
-     <item>
-      <widget class="QLabel" name="label_5" >
-       <property name="text" >
-        <string>Width (pdf471):</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="widthb" >
-       <property name="maximum" >
-        <number>300</number>
-       </property>
-       <property name="value" >
-        <number>0</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="4" column="4" colspan="4" >
-    <layout class="QHBoxLayout" name="horizontalLayout_13" >
-     <item>
-      <widget class="QLabel" name="label_12" >
-       <property name="text" >
-        <string>Item Height:</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="iheight" >
-       <property name="minimum" >
-        <number>10</number>
-       </property>
-       <property name="maximum" >
-        <number>1000</number>
-       </property>
-       <property name="singleStep" >
-        <number>5</number>
-       </property>
-       <property name="value" >
-        <number>400</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="5" column="0" colspan="4" >
-    <layout class="QHBoxLayout" name="horizontalLayout_6" >
-     <item>
-      <widget class="QLabel" name="label_6" >
-       <property name="text" >
-        <string>Security level/mode:</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="security" >
-       <property name="minimum" >
-        <number>-1</number>
-       </property>
-       <property name="maximum" >
-        <number>9</number>
-       </property>
-       <property name="value" >
-        <number>-1</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="5" column="4" colspan="4" >
-    <layout class="QHBoxLayout" name="horizontalLayout_4" >
-     <item>
-      <widget class="QLabel" name="label_4" >
-       <property name="text" >
-        <string>Primary</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="primary" />
-     </item>
-    </layout>
-   </item>
-   <item row="6" column="0" colspan="4" >
-    <layout class="QHBoxLayout" name="horizontalLayout_8" >
-     <item>
-      <widget class="QLabel" name="label_8" >
-       <property name="text" >
-        <string>Border width:</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="bwidth" >
-       <property name="minimum" >
-        <number>0</number>
-       </property>
-       <property name="maximum" >
-        <number>16</number>
-       </property>
-       <property name="value" >
-        <number>0</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item rowspan="6" row="6" column="4" colspan="4" >
-    <layout class="QVBoxLayout" name="verticalLayout" >
-     <item>
-      <widget class="QLabel" name="label_2" >
-       <property name="text" >
-        <string>Data</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QTextEdit" name="text" >
-       <property name="html" >
-        <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+     <widget class="QTextEdit" name="txtComposite" >
+      <property name="enabled" >
+       <bool>false</bool>
+      </property>
+      <property name="geometry" >
+       <rect>
+        <x>12</x>
+        <y>67</y>
+        <width>552</width>
+        <height>40</height>
+       </rect>
+      </property>
+      <property name="html" >
+       <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
 &lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:10pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">123456&lt;/p>&lt;/body>&lt;/html></string>
-       </property>
-       <property name="acceptRichText" >
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="7" column="0" colspan="4" >
-    <layout class="QHBoxLayout" name="horizontalLayout_10" >
-     <item>
-      <widget class="QLabel" name="label_9" >
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Your Data Here!&lt;/p>&lt;/body>&lt;/html></string>
+      </property>
+      <property name="acceptRichText" >
+       <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lblComposite" >
+      <property name="enabled" >
+       <bool>false</bool>
+      </property>
+      <property name="geometry" >
+       <rect>
+        <x>13</x>
+        <y>45</y>
+        <width>121</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>&amp;2D Component Data:</string>
+      </property>
+      <property name="buddy" >
+       <cstring>txtComposite</cstring>
+      </property>
+     </widget>
+     <widget class="QWidget" name="layoutWidget" >
+      <property name="geometry" >
+       <rect>
+        <x>10</x>
+        <y>15</y>
+        <width>552</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_2" >
+       <item>
+        <widget class="QCheckBox" name="chkComposite" >
+         <property name="text" >
+          <string>&amp;Add 2D Component</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer" >
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="lblCompType" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="text" >
+          <string>Component T&amp;ype:</string>
+         </property>
+         <property name="buddy" >
+          <cstring>cmbCompType</cstring>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="cmbCompType" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <item>
+          <property name="text" >
+           <string>Automatic</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>CC-A</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>CC-B</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>CC-C</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <zorder>txtComposite</zorder>
+     <zorder>lblComposite</zorder>
+     <zorder>layoutWidget</zorder>
+     <zorder>grpMaxiCode</zorder>
+    </widget>
+    <widget class="QGroupBox" name="grpMaxiCode" >
+     <property name="geometry" >
+      <rect>
+       <x>9</x>
+       <y>67</y>
+       <width>575</width>
+       <height>73</height>
+      </rect>
+     </property>
+     <property name="title" >
+      <string>Maxicode</string>
+     </property>
+     <widget class="QLabel" name="lblMaxiMode" >
+      <property name="geometry" >
+       <rect>
+        <x>9</x>
+        <y>21</y>
+        <width>96</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Encoding Mode:</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="cmbMaxiMode" >
+      <property name="geometry" >
+       <rect>
+        <x>108</x>
+        <y>16</y>
+        <width>260</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="currentIndex" >
+       <number>1</number>
+      </property>
+      <item>
        <property name="text" >
-        <string>Border type:</string>
+        <string>Structured Carrier Message (Mode 2 or 3)</string>
        </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="btype" >
-       <item>
-        <property name="text" >
-         <string>No border</string>
-        </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>Bind</string>
-        </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>Box</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="8" column="0" colspan="4" >
-    <layout class="QHBoxLayout" name="horizontalLayout_11" >
-     <item>
-      <widget class="QLabel" name="label_10" >
+      </item>
+      <item>
        <property name="text" >
-        <string>PDF417 CODEWORDS:</string>
+        <string>Standard Symbol, SEC (Mode 4)</string>
        </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="codewords" >
-       <property name="minimum" >
-        <number>928</number>
-       </property>
-       <property name="maximum" >
-        <number>1800</number>
-       </property>
-       <property name="value" >
-        <number>928</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="9" column="0" colspan="4" >
-    <layout class="QHBoxLayout" name="horizontalLayout_14" >
-     <item>
-      <widget class="QLabel" name="label_13" >
+      </item>
+      <item>
        <property name="text" >
-        <string>MSI PLESSEY:</string>
+        <string>Full ECC Symbol (Mode 5)</string>
        </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="msiPlessey" >
-       <item>
-        <property name="text" >
-         <string>MSI_PLESSEY</string>
-        </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>MSI_10</string>
-        </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>MSI_10_10</string>
-        </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>MSI_11</string>
-        </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>MSI_11_10</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="10" column="0" colspan="4" >
-    <layout class="QHBoxLayout" name="horizontalLayout_15" >
-     <item>
-      <widget class="QLabel" name="label_14" >
+      </item>
+      <item>
        <property name="text" >
-        <string>(Ex)CODE39:</string>
+        <string>Reader Program, SEC (Mode 6)</string>
        </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </item>
+     </widget>
+     <widget class="QLabel" name="lblMaxiPrimary" >
+      <property name="geometry" >
+       <rect>
+        <x>9</x>
+        <y>46</y>
+        <width>89</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Primary Data:</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="txtMaxiPrimary" >
+      <property name="geometry" >
+       <rect>
+        <x>107</x>
+        <y>44</y>
+        <width>457</width>
+        <height>22</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tabOptions" >
+    <property name="geometry" >
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>591</width>
+      <height>191</height>
+     </rect>
+    </property>
+    <attribute name="title" >
+     <string>Options</string>
+    </attribute>
+    <widget class="QGroupBox" name="grpC128" >
+     <property name="geometry" >
+      <rect>
+       <x>114</x>
+       <y>39</y>
+       <width>315</width>
+       <height>109</height>
+      </rect>
+     </property>
+     <property name="title" >
+      <string>Code 128</string>
+     </property>
+     <widget class="QLabel" name="lblC128" >
+      <property name="geometry" >
+       <rect>
+        <x>48</x>
+        <y>65</y>
+        <width>216</width>
+        <height>37</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;">
+&lt;p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Note: Composite symbols require a&lt;/p>
+&lt;p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">GS1-128 linear component.&lt;/p>&lt;/body>&lt;/html></string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radC128Stand" >
+      <property name="geometry" >
+       <rect>
+        <x>12</x>
+        <y>19</y>
+        <width>74</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>S&amp;tandard</string>
+      </property>
+      <property name="checked" >
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radC128EAN" >
+      <property name="geometry" >
+       <rect>
+        <x>12</x>
+        <y>42</y>
+        <width>74</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>&amp;GS1-128</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radC128CSup" >
+      <property name="geometry" >
+       <rect>
+        <x>160</x>
+        <y>19</y>
+        <width>142</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Subset &amp;C Supression</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radC128HIBC" >
+      <property name="geometry" >
+       <rect>
+        <x>160</x>
+        <y>42</y>
+        <width>142</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>&amp;HIBC 128</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="grpPDF417" >
+     <property name="geometry" >
+      <rect>
+       <x>104</x>
+       <y>19</y>
+       <width>332</width>
+       <height>149</height>
+      </rect>
+     </property>
+     <property name="title" >
+      <string>PDF417</string>
+     </property>
+     <widget class="QLabel" name="lblPDFWords" >
+      <property name="geometry" >
+       <rect>
+        <x>13</x>
+        <y>69</y>
+        <width>158</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Ma&amp;ximum Codeword Lengh:</string>
+      </property>
+      <property name="alignment" >
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+      <property name="buddy" >
+       <cstring>codewords</cstring>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lblPDFCols" >
+      <property name="geometry" >
+       <rect>
+        <x>13</x>
+        <y>18</y>
+        <width>146</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Number of Data Columns:</string>
+      </property>
+      <property name="alignment" >
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lblPDFECC" >
+      <property name="geometry" >
+       <rect>
+        <x>13</x>
+        <y>45</y>
+        <width>142</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Error Correction Capacity:</string>
+      </property>
+      <property name="alignment" >
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="codewords" >
+      <property name="geometry" >
+       <rect>
+        <x>189</x>
+        <y>72</y>
+        <width>105</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="minimum" >
+       <number>928</number>
+      </property>
+      <property name="maximum" >
+       <number>1800</number>
+      </property>
+      <property name="value" >
+       <number>928</number>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="cmbPDFECC" >
+      <property name="geometry" >
+       <rect>
+        <x>190</x>
+        <y>44</y>
+        <width>105</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text" >
+        <string>Automatic</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>2 words</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>4 words</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>8 words</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>16 words</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>32 words</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>64 words</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>128 words</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>256 words</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>512 words</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QComboBox" name="cmbPDFCols" >
+      <property name="geometry" >
+       <rect>
+        <x>191</x>
+        <y>16</y>
+        <width>104</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text" >
+        <string>Automatic</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>1</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>2</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>3</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>4</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>5</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>6</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>7</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>8</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>9</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>10</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>11</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>12</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>13</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>14</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>15</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>16</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>17</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>18</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>19</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>20</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QRadioButton" name="radPDFStand" >
+      <property name="geometry" >
+       <rect>
+        <x>25</x>
+        <y>99</y>
+        <width>92</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Standard</string>
+      </property>
+      <property name="checked" >
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radPDFTruncated" >
+      <property name="geometry" >
+       <rect>
+        <x>25</x>
+        <y>121</y>
+        <width>92</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Truncated</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radPDFHIBC" >
+      <property name="geometry" >
+       <rect>
+        <x>176</x>
+        <y>99</y>
+        <width>105</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>HIBC PDF417</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="grpAztec" >
+     <property name="geometry" >
+      <rect>
+       <x>95</x>
+       <y>20</y>
+       <width>346</width>
+       <height>144</height>
+      </rect>
+     </property>
+     <property name="title" >
+      <string>Aztec Code</string>
+     </property>
+     <widget class="QRadioButton" name="radAztecAuto" >
+      <property name="geometry" >
+       <rect>
+        <x>8</x>
+        <y>18</y>
+        <width>128</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Automatic Resizing</string>
+      </property>
+      <property name="checked" >
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radAztecSize" >
+      <property name="geometry" >
+       <rect>
+        <x>8</x>
+        <y>39</y>
+        <width>146</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Adjust Size To:</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radAztecECC" >
+      <property name="geometry" >
+       <rect>
+        <x>7</x>
+        <y>61</y>
+        <width>192</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Add Minimum Error Correction:</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="cmbAztecECC" >
+      <property name="enabled" >
+       <bool>false</bool>
+      </property>
+      <property name="geometry" >
+       <rect>
+        <x>218</x>
+        <y>63</y>
+        <width>113</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text" >
+        <string>10% + 3 words</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>23% + 3 words</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>36% + 3 words</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>50% + 3 words</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QComboBox" name="cmbAztecSize" >
+      <property name="enabled" >
+       <bool>false</bool>
+      </property>
+      <property name="geometry" >
+       <rect>
+        <x>220</x>
+        <y>36</y>
+        <width>112</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text" >
+        <string>15 x 15*</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>19 x 19*</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>23 x 23*</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>27 x 27*</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>19 x 19</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>23 x 23</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>27 x 27</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>31 x 31</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>37 x 37</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>41 x 41</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>45 x 45</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>49 x 49</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>53 x 53</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>57 x 57</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>61 x 61</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>67 x 67</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>71 x 71</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>75 x 75</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>79 x 79</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>83 x 83</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>87 x 87</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>91 x 91</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>95 x 95</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>101 x 101</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>105 x 105</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>109 x 109</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>113 x 113</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>117 x 117</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>121 x 121</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>125 x 125</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>131 x 131</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>135 x 135</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>139 x 139</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>143 x 143</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>147 x 147</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>151 x 151</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QCheckBox" name="chkAztecMode" >
+      <property name="geometry" >
+       <rect>
+        <x>7</x>
+        <y>84</y>
+        <width>167</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Encode as GS-1 Data</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lblAztecNote" >
+      <property name="geometry" >
+       <rect>
+        <x>51</x>
+        <y>104</y>
+        <width>255</width>
+        <height>33</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;">
+&lt;p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">* An asterisk indicates a "compact" symbol;&lt;/p>
+&lt;p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">the rest are "full range" symbols.&lt;/p>&lt;/body>&lt;/html></string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QLabel" name="lblNoOption" >
+     <property name="geometry" >
+      <rect>
+       <x>145</x>
+       <y>85</y>
+       <width>277</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text" >
+      <string>No additional settings required for this symbology.</string>
+     </property>
+    </widget>
+    <widget class="QGroupBox" name="grpMSICheck" >
+     <property name="geometry" >
+      <rect>
+       <x>158</x>
+       <y>64</y>
+       <width>238</width>
+       <height>57</height>
+      </rect>
+     </property>
+     <property name="title" >
+      <string>MSI Plessey</string>
+     </property>
+     <widget class="QLabel" name="lblMSICheck" >
+      <property name="geometry" >
+       <rect>
+        <x>14</x>
+        <y>25</y>
+        <width>74</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Check Digit:</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="cmbMSICheck" >
+      <property name="geometry" >
+       <rect>
+        <x>97</x>
+        <y>20</y>
+        <width>125</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text" >
+        <string>None</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>Mod-10</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>Mod-10 &amp; Mod-10</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>Mod-11</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>Mod-11 &amp; Mod-10</string>
+       </property>
+      </item>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="grpC39" >
+     <property name="geometry" >
+      <rect>
+       <x>192</x>
+       <y>39</y>
+       <width>181</width>
+       <height>107</height>
+      </rect>
+     </property>
+     <property name="title" >
+      <string>Code 39</string>
+     </property>
+     <widget class="QRadioButton" name="radC39Stand" >
+      <property name="geometry" >
+       <rect>
+        <x>13</x>
+        <y>20</y>
+        <width>115</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>No Check Digit</string>
+      </property>
+      <property name="checked" >
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radC39Check" >
+      <property name="geometry" >
+       <rect>
+        <x>13</x>
+        <y>45</y>
+        <width>138</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Mod-43 Check Digit</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radC39HIBC" >
+      <property name="geometry" >
+       <rect>
+        <x>13</x>
+        <y>72</y>
+        <width>92</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>HIBC 39</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="grpMicroPDF" >
+     <property name="geometry" >
+      <rect>
+       <x>132</x>
+       <y>49</y>
+       <width>287</width>
+       <height>87</height>
+      </rect>
+     </property>
+     <property name="title" >
+      <string>MicroPDF417</string>
+     </property>
+     <widget class="QLabel" name="lblMPDFCols" >
+      <property name="geometry" >
+       <rect>
+        <x>10</x>
+        <y>23</y>
+        <width>146</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Number of Data Columns:</string>
+      </property>
+      <property name="alignment" >
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="cmbMPDFCols" >
+      <property name="geometry" >
+       <rect>
+        <x>172</x>
+        <y>21</y>
+        <width>104</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text" >
+        <string>Automatic</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>1</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>2</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>3</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>4</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QRadioButton" name="radMPDFStand" >
+      <property name="geometry" >
+       <rect>
+        <x>14</x>
+        <y>49</y>
+        <width>92</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Standard</string>
+      </property>
+      <property name="checked" >
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radMPDFHIBC" >
+      <property name="geometry" >
+       <rect>
+        <x>145</x>
+        <y>52</y>
+        <width>133</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>HIBC MicroPDF417</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="grpC16k" >
+     <property name="geometry" >
+      <rect>
+       <x>202</x>
+       <y>55</y>
+       <width>137</width>
+       <height>75</height>
+      </rect>
+     </property>
+     <property name="title" >
+      <string>Code 16K</string>
+     </property>
+     <widget class="QRadioButton" name="radC16kStand" >
+      <property name="geometry" >
+       <rect>
+        <x>12</x>
+        <y>18</y>
+        <width>106</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Standard Mode</string>
+      </property>
+      <property name="checked" >
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radC16kGS1" >
+      <property name="geometry" >
+       <rect>
+        <x>12</x>
+        <y>43</y>
+        <width>115</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>GS-1 Data Mode</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="grpCodablock" >
+     <property name="geometry" >
+      <rect>
+       <x>193</x>
+       <y>42</y>
+       <width>155</width>
+       <height>101</height>
+      </rect>
+     </property>
+     <property name="title" >
+      <string>Codablock-F</string>
+     </property>
+     <widget class="QRadioButton" name="radCodaStand" >
+      <property name="geometry" >
+       <rect>
+        <x>12</x>
+        <y>18</y>
+        <width>106</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Standard Mode</string>
+      </property>
+      <property name="checked" >
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radCodaGS1" >
+      <property name="geometry" >
+       <rect>
+        <x>12</x>
+        <y>43</y>
+        <width>115</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>GS-1 Data Mode</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radCodaHIBC" >
+      <property name="geometry" >
+       <rect>
+        <x>12</x>
+        <y>68</y>
+        <width>131</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>HIBC Codablock-F</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="grpDM" >
+     <property name="geometry" >
+      <rect>
+       <x>116</x>
+       <y>21</y>
+       <width>311</width>
+       <height>145</height>
+      </rect>
+     </property>
+     <property name="title" >
+      <string>Data Matrix</string>
+     </property>
+     <widget class="QComboBox" name="cmbDMMode" >
+      <property name="geometry" >
+       <rect>
+        <x>119</x>
+        <y>16</y>
+        <width>181</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text" >
+        <string>ECC 200 (Recommended)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>ECC 000</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>ECC 050</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>ECC 080</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>ECC 100</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>ECC 140</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QLabel" name="label" >
+      <property name="geometry" >
+       <rect>
+        <x>15</x>
+        <y>21</y>
+        <width>96</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Encoding Mode:</string>
+      </property>
+      <property name="buddy" >
+       <cstring>cmbDMMode</cstring>
+      </property>
+     </widget>
+     <widget class="QGroupBox" name="grpDM200" >
+      <property name="geometry" >
+       <rect>
+        <x>14</x>
+        <y>45</y>
+        <width>287</width>
+        <height>91</height>
+       </rect>
+      </property>
+      <property name="title" >
+       <string>ECC 200 Options</string>
+      </property>
+      <widget class="QRadioButton" name="radDM200Stand" >
+       <property name="geometry" >
+        <rect>
+         <x>12</x>
+         <y>14</y>
+         <width>92</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text" >
+        <string>Standard</string>
+       </property>
+       <property name="checked" >
+        <bool>true</bool>
        </property>
       </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="code39" >
+      <widget class="QRadioButton" name="radDM200GS1" >
+       <property name="geometry" >
+        <rect>
+         <x>12</x>
+         <y>35</y>
+         <width>122</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text" >
+        <string>GS-1 Data Mode</string>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="radDM200HIBC" >
+       <property name="geometry" >
+        <rect>
+         <x>154</x>
+         <y>14</y>
+         <width>121</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text" >
+        <string>HIBC Data Matrix</string>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="cmbDM200Size" >
+       <property name="geometry" >
+        <rect>
+         <x>107</x>
+         <y>59</y>
+         <width>124</width>
+         <height>22</height>
+        </rect>
+       </property>
        <item>
         <property name="text" >
-         <string>(EX)CODE39</string>
+         <string>Automatic</string>
         </property>
        </item>
        <item>
         <property name="text" >
-         <string>(EX)CODE39_43</string>
+         <string>10 x 10</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>12 x 12</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>14 x 14</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>16 x 16</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>18 x 18</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>20 x 20</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>22 x 22</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>24 x 24</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>26 x 26</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>32 x 32</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>36 x 36</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>40 x 40</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>44 x 44</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>48 x 48</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>52 x 52</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>64 x 64</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>72 x 72</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>80 x 80</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>88 x 88</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>96 x 96</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>104 x 104</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>120 x 120</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>132 x 132</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>144 x 144</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>8 x 18</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>8 x 32</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>12 x 26</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>12 x 36</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>16 x 36</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>16 x 48</string>
         </property>
        </item>
       </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="11" column="0" colspan="4" >
-    <layout class="QHBoxLayout" name="horizontalLayout_9" >
-     <item>
-      <widget class="QPushButton" name="fgcolor" >
+      <widget class="QLabel" name="lblDM200Size" >
+       <property name="geometry" >
+        <rect>
+         <x>57</x>
+         <y>64</y>
+         <width>38</width>
+         <height>16</height>
+        </rect>
+       </property>
        <property name="text" >
-        <string>Foreground color</string>
+        <string>Size:</string>
        </property>
       </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="bgcolor" >
+     </widget>
+     <widget class="QGroupBox" name="grpDMNon200" >
+      <property name="geometry" >
+       <rect>
+        <x>66</x>
+        <y>45</y>
+        <width>187</width>
+        <height>49</height>
+       </rect>
+      </property>
+      <property name="title" >
+       <string>Non ECC 200 Options</string>
+      </property>
+      <widget class="QLabel" name="lblDMNon200Size" >
+       <property name="geometry" >
+        <rect>
+         <x>11</x>
+         <y>20</y>
+         <width>38</width>
+         <height>16</height>
+        </rect>
+       </property>
        <property name="text" >
-        <string>Backgound color</string>
+        <string>Size:</string>
        </property>
       </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="12" column="0" colspan="8" >
-    <layout class="QHBoxLayout" name="horizontalLayout" >
-     <item>
-      <spacer name="horizontalSpacer" >
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
+      <widget class="QComboBox" name="cmbDMNon200Size" >
+       <property name="geometry" >
+        <rect>
+         <x>63</x>
+         <y>18</y>
+         <width>116</width>
+         <height>22</height>
+        </rect>
        </property>
-       <property name="sizeHint" stdset="0" >
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="generate" >
-       <property name="text" >
-        <string>&amp;Generate</string>
-       </property>
+       <item>
+        <property name="text" >
+         <string>Automatic</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>7 x 7</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>9 x 9</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>11 x 11</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>13 x 13</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>15 x 15</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>17 x 17</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>19 x 19</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>21 x 21</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>23 x 23</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>25 x 25</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>27 x 27</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>29 x 29</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>31 x 31</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>33 x 33</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>35 x 35</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>37 x 37</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>39 x 39</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>41 x 41</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>43 x 43</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>45 x 45</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>47 x 47</string>
+        </property>
+       </item>
       </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_2" >
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0" >
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_2" >
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="grpQR" >
+     <property name="geometry" >
+      <rect>
+       <x>108</x>
+       <y>30</y>
+       <width>328</width>
+       <height>124</height>
+      </rect>
+     </property>
+     <property name="title" >
+      <string>QR Code</string>
+     </property>
+     <widget class="QRadioButton" name="radQRAuto" >
+      <property name="geometry" >
+       <rect>
+        <x>9</x>
+        <y>21</y>
+        <width>135</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Automatic Resizing</string>
+      </property>
+      <property name="checked" >
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radQRSize" >
+      <property name="geometry" >
+       <rect>
+        <x>10</x>
+        <y>44</y>
+        <width>134</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Adjust Size To:</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radQRECC" >
+      <property name="geometry" >
+       <rect>
+        <x>10</x>
+        <y>67</y>
+        <width>141</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Add Error Correction:</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="chkQRHIBC" >
+      <property name="geometry" >
+       <rect>
+        <x>11</x>
+        <y>91</y>
+        <width>116</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>HIBC QR Code</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="cmbQRSize" >
+      <property name="enabled" >
+       <bool>false</bool>
+      </property>
+      <property name="geometry" >
+       <rect>
+        <x>158</x>
+        <y>43</y>
+        <width>156</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <item>
        <property name="text" >
-        <string>Close</string>
+        <string>21 x 21 (Version 1)</string>
        </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-  </layout>
+      </item>
+      <item>
+       <property name="text" >
+        <string>25 x 25 (Version 2)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>29 x 29 (Version 3)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>33 x 33 (Version 4)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>37 x 37 (Version 5)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>41 x 41 (Version 6)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>45 x 45 (Version 7)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>49 x 49 (Version 8)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>53 x 53 (Version 9)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>57 x 57 (Version 10)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>61 x 61 (Version 11)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>65 x 65 (Version 12)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>69 x 69 (Version 13)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>73 x 73 (Version 14)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>77 x 77 (Version 15)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>81 x 81 (Version 16)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>85 x 85 (Version 17)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>89 x 89 (Version 18)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>93 x 93 (Version 19)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>97 x 97 (Version 20)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>101 x 101 (Version 21)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>105 x 105 (Version 22)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>109 x 109 (Version 23)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>113 x 113 (Version 24)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>117 x 117 (Version 25)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>121 x 121 (Version 26)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>125 x 125 (Version 27)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>129 x 129 (Version 28)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>133 x 133 (Version 29)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>137 x 137 (Version 30)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>141 x 141 (Version 31)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>145 x 145 (Version 32)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>149 x 149 (Version 33)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>153 x 153 (Version 34)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>157 x 157 (Version 35)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>161x 161 (Version 36)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>165 x 165 (Version 37)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>169 x 169 (Version 38)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>173 x 173 (Version 39)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>177 x 177 (Version 40)</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QComboBox" name="cmbQRECC" >
+      <property name="enabled" >
+       <bool>false</bool>
+      </property>
+      <property name="geometry" >
+       <rect>
+        <x>157</x>
+        <y>69</y>
+        <width>157</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text" >
+        <string>~20% (Level L)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>~37% (Level M)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>~55% (Level Q)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>~65% (Level H)</string>
+       </property>
+      </item>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="grpMQR" >
+     <property name="geometry" >
+      <rect>
+       <x>105</x>
+       <y>42</y>
+       <width>328</width>
+       <height>102</height>
+      </rect>
+     </property>
+     <property name="title" >
+      <string>MicroQR Code</string>
+     </property>
+     <widget class="QRadioButton" name="radMQRAuto" >
+      <property name="geometry" >
+       <rect>
+        <x>9</x>
+        <y>21</y>
+        <width>135</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Automatic Resizing</string>
+      </property>
+      <property name="checked" >
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radMQRSize" >
+      <property name="geometry" >
+       <rect>
+        <x>10</x>
+        <y>44</y>
+        <width>134</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Adjust Size To:</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radMQRECC" >
+      <property name="geometry" >
+       <rect>
+        <x>10</x>
+        <y>67</y>
+        <width>141</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Add Error Correction:</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="cmbMQRSize" >
+      <property name="enabled" >
+       <bool>false</bool>
+      </property>
+      <property name="geometry" >
+       <rect>
+        <x>158</x>
+        <y>43</y>
+        <width>156</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text" >
+        <string>11 x 11 (Version M1)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>13 x 13 (Version M2)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>15 x 15 (Version M3)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>17 x 17 (Version M4)</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QComboBox" name="cmbMQRECC" >
+      <property name="enabled" >
+       <bool>false</bool>
+      </property>
+      <property name="geometry" >
+       <rect>
+        <x>157</x>
+        <y>69</y>
+        <width>157</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text" >
+        <string>~20% (Level L)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>~37% (Level M)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>~55% (Level Q)</string>
+       </property>
+      </item>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tabAppear" >
+    <property name="geometry" >
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>591</width>
+      <height>191</height>
+     </rect>
+    </property>
+    <attribute name="title" >
+     <string>Appearance</string>
+    </attribute>
+    <widget class="QGroupBox" name="groupAppear" >
+     <property name="geometry" >
+      <rect>
+       <x>10</x>
+       <y>6</y>
+       <width>572</width>
+       <height>92</height>
+      </rect>
+     </property>
+     <property name="title" >
+      <string>Appearance</string>
+     </property>
+     <widget class="QLabel" name="label_3" >
+      <property name="geometry" >
+       <rect>
+        <x>14</x>
+        <y>19</y>
+        <width>91</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Height:</string>
+      </property>
+      <property name="alignment" >
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="heightb" >
+      <property name="geometry" >
+       <rect>
+        <x>117</x>
+        <y>17</y>
+        <width>122</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="maximum" >
+       <number>300</number>
+      </property>
+      <property name="value" >
+       <number>50</number>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_8" >
+      <property name="geometry" >
+       <rect>
+        <x>-3</x>
+        <y>43</y>
+        <width>109</width>
+        <height>29</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Border width:</string>
+      </property>
+      <property name="alignment" >
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="bwidth" >
+      <property name="geometry" >
+       <rect>
+        <x>114</x>
+        <y>46</y>
+        <width>124</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="minimum" >
+       <number>0</number>
+      </property>
+      <property name="maximum" >
+       <number>16</number>
+      </property>
+      <property name="value" >
+       <number>0</number>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_9" >
+      <property name="geometry" >
+       <rect>
+        <x>268</x>
+        <y>12</y>
+        <width>115</width>
+        <height>29</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Border type:</string>
+      </property>
+      <property name="alignment" >
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="btype" >
+      <property name="geometry" >
+       <rect>
+        <x>429</x>
+        <y>18</y>
+        <width>132</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text" >
+        <string>No border</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>Bind</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>Box</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QPushButton" name="fgcolor" >
+      <property name="geometry" >
+       <rect>
+        <x>273</x>
+        <y>51</y>
+        <width>145</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Foreground Colour</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="bgcolor" >
+      <property name="geometry" >
+       <rect>
+        <x>427</x>
+        <y>51</y>
+        <width>133</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Backgound Colour</string>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QWidget" name="layoutWidget" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>2</width>
+     <height>2</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout" />
+  </widget>
+  <widget class="QGroupBox" name="groupPreview" >
+   <property name="geometry" >
+    <rect>
+     <x>15</x>
+     <y>5</y>
+     <width>593</width>
+     <height>284</height>
+    </rect>
+   </property>
+   <property name="title" >
+    <string>Preview</string>
+   </property>
+   <widget class="QGraphicsView" name="view" >
+    <property name="geometry" >
+     <rect>
+      <x>9</x>
+      <y>21</y>
+      <width>575</width>
+      <height>251</height>
+     </rect>
+    </property>
+   </widget>
+  </widget>
  </widget>
+ <tabstops>
+  <tabstop>bstyle</tabstop>
+  <tabstop>tabMain</tabstop>
+  <tabstop>txtData</tabstop>
+  <tabstop>chkComposite</tabstop>
+  <tabstop>cmbCompType</tabstop>
+  <tabstop>txtComposite</tabstop>
+  <tabstop>radC128Stand</tabstop>
+  <tabstop>radC128CSup</tabstop>
+  <tabstop>radC128EAN</tabstop>
+  <tabstop>radC128HIBC</tabstop>
+  <tabstop>heightb</tabstop>
+  <tabstop>btype</tabstop>
+  <tabstop>bwidth</tabstop>
+  <tabstop>fgcolor</tabstop>
+  <tabstop>bgcolor</tabstop>
+  <tabstop>view</tabstop>
+ </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>pushButton_2</sender>
-   <signal>clicked()</signal>
-   <receiver>mainWindow</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>585</x>
-     <y>544</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>554</x>
-     <y>310</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

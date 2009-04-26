@@ -72,14 +72,7 @@ public:
 	int mode();
 	void setMode(int securityLevel);
 
-	int msiExtraSymbology();
-	void setMsiExtraSymbology(int msiSymbologyNumber);
-
-	int  code39ExtraSymbology();
-	void setCode39ExtraSymbology(int m_code39SymbologyNumber);
-
-	int excode39ExtraSymbology();
-	void setExcode39ExtraSymbology(int excode39SymbologyNumber);
+	void setInputMode(int input_mode);
 
 	void render(QPainter & painter, const QRectF & paintRect, AspectRatioMode mode=IgnoreAspectRatio);
 
@@ -98,9 +91,7 @@ private:
 	int m_width;
 	int m_securityLevel;
 	int m_pdf417CodeWords;
-	int m_msiSymbologyNumber;
-	int m_code39SymbologyNumber;
-	int m_excode39SymbologyNumber;
+	int m_input_mode;
 	QColor m_fgColor;
 	QColor m_bgColor;
 	QString m_lastError;
