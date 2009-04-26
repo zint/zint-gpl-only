@@ -430,7 +430,7 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source)
 	if((symbol->symbology >= 112) && (symbol->symbology <= 127)) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128 [Z10]"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
 	/* Everything from 128 up is Zint-specific */
 	if(symbol->symbology >= 140) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128 [Z11]"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
-
+	
 	if(error_number > 4) {
 		error_tag(symbol->errtxt, error_number);
 		return error_number;

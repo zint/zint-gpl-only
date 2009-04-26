@@ -672,7 +672,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 	
 	ecc_level = symbol->option_1;
 	
-	if(ecc_level == -1) {
+	if((ecc_level == -1) || (ecc_level == 0)) {
 		ecc_level = 2;
 	}
 	
@@ -685,6 +685,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 			/* Decide what size symbol to use - the smallest that fits the data */
 			compact = 0; /* 1 = Aztec Compact, 0 = Normal Aztec */
 			layers = 0;
+
 			switch(ecc_level) {
 				/* For each level of error correction work out the smallest symbol which
 				the data will fit in */

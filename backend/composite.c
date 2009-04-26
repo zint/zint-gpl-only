@@ -1761,6 +1761,8 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 		return error_number;
 	}
 	
+	if(cc_mode < 1 || cc_mode > 3) { cc_mode = 1; }
+
 	if(cc_mode == 1) {
 		i = cc_binary_string(symbol, reduced, binary_string, cc_mode, &cc_width, &ecc_level, linear->width);
 		if (i == ERROR_TOO_LONG) {
