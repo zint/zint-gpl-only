@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 #include "qzint.h"
+#include <stdio.h>
 
 namespace Zint
 {
@@ -193,6 +194,9 @@ void QZint::setMode(int securityLevel)
 void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode mode)
 {
 	encode();
+	bool textdone;
+	int comp_offset = 0, xoffset = 0, j;
+	QString caption = (const char*)m_zintSymbol->text;
 
 	if (m_lastError.length())
 	{
@@ -234,9 +238,16 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 
 	qreal xsf=1;
 	qreal ysf=1;
+	qreal textoffset = 0;
 
 	gwidth+=((m_border==BOX)?m_boderWidth*2:0);
 	gheight+=((m_border!=NO_BORDER)?m_boderWidth*2:0);
+	if(QString((const char*)m_zintSymbol->text).isEmpty() == false) {
+		textoffset = 9;
+		gheight += textoffset;
+	} else {
+		textoffset = 0;
+	}
 	gwidth+=m_zintSymbol->whitespace_width*2;
 	switch(mode)
 	{
@@ -379,6 +390,96 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 				}
 			y+=m_zintSymbol->row_height[row];
 		}
+	}
+
+	textdone = false;
+	while(m_zintSymbol->encoded_data[m_zintSymbol->rows - 1][comp_offset] != '1') {
+		comp_offset++;
+	}
+	xoffset += comp_offset;
+	
+	painter.setFont(QFont("Ariel", 4));
+	if(((m_zintSymbol->symbology == BARCODE_EANX) || (m_zintSymbol->symbology == BARCODE_EANX_CC)) ||
+		(m_zintSymbol->symbology == BARCODE_ISBNX)) {
+		switch(caption.size()) {
+			case 8:
+			case 11:
+			case 14:
+				painter.fillRect(0 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+				painter.fillRect(2 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+				painter.fillRect(32 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+				painter.fillRect(34 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+				painter.fillRect(64 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+				painter.fillRect(66 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+				textdone = true;
+				break;
+			case 13:
+			case 16:
+			case 19:
+				painter.fillRect(0 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+				painter.fillRect(2 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+				painter.fillRect(46 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+				painter.fillRect(48 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+				painter.fillRect(92 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+				painter.fillRect(94 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+				textdone = true;
+				break;
+		}
+	}
+	
+	if((m_zintSymbol->symbology == BARCODE_UPCA) || (m_zintSymbol->symbology == BARCODE_UPCA_CC)) {
+		int block_width;
+		bool latch = true;
+		
+		j = 0 + comp_offset;
+		do {
+			block_width = 0;
+			do {
+				block_width++;
+			} while (m_zintSymbol->encoded_data[m_zintSymbol->rows - 1][j + block_width] == m_zintSymbol->encoded_data[m_zintSymbol->rows - 1][j]);
+			if(latch == true) {
+				/* a bar */
+				painter.fillRect(j + xoffset - comp_offset,m_zintSymbol->height,block_width,5,QBrush(m_fgColor));
+				latch = false;
+			} else {
+				/* a space */
+				latch = true;
+			}
+			j += block_width;
+		} while (j < 11 + comp_offset);
+		painter.fillRect(46 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+		painter.fillRect(48 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+		latch = true;
+		j = 85 + comp_offset;
+		do {
+			block_width = 0;
+			do {
+				block_width++;
+			} while (m_zintSymbol->encoded_data[m_zintSymbol->rows - 1][j + block_width] == m_zintSymbol->encoded_data[m_zintSymbol->rows - 1][j]);
+			if(latch == true) {
+				/* a bar */
+				painter.fillRect(j + xoffset - comp_offset,m_zintSymbol->height,block_width,5,QBrush(m_fgColor));
+				latch = false;
+			} else {
+				/* a space */
+				latch = true;
+			}
+			j += block_width;
+		} while (j < 96 + comp_offset);
+		textdone = true;
+	}
+	
+	if((m_zintSymbol->symbology == BARCODE_UPCE) || (m_zintSymbol->symbology == BARCODE_UPCE_CC)) {
+		painter.fillRect(0 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+		painter.fillRect(2 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+		painter.fillRect(46 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+		painter.fillRect(48 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+		painter.fillRect(50 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+		textdone = true;
+	}
+	
+	if((caption.isEmpty() == false) && (textdone == false)) {
+		painter.drawText(0, m_zintSymbol->height + 3, m_zintSymbol->width, 7,Qt::AlignCenter, caption);
 	}
 	painter.restore();
 }
