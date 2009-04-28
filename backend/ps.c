@@ -58,7 +58,7 @@ int ps_plot(struct zint_symbol *symbol)
 		feps = fopen(symbol->outfile, "w");
 	}
 	if(feps == NULL) {
-		strcpy(symbol->errtxt, "Could not open output file [C1]");
+		strcpy(symbol->errtxt, "Could not open output file");
 		return ERROR_FILE_ACCESS;
 	}
 	
@@ -67,21 +67,21 @@ int ps_plot(struct zint_symbol *symbol)
 	to_upper((unsigned char*)symbol->bgcolour);
 	
 	if(strlen(symbol->fgcolour) != 6) {
-		strcpy(symbol->errtxt, "Malformed foreground colour target [C2]");
+		strcpy(symbol->errtxt, "Malformed foreground colour target");
 		return ERROR_INVALID_OPTION;
 	}
 	if(strlen(symbol->bgcolour) != 6) {
-		strcpy(symbol->errtxt, "Malformed background colour target [C3]");
+		strcpy(symbol->errtxt, "Malformed background colour target");
 		return ERROR_INVALID_OPTION;
 	}
 	error_number = is_sane(SSET, (unsigned char*)symbol->fgcolour);
 	if (error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Malformed foreground colour target [C4]");
+		strcpy(symbol->errtxt, "Malformed foreground colour target");
 		return ERROR_INVALID_OPTION;
 	}
 	error_number = is_sane(SSET, (unsigned char*)symbol->bgcolour);
 	if (error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Malformed background colour target [C5]");
+		strcpy(symbol->errtxt, "Malformed background colour target");
 		return ERROR_INVALID_OPTION;
 	}
 	
@@ -121,7 +121,8 @@ int ps_plot(struct zint_symbol *symbol)
 	}
 
 	/* Certain symbols need whitespace otherwise characters get chopped off the sides */
-	if (((symbol->symbology == BARCODE_EANX) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_EANX_CC)) {
+	if ((((symbol->symbology == BARCODE_EANX) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_EANX_CC))
+		|| (symbol->symbology == BARCODE_ISBNX)) {
 		switch(ustrlen(symbol->text)) {
 			case 13: /* EAN 13 */
 			case 16:
@@ -324,7 +325,8 @@ int ps_plot(struct zint_symbol *symbol)
 
 	xoffset += comp_offset;
 
-	if (((symbol->symbology == BARCODE_EANX) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_EANX_CC)) {
+	if ((((symbol->symbology == BARCODE_EANX) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_EANX_CC)) ||
+		(symbol->symbology == BARCODE_ISBNX)) {
 		/* guard bar extensions and text formatting for EAN8 and EAN13 */
 		switch(ustrlen(symbol->text)) {
 			case 8: /* EAN-8 */
