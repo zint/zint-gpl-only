@@ -228,7 +228,7 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 	qreal gheight=m_zintSymbol->height;
 	if (m_zintSymbol->symbology == BARCODE_MAXICODE)
 	{
-		gheight*=(maxi_width+1);
+		gheight*=(maxi_width);
 		gwidth*=(maxi_width+1);
 	}
 
@@ -246,7 +246,7 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 			break;
 
 		case KeepAspectRatio:
-			if (paintRect.width()-gwidth<paintRect.height()-gheight)
+			if (paintRect.width()/gwidth<paintRect.height()/gheight)
 			{
 				ysf=xsf=(qreal)paintRect.width()/gwidth;
 				ytr+=(qreal)(paintRect.height()-gheight*ysf)/2;
