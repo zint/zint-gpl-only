@@ -223,10 +223,6 @@ p, li { white-space: pre-wrap; }
        </item>
       </layout>
      </widget>
-     <zorder>txtComposite</zorder>
-     <zorder>lblComposite</zorder>
-     <zorder>layoutWidget</zorder>
-     <zorder>grpMaxiCode</zorder>
     </widget>
     <widget class="QGroupBox" name="grpMaxiCode" >
      <property name="geometry" >
@@ -287,6 +283,9 @@ p, li { white-space: pre-wrap; }
       </item>
      </widget>
      <widget class="QLabel" name="lblMaxiPrimary" >
+      <property name="enabled" >
+       <bool>false</bool>
+      </property>
       <property name="geometry" >
        <rect>
         <x>9</x>
@@ -300,6 +299,9 @@ p, li { white-space: pre-wrap; }
       </property>
      </widget>
      <widget class="QLineEdit" name="txtMaxiPrimary" >
+      <property name="enabled" >
+       <bool>false</bool>
+      </property>
       <property name="geometry" >
        <rect>
         <x>107</x>
@@ -307,6 +309,9 @@ p, li { white-space: pre-wrap; }
         <width>457</width>
         <height>22</height>
        </rect>
+      </property>
+      <property name="text" >
+       <string>Primary Data Here!</string>
       </property>
      </widget>
     </widget>
