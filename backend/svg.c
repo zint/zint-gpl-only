@@ -117,7 +117,8 @@ int svg_plot(struct zint_symbol *symbol)
 	}
 
 	/* Certain symbols need whitespace otherwise characters get chopped off the sides */
-	if (((symbol->symbology == BARCODE_EANX) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_EANX_CC)) {
+	if ((((symbol->symbology == BARCODE_EANX) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_EANX_CC))
+		|| (symbol->symbology == BARCODE_ISBNX)) {
 		switch(ustrlen(symbol->text)) {
 			case 13: /* EAN 13 */
 			case 16:
@@ -307,7 +308,8 @@ int svg_plot(struct zint_symbol *symbol)
 	xoffset += comp_offset;
 	row_posn = (row_posn + large_bar_height) * scaler;
 
-	if (((symbol->symbology == BARCODE_EANX) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_EANX_CC)) {
+	if ((((symbol->symbology == BARCODE_EANX) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_EANX_CC)) ||
+		(symbol->symbology == BARCODE_ISBNX)) {
 		/* guard bar extensions and text formatting for EAN8 and EAN13 */
 		switch(ustrlen(symbol->text)) {
 			case 8: /* EAN-8 */

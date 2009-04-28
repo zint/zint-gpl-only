@@ -84,21 +84,21 @@ int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, c
 	to_upper((unsigned char*)symbol->bgcolour);
 	
 	if(strlen(symbol->fgcolour) != 6) {
-		strcpy(symbol->errtxt, "Malformed foreground colour target [B1]");
+		strcpy(symbol->errtxt, "Malformed foreground colour target");
 		return ERROR_INVALID_OPTION;
 	}
 	if(strlen(symbol->bgcolour) != 6) {
-		strcpy(symbol->errtxt, "Malformed background colour target [B2]");
+		strcpy(symbol->errtxt, "Malformed background colour target");
 		return ERROR_INVALID_OPTION;
 	}
 	errno = is_sane(SSET, (unsigned char*)symbol->fgcolour);
 	if (errno == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Malformed foreground colour target [B3]");
+		strcpy(symbol->errtxt, "Malformed foreground colour target");
 		return ERROR_INVALID_OPTION;
 	}
 	errno = is_sane(SSET, (unsigned char*)symbol->bgcolour);
 	if (errno == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Malformed background colour target [B4]");
+		strcpy(symbol->errtxt, "Malformed background colour target");
 		return ERROR_INVALID_OPTION;
 	}
 	
@@ -114,7 +114,7 @@ int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, c
 		graphic->outfile = stdout;
 	} else {
 		if (!(graphic->outfile = fopen(symbol->outfile, "wb"))) {
-			strcpy(symbol->errtxt, "Can't open output file [B5]");
+			strcpy(symbol->errtxt, "Can't open output file");
 			return ERROR_FILE_ACCESS;
 		}
 	}
@@ -122,21 +122,21 @@ int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, c
 	/* Set up error handling routine as proc() above */
 	png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, graphic, writepng_error_handler, NULL);
 	if (!png_ptr) {
-		strcpy(symbol->errtxt, "Out of memory [B6]");
+		strcpy(symbol->errtxt, "Out of memory");
 		return ERROR_MEMORY;
 	}
 
 	info_ptr = png_create_info_struct(png_ptr);
 	if (!info_ptr) {
 		png_destroy_write_struct(&png_ptr, NULL);
-		strcpy(symbol->errtxt, "Out of memory [B7]");
+		strcpy(symbol->errtxt, "Out of memory");
 		return ERROR_MEMORY;
 	}
 
 	/* catch jumping here */
 	if (setjmp(graphic->jmpbuf)) {
 		png_destroy_write_struct(&png_ptr, &info_ptr);
-		strcpy(symbol->errtxt, "libpng error occurred [B8]");
+		strcpy(symbol->errtxt, "libpng error occurred");
 		return ERROR_MEMORY;
 	}
 
@@ -382,7 +382,7 @@ int maxi_png_plot(struct zint_symbol *symbol, int rotate_angle)
 	image_height = 300 + (2 * yoffset * scaler);
 	
 	if (!(pixelbuf = (char *) malloc(image_width * image_height))) {
-		printf("Insifficient memory for pixel buffer [B9]");
+		printf("Insifficient memory for pixel buffer");
 		return ERROR_ENCODING_PROBLEM;
 	} else {
 		for(i = 0; i < (image_width * image_height); i++) {
@@ -434,6 +434,7 @@ void to_latin1(unsigned char source[], unsigned char preprocessed[])
 	
 	j = 0;
 	i = 0;
+	next = 0;
 	do {
 		if(source[i] < 128) {
 			preprocessed[j] = source[i];
@@ -505,7 +506,8 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 	}
 
 	/* Certain symbols need whitespace otherwise characters get chopped off the sides */
-	if (((symbol->symbology == BARCODE_EANX) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_EANX_CC)) {
+	if ((((symbol->symbology == BARCODE_EANX) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_EANX_CC))
+		|| (symbol->symbology == BARCODE_ISBNX)) {
 		switch(ustrlen(local_text)) {
 			case 13: /* EAN 13 */
 			case 16:
@@ -559,7 +561,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 	image_height = scaler * (symbol->height + textoffset + yoffset + yoffset);
 	
 	if (!(pixelbuf = (char *) malloc(image_width * image_height))) {
-		printf("Insifficient memory for pixel buffer [BA]");
+		printf("Insifficient memory for pixel buffer");
 		return ERROR_ENCODING_PROBLEM;
 	} else {
 		for(i = 0; i < (image_width * image_height); i++) {
@@ -627,7 +629,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 	
 	xoffset += comp_offset;
 
-	if (((symbol->symbology == BARCODE_EANX) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_EANX_CC)) {
+	if ((((symbol->symbology == BARCODE_EANX) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_EANX_CC)) || (symbol->symbology == BARCODE_ISBNX)) {
 		/* guard bar extensions and text formatting for EAN8 and EAN13 */
 		switch(ustrlen(local_text)) {
 			case 8: /* EAN-8 */
