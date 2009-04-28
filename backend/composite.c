@@ -827,7 +827,7 @@ int cc_binary_string(struct zint_symbol *symbol, char source[], char binary_stri
 			if (!(((ninety[i] >= '0') && (ninety[i] <= '9')) || ((ninety[i] >= 'A') && (ninety[i] <= 'Z')))) {
 				if((ninety[i] != '*') && (ninety[i] != ',') && (ninety[i] != '-') && (ninety[i] != '.') && (ninety[i] != '/')) {
 					/* An Invalid AI 90 character */
-					strcpy(symbol->errtxt, "Invalid AI 90 data [A1]");
+					strcpy(symbol->errtxt, "Invalid AI 90 data");
 					return ERROR_INVALID_DATA;
 				}
 			}
@@ -1152,7 +1152,7 @@ int cc_binary_string(struct zint_symbol *symbol, char source[], char binary_stri
 	
 	if(latch == 1) {
 		/* Invalid characters in input data */
-		strcpy(symbol->errtxt, "Invalid characters in input data [A2]");
+		strcpy(symbol->errtxt, "Invalid characters in input data");
 		return ERROR_INVALID_DATA;
 	}
 
@@ -1511,7 +1511,7 @@ int cc_binary_string(struct zint_symbol *symbol, char source[], char binary_stri
 	}
 	
 	if(strlen(binary_string) > 11805) { /* (2361 * 5) */
-		strcpy(symbol->errtxt, "Input too long [A3]");
+		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	
@@ -1683,12 +1683,12 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 	separator_row = 0;
 	
 	if(strlen(symbol->primary) == 0) {
-		strcpy(symbol->errtxt, "No primary (linear) message in 2D composite [A4]");
+		strcpy(symbol->errtxt, "No primary (linear) message in 2D composite");
 		return ERROR_INVALID_OPTION;
 	}
 	
 	if(ustrlen(source) > 2990) {
-		strcpy(symbol->errtxt, "2D component input data too long [A5]");
+		strcpy(symbol->errtxt, "2D component input data too long");
 		return ERROR_TOO_LONG;
 	}
 	
@@ -1701,7 +1701,7 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 	
 	if((cc_mode == 3) && (symbol->symbology != BARCODE_EAN128_CC)) {
 		/* CC-C can only be used with a GS1-128 linear part */
-		strcpy(symbol->errtxt, "Invalid mode (CC-C only valid with GS1-128 linear component) [A9]");
+		strcpy(symbol->errtxt, "Invalid mode (CC-C only valid with GS1-128 linear component)");
 		return ERROR_INVALID_OPTION;
 	}
 	
@@ -1727,7 +1727,13 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 		case BARCODE_RSS14_OMNI_CC: error_number = rss14(linear, (unsigned char *)symbol->primary); break;
 		case BARCODE_RSS_EXPSTACK_CC: error_number = rssexpanded(linear, (unsigned char *)symbol->primary); break;
 	}
-	
+
+	if(error_number != 0) {
+		strcpy(symbol->errtxt, linear->errtxt);
+		concat(symbol->errtxt, " in linear component");
+		return error_number;
+	}
+
 	switch(symbol->symbology) {
 		/* Determine width of 2D component according to ISO/IEC 24723 Table 1 */
 		case BARCODE_EANX_CC:
@@ -1756,10 +1762,6 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	strcpy(binary_string, "");
-	
-	if(error_number != 0) {
-		return error_number;
-	}
 	
 	if(cc_mode < 1 || cc_mode > 3) { cc_mode = 1; }
 
