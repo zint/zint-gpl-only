@@ -195,7 +195,7 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 {
 	encode();
 	bool textdone;
-	int comp_offset = 0, xoffset = 0, j;
+	int comp_offset = 0, xoffset = 0, j, main_width = 0, addon_text_height = 0;
 	QString caption = (const char*)m_zintSymbol->text;
 
 	if (m_lastError.length())
@@ -307,6 +307,43 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 			break;;
 	}
 
+	while(m_zintSymbol->encoded_data[m_zintSymbol->rows - 1][comp_offset] != '1') {
+		comp_offset++;
+	}
+	xoffset += comp_offset;
+	
+	main_width = m_zintSymbol->width;
+	if ((((m_zintSymbol->symbology == BARCODE_EANX) && (m_zintSymbol->rows == 1)) || (m_zintSymbol->symbology == BARCODE_EANX_CC))
+		|| (m_zintSymbol->symbology == BARCODE_ISBNX)) {
+		switch(caption.size()) {
+			case 13: /* EAN 13 */
+			case 16:
+			case 19:
+				if(m_zintSymbol->whitespace_width == 0) {
+					m_zintSymbol->whitespace_width = 10;
+				}
+				main_width = 96 + comp_offset;
+				break;
+			default:
+				main_width = 68 + comp_offset;
+				break;
+		}
+	}
+	
+	if (((m_zintSymbol->symbology == BARCODE_UPCA) && (m_zintSymbol->rows == 1)) || (m_zintSymbol->symbology == BARCODE_UPCA_CC)) {
+		if(m_zintSymbol->whitespace_width == 0) {
+			m_zintSymbol->whitespace_width = 10;
+			main_width = 96 + comp_offset;
+		}
+	}
+	
+	if (((m_zintSymbol->symbology == BARCODE_UPCE) && (m_zintSymbol->rows == 1)) || (m_zintSymbol->symbology == BARCODE_UPCE_CC)) {
+		if(m_zintSymbol->whitespace_width == 0) {
+			m_zintSymbol->whitespace_width = 10;
+			main_width = 51 + comp_offset;
+		}
+	}
+	
 	p.setWidth(1);
 	painter.setPen(p);
 
@@ -386,17 +423,18 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 							color=m_fgColor;
 							break;
 					}
-					painter.fillRect(i,y,linewidth,m_zintSymbol->row_height[row],QBrush(color));
+					if(!((i > main_width) && (row == m_zintSymbol->rows - 1)))  {
+						painter.fillRect(i,y,linewidth,m_zintSymbol->row_height[row],QBrush(color));
+					} else {
+						painter.fillRect(i,y + 8,linewidth,m_zintSymbol->row_height[row] - 3,QBrush(color));
+						addon_text_height = y;
+					}
 				}
 			y+=m_zintSymbol->row_height[row];
 		}
 	}
 
 	textdone = false;
-	while(m_zintSymbol->encoded_data[m_zintSymbol->rows - 1][comp_offset] != '1') {
-		comp_offset++;
-	}
-	xoffset += comp_offset;
 	
 	painter.setFont(QFont("Ariel", 4));
 	if(((m_zintSymbol->symbology == BARCODE_EANX) || (m_zintSymbol->symbology == BARCODE_EANX_CC)) ||
@@ -411,6 +449,12 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 				painter.fillRect(34 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
 				painter.fillRect(64 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
 				painter.fillRect(66 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+				painter.setFont(QFont("Ariel", 6));
+				painter.drawText(3 + xoffset, m_zintSymbol->height, 29, 9,Qt::AlignCenter, caption.mid(0,4));
+				painter.drawText(35 + xoffset, m_zintSymbol->height, 29, 9,Qt::AlignCenter, caption.mid(4,4));
+				if(caption.size() == 11) { /* EAN-2 */ painter.drawText(76 + xoffset, addon_text_height, 20, 9,Qt::AlignCenter, caption.mid(9,2)); };
+				if(caption.size() == 14) { /* EAN-5 */ painter.drawText(76 + xoffset, addon_text_height, 47, 9,Qt::AlignCenter, caption.mid(9,5)); };
+				painter.setFont(QFont("Ariel", 4));
 				textdone = true;
 				break;
 			case 13:
@@ -422,8 +466,21 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 				painter.fillRect(48 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
 				painter.fillRect(92 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
 				painter.fillRect(94 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+				painter.setFont(QFont("Ariel", 6));
+				painter.drawText(xoffset - 7, m_zintSymbol->height, 7, 9,Qt::AlignCenter, caption.mid(0,1));
+				painter.drawText(3 + xoffset, m_zintSymbol->height, 43, 9,Qt::AlignCenter, caption.mid(1,6));
+				painter.drawText(49 + xoffset, m_zintSymbol->height, 43, 9,Qt::AlignCenter, caption.mid(7,6));
+				if(caption.size() == 16) { /* EAN-2 */ painter.drawText(104 + xoffset, addon_text_height, 20, 9,Qt::AlignCenter, caption.mid(14,2)); };
+				if(caption.size() == 19) { /* EAN-5 */ painter.drawText(104 + xoffset, addon_text_height, 47, 9,Qt::AlignCenter, caption.mid(14,5)); };
+				painter.setFont(QFont("Ariel", 4));
 				textdone = true;
 				break;
+		}
+		if(textdone == false) {
+			painter.setFont(QFont("Ariel", 6));
+			painter.drawText(0, m_zintSymbol->height, m_zintSymbol->width, 9,Qt::AlignCenter, caption);
+			painter.setFont(QFont("Ariel", 4));
+			textdone = true;
 		}
 	}
 	
@@ -466,6 +523,14 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 			}
 			j += block_width;
 		} while (j < 96 + comp_offset);
+		painter.drawText(xoffset - 7, m_zintSymbol->height, 7, 7,Qt::AlignCenter, caption.mid(0,1));
+		painter.drawText(96 + xoffset, m_zintSymbol->height, 7, 7,Qt::AlignCenter, caption.mid(11,1));
+		painter.setFont(QFont("Ariel", 6));
+		painter.drawText(11 + xoffset, m_zintSymbol->height, 35, 9,Qt::AlignCenter, caption.mid(1,5));
+		painter.drawText(49 + xoffset, m_zintSymbol->height, 35, 9,Qt::AlignCenter, caption.mid(6,5));
+		if(caption.size() == 15) { /* EAN-2 */ painter.drawText(104 + xoffset, addon_text_height, 20, 9,Qt::AlignCenter, caption.mid(13,2)); };
+		if(caption.size() == 18) { /* EAN-5 */ painter.drawText(104 + xoffset, addon_text_height, 47, 9,Qt::AlignCenter, caption.mid(13,5)); };
+		painter.setFont(QFont("Ariel", 4));
 		textdone = true;
 	}
 	
@@ -475,11 +540,18 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 		painter.fillRect(46 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
 		painter.fillRect(48 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
 		painter.fillRect(50 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+		painter.drawText(xoffset - 7, m_zintSymbol->height, 7, 7,Qt::AlignCenter, caption.mid(0,1));
+		painter.drawText(51 + xoffset, m_zintSymbol->height, 7, 7,Qt::AlignCenter, caption.mid(7,1));
+		painter.setFont(QFont("Ariel", 6));
+		painter.drawText(3 + xoffset, m_zintSymbol->height, 43, 9,Qt::AlignCenter, caption.mid(1,6));
+		if(caption.size() == 11) { /* EAN-2 */ painter.drawText(60 + xoffset, addon_text_height, 20, 9,Qt::AlignCenter, caption.mid(9,2)); };
+		if(caption.size() == 14) { /* EAN-2 */ painter.drawText(60 + xoffset, addon_text_height, 47, 9,Qt::AlignCenter, caption.mid(9,5)); };
+		painter.setFont(QFont("Ariel", 4));
 		textdone = true;
 	}
 	
 	if((caption.isEmpty() == false) && (textdone == false)) {
-		painter.drawText(0, m_zintSymbol->height + 3, m_zintSymbol->width, 7,Qt::AlignCenter, caption);
+		painter.drawText(0, m_zintSymbol->height, m_zintSymbol->width, 7,Qt::AlignCenter, caption);
 	}
 	painter.restore();
 }
