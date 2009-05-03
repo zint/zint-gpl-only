@@ -28,7 +28,7 @@ QZint::QZint()
 	m_symbol=BARCODE_CODE128;
 	m_height=50;
 	m_border=NO_BORDER;
-	m_boderWidth=1;
+	m_borderWidth=1;
 	m_securityLevel=-1;
 	m_pdf417CodeWords=928;
 	m_fgColor=Qt::black;
@@ -54,9 +54,8 @@ void QZint::encode()
 	m_zintSymbol->output_options=m_border;
 	m_zintSymbol->symbology=m_symbol;
 	m_zintSymbol->height=m_height;
-	m_zintSymbol->output_options=0;
-	m_zintSymbol->whitespace_width=0;
-	m_zintSymbol->border_width=m_boderWidth;
+	m_zintSymbol->whitespace_width=m_whitespace;
+	m_zintSymbol->border_width=m_borderWidth;
 	m_zintSymbol->option_1=m_securityLevel;
 	m_zintSymbol->input_mode = m_input_mode;
 	m_zintSymbol->option_2=m_width;
@@ -70,6 +69,14 @@ void QZint::encode()
 
 	if (m_zintSymbol->symbology == BARCODE_MAXICODE)
 		m_zintSymbol->height = 33;
+	
+	switch(m_zintSymbol->output_options) {
+		case 0: m_border = NO_BORDER; break;
+		case 2: m_border = BIND; break;
+		case 4: m_border = BOX; break;
+	}
+	m_borderWidth = (BorderType)m_zintSymbol->border_width;
+	m_whitespace = m_zintSymbol->whitespace_width;
 }
 
 int  QZint::symbol()
@@ -107,7 +114,7 @@ void QZint::setPrimaryMessage(const QString & primaryMessage)
 int QZint::height()
 {
 	encode();
-	return (m_zintSymbol->height+(m_border!=NO_BORDER)?m_boderWidth*2:0)*(m_zintSymbol->symbology == BARCODE_MAXICODE?(maxi_width+1):1);
+	return (m_zintSymbol->height+(m_border!=NO_BORDER)?m_borderWidth*2:0)*(m_zintSymbol->symbology == BARCODE_MAXICODE?(maxi_width+1):1);
 }
 
 void QZint::setHeight(int height)
@@ -123,7 +130,7 @@ void QZint::setWidth(int width)
 int QZint::width()
 {
 	encode();
-	return (m_zintSymbol->width+(m_border==BOX)?m_boderWidth*2:0)*(m_zintSymbol->symbology == BARCODE_MAXICODE?(maxi_width+1):1);
+	return (m_zintSymbol->width+(m_border==BOX)?m_borderWidth*2:0)*(m_zintSymbol->symbology == BARCODE_MAXICODE?(maxi_width+1):1);
 }
 
 QColor QZint::fgColor()
@@ -155,13 +162,18 @@ void QZint::setBorderType(BorderType border)
 
 int QZint::borderWidth()
 {
-	return m_boderWidth;
+	return m_borderWidth;
 }
 void QZint::setBorderWidth(int boderWidth)
 {
 	if (boderWidth<1 || boderWidth>16)
 		boderWidth=1;
-	m_boderWidth=boderWidth;
+	m_borderWidth=boderWidth;
+}
+
+void QZint::setWhitespace(int whitespace)
+{
+	m_whitespace = whitespace;
 }
 
 int QZint::pdf417CodeWords()
@@ -195,7 +207,8 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 {
 	encode();
 	bool textdone;
-	int comp_offset = 0, xoffset = 0, j, main_width = 0, addon_text_height = 0;
+	int comp_offset = 0, xoffset = m_whitespace, j, main_width = 0, addon_text_height = 0;
+	int yoffset = 0;
 	QString caption = (const char*)m_zintSymbol->text;
 
 	if (m_lastError.length())
@@ -240,8 +253,8 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 	qreal ysf=1;
 	qreal textoffset = 0;
 
-	gwidth+=((m_border==BOX)?m_boderWidth*2:0);
-	gheight+=((m_border!=NO_BORDER)?m_boderWidth*2:0);
+	gwidth+=((m_border==BOX)?m_borderWidth*2:0);
+	gheight+=((m_border!=NO_BORDER)?m_borderWidth*2:0);
 	if(QString((const char*)m_zintSymbol->text).isEmpty() == false) {
 		textoffset = 9;
 		gheight += textoffset;
@@ -282,36 +295,41 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 
 	QPen p;
 	p.setColor(m_fgColor);
-	p.setWidth(m_boderWidth);
+	p.setWidth(m_borderWidth);
 	painter.setPen(p);
 
 	QPainterPath pt;
-	switch(m_border)
-	{
-		case BOX:
-			painter.drawLine(m_boderWidth/2,m_boderWidth/2, gwidth-m_boderWidth/2, m_boderWidth/2);
-			painter.drawLine(gwidth-m_boderWidth/2, m_boderWidth/2, gwidth-m_boderWidth/2, gheight-m_boderWidth/2);
-			painter.drawLine(m_boderWidth/2, gheight-m_boderWidth/2, gwidth-m_boderWidth/2, gheight-m_boderWidth/2);
-			painter.drawLine(m_boderWidth/2, gheight-m_boderWidth/2, m_boderWidth/2,m_boderWidth/2);
-			painter.translate(m_boderWidth+m_zintSymbol->whitespace_width,m_boderWidth);
-			break;
-
-		case BIND:
-			painter.drawLine(m_boderWidth/2,m_boderWidth/2,gwidth-m_boderWidth/2, m_boderWidth/2);
-			painter.drawLine(m_boderWidth/2,gheight-m_boderWidth/2,gwidth-m_boderWidth/2, gheight-m_boderWidth/2);
-			painter.translate(m_zintSymbol->whitespace_width,m_boderWidth);
-			break;
-
-		default:
-			painter.translate(m_zintSymbol->whitespace_width,0);
-			break;;
+	if(m_zintSymbol->symbology != BARCODE_MAXICODE) {
+		/* Draw boundary bars or boxes around the symbol */
+		switch(m_border)
+		{
+			case BOX:
+				painter.fillRect(0,m_borderWidth,m_borderWidth,m_zintSymbol->height,QBrush(m_fgColor));
+				painter.fillRect(m_zintSymbol->width + xoffset + xoffset + m_borderWidth,m_borderWidth,m_borderWidth,m_zintSymbol->height,QBrush(m_fgColor));
+				painter.fillRect(0,0,m_zintSymbol->width + xoffset + xoffset + m_borderWidth + m_borderWidth,m_borderWidth,QBrush(m_fgColor));
+				painter.fillRect(0,m_zintSymbol->height + m_borderWidth,m_zintSymbol->width + xoffset + xoffset + m_borderWidth + m_borderWidth, m_borderWidth,QBrush(m_fgColor));
+				painter.translate(m_borderWidth+m_zintSymbol->whitespace_width,m_borderWidth);
+				yoffset = m_borderWidth;
+				break;
+			case BIND:
+				painter.fillRect(0,0,m_zintSymbol->width + xoffset + xoffset,m_borderWidth,QBrush(m_fgColor));
+				painter.fillRect(0,m_zintSymbol->height + m_borderWidth,m_zintSymbol->width + xoffset + xoffset, m_borderWidth,QBrush(m_fgColor));
+				painter.translate(m_zintSymbol->whitespace_width,m_borderWidth);
+				yoffset = m_borderWidth;
+				break;
+	
+			default:
+				painter.translate(m_zintSymbol->whitespace_width,0);
+				break;;
+		}
 	}
 
 	while(m_zintSymbol->encoded_data[m_zintSymbol->rows - 1][comp_offset] != '1') {
 		comp_offset++;
 	}
-	xoffset += comp_offset;
+	xoffset = comp_offset;
 	
+	/* Set up some values for displaying EAN and UPC symbols correctly */
 	main_width = m_zintSymbol->width;
 	if ((((m_zintSymbol->symbology == BARCODE_EANX) && (m_zintSymbol->rows == 1)) || (m_zintSymbol->symbology == BARCODE_EANX_CC))
 		|| (m_zintSymbol->symbology == BARCODE_ISBNX)) {
@@ -333,15 +351,15 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 	if (((m_zintSymbol->symbology == BARCODE_UPCA) && (m_zintSymbol->rows == 1)) || (m_zintSymbol->symbology == BARCODE_UPCA_CC)) {
 		if(m_zintSymbol->whitespace_width == 0) {
 			m_zintSymbol->whitespace_width = 10;
-			main_width = 96 + comp_offset;
 		}
+		main_width = 96 + comp_offset;
 	}
 	
 	if (((m_zintSymbol->symbology == BARCODE_UPCE) && (m_zintSymbol->rows == 1)) || (m_zintSymbol->symbology == BARCODE_UPCE_CC)) {
 		if(m_zintSymbol->whitespace_width == 0) {
 			m_zintSymbol->whitespace_width = 10;
-			main_width = 51 + comp_offset;
 		}
+		main_width = 51 + comp_offset;
 	}
 	
 	p.setWidth(1);
@@ -349,6 +367,7 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 
 	if (m_zintSymbol->symbology == BARCODE_MAXICODE)
 	{
+		/* Draw Maxicode with hexagons */
 		painter.save();
 		painter.setRenderHint(QPainter::Antialiasing);
 		for (int r=0;r<m_zintSymbol->rows;r++)
@@ -381,10 +400,11 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 	}
 	else
 	{
+		/* Draw all other symbols with rectangles */
 		int y=0;
 		for (int row=0;row<m_zintSymbol->rows;row++)
 		{
-			for (int i=0;i<m_zintSymbol->width;i++)
+			for (int i=0;i<m_zintSymbol->width;i++) {
 				if (m_zintSymbol->encoded_data[row][i]!='0')
 				{
 					int ed=m_zintSymbol->encoded_data[row][i];
@@ -430,6 +450,14 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 						addon_text_height = y;
 					}
 				}
+			}
+			/* Add row binding */
+			if((m_zintSymbol->symbology == BARCODE_CODE16K) && (row != 0)) {
+				painter.fillRect(0,y - 1,m_zintSymbol->width,2,QBrush(m_fgColor));
+			}
+			if(((m_zintSymbol->symbology == BARCODE_CODABLOCKF) || (m_zintSymbol->symbology == BARCODE_HIBC_BLOCKF)) && (row != 0)) {
+				painter.fillRect(11,y - 1,m_zintSymbol->width - 24,2,QBrush(m_fgColor));
+			}
 			y+=m_zintSymbol->row_height[row];
 		}
 	}
@@ -439,6 +467,7 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 	painter.setFont(QFont("Ariel", 4));
 	if(((m_zintSymbol->symbology == BARCODE_EANX) || (m_zintSymbol->symbology == BARCODE_EANX_CC)) ||
 		(m_zintSymbol->symbology == BARCODE_ISBNX)) {
+		/* Add bridge and format text for EAN */
 		switch(caption.size()) {
 			case 8:
 			case 11:
@@ -450,8 +479,8 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 				painter.fillRect(64 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
 				painter.fillRect(66 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
 				painter.setFont(QFont("Ariel", 6));
-				painter.drawText(3 + xoffset, m_zintSymbol->height, 29, 9,Qt::AlignCenter, caption.mid(0,4));
-				painter.drawText(35 + xoffset, m_zintSymbol->height, 29, 9,Qt::AlignCenter, caption.mid(4,4));
+				painter.drawText(3 + xoffset, m_zintSymbol->height + yoffset, 29, 9,Qt::AlignCenter, caption.mid(0,4));
+				painter.drawText(35 + xoffset, m_zintSymbol->height + yoffset, 29, 9,Qt::AlignCenter, caption.mid(4,4));
 				if(caption.size() == 11) { /* EAN-2 */ painter.drawText(76 + xoffset, addon_text_height, 20, 9,Qt::AlignCenter, caption.mid(9,2)); };
 				if(caption.size() == 14) { /* EAN-5 */ painter.drawText(76 + xoffset, addon_text_height, 47, 9,Qt::AlignCenter, caption.mid(9,5)); };
 				painter.setFont(QFont("Ariel", 4));
@@ -467,9 +496,9 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 				painter.fillRect(92 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
 				painter.fillRect(94 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
 				painter.setFont(QFont("Ariel", 6));
-				painter.drawText(xoffset - 7, m_zintSymbol->height, 7, 9,Qt::AlignCenter, caption.mid(0,1));
-				painter.drawText(3 + xoffset, m_zintSymbol->height, 43, 9,Qt::AlignCenter, caption.mid(1,6));
-				painter.drawText(49 + xoffset, m_zintSymbol->height, 43, 9,Qt::AlignCenter, caption.mid(7,6));
+				painter.drawText(xoffset - 7, m_zintSymbol->height + yoffset, 7, 9,Qt::AlignCenter, caption.mid(0,1));
+				painter.drawText(3 + xoffset, m_zintSymbol->height + yoffset, 43, 9,Qt::AlignCenter, caption.mid(1,6));
+				painter.drawText(49 + xoffset, m_zintSymbol->height + yoffset, 43, 9,Qt::AlignCenter, caption.mid(7,6));
 				if(caption.size() == 16) { /* EAN-2 */ painter.drawText(104 + xoffset, addon_text_height, 20, 9,Qt::AlignCenter, caption.mid(14,2)); };
 				if(caption.size() == 19) { /* EAN-5 */ painter.drawText(104 + xoffset, addon_text_height, 47, 9,Qt::AlignCenter, caption.mid(14,5)); };
 				painter.setFont(QFont("Ariel", 4));
@@ -485,6 +514,7 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 	}
 	
 	if((m_zintSymbol->symbology == BARCODE_UPCA) || (m_zintSymbol->symbology == BARCODE_UPCA_CC)) {
+		/* Add bridge and format text for UPC-A */
 		int block_width;
 		bool latch = true;
 		
@@ -523,11 +553,11 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 			}
 			j += block_width;
 		} while (j < 96 + comp_offset);
-		painter.drawText(xoffset - 7, m_zintSymbol->height, 7, 7,Qt::AlignCenter, caption.mid(0,1));
-		painter.drawText(96 + xoffset, m_zintSymbol->height, 7, 7,Qt::AlignCenter, caption.mid(11,1));
+		painter.drawText(xoffset - 7, m_zintSymbol->height + yoffset, 7, 7,Qt::AlignCenter, caption.mid(0,1));
+		painter.drawText(96 + xoffset, m_zintSymbol->height + yoffset, 7, 7,Qt::AlignCenter, caption.mid(11,1));
 		painter.setFont(QFont("Ariel", 6));
-		painter.drawText(11 + xoffset, m_zintSymbol->height, 35, 9,Qt::AlignCenter, caption.mid(1,5));
-		painter.drawText(49 + xoffset, m_zintSymbol->height, 35, 9,Qt::AlignCenter, caption.mid(6,5));
+		painter.drawText(11 + xoffset, m_zintSymbol->height + yoffset, 35, 9,Qt::AlignCenter, caption.mid(1,5));
+		painter.drawText(49 + xoffset, m_zintSymbol->height + yoffset, 35, 9,Qt::AlignCenter, caption.mid(6,5));
 		if(caption.size() == 15) { /* EAN-2 */ painter.drawText(104 + xoffset, addon_text_height, 20, 9,Qt::AlignCenter, caption.mid(13,2)); };
 		if(caption.size() == 18) { /* EAN-5 */ painter.drawText(104 + xoffset, addon_text_height, 47, 9,Qt::AlignCenter, caption.mid(13,5)); };
 		painter.setFont(QFont("Ariel", 4));
@@ -535,15 +565,16 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 	}
 	
 	if((m_zintSymbol->symbology == BARCODE_UPCE) || (m_zintSymbol->symbology == BARCODE_UPCE_CC)) {
+		/* Add bridge and format text for UPC-E */
 		painter.fillRect(0 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
 		painter.fillRect(2 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
 		painter.fillRect(46 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
 		painter.fillRect(48 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
 		painter.fillRect(50 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
-		painter.drawText(xoffset - 7, m_zintSymbol->height, 7, 7,Qt::AlignCenter, caption.mid(0,1));
-		painter.drawText(51 + xoffset, m_zintSymbol->height, 7, 7,Qt::AlignCenter, caption.mid(7,1));
+		painter.drawText(xoffset - 7, m_zintSymbol->height + yoffset, 7, 7,Qt::AlignCenter, caption.mid(0,1));
+		painter.drawText(51 + xoffset, m_zintSymbol->height + yoffset, 7, 7,Qt::AlignCenter, caption.mid(7,1));
 		painter.setFont(QFont("Ariel", 6));
-		painter.drawText(3 + xoffset, m_zintSymbol->height, 43, 9,Qt::AlignCenter, caption.mid(1,6));
+		painter.drawText(3 + xoffset, m_zintSymbol->height + yoffset, 43, 9,Qt::AlignCenter, caption.mid(1,6));
 		if(caption.size() == 11) { /* EAN-2 */ painter.drawText(60 + xoffset, addon_text_height, 20, 9,Qt::AlignCenter, caption.mid(9,2)); };
 		if(caption.size() == 14) { /* EAN-2 */ painter.drawText(60 + xoffset, addon_text_height, 47, 9,Qt::AlignCenter, caption.mid(9,5)); };
 		painter.setFont(QFont("Ariel", 4));
@@ -551,7 +582,8 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 	}
 	
 	if((caption.isEmpty() == false) && (textdone == false)) {
-		painter.drawText(0, m_zintSymbol->height, m_zintSymbol->width, 7,Qt::AlignCenter, caption);
+		/* Add text to any other symbol */
+		painter.drawText(0, m_zintSymbol->height + yoffset, m_zintSymbol->width, 7,Qt::AlignCenter, caption);
 	}
 	painter.restore();
 }
