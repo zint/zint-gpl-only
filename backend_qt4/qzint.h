@@ -74,6 +74,8 @@ public:
 
 	void setInputMode(int input_mode);
 
+	void setWhitespace(int whitespace);
+
 	void render(QPainter & painter, const QRectF & paintRect, AspectRatioMode mode=IgnoreAspectRatio);
 
 	const QString & lastError();
@@ -87,7 +89,7 @@ private:
 	QString m_primaryMessage;
 	int m_height;
 	BorderType m_border;
-	int m_boderWidth;
+	int m_borderWidth;
 	int m_width;
 	int m_securityLevel;
 	int m_pdf417CodeWords;
@@ -96,6 +98,7 @@ private:
 	QColor m_bgColor;
 	QString m_lastError;
 	int m_error;
+	int m_whitespace;
 	zint_symbol * m_zintSymbol;
 };
 }

@@ -12,6 +12,10 @@
   <property name="windowTitle" >
    <string>Zint Barcode Studio</string>
   </property>
+  <property name="windowIcon" >
+   <iconset>
+    <normaloff>stripe.ico</normaloff>stripe.ico</iconset>
+  </property>
   <widget class="QComboBox" name="bstyle" >
    <property name="geometry" >
     <rect>
@@ -54,7 +58,7 @@
     </rect>
    </property>
    <property name="currentIndex" >
-    <number>0</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="tabGeneral" >
     <property name="geometry" >
@@ -2242,7 +2246,7 @@ p, li { white-space: pre-wrap; }
        <x>10</x>
        <y>6</y>
        <width>572</width>
-       <height>92</height>
+       <height>102</height>
       </rect>
      </property>
      <property name="title" >
@@ -2380,6 +2384,29 @@ p, li { white-space: pre-wrap; }
       </property>
       <property name="text" >
        <string>Backgound Colour</string>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="spnWhitespace" >
+      <property name="geometry" >
+       <rect>
+        <x>117</x>
+        <y>73</y>
+        <width>120</width>
+        <height>22</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lblWhitespace" >
+      <property name="geometry" >
+       <rect>
+        <x>21</x>
+        <y>73</y>
+        <width>78</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Whitespace:</string>
       </property>
      </widget>
     </widget>

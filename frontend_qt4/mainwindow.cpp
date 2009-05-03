@@ -162,6 +162,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 	connect(cmbMaxiMode, SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
 	connect(cmbMaxiMode, SIGNAL(currentIndexChanged( int )), SLOT(maxi_primary()));
 	connect(txtMaxiPrimary, SIGNAL(textChanged( const QString& )), SLOT(update_preview()));
+	connect(spnWhitespace, SIGNAL(valueChanged( int )), SLOT(update_preview()));
 }
 
 MainWindow::~MainWindow()
@@ -652,6 +653,7 @@ void MainWindow::update_preview()
 	m_bc.bc.setBorderType((Zint::QZint::BorderType)(btype->currentIndex()*2));
 	m_bc.bc.setBorderWidth(bwidth->value());
 	m_bc.bc.setHeight(heightb->value());
+	m_bc.bc.setWhitespace(spnWhitespace->value());
 	m_bc.bc.setFgColor(m_fgcolor);
 	m_bc.bc.setBgColor(m_bgcolor);
 	m_bc.update();
