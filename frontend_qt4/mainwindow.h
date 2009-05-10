@@ -49,6 +49,7 @@ public:
 		CODE32		=129,
 		CODE39		=8,
 		EXCODE39	=9,
+		CODE49		=24,
 		CODE93		=25,
 		CODABAR		=18,
 		CODABLOCKF	=74,
