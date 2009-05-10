@@ -452,7 +452,7 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 				}
 			}
 			/* Add row binding */
-			if((m_zintSymbol->symbology == BARCODE_CODE16K) && (row != 0)) {
+			if(((m_zintSymbol->symbology == BARCODE_CODE16K) || (m_zintSymbol->symbology == BARCODE_CODE49)) && (row != 0)) {
 				painter.fillRect(0,y - 1,m_zintSymbol->width,2,QBrush(m_fgColor));
 			}
 			if(((m_zintSymbol->symbology == BARCODE_CODABLOCKF) || (m_zintSymbol->symbology == BARCODE_HIBC_BLOCKF)) && (row != 0)) {

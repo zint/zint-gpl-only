@@ -44,6 +44,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 		"Code 32 (Italian Pharmacode)",
 		"Code 39",
 		"Code 39 Extended",
+		"Code 49",
 		"Code 93", 
 		"Codabar",
 		"Codablock-F",
