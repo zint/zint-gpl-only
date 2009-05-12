@@ -346,6 +346,11 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 		bar_characters += 2;
 	}
 	
+	for(j = 0; j < ustrlen(source); j++) {
+		if(set[j] == 'a') { set[j] = 'A'; }
+		if(set[j] == 'b') { set[j] = 'B'; }
+	}
+	
 	read = 0;
 	/* Encode the data */
 	do {
@@ -423,7 +428,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 			values[bar_characters] = 98;
 			bar_characters++;
 		}
-
+		
 		if(!((gs1) && (source[read] == '['))) {
 			switch(set[read])
 			{ /* Encode data characters */
@@ -442,6 +447,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 			bar_characters++;
 			read++;
 		}
+		
 	} while (read < ustrlen(source));
 	
 	pads_needed = 5 - ((bar_characters + 2) % 5);
