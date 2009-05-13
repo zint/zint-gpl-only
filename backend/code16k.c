@@ -117,7 +117,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	char width_pattern[100];
 	int current_row, rows_needed, flip_flop, looper, first_check, second_check;
 	int indexliste, indexchaine, pads_needed;
-	char set[160], fset[160], mode, last_set, last_fset;
+	char set[160], fset[160], mode, last_set, last_fset, current_set;
 	unsigned int i, j, k, m, e_count, read, mx_reader, writer;
 	unsigned int values[160];
 	unsigned int bar_characters;
@@ -228,6 +228,23 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 		}
 	}
 
+	/* Adjust for strings which start with shift characters - make them latch instead */
+	if(set[0] == 'a') {
+		i = 0;
+		do {
+			set[i] = 'A';
+			i++;
+		} while (set[i] == 'a');
+	}
+	
+	if(set[0] == 'b') {
+		i = 0;
+		do {
+			set[i] = 'B';
+			i++;
+		} while (set[i] == 'b');
+	}
+	
 	/* We have a problem with FNC1 in Code Set C to resolve */
 	for(i = 0; i < input_length; i++) {
 		if((set[i] == 'C') && (source[i] == '[')) {
@@ -332,8 +349,9 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	values[bar_characters] = (7 * (rows_needed - 2)) + m; /* see 4.3.4.2 */
 	bar_characters++;
 
+	current_set = set[0];
 	if(fset[0] == 'F') {
-		switch(set[0]) {
+		switch(current_set) {
 			case 'A':
 				values[bar_characters] = 101;
 				values[bar_characters + 1] = 101;
@@ -344,11 +362,6 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 				break;
 		}
 		bar_characters += 2;
-	}
-	
-	for(j = 0; j < ustrlen(source); j++) {
-		if(set[j] == 'a') { set[j] = 'A'; }
-		if(set[j] == 'b') { set[j] = 'B'; }
 	}
 	
 	read = 0;
@@ -362,10 +375,12 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 				case 'A':
 					values[bar_characters] = 101;
 					bar_characters++;
+					current_set = 'A';
 					break;
 				case 'B':
 					values[bar_characters] = 100;
 					bar_characters++;
+					current_set = 'B';
 					break;
 				case 'C':
 					if(!((read == 1) && (set[0] == 'B'))) { /* Not Mode C/Shift B */
@@ -375,6 +390,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 							bar_characters++;
 						}
 					}
+					current_set = 'C';
 					break;
 			}
 		}
@@ -382,7 +398,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 		if((read != 0) && (fset[read] != fset[read - 1])) {
 			if(fset[read] == 'F') {
 				/* Latch beginning of extended mode */
-				switch(set[0]) {
+				switch(current_set) {
 					case 'A':
 						values[bar_characters] = 101;
 						values[bar_characters + 1] = 101;
@@ -396,7 +412,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 			}
 			if(fset[read - 1] == 'F') {
 				/* Latch end of extended mode */
-				switch(set[0]) {
+				switch(current_set) {
 					case 'A':
 						values[bar_characters] = 101;
 						values[bar_characters + 1] = 101;
@@ -412,7 +428,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 		
 		if(fset[i] == 'f') {
 			/* Shift extended mode */
-			switch(set[i]) {
+			switch(current_set) {
 				case 'A':
 					values[bar_characters] = 101;
 					break;
@@ -432,10 +448,14 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 		if(!((gs1) && (source[read] == '['))) {
 			switch(set[read])
 			{ /* Encode data characters */
-				case 'A': c16k_set_a(source[read], values, &bar_characters, symbol->nullchar);
+				case 'A':
+				case 'a':
+					c16k_set_a(source[read], values, &bar_characters, symbol->nullchar);
 					read++;
 					break;
-				case 'B': c16k_set_b(source[read], values, &bar_characters);
+				case 'B':
+				case 'b':
+					c16k_set_b(source[read], values, &bar_characters);
 					read++;
 					break;
 				case 'C': c16k_set_c(source[read], source[read + 1], values, &bar_characters);
