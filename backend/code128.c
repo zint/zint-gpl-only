@@ -198,7 +198,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 { /* Handle Code 128 and NVE-18 */
 	int i, j, k, e_count, values[170], bar_characters, read, total_sum, nve_check;
 	int error_number, indexchaine, indexliste, sourcelen;
-	char set[170], fset[170], mode, last_set, last_fset;
+	char set[170], fset[170], mode, last_set, last_fset, current_set = ' ';
 	float glyph_count;
 	char dest[1000];
 	
@@ -391,20 +391,24 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 		case 'A': /* Start A */
 			concat(dest, C128Table[103]);
 			values[0] = 103;
+			current_set = 'A';
 			break;
 		case 'B': /* Start B */
 			concat(dest, C128Table[104]);
 			values[0] = 104;
+			current_set = 'B';
 			break;
 		case 'C': /* Start C */
 			concat(dest, C128Table[105]);
 			values[0] = 105;
+			current_set = 'C';
 			break;
 	}
 	bar_characters++;
+	last_set = set[0];
 
 	if(fset[0] == 'F') {
-		switch(set[0]) {
+		switch(current_set) {
 			case 'A':
 				concat(dest, C128Table[101]);
 				concat(dest, C128Table[101]);
@@ -425,21 +429,24 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 	read = 0;
 	do {
 
-		if((read != 0) && (set[read] != set[read - 1]))
+		if((read != 0) && (set[read] != current_set))
 		{ /* Latch different code set */
 			switch(set[read])
 			{
 				case 'A': concat(dest, C128Table[101]);
 					values[bar_characters] = 101;
 					bar_characters++;
+					current_set = 'A';
 					break;
 				case 'B': concat(dest, C128Table[100]);
 					values[bar_characters] = 100;
 					bar_characters++;
+					current_set = 'B';
 					break;
 				case 'C': concat(dest, C128Table[99]);
 					values[bar_characters] = 99;
 					bar_characters++;
+					current_set = 'C';
 					break;
 			}
 		}
@@ -447,7 +454,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 		if((read != 0) && (fset[read] != fset[read - 1])) {
 			if(fset[read] == 'F') {
 				/* Latch beginning of extended mode */
-				switch(set[0]) {
+				switch(current_set) {
 					case 'A':
 						concat(dest, C128Table[101]);
 						concat(dest, C128Table[101]);
@@ -465,7 +472,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 			}
 			if(fset[read - 1] == 'F') {
 				/* Latch end of extended mode */
-				switch(set[0]) {
+				switch(current_set) {
 					case 'A':
 						concat(dest, C128Table[101]);
 						concat(dest, C128Table[101]);
@@ -485,13 +492,11 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 
 		if(fset[read] == 'f') {
 			/* Shift extended mode */
-			switch(set[read]) {
-				case 'a':
+			switch(current_set) {
 				case 'A':
 					concat(dest, C128Table[101]);
 					values[bar_characters] = 101;
 					break;
-				case 'b':
 				case 'B':
 					concat(dest, C128Table[100]);
 					values[bar_characters] = 100;
