@@ -116,7 +116,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 {
 	char width_pattern[100];
 	int current_row, rows_needed, flip_flop, looper, first_check, second_check;
-	int indexliste, indexchaine, pads_needed;
+	int indexliste, indexchaine, pads_needed, f_state;
 	char set[160], fset[160], mode, last_set, last_fset, current_set;
 	unsigned int i, j, k, m, e_count, read, mx_reader, writer;
 	unsigned int values[160];
@@ -133,7 +133,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	if(symbol->input_mode == GS1_MODE) { gs1 = 1; } else { gs1 = 0; }
 	
 	if(input_length > 157) {
-		strcpy(symbol->errtxt, "Input too long [231]");
+		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 
@@ -161,7 +161,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 			do {
 				j++;
 			} while(fset[i + j] == 'f');
-			if((j >= 5) || ((j >= 3) && ((i + j) == input_length))) {
+			if((j >= 5) || ((j >= 3) && ((i + j) == (input_length - 1)))) {
 				for(k = 0; k <= j; k++) {
 					fset[i + k] = 'F';
 				}
@@ -169,6 +169,22 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 		}
 	}
 	
+	
+	/* Decide if it is worth reverting to 646 encodation for a few characters */
+	if(input_length > 1) {
+		for(i = 1; i < input_length; i++) {
+			if((fset[i - 1] == 'F') && (fset[i] == ' ')) {
+				/* Detected a change from 8859-1 to 646 - count how long for */
+				for(j = 0; (fset[i + j] == ' ') && ((i + j) < input_length); j++);
+				if((j < 5) || ((j < 3) && ((i + j) == (input_length - 1)))) {
+					/* Change to shifting back rather than latching back */
+					for(k = 0; k < j; k++) {
+						fset[i + k] = 'n';
+					}
+				}
+			}
+		}
+	}
 	/* Detect mode A, B and C characters */
 	indexliste = 0;
 	indexchaine = 0;
@@ -268,7 +284,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 		if((set[i] == 'a') || (set[i] == 'b')) {
 			glyph_count = glyph_count + 1.0;
 		}
-		if(fset[i] == 'f') {
+		if((fset[i] == 'f') || (fset[i] == 'n')) {
 			glyph_count = glyph_count + 1.0;
 		}
 		if(((set[i] == 'A') || (set[i] == 'B')) || (set[i] == 'C')) {
@@ -314,7 +330,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	if(glyph_count > 77.0) {
-		strcpy(symbol->errtxt, "Input too long [232]");
+		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	
@@ -350,6 +366,8 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	bar_characters++;
 
 	current_set = set[0];
+	f_state = 0; /* f_state remembers if we are in Extended ASCII mode (value 1) or
+	in ISO/IEC 646 mode (value 0) */
 	if(fset[0] == 'F') {
 		switch(current_set) {
 			case 'A':
@@ -362,6 +380,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 				break;
 		}
 		bar_characters += 2;
+		f_state = 1;
 	}
 	
 	read = 0;
@@ -395,8 +414,8 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 			}
 		}
 
-		if((read != 0) && (fset[read] != fset[read - 1])) {
-			if(fset[read] == 'F') {
+		if(read != 0) {
+			if((fset[read] == 'F') && (f_state == 0)) {
 				/* Latch beginning of extended mode */
 				switch(current_set) {
 					case 'A':
@@ -409,8 +428,9 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 						break;
 				}
 				bar_characters += 2;
+				f_state = 1;
 			}
-			if(fset[read - 1] == 'F') {
+			if((fset[read] == ' ') && (f_state == 1)) {
 				/* Latch end of extended mode */
 				switch(current_set) {
 					case 'A':
@@ -423,17 +443,18 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 						break;
 				}
 				bar_characters += 2;
+				f_state = 0;
 			}
 		}
 		
-		if(fset[i] == 'f') {
+		if((fset[i] == 'f') || (fset[i] == 'n')) {
 			/* Shift extended mode */
 			switch(current_set) {
 				case 'A':
-					values[bar_characters] = 101;
+					values[bar_characters] = 101; /* FNC 4 */
 					break;
 				case 'B':
-					values[bar_characters] = 100;
+					values[bar_characters] = 100; /* FNC 4 */
 					break;
 			}
 			bar_characters++;

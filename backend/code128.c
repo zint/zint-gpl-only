@@ -197,7 +197,7 @@ void c128_set_c(unsigned char source_a, unsigned char source_b, char dest[], int
 int code_128(struct zint_symbol *symbol, unsigned char source[])
 { /* Handle Code 128 and NVE-18 */
 	int i, j, k, e_count, values[170], bar_characters, read, total_sum, nve_check;
-	int error_number, indexchaine, indexliste, sourcelen;
+	int error_number, indexchaine, indexliste, sourcelen, f_state;
 	char set[170], fset[170], mode, last_set, last_fset, current_set = ' ';
 	float glyph_count;
 	char dest[1000];
@@ -211,6 +211,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 	e_count = 0;
 	bar_characters = 0;
 	nve_check = 0;
+	f_state = 0;
 
 	for(i = 0; i < 170; i++) {
 		values[i] = 0;
@@ -221,7 +222,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 	if(sourcelen > 160) {
 		/* This only blocks rediculously long input - the actual length of the
 		   resulting barcode depends on the type of data, so this is trapped later */
-		strcpy(symbol->errtxt, "Input too long [201]");
+		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	
@@ -253,6 +254,23 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 		if((j >= 3) && (i == (sourcelen - 1))) {
 			for(k = i; k > (i - 3); k--) {
 				fset[k] = 'F';
+			}
+		}
+	}
+	
+	/* Decide if it is worth reverting to 646 encodation for a few characters as described in 4.3.4.2 (d) */
+	if(sourcelen > 1) {
+		for(i = 1; i < sourcelen; i++) {
+			if((fset[i - 1] == 'F') && (fset[i] == ' ')) {
+				/* Detected a change from 8859-1 to 646 - count how long for */
+				for(j = 0; (fset[i + j] == ' ') && ((i + j) < sourcelen); j++);
+				if((j < 5) || ((j < 3) && ((i + j) == (sourcelen - 1)))) {
+					/* Uses the same figures recommended by Annex E note 3 */
+					/* Change to shifting back rather than latching back */
+					for(k = 0; k < j; k++) {
+						fset[i + k] = 'n';
+					}
+				}
 			}
 		}
 	}
@@ -348,7 +366,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 		if((set[i] == 'a') || (set[i] == 'b')) {
 			glyph_count = glyph_count + 1.0;
 		}
-		if(fset[i] == 'f') {
+		if((fset[i] == 'f') || (fset[i] == 'n')) {
 			glyph_count = glyph_count + 1.0;
 		}
 		if(((set[i] == 'A') || (set[i] == 'B')) || (set[i] == 'C')) {
@@ -380,7 +398,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 		}
 	}
 	if(glyph_count > 80.0) {
-		strcpy(symbol->errtxt, "Input too long [204]");
+		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	
@@ -423,6 +441,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 				break;
 		}
 		bar_characters += 2;
+		f_state = 1;
 	}
 	
 	/* Encode the data */
@@ -451,8 +470,8 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 			}
 		}
 
-		if((read != 0) && (fset[read] != fset[read - 1])) {
-			if(fset[read] == 'F') {
+		if(read != 0) {
+			if((fset[read] == 'F') && (f_state == 0)) {
 				/* Latch beginning of extended mode */
 				switch(current_set) {
 					case 'A':
@@ -469,8 +488,9 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 						break;
 				}
 				bar_characters += 2;
+				f_state = 1;
 			}
-			if(fset[read - 1] == 'F') {
+			if((fset[read] == ' ') && (f_state == 1)) {
 				/* Latch end of extended mode */
 				switch(current_set) {
 					case 'A':
@@ -487,18 +507,19 @@ int code_128(struct zint_symbol *symbol, unsigned char source[])
 						break;
 				}
 				bar_characters += 2;
+				f_state = 0;
 			}
 		}
 
-		if(fset[read] == 'f') {
-			/* Shift extended mode */
+		if((fset[read] == 'f') || (fset[read] == 'n')) {
+			/* Shift to or from extended mode */
 			switch(current_set) {
 				case 'A':
-					concat(dest, C128Table[101]);
+					concat(dest, C128Table[101]); /* FNC 4 */
 					values[bar_characters] = 101;
 					break;
 				case 'B':
-					concat(dest, C128Table[100]);
+					concat(dest, C128Table[100]); /* FNC 4 */
 					values[bar_characters] = 100;
 					break;
 			}
@@ -584,7 +605,7 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 	if(sourcelen > 160) {
 		/* This only blocks rediculously long input - the actual length of the
 		resulting barcode depends on the type of data, so this is trapped later */
-		strcpy(symbol->errtxt, "Input too long [161]");
+		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	
@@ -701,7 +722,7 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 		}
 	}
 	if(glyph_count > 80.0) {
-		strcpy(symbol->errtxt, "Input too long [164]");
+		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	
@@ -874,13 +895,13 @@ int nve_18(struct zint_symbol *symbol, unsigned char source[])
 	sourcelen = ustrlen(source);
 	
 	if(sourcelen > 17) {
-		strcpy(symbol->errtxt, "Input too long [203]");
+		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Invalid characters in data [202]");
+		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
 	
@@ -923,13 +944,13 @@ int ean_14(struct zint_symbol *symbol, unsigned char source[])
 	input_length = ustrlen(source);
 	
 	if(input_length > 13) {
-		strcpy(symbol->errtxt, "Input wrong length [721]");
+		strcpy(symbol->errtxt, "Input wrong length");
 		return ERROR_TOO_LONG;
 	}
 	
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Invalid character in data [722]");
+		strcpy(symbol->errtxt, "Invalid character in data");
 		return error_number;
 	}
 	

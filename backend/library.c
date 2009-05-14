@@ -388,7 +388,7 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source)
 	unsigned char preprocessed[input_length];
 
 	if(ustrlen(source) == 0) {
-		strcpy(symbol->errtxt, "No input data [Z00]");
+		strcpy(symbol->errtxt, "No input data");
 		error_tag(symbol->errtxt, ERROR_INVALID_DATA);
 		return ERROR_INVALID_DATA;
 	}
