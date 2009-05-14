@@ -651,7 +651,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 	unsigned int data_part[1500], ecc_part[840];
 	unsigned char desc_data[4], desc_ecc[6];
 	int err_code, ecc_level, compact, data_length, data_maxsize, codeword_size, adjusted_length;
-	int remainder, padbits, count, gs1;
+	int remainder, padbits, count, gs1, adjustment_size;
 	
 	memset(binary_string,0,20000);
 	memset(adjusted_string,0,20000);
@@ -660,12 +660,12 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 	err_code = aztec_text_process(source, binary_string, gs1);
 
 	if(err_code != 0) {
-		strcpy(symbol->errtxt, "Input too long or too many extended ASCII characters [921]");
+		strcpy(symbol->errtxt, "Input too long or too many extended ASCII characters");
 		return err_code;
 	}
 	
 	if(!((symbol->option_1 >= -1) && (symbol->option_1 <= 4))) {
-		strcpy(symbol->errtxt, "Invalid error correction level - using default instead [922]");
+		strcpy(symbol->errtxt, "Invalid error correction level - using default instead");
 		err_code = WARN_INVALID_OPTION;
 		symbol->option_1 = -1;
 	}
@@ -680,6 +680,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 
 	layers = 0; /* Keep compiler happy! */
 	data_maxsize = 0; /* Keep compiler happy! */
+	adjustment_size = 0;
 	if(symbol->option_2 == 0) { /* The size of the symbol can be determined by Zint */
 		do {
 			/* Decide what size symbol to use - the smallest that fits the data */
@@ -690,14 +691,14 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 				/* For each level of error correction work out the smallest symbol which
 				the data will fit in */
 				case 1: for(i = 32; i > 0; i--) {
-						if(data_length < Aztec10DataSizes[i - 1]) {
+						if((data_length + adjustment_size) < Aztec10DataSizes[i - 1]) {
 							layers = i;
 							compact = 0;
 							data_maxsize = Aztec10DataSizes[i - 1];
 						}
 					}
 					for(i = 4; i > 0; i--) {
-						if(data_length < AztecCompact10DataSizes[i - 1]) {
+						if((data_length + adjustment_size) < AztecCompact10DataSizes[i - 1]) {
 							layers = i;
 							compact = 1;
 							data_maxsize = AztecCompact10DataSizes[i - 1];
@@ -705,14 +706,14 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 					}
 					break;
 				case 2: for(i = 32; i > 0; i--) {
-						if(data_length < Aztec23DataSizes[i - 1]) {
+						if((data_length + adjustment_size) < Aztec23DataSizes[i - 1]) {
 							layers = i;
 							compact = 0;
 							data_maxsize = Aztec23DataSizes[i - 1];
 						}
 					}
 					for(i = 4; i > 0; i--) {
-						if(data_length < AztecCompact23DataSizes[i - 1]) {
+						if((data_length + adjustment_size) < AztecCompact23DataSizes[i - 1]) {
 							layers = i;
 							compact = 1;
 							data_maxsize = AztecCompact23DataSizes[i - 1];
@@ -720,14 +721,14 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 					}
 					break;
 				case 3: for(i = 32; i > 0; i--) {
-						if(data_length < Aztec36DataSizes[i - 1]) {
+						if((data_length + adjustment_size) < Aztec36DataSizes[i - 1]) {
 							layers = i;
 							compact = 0;
 							data_maxsize = Aztec36DataSizes[i - 1];
 						}
 					}
 					for(i = 4; i > 0; i--) {
-						if(data_length < AztecCompact36DataSizes[i - 1]) {
+						if((data_length + adjustment_size) < AztecCompact36DataSizes[i - 1]) {
 							layers = i;
 							compact = 1;
 							data_maxsize = AztecCompact36DataSizes[i - 1];
@@ -735,14 +736,14 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 					}
 					break;
 				case 4: for(i = 32; i > 0; i--) {
-						if(data_length < Aztec50DataSizes[i - 1]) {
+						if((data_length + adjustment_size) < Aztec50DataSizes[i - 1]) {
 							layers = i;
 							compact = 0;
 							data_maxsize = Aztec50DataSizes[i - 1];
 						}
 					}
 					for(i = 4; i > 0; i--) {
-						if(data_length < AztecCompact50DataSizes[i - 1]) {
+						if((data_length + adjustment_size) < AztecCompact50DataSizes[i - 1]) {
 							layers = i;
 							compact = 1;
 							data_maxsize = AztecCompact50DataSizes[i - 1];
@@ -750,9 +751,9 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 					}
 					break;
 			}
-		
+			
 			if(layers == 0) { /* Couldn't find a symbol which fits the data */
-				strcpy(symbol->errtxt, "Input too long (too many bits for selected ECC) [923]");
+				strcpy(symbol->errtxt, "Input too long (too many bits for selected ECC)");
 				return ERROR_TOO_LONG;
 			}
 			
@@ -786,6 +787,8 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 			}
 			adjusted_string[j] = '\0';
 			adjusted_length = strlen(adjusted_string);
+			adjustment_size = adjusted_length - data_length;
+				/* Only important if this loop is repeated */
 			
 			remainder = adjusted_length % codeword_size;
 			
@@ -809,7 +812,6 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 		be encoded in a symbol of the selected size */
 
 	} else { /* The size of the symbol has been specified by the user */
-		
 		if((symbol->option_2 >= 1) && (symbol->option_2 <= 4)) {
 			compact = 1;
 			layers = symbol->option_2;
@@ -819,7 +821,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 			layers = symbol->option_2 - 4;
 		}
 		if((symbol->option_2 < 0) || (symbol->option_2 > 36)) {
-			strcpy(symbol->errtxt, "Invalid Aztec Code size [924]");
+			strcpy(symbol->errtxt, "Invalid Aztec Code size");
 			return ERROR_INVALID_OPTION;
 		}
 
@@ -863,7 +865,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 			concat(adjusted_string, "1");
 		}
 		adjusted_length = strlen(adjusted_string);
-			
+		
 		count = 0;
 		for(i = (adjusted_length - codeword_size); i < adjusted_length; i++) {
 			if(adjusted_string[i] == '1') { count++; }
@@ -878,7 +880,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 		}
 
 		if(adjusted_length > data_maxsize) {
-			strcpy(symbol->errtxt, "Data too long for specified Aztec Code symbol size [925]");
+			strcpy(symbol->errtxt, "Data too long for specified Aztec Code symbol size");
 			return ERROR_TOO_LONG;
 		}
 	}
@@ -890,7 +892,6 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 	} else {
 		ecc_blocks = AztecSizes[layers - 1] - data_blocks;
 	}
-	
 	/* Copy across data into separate integers */
 	memset(data_part,0,1500*sizeof(int));
 	memset(ecc_part,0,840*sizeof(int));
@@ -1102,6 +1103,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 
 	/* Plot all of the data into the symbol in pre-defined spiral pattern */
 	if(compact) {
+		
 		for(y = AztecCompactOffset[layers - 1]; y < (27 - AztecCompactOffset[layers - 1]); y++) {
 			for(x = AztecCompactOffset[layers - 1]; x < (27 - AztecCompactOffset[layers - 1]); x++) {
 				if(CompactAztecMap[(y * 27) + x] == 1) {
@@ -1118,6 +1120,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 		symbol->rows = 27 - (2 * AztecCompactOffset[layers - 1]);
 		symbol->width = 27 - (2 * AztecCompactOffset[layers - 1]);
 	} else {
+		
 		for(y = AztecOffset[layers - 1]; y < (151 - AztecOffset[layers - 1]); y++) {
 			for(x = AztecOffset[layers - 1]; x < (151 - AztecOffset[layers - 1]); x++) {
 				if(AztecMap[(y * 151) + x] == 1) {
