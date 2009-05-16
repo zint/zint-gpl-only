@@ -29,7 +29,7 @@
 int svg_plot(struct zint_symbol *symbol)
 {
 	int i, block_width, latch, r, this_row;
-	float textpos, large_bar_height, preset_height, row_height, row_posn;
+	float textpos, large_bar_height, preset_height, row_height, row_posn = 0;
 	FILE *fsvg;
 	int fgred, fggrn, fgblu, bgred, bggrn, bgblu;
 	float red_ink, green_ink, blue_ink, red_paper, green_paper, blue_paper;
