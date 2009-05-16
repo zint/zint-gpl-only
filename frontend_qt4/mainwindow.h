@@ -38,6 +38,7 @@ public:
 		AUSREDIRECT	=68,
 		AZTEC		=92,
 		AZRUNE		=128,
+		CHANNEL		=140,
 		CODE11		=1,
 		CODE128		=20,
 		CODE16K		=23,

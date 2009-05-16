@@ -33,6 +33,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 		"Australia Post Redirect Code",
 		"Aztec Code",
 		"Aztec Runes",
+		"Channel Code",
 		"Code 11",
 		"Code 128",
 		"Code 16k",
@@ -95,7 +96,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 		bstyle->addItem(metaObject()->enumerator(0).key(i));
 		bstyle->setItemText(i,bstyle_text[i]);
 	}
-	bstyle->setCurrentIndex(7);
+	bstyle->setCurrentIndex(8);
 	change_options();
 	update_preview();
 	view->scene()->addItem(&m_bc);
@@ -164,6 +165,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 	connect(cmbMaxiMode, SIGNAL(currentIndexChanged( int )), SLOT(maxi_primary()));
 	connect(txtMaxiPrimary, SIGNAL(textChanged( const QString& )), SLOT(update_preview()));
 	connect(spnWhitespace, SIGNAL(valueChanged( int )), SLOT(update_preview()));
+	connect(cmbChannel, SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
 }
 
 MainWindow::~MainWindow()
@@ -295,6 +297,14 @@ void MainWindow::change_options()
 		grpMaxiCode->show();
 	} else {
 		grpMaxiCode->hide();
+	}
+	
+	if(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_CHANNEL)
+	{
+		options = true;
+		grpChannel->show();
+	} else {
+		grpChannel->hide();
 	}
 
 
@@ -642,6 +652,14 @@ void MainWindow::update_preview()
 				m_bc.bc.setPrimaryMessage(txtMaxiPrimary->text());
 			} else {
 				m_bc.bc.setSecurityLevel(cmbMaxiMode->currentIndex() + 3);
+			}
+			break;
+		case BARCODE_CHANNEL:
+			m_bc.bc.setSymbol(BARCODE_CHANNEL);
+			if(cmbChannel->currentIndex() == 0) {
+				m_bc.bc.setWidth(0);
+			} else {
+				m_bc.bc.setWidth(cmbChannel->currentIndex() + 2);
 			}
 			break;
 		default:

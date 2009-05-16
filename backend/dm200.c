@@ -194,7 +194,7 @@ float dmroundup(float input)
 	float fraction, output;
 	
 	fraction = input - (int)input;
-	if(fraction > 0.01) { output = (input - fraction) + 1.0; }
+	if(fraction > 0.01) { output = (input - fraction) + 1.0; } else { output = input; }
 	
 	return output;
 }
@@ -538,7 +538,7 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 		
 		/* step (e) X12 encodation */
 		if(current_mode == DM_X12) {
-			int value;
+			int value = 0;
 			
 			next_mode = DM_X12;
 			if(text_p == 0) {
@@ -579,7 +579,7 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 		
 		/* step (f) EDIFACT encodation */
 		if(current_mode == DM_EDIFACT) {
-			int value;
+			int value = 0;
 			
 			next_mode = DM_EDIFACT;
 			if(edifact_p == 3) {
