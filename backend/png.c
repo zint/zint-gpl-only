@@ -822,11 +822,14 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 	
 	/* Put boundary bars or box around symbol */
 	if(((symbol->output_options & BARCODE_BOX) != 0) || ((symbol->output_options & BARCODE_BIND) != 0)) {
+		printf("1st\n");
 		if((symbol->symbology != BARCODE_CODABLOCKF) && (symbol->symbology != BARCODE_HIBC_BLOCKF)) {
+			printf("2nd\n");
 			/* boundary bars */
 			draw_bar(pixelbuf, 0, (symbol->width + xoffset + xoffset) * scaler, textoffset * scaler, symbol->border_width * scaler, image_width, image_height);
 			draw_bar(pixelbuf, 0, (symbol->width + xoffset + xoffset) * scaler, (textoffset + symbol->height + symbol->border_width) * scaler, symbol->border_width * scaler, image_width, image_height);
-			if((symbol->symbology & BARCODE_BIND) != 0) {
+			if((symbol->output_options & BARCODE_BIND) != 0) {
+				printf("3rd\n");
 				if((symbol->rows > 1) && (is_stackable(symbol->symbology) == 1)) {
 					/* row binding */
 					for(r = 1; r < symbol->rows; r++) {
