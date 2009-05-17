@@ -82,6 +82,10 @@ echo testing Code 16k
 ./zint -o bar23a.png -b 23 --gs1 --border=10 -d "[01]98898765432106[02]13012345678909[10]1234567ABCDEFG[3202]012345[15]991231"
 ./zint -o bar23a.eps -b 23 --gs1 --border=10 -d "[01]98898765432106[02]13012345678909[10]1234567ABCDEFG[3202]012345[15]991231"
 ./zint -o bar23a.svg -b 23 --gs1 --border=10 -d "[01]98898765432106[02]13012345678909[10]1234567ABCDEFG[3202]012345[15]991231"
+echo testing Code 49
+./zint -o bar24.png -b 24 -d "Demonstration Code 49"
+./zint -o bar24.eps -b 24 -d "Demonstration Code 49"
+./zint -o bar24.svg -b 24 -d "Demonstration Code 49"
 echo testing Code 93
 ./zint -o bar25.png -b 25 --height=50 --border=10 -d 'Code 93'
 ./zint -o bar25.eps -b 25 --height=50 --border=10 -d 'Code 93'
@@ -248,9 +252,9 @@ echo testing NVE-18
 ./zint -o bar75.eps -b 75 --height=50 --border=10 -d 76543210987654321
 ./zint -o bar75.svg -b 75 --height=50 --border=10 -d 76543210987654321
 echo testing Japanese Post
-./zint -o bar76.png -b 76 --border=10 -d 10000131-3-2-503
-./zint -o bar76.eps -b 76 --border=10 -d 10000131-3-2-503
-./zint -o bar76.svg -b 76 --border=10 -d 10000131-3-2-503
+./zint -o bar76.png -b 76 --border=10 -d "10000131-3-2-503"
+./zint -o bar76.eps -b 76 --border=10 -d "10000131-3-2-503"
+./zint -o bar76.svg -b 76 --border=10 -d "10000131-3-2-503"
 echo testing Korea Post
 ./zint -o bar77.png -b 77 --height=50 --border=10 -d 123456
 ./zint -o bar77.eps -b 77 --height=50 --border=10 -d 123456
@@ -405,6 +409,10 @@ echo testing RSS Expanded Stacked Composite with CC-A
 ./zint -o bar139.png -b 139 --height=150 --border=10 --mode=1 --primary="[01]00012345678905[10]ABCDEF" -d "[21]12345678"
 ./zint -o bar139.eps -b 139 --height=150 --border=10 --mode=1 --primary="[01]00012345678905[10]ABCDEF" -d "[21]12345678"
 ./zint -o bar139.svg -b 139 --height=150 --border=10 --mode=1 --primary="[01]00012345678905[10]ABCDEF" -d "[21]12345678"
+echo testing Channel Code
+./zint -o bar140.png -b 140 --height=100 --border=10 -d "12345"
+./zint -o bar140.eps -b 140 --height=100 --border=10 -d "12345"
+./zint -o bar140.svg -b 140 --height=100 --border=10 -d "12345"
 echo testing PNG rotation
 ./zint -o barrot0.png -b 130 --height=50 --border=10 --mode=1 --rotate=0 --primary=331234567890+01234 -d "[99]1234-abcd"
 ./zint -o barrot90.png -b 130 --height=50 --border=10 --mode=1 --rotate=90 --primary=331234567890+01234 -d "[99]1234-abcd"
