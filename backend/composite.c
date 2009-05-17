@@ -696,7 +696,8 @@ int cc_c(struct zint_symbol *symbol, unsigned char source[], int cc_width, int e
 int cc_binary_string(struct zint_symbol *symbol, char source[], char binary_string[], int cc_mode, int *cc_width, int *ecc, int lin_width)
 { /* Handles all data encodation from section 5 of ISO/IEC 24723 */
 	int encoding_method, read_posn, d1, d2, value, alpha_pad;
-	int group_val, i, j, mask, ai_crop, ai_crop_posn, fnc1_latch;
+	int i, j, mask, ai_crop, ai_crop_posn, fnc1_latch;
+	long int group_val;
 	int ai90_mode, latch, remainder, binary_length;
 	char date_str[4];
 	char general_field[strlen(source)], general_field_type[strlen(source)];
@@ -722,7 +723,7 @@ int cc_binary_string(struct zint_symbol *symbol, char source[], char binary_stri
 		/* Source starts (90) */
 		encoding_method = 3;
 	}
-	
+
 	if(encoding_method == 1) {
 		concat(binary_string, "0");
 	}
@@ -1678,7 +1679,7 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 	char binary_string[10 * ustrlen(source)];
 	struct zint_symbol *linear;
 	int top_shift, bottom_shift;
-	
+
 	error_number = 0;
 	separator_row = 0;
 	
@@ -1790,13 +1791,13 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 			return ERROR_TOO_LONG;
 		}
 	}
-	
+
 	switch(cc_mode) { /* Note that ecc_level is only relevant to CC-C */
 		case 1: error_number = cc_a(symbol, (unsigned char*)binary_string, cc_width); break;
 		case 2: error_number = cc_b(symbol, (unsigned char*)binary_string, cc_width); break;
 		case 3: error_number = cc_c(symbol, (unsigned char*)binary_string, cc_width, ecc_level); break;
 	}
-	
+
 	if(error_number != 0) {
 		return ERROR_ENCODING_PROBLEM;
 	}
@@ -1845,18 +1846,20 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 			top_shift = k;
 			break;
 	}
-	
+
 	if(top_shift != 0) {
+		/* Move the 2d component of the symbol horizontally */
 		for(i = 0; i <= symbol->rows; i++) {
 			for(j = (symbol->width + top_shift); j >= top_shift; j--) {
 				symbol->encoded_data[i][j] = symbol->encoded_data[i][j - top_shift];
 			}
 			for(j = 0; j < top_shift; j++) {
-				symbol->encoded_data[i][j] = 0;
+				symbol->encoded_data[i][j] = '0';
 			}
 		}
 	} 
-	
+
+	/* Merge linear and 2D components into one structure */
 	for(i = 0; i <= linear->rows; i++) {
 		symbol->row_height[symbol->rows + i] = linear->row_height[i];
 		for(j = 0; j <= linear->width; j++) {
@@ -1871,7 +1874,6 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 	}
 	symbol->rows += linear->rows;
 	ustrcpy(symbol->text, (unsigned char *)linear->text);
-
 	
 	ZBarcode_Delete(linear);
 	

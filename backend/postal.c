@@ -507,16 +507,17 @@ int japan_post(struct zint_symbol *symbol, unsigned char source[])
 	char local_source[input_length];
 	inter_posn = 0;
 	error_number = 0;
-	
+
 	strcpy(local_source, (char*)source);
 	to_upper((unsigned char*)local_source);
 	error_number = is_sane(SHKASUTSET, (unsigned char*)local_source);
+
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
 
-	for(i = 0; i < (inter_length * 2); i++) {
+	for(i = 0; i < inter_length; i++) {
 		inter[i] = 'd'; /* Pad character CC4 */
 	}
 
@@ -542,7 +543,7 @@ int japan_post(struct zint_symbol *symbol, unsigned char source[])
 			}
 		}
 	}
-	
+
 	strcpy(pattern, "13"); /* Start */
 	
 	sum = 0;
@@ -551,7 +552,7 @@ int japan_post(struct zint_symbol *symbol, unsigned char source[])
 		sum += posn(CHKASUTSET, inter[i]);
 		/* printf("%c (%d)\n", inter[i], posn(CHKASUTSET, inter[i])); */
 	}
-	
+
 	/* Calculate check digit */
 	check = 19 - (sum % 19);
 	if(check == 19) { check = 0; }
