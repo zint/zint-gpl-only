@@ -386,7 +386,7 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 	
 	if(symbol->input_mode == GS1_MODE) { gs1 = 1; } else { gs1 = 0; }
 	
-	if(gs1) { target[tp] = 232; tp++; } /* FNC1 */
+	if(gs1) { target[tp] = 232; tp++; concat(binary, " "); } /* FNC1 */
 	
 	while (sp < inputlen) {
 		
@@ -442,7 +442,7 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 			}
 			
 			if(next_mode != DM_C40) {
-				target[tp] = 254; tp++; /* Unlatch */
+				target[tp] = 254; tp++; concat(binary, " ");/* Unlatch */
 			} else {
 				if(source[sp] > 127) {
 					c40_buffer[c40_p] = 1; c40_p++;
@@ -494,7 +494,7 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 			}
 			
 			if(next_mode != DM_TEXT) {
-				target[tp] = 254; tp++; /* Unlatch */
+				target[tp] = 254; tp++; concat(binary, " ");/* Unlatch */
 			} else {
 				if(source[sp] > 127) {
 					text_buffer[text_p] = 1; text_p++;
@@ -546,7 +546,7 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 			}
 			
 			if(next_mode != DM_X12) {
-				target[tp] = 254; tp++; /* Unlatch */
+				target[tp] = 254; tp++; concat(binary, " ");/* Unlatch */
 			} else {
 				if(source[sp] == 13) { value = 0; }
 				if(source[sp] == '*') { value = 1; }
@@ -639,13 +639,13 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 		target[tp] = 254; tp++; /* unlatch */
 		target[tp] = source[inputlen - 2] + 1; tp++;
 		target[tp] = source[inputlen - 1] + 1; tp++;
-		concat(binary, "  ");
+		concat(binary, "   ");
 		current_mode = DM_ASCII;
 	}
 	if(c40_p == 1) {
 		target[tp] = 254; tp++; /* unlatch */
 		target[tp] = source[inputlen - 1] + 1; tp++;
-		concat(binary, " ");
+		concat(binary, "  ");
 		current_mode = DM_ASCII;
 	}
 	
@@ -653,13 +653,13 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 		target[tp] = 254; tp++; /* unlatch */
 		target[tp] = source[inputlen - 2] + 1; tp++;
 		target[tp] = source[inputlen - 1] + 1; tp++;
-		concat(binary, "  ");
+		concat(binary, "   ");
 		current_mode = DM_ASCII;
 	}
 	if(text_p == 1) {
 		target[tp] = 254; tp++; /* unlatch */
 		target[tp] = source[inputlen - 1] + 1; tp++;
-		concat(binary, " ");
+		concat(binary, "  ");
 		current_mode = DM_ASCII;
 	}
 	
@@ -667,16 +667,16 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 		target[tp] = 254; tp++; /* unlatch */
 		target[tp] = source[inputlen - 2] + 1; tp++;
 		target[tp] = source[inputlen - 1] + 1; tp++;
-		concat(binary, "  ");
+		concat(binary, "   ");
 		current_mode = DM_ASCII;
 	}
 	if(x12_p == 1) {
 		target[tp] = 254; tp++; /* unlatch */
 		target[tp] = source[inputlen - 1] + 1; tp++;
-		concat(binary, " ");
+		concat(binary, "  ");
 		current_mode = DM_ASCII;
 	}
-	
+
 	/* Add length and randomising algorithm to b256 */
 	i = 0;
 	while (i < tp) {

@@ -46,6 +46,10 @@ code.c:
 	Extended Code 39 (Code 39+)
 	Code 93
 	LOGMARS
+	Channel Code
+
+code49.c:
+	Code 49
 
 composite.c:
 	CC-A Composite Symbology
