@@ -640,9 +640,13 @@ int ZBarcode_Print_Rotated(struct zint_symbol *symbol, int rotate_angle)
 			if(!(strcmp(output, "EPS"))) {
 				error_number = ps_plot(symbol);
 			} else {
-				strcpy(symbol->errtxt, "Unknown output format");
-				error_tag(symbol->errtxt, ERROR_INVALID_OPTION);
-				return ERROR_INVALID_OPTION;
+				if(!(strcmp(output, "SVG"))) {
+					error_number = svg_plot(symbol);
+				} else {
+					strcpy(symbol->errtxt, "Unknown output format");
+					error_tag(symbol->errtxt, ERROR_INVALID_OPTION);
+					return ERROR_INVALID_OPTION;
+				}
 			}
 #ifndef NO_PNG
 		}
