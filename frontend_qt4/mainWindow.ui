@@ -2372,6 +2372,12 @@ p, li { white-space: pre-wrap; }
         <height>21</height>
        </rect>
       </property>
+      <property name="suffix" >
+       <string> X</string>
+      </property>
+      <property name="prefix" >
+       <string/>
+      </property>
       <property name="maximum" >
        <number>300</number>
       </property>
@@ -2403,6 +2409,9 @@ p, li { white-space: pre-wrap; }
         <width>120</width>
         <height>21</height>
        </rect>
+      </property>
+      <property name="suffix" >
+       <string> X</string>
       </property>
       <property name="minimum" >
        <number>0</number>
@@ -2490,6 +2499,9 @@ p, li { white-space: pre-wrap; }
         <height>22</height>
        </rect>
       </property>
+      <property name="suffix" >
+       <string> X</string>
+      </property>
      </widget>
      <widget class="QLabel" name="lblWhitespace" >
       <property name="geometry" >
@@ -2527,7 +2539,16 @@ p, li { white-space: pre-wrap; }
        </rect>
       </property>
       <property name="suffix" >
-       <string> X</string>
+       <string/>
+      </property>
+      <property name="decimals" >
+       <number>2</number>
+      </property>
+      <property name="minimum" >
+       <double>0.500000000000000</double>
+      </property>
+      <property name="maximum" >
+       <double>99.500000000000000</double>
       </property>
       <property name="singleStep" >
        <double>0.500000000000000</double>
