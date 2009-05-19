@@ -69,6 +69,9 @@ public:
 	int securityLevel();
 	void setSecurityLevel(int securityLevel);
 
+	float scale();
+	void setScale(float scale);
+
 	int mode();
 	void setMode(int securityLevel);
 
@@ -76,10 +79,14 @@ public:
 
 	void setWhitespace(int whitespace);
 
+	QString error_message();
+
 	void render(QPainter & painter, const QRectF & paintRect, AspectRatioMode mode=IgnoreAspectRatio);
 
 	const QString & lastError();
 	bool hasErrors();
+
+	bool save_to_file(QString filename);
 private:
 	void encode();
 
@@ -100,6 +107,7 @@ private:
 	int m_error;
 	int m_whitespace;
 	zint_symbol * m_zintSymbol;
+	float m_scale;
 };
 }
 #endif
