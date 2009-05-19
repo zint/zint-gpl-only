@@ -19,9 +19,15 @@
 
 #include <QtGui>
 #include <QGraphicsItem>
+ #include <QMainWindow>
 
 #include "ui_mainWindow.h"
 #include "barcodeitem.h"
+
+ class QAction;
+ class QActionGroup;
+ class QLabel;
+ class QMenu;
 
 class MainWindow : public QWidget, private Ui::mainWindow
 {
@@ -113,11 +119,24 @@ public slots:
 	void mqr_size();
 	void mqr_errorcorrect();
 	void maxi_primary();
+	void change_print_scale();
+
+private slots:
+	bool save();
+	void about();
+	void quit_now();
+	/* void about(); */
 
 private:
+/*	void createActions();
+	void createMenus(); */
+
 	QColor m_fgcolor,m_bgcolor;
 	BarcodeItem m_bc;
-
+/*     QMenu *fileMenu;
+     QMenu *helpMenu;
+     QAction *saveAct;
+     QAction *aboutQtAct; */
 };
 
 #endif

@@ -6,8 +6,26 @@
     <x>0</x>
     <y>0</y>
     <width>619</width>
-    <height>559</height>
+    <height>596</height>
    </rect>
+  </property>
+  <property name="sizePolicy" >
+   <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize" >
+   <size>
+    <width>619</width>
+    <height>596</height>
+   </size>
+  </property>
+  <property name="maximumSize" >
+   <size>
+    <width>619</width>
+    <height>596</height>
+   </size>
   </property>
   <property name="windowTitle" >
    <string>Zint Barcode Studio</string>
@@ -56,6 +74,12 @@
      <width>595</width>
      <height>217</height>
     </rect>
+   </property>
+   <property name="sizePolicy" >
+    <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
    </property>
    <property name="currentIndex" >
     <number>0</number>
@@ -2317,7 +2341,7 @@ p, li { white-space: pre-wrap; }
        <x>10</x>
        <y>6</y>
        <width>572</width>
-       <height>102</height>
+       <height>140</height>
       </rect>
      </property>
      <property name="title" >
@@ -2326,9 +2350,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QLabel" name="label_3" >
       <property name="geometry" >
        <rect>
-        <x>14</x>
-        <y>19</y>
-        <width>91</width>
+        <x>10</x>
+        <y>18</y>
+        <width>40</width>
         <height>21</height>
        </rect>
       </property>
@@ -2358,9 +2382,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QLabel" name="label_8" >
       <property name="geometry" >
        <rect>
-        <x>-3</x>
-        <y>43</y>
-        <width>109</width>
+        <x>9</x>
+        <y>39</y>
+        <width>73</width>
         <height>29</height>
        </rect>
       </property>
@@ -2374,9 +2398,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QSpinBox" name="bwidth" >
       <property name="geometry" >
        <rect>
-        <x>114</x>
+        <x>118</x>
         <y>46</y>
-        <width>124</width>
+        <width>120</width>
         <height>21</height>
        </rect>
       </property>
@@ -2434,9 +2458,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QPushButton" name="fgcolor" >
       <property name="geometry" >
        <rect>
-        <x>273</x>
-        <y>51</y>
-        <width>145</width>
+        <x>357</x>
+        <y>92</y>
+        <width>141</width>
         <height>26</height>
        </rect>
       </property>
@@ -2447,9 +2471,9 @@ p, li { white-space: pre-wrap; }
      <widget class="QPushButton" name="bgcolor" >
       <property name="geometry" >
        <rect>
-        <x>427</x>
-        <y>51</y>
-        <width>133</width>
+        <x>357</x>
+        <y>57</y>
+        <width>142</width>
         <height>26</height>
        </rect>
       </property>
@@ -2460,8 +2484,8 @@ p, li { white-space: pre-wrap; }
      <widget class="QSpinBox" name="spnWhitespace" >
       <property name="geometry" >
        <rect>
-        <x>117</x>
-        <y>73</y>
+        <x>119</x>
+        <y>72</y>
         <width>120</width>
         <height>22</height>
        </rect>
@@ -2470,14 +2494,46 @@ p, li { white-space: pre-wrap; }
      <widget class="QLabel" name="lblWhitespace" >
       <property name="geometry" >
        <rect>
-        <x>21</x>
-        <y>73</y>
+        <x>11</x>
+        <y>74</y>
         <width>78</width>
         <height>16</height>
        </rect>
       </property>
       <property name="text" >
        <string>Whitespace:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="lblScale" >
+      <property name="geometry" >
+       <rect>
+        <x>12</x>
+        <y>103</y>
+        <width>85</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>Printing Scale:</string>
+      </property>
+     </widget>
+     <widget class="QDoubleSpinBox" name="spnScale" >
+      <property name="geometry" >
+       <rect>
+        <x>119</x>
+        <y>102</y>
+        <width>119</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="suffix" >
+       <string> X</string>
+      </property>
+      <property name="singleStep" >
+       <double>0.500000000000000</double>
+      </property>
+      <property name="value" >
+       <double>1.000000000000000</double>
       </property>
      </widget>
     </widget>
@@ -2516,6 +2572,61 @@ p, li { white-space: pre-wrap; }
      </rect>
     </property>
    </widget>
+  </widget>
+  <widget class="QPushButton" name="btnAbout" >
+   <property name="geometry" >
+    <rect>
+     <x>10</x>
+     <y>560</y>
+     <width>75</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>About</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnCopy" >
+   <property name="enabled" >
+    <bool>false</bool>
+   </property>
+   <property name="geometry" >
+    <rect>
+     <x>450</x>
+     <y>560</y>
+     <width>75</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Copy</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnSave" >
+   <property name="geometry" >
+    <rect>
+     <x>370</x>
+     <y>560</y>
+     <width>75</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>Save</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnExit" >
+   <property name="geometry" >
+    <rect>
+     <x>530</x>
+     <y>560</y>
+     <width>75</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="text" >
+    <string>E&amp;xit</string>
+   </property>
   </widget>
  </widget>
  <tabstops>
