@@ -36,6 +36,7 @@ QZint::QZint()
 	m_zintSymbol=0;
 	m_error=0;
 	m_input_mode = UNICODE_MODE;
+	m_scale = 1.0;
 }
 
 QZint::~QZint()
@@ -133,6 +134,16 @@ int QZint::width()
 	return (m_zintSymbol->width+(m_border==BOX)?m_borderWidth*2:0)*(m_zintSymbol->symbology == BARCODE_MAXICODE?(maxi_width+1):1);
 }
 
+float QZint::scale()
+{
+	return m_scale;
+}
+
+void QZint::setScale(float scale)
+{
+	m_scale = scale;
+}
+
 QColor QZint::fgColor()
 {
 	return m_fgColor;
@@ -194,6 +205,11 @@ void QZint::setSecurityLevel(int securityLevel)
 	m_securityLevel=securityLevel;
 }
 
+QString QZint::error_message()
+{
+	return m_lastError;
+}
+
 int QZint::mode()
 {
 	return m_securityLevel;
@@ -201,6 +217,34 @@ int QZint::mode()
 void QZint::setMode(int securityLevel)
 {
 	m_securityLevel=securityLevel;
+}
+
+bool QZint::save_to_file(QString filename)
+{
+	if (m_zintSymbol)
+		ZBarcode_Delete(m_zintSymbol);
+
+	m_lastError.clear();
+	m_zintSymbol = ZBarcode_Create();
+	m_zintSymbol->output_options=m_border;
+	m_zintSymbol->symbology=m_symbol;
+	m_zintSymbol->height=m_height;
+	m_zintSymbol->whitespace_width=m_whitespace;
+	m_zintSymbol->border_width=m_borderWidth;
+	m_zintSymbol->option_1=m_securityLevel;
+	m_zintSymbol->input_mode = m_input_mode;
+	m_zintSymbol->option_2=m_width;
+	m_zintSymbol->option_3=m_pdf417CodeWords;
+	m_zintSymbol->scale=m_scale;
+	QByteArray bstr=m_text.toAscii();
+	QByteArray pstr=m_primaryMessage.left(99).toAscii();
+	QByteArray fstr=filename.left(255).toAscii();
+	strcpy(m_zintSymbol->primary,pstr.data());
+	strcpy(m_zintSymbol->outfile,fstr.data());
+	int error = ZBarcode_Encode_and_Print(m_zintSymbol, (unsigned char*)bstr.data());
+	if (error > WARN_INVALID_OPTION)
+		m_lastError=m_zintSymbol->errtxt;
+	if(error == 0) { return true; } else { return false; }
 }
 
 void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode mode)
