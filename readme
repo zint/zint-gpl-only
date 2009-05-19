@@ -15,11 +15,7 @@ Composite Symbology, Data Matrix, QR Code, Maxicode, Aztec Code, EAN-13, Codablo
 Korea Post Barcode, HIBC Code 128, HIBC Code 39, HIBC Data Matrix, HIBC PDF417, HIBC MicroPDF417,
 HIBC QR Code, HIBC Codablock-F, Japanese Postal Code, Code 49, Channel Code, FIM and Flattermarken.
 
-Full documentation is included in the 'docs' directory. The libzint back end code is included
-in the 'backend' directory, and the front end command line program 'zint' is included in the
-'frontend' directory. See the HTML documentation for full installation instructions. The file
-DEVELOPERS in the backend folder gives a brief guide to which symbologies are handled by which
-source code files.
+Full documentation is now available from the project website at http://www.zint.org.uk
 
 SUPPORT ZINT
 ------------
@@ -35,7 +31,6 @@ To donate to this project go to: http://sourceforge.net/project/project_donation
 
 QT FRONT END
 ------------
-
 This package includes a Qt4 GUI front end. This feature is still under development but if you would
 like to give it a try then here is how to get to it: You will need Qt4 and cmake to compile the code.
 cd to the folder that contains this README file then...
@@ -77,8 +72,8 @@ Robin.
 THINGS TO DO
 ------------
 
-If you are interested in expanding the functionality of this library then here are a few
-things which you may like to attempt:
+If you are interested in expanding the functionality of this package then here are a few
+things which need to be done!
 
 Frontend
 --------
