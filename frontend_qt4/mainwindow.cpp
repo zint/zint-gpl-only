@@ -19,13 +19,13 @@
 #include <QImage>
 #include <QColorDialog>
 
-
 #include "mainwindow.h"
 #include <stdio.h>
 
 MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 		: QWidget(parent, fl)
 {
+
 	char bstyle_text[][50] = {
 		"Australia Post Standard Customer",
 		"Australia Post Reply-Paid",
@@ -88,8 +88,13 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 		"UPC-E",
 		"USPS One Code"
 	};
+		
+	/* createActions();
+	createMenus();	*/
+	
 	setupUi(this);
 	view->setScene(new QGraphicsScene);
+	
 	m_fgcolor=qRgb(0,0,0);
 	m_bgcolor=qRgb(0xff,0xff,0xff);
 	for (int i=0;i<metaObject()->enumerator(0).keyCount();i++) {
@@ -166,10 +171,67 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 	connect(txtMaxiPrimary, SIGNAL(textChanged( const QString& )), SLOT(update_preview()));
 	connect(spnWhitespace, SIGNAL(valueChanged( int )), SLOT(update_preview()));
 	connect(cmbChannel, SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
+	connect(btnAbout, SIGNAL(clicked( bool )), SLOT(about()));
+	connect(btnSave, SIGNAL(clicked( bool )), SLOT(save()));
+	connect(spnScale, SIGNAL(valueChanged( double )), SLOT(change_print_scale()));
+	connect(btnExit, SIGNAL(clicked( bool )), SLOT(quit_now()));
 }
 
 MainWindow::~MainWindow()
 {
+}
+/*
+void MainWindow::createActions()
+{
+	saveAct = new QAction(tr("&Save"), this);
+	saveAct->setShortcut(tr("Ctrl+S"));
+	saveAct->setStatusTip(tr("Save the document to disk"));
+	connect(saveAct, SIGNAL(triggered()), this, SLOT(save()));
+	aboutQtAct = new QAction(tr("About &Qt"), this);
+	aboutQtAct->setStatusTip(tr("Show the Qt library's About box"));
+	connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+}
+
+ void MainWindow::createMenus()
+{
+	fileMenu = menuBar()->addMenu(tr("&File"));
+	fileMenu->addAction(saveAct);
+	fileMenu->addAction(exitAction);
+	helpMenu = menuBar()->addMenu(tr("&Help"));
+	helpMenu->addAction(aboutQtAct);
+} */
+
+bool MainWindow::save()
+{
+	bool status;
+	
+	/* Does nothing yet! */
+	QString fileName = QFileDialog::getSaveFileName(this,
+			tr("Save Barcode Image"), ".",
+			   tr("Barcode Images (*.png *.eps *.svg)"));
+	
+	if (fileName.isEmpty())
+		return false;
+	
+	status = m_bc.bc.save_to_file(fileName);
+	if(status == false) {
+		QMessageBox::critical(this,tr("Save Error"),m_bc.bc.error_message());
+	}
+	return status;
+}
+
+void MainWindow::about()
+{
+	QMessageBox::about(this, tr("About Zint"),
+			   tr("<h2>Zint Barcode Studio 0.2</h2>"
+					   "<p>A simple barcode generator"
+					   "<p>Requires libzint 2.1.3 or greater."
+					   "<p>Visit the <a href=\"http://www.zint.org.uk\">Zint Project Homepage</a> for more information."
+					   "<p>Copyright &copy; 2009 Robin Stuart &amp; Bogdan Vatra.<br>"
+					   "QR Code support by Kentaro Fukuchi.<br>"
+					   "Released under the GNU General Public License ver. 3"
+					   "<p>\"QR Code\" is a Registered Trademark of Denso Corp."
+			     ));
 }
 
 void MainWindow::on_fgcolor_clicked()
@@ -182,6 +244,17 @@ void MainWindow::on_bgcolor_clicked()
 {
 	m_bgcolor=QColorDialog::getColor(m_bgcolor,this);
 	update_preview();
+}
+
+void MainWindow::change_print_scale()
+{
+	/* This value is only used when printing (saving) to file */
+	m_bc.bc.setScale((float)spnScale->value());
+}
+
+void MainWindow::quit_now()
+{
+	this->close();
 }
 
 void MainWindow::change_options()
