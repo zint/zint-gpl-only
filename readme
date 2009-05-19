@@ -1,4 +1,4 @@
-Zint and libzint 2.1.2
+Zint and libzint 2.1.3
 ----------------------
 
 Zint is a front end program and library which provides support for over 40 barcode symbologies
@@ -13,7 +13,7 @@ Code 16k, PDF417, MicroPDF417, Two-Track Pharmacode, PostNet, PLANET, Australia 
 RM4SCC, USPS OneCode, GS1 DataBar, DataBar-14, DataBar Limited, DataBar Extended, DataBar Stacked,
 Composite Symbology, Data Matrix, QR Code, Maxicode, Aztec Code, EAN-13, Codablock-F, Micro QR,
 Korea Post Barcode, HIBC Code 128, HIBC Code 39, HIBC Data Matrix, HIBC PDF417, HIBC MicroPDF417,
-HIBC QR Code, HIBC Codablock-F, FIM and Flattermarken.
+HIBC QR Code, HIBC Codablock-F, Japanese Postal Code, Code 49, Channel Code, FIM and Flattermarken.
 
 Full documentation is included in the 'docs' directory. The libzint back end code is included
 in the 'backend' directory, and the front end command line program 'zint' is included in the
@@ -27,8 +27,8 @@ SUPPORT ZINT
 The Zint project is committed to providing the open source community with encoding software for
 all public domain barcode standards. For this we need access to the standard documentation and,
 unfortunately, this is not free. Your donation will contribute towards the purchase of standard documents
-from ANSI. Standards which we hope to add to Zint in this way include Aztec Mesas, Code 49, 
-Supercode, Code One and many others.
+from ANSI. Standards which we hope to add to Zint in this way include Aztec Mesas, Supercode,
+Code One and many others.
 
 To donate to this project go to: http://sourceforge.net/project/project_donations.php?group_id=199350
 
@@ -82,16 +82,15 @@ things which you may like to attempt:
 
 Frontend
 --------
-	The Qt front end needs a lot of work. It needs to be able to:
-	* Show barcode images properly
-	* Allow saving of generated barcodes to file
-	* Allow copying of generated barcodes to the clipboard
+	The Qt frontend has had a lot of work since the last version - it has now
+	been renamed "Zint Barcode Studio version 0.2". It needs to:
+	* Allow copying of generated barcodes to the clipboard with "Copy" button
+	* Allow dragging and dropping to external apps.
 
 Packaging
 ---------
 	Binary packages are needed for distribution in the following formats
 	* RPMs for various Linux distros
-	* DEB package for Debian
 	* Install binaries for MS Windows
 	* Install binaries for Mac OSX
 
@@ -110,6 +109,13 @@ Research
 Coming Soon
 -----------
 	Features which it is hoped will appear in this library soon:
-	* Extended Channel Interpretations
-	* Code 49
+	* Extended Channel Interpretations (this has been delayed - see the website)
 	* Code One
+
+Known Problems
+--------------
+	A curious fault has developed in composite symbols with 2D components starting
+	with date fields such as AI [17]. When compiled with make directly this works
+	properly - when compiled with cmake this sigfaults. Why?
+
+	Large Data Matrix symbols which are not ECC200 seem to do strange things.
