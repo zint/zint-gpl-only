@@ -15,3 +15,5 @@ add_dependencies(zint_frontend zint)
 link_directories( "${CMAKE_BINARY_DIR}/backend" )
 
 target_link_libraries(zint_frontend zint)
+
+install(TARGETS zint_frontend DESTINATION "${BIN_INSTALL_DIR}" RUNTIME)
