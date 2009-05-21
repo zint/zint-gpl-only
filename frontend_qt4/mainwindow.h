@@ -19,15 +19,15 @@
 
 #include <QtGui>
 #include <QGraphicsItem>
- #include <QMainWindow>
+#include <QMainWindow>
 
 #include "ui_mainWindow.h"
 #include "barcodeitem.h"
 
- class QAction;
- class QActionGroup;
- class QLabel;
- class QMenu;
+class QAction;
+class QActionGroup;
+class QLabel;
+class QMenu;
 
 class MainWindow : public QWidget, private Ui::mainWindow
 {
@@ -104,6 +104,7 @@ public:
 	MainWindow(QWidget* parent = 0, Qt::WFlags fl = 0);
 	~MainWindow();
 
+
 public slots:
 	void update_preview();
 	void change_options();
@@ -111,21 +112,16 @@ public slots:
 	void on_bgcolor_clicked();
 	void composite_enable();
 	void composite_ean_check();
-	void aztec_size();
-	void aztec_errorcorrect();
 	void datamatrix_options();
-	void qr_size();
-	void qr_errorcorrect();
-	void mqr_size();
-	void mqr_errorcorrect();
 	void maxi_primary();
 	void change_print_scale();
+	void scaleRotate();
 
 private slots:
 	bool save();
 	void about();
 	void quit_now();
-	/* void about(); */
+
 
 private:
 /*	void createActions();
@@ -133,6 +129,7 @@ private:
 
 	QColor m_fgcolor,m_bgcolor;
 	BarcodeItem m_bc;
+	QWidget *m_optionWidget; 
 /*     QMenu *fileMenu;
      QMenu *helpMenu;
      QAction *saveAct;
