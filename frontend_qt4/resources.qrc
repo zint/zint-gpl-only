@@ -1,0 +1,20 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+    <file>zoomin.png</file>
+    <file>zoomout.png</file>
+    <file>rotateleft.png</file>
+    <file>rotateright.png</file>
+    <file>grpAztec.ui</file>
+    <file>grpC39.ui</file>
+    <file>grpDM.ui</file>
+    <file>grpMSICheck.ui</file>
+    <file>grpC128.ui</file>
+    <file>grpChannel.ui</file>
+    <file>grpMicroPDF.ui</file>
+    <file>grpPDF417.ui</file>
+    <file>grpC16k.ui</file>
+    <file>grpCodablock.ui</file>
+    <file>grpMQR.ui</file>
+    <file>grpQR.ui</file>
+</qresource>
+</RCC>

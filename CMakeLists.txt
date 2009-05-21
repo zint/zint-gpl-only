@@ -19,6 +19,16 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules" )
 
 include (SetPaths.cmake)
 
+INCLUDE (CheckCXXCompilerFlag)
+
+if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
+    check_cxx_compiler_flag("-Wall" CXX_COMPILER_FLAG_WALL)
+    if (CXX_COMPILER_FLAG_WALL)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+    endif (CXX_COMPILER_FLAG_WALL)
+endif (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
+
+
 IF(APPLE)
     IF(NOT ZINT_HAS_BEEN_RUN_BEFORE)
         IF(EXISTS /Developer/SDKs/MacOSX10.5.sdk OR EXISTS /SDKs/MacOSX10.5.sdk)
@@ -38,8 +48,10 @@ add_subdirectory(backend)
 add_subdirectory(frontend)
 
 find_package(Qt4)
+
 if (QT4_FOUND)
     set( QT_USE_QTGUI   TRUE )
+    set( QT_USE_QTUITOOLS TRUE )
     include( ${QT_USE_FILE} )
     include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}

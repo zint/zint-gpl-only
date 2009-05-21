@@ -18,12 +18,14 @@
 #include <QGraphicsScene>
 #include <QImage>
 #include <QColorDialog>
+#include <QUiLoader>
+#include <QFile>
 
 #include "mainwindow.h"
 #include <stdio.h>
 
 MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
-		: QWidget(parent, fl)
+		: QWidget(parent, fl),m_optionWidget(0)
 {
 
 	char bstyle_text[][50] = {
@@ -109,68 +111,18 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 	connect(bstyle, SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
 	connect(heightb, SIGNAL(valueChanged( int )), SLOT(update_preview()));
 	connect(bwidth,  SIGNAL(valueChanged( int )), SLOT(update_preview()));
-	connect(codewords,  SIGNAL(valueChanged( int )), SLOT(update_preview()));
 	connect(btype, SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
 	connect(txtData, SIGNAL(textChanged( const QString& )), SLOT(update_preview()));
 	connect(txtComposite, SIGNAL(textChanged()), SLOT(update_preview()));
 	connect(chkComposite, SIGNAL(stateChanged( int )), SLOT(composite_enable()));
 	connect(chkComposite, SIGNAL(stateChanged( int )), SLOT(update_preview()));
 	connect(cmbCompType, SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
-	connect(radC128EAN, SIGNAL(toggled( bool )), SLOT(composite_ean_check()));
-	connect(radC128Stand, SIGNAL(clicked( bool )), SLOT(update_preview()));
-	connect(radC128CSup, SIGNAL(clicked( bool )), SLOT(update_preview()));
-	connect(radC128EAN, SIGNAL(clicked( bool )), SLOT(update_preview()));
-	connect(radC128HIBC, SIGNAL(clicked( bool )), SLOT(update_preview()));
-	connect(cmbPDFECC, SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
-	connect(cmbPDFCols, SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
-	connect(radPDFTruncated, SIGNAL(clicked( bool )), SLOT(update_preview()));
-	connect(radPDFStand, SIGNAL(clicked( bool )), SLOT(update_preview()));
-	connect(radPDFHIBC, SIGNAL(clicked( bool )), SLOT(update_preview()));
-	connect(radAztecSize, SIGNAL(toggled( bool )), SLOT(aztec_size()));
-	connect(radAztecECC, SIGNAL(toggled( bool )), SLOT(aztec_errorcorrect()));
-	connect(radAztecAuto, SIGNAL(clicked( bool )), SLOT(update_preview()));
-	connect(radAztecSize, SIGNAL(clicked( bool )), SLOT(update_preview()));
-	connect(radAztecECC, SIGNAL(clicked( bool )), SLOT(update_preview()));
-	connect(cmbAztecSize, SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
-	connect(cmbAztecECC, SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
-	connect(chkAztecMode, SIGNAL(stateChanged( int )), SLOT(update_preview()));
-	connect(cmbMSICheck, SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
-	connect(radC39Stand, SIGNAL(clicked( bool )), SLOT(update_preview()));
-	connect(radC39Check, SIGNAL(clicked( bool )), SLOT(update_preview()));
-	connect(radC39HIBC, SIGNAL(clicked( bool )), SLOT(update_preview()));
-	connect(cmbMPDFCols, SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
-	connect(radMPDFStand, SIGNAL(toggled( bool )), SLOT(update_preview()));
-	connect(radC16kStand, SIGNAL(toggled( bool )), SLOT(update_preview()));
-	connect(radCodaStand, SIGNAL(clicked( bool )), SLOT(update_preview()));
-	connect(radCodaGS1, SIGNAL(clicked( bool )), SLOT(update_preview()));
-	connect(radCodaHIBC, SIGNAL(clicked( bool )), SLOT(update_preview()));
-	connect(cmbDMMode, SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
-	connect(cmbDMMode, SIGNAL(currentIndexChanged( int )), SLOT(datamatrix_options()));
-	connect(radDM200Stand, SIGNAL(clicked( bool )), SLOT(update_preview()));
-	connect(radDM200GS1, SIGNAL(clicked( bool )), SLOT(update_preview()));
-	connect(radDM200HIBC, SIGNAL(clicked( bool )), SLOT(update_preview()));
-	connect(cmbDM200Size, SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
-	connect(cmbDMNon200Size, SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
-	connect(radQRAuto, SIGNAL(clicked( bool )), SLOT(update_preview()));
-	connect(radQRSize, SIGNAL(clicked( bool )), SLOT(update_preview()));
-	connect(radQRECC, SIGNAL(clicked( bool )), SLOT(update_preview()));
-	connect(radQRSize, SIGNAL(toggled( bool )), SLOT(qr_size()));
-	connect(radQRECC, SIGNAL(toggled( bool )), SLOT(qr_errorcorrect()));
-	connect(cmbQRSize, SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
-	connect(cmbQRECC, SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
-	connect(chkQRHIBC, SIGNAL(stateChanged( int )), SLOT(update_preview()));
-	connect(radMQRAuto, SIGNAL(clicked( bool )), SLOT(update_preview()));
-	connect(radMQRSize, SIGNAL(clicked( bool )), SLOT(update_preview()));
-	connect(radMQRECC, SIGNAL(clicked( bool )), SLOT(update_preview()));
-	connect(radMQRSize, SIGNAL(toggled( bool )), SLOT(mqr_size()));
-	connect(radMQRECC, SIGNAL(toggled( bool )), SLOT(mqr_errorcorrect()));
-	connect(cmbMQRSize, SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
-	connect(cmbMQRECC, SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
+	connect(rotateSlider, SIGNAL(valueChanged(int)), SLOT(scaleRotate()));
+	connect(scaleSlider, SIGNAL(valueChanged(int)), SLOT(scaleRotate()));
 	connect(cmbMaxiMode, SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
 	connect(cmbMaxiMode, SIGNAL(currentIndexChanged( int )), SLOT(maxi_primary()));
 	connect(txtMaxiPrimary, SIGNAL(textChanged( const QString& )), SLOT(update_preview()));
 	connect(spnWhitespace, SIGNAL(valueChanged( int )), SLOT(update_preview()));
-	connect(cmbChannel, SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
 	connect(btnAbout, SIGNAL(clicked( bool )), SLOT(about()));
 	connect(btnSave, SIGNAL(clicked( bool )), SLOT(save()));
 	connect(spnScale, SIGNAL(valueChanged( double )), SLOT(change_print_scale()));
@@ -180,6 +132,13 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 MainWindow::~MainWindow()
 {
 }
+void MainWindow::scaleRotate()
+{
+	view->resetTransform();
+	view->rotate(rotateSlider->value());
+	view->scale((double)scaleSlider->value()/100,(double)scaleSlider->value()/100);
+}
+
 /*
 void MainWindow::createActions()
 {
@@ -254,138 +213,209 @@ void MainWindow::change_print_scale()
 
 void MainWindow::quit_now()
 {
-	this->close();
+	close();
 }
 
 void MainWindow::change_options()
 {
-	bool options;
+	QUiLoader uiload;
 
-	options = false;
+	if (tabMain->count()==3)
+		tabMain->removeTab(1);
 
 	if(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_CODE128)
 	{
-		options = true;
-		grpC128->show();
+		QFile file(":/grpC128.ui");
+		if (!file.open(QIODevice::ReadOnly))
+			return;
+		m_optionWidget=uiload.load(&file);
+		file.close();
+		tabMain->insertTab(1,m_optionWidget,tr("Options"));
 		chkComposite->setText(tr("Add 2D Component (GS1-128 only)"));
-	} else {
-		grpC128->hide();
+		connect(m_optionWidget->findChild<QObject*>("radC128EAN"), SIGNAL(toggled( bool )), SLOT(composite_ean_check()));
+		connect(m_optionWidget->findChild<QObject*>("radC128Stand"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("radC128CSup"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("radC128EAN"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("radC128HIBC"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+	} 
+	else
 		chkComposite->setText(tr("Add 2D Component"));
-	}
+
 
 	if(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_PDF417)
 	{
-		options = true;
-		grpPDF417->show();
-	} else {
-		grpPDF417->hide();
+		QFile file(":/grpPDF417.ui");
+		if (!file.open(QIODevice::ReadOnly))
+			return;
+		m_optionWidget=uiload.load(&file);
+		file.close();
+		tabMain->insertTab(1,m_optionWidget,tr("Options"));
+		connect(m_optionWidget->findChild<QObject*>("codewords"),  SIGNAL(valueChanged( int )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("cmbPDFECC"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("cmbPDFCols"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("radPDFTruncated"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("radPDFStand"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("radPDFHIBC"), SIGNAL(clicked( bool )), SLOT(update_preview()));
 	}
 
 	if(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_MICROPDF417)
 	{
-		options = true;
-		grpMicroPDF->show();
-	} else {
-		grpMicroPDF->hide();
+		QFile file(":/grpMicroPDF.ui");
+		if (!file.open(QIODevice::ReadOnly))
+			return;
+		m_optionWidget=uiload.load(&file);
+		file.close();
+		tabMain->insertTab(1,m_optionWidget,tr("Options"));
+		connect(m_optionWidget->findChild<QObject*>("cmbMPDFCols"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("radMPDFStand"), SIGNAL(toggled( bool )), SLOT(update_preview()));
 	}
 
 	if(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_AZTEC)
 	{
-		options = true;
-		grpAztec->show();
-	} else {
-		grpAztec->hide();
+		QFile file(":/grpAztec.ui");
+		if (!file.open(QIODevice::ReadOnly))
+			return;
+		m_optionWidget=uiload.load(&file);
+		file.close();
+		tabMain->insertTab(1,m_optionWidget,tr("Options"));
+		connect(m_optionWidget->findChild<QObject*>("radAztecAuto"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("radAztecSize"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("radAztecECC"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("cmbAztecSize"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("cmbAztecECC"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("chkAztecMode"), SIGNAL(stateChanged( int )), SLOT(update_preview()));
 	}
 
 	if(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_MSI_PLESSEY)
 	{
-		options = true;
-		grpMSICheck->show();
-	} else {
-		grpMSICheck->hide();
+		QFile file(":/grpMSICheck.ui");
+		if (!file.open(QIODevice::ReadOnly))
+			return;
+		m_optionWidget=uiload.load(&file);
+		file.close();
+		tabMain->insertTab(1,m_optionWidget,tr("Options"));
+		connect(m_optionWidget->findChild<QObject*>("cmbMSICheck"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
 	}
 
 	if((metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_CODE39) ||
 		(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_EXCODE39))
 	{
-		options = true;
-		grpC39->show();
-	} else {
-		grpC39->hide();
-	}
-
-	if(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_EXCODE39) {
-		if(radC39HIBC->isChecked() == true) {
-			radC39HIBC->setChecked(false);
-			radC39Stand->setChecked(true);
-		}
-		radC39HIBC->setEnabled(false);
-	} else {
-		radC39HIBC->setEnabled(true);
+		QFile file(":/grpC39.ui");
+		if (!file.open(QIODevice::ReadOnly))
+			return;
+		m_optionWidget=uiload.load(&file);
+		file.close();
+		tabMain->insertTab(1,m_optionWidget,tr("Options"));
+		connect(m_optionWidget->findChild<QObject*>("radC39Stand"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("radC39Check"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("radC39HIBC"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		if(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_EXCODE39) 
+		{
+			if(m_optionWidget->findChild<QRadioButton*>("radC39HIBC")->isChecked() == true) 
+			{
+				m_optionWidget->findChild<QRadioButton*>("radC39HIBC")->setChecked(false);
+				m_optionWidget->findChild<QRadioButton*>("radC39Stand")->setChecked(true);
+			}
+			m_optionWidget->findChild<QRadioButton*>("radC39HIBC")->setEnabled(false);
+		} 
+		else 
+			m_optionWidget->findChild<QRadioButton*>("radC39HIBC")->setEnabled(true);
 	}
 
 	if(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_CODABLOCKF)
 	{
-		options = true;
-		grpCodablock->show();
-	} else {
-		grpCodablock->hide();
+		QFile file(":/grpCodablock.ui");
+		if (!file.open(QIODevice::ReadOnly))
+			return;
+		m_optionWidget=uiload.load(&file);
+		file.close();
+		tabMain->insertTab(1,m_optionWidget,tr("Options"));
+		connect(m_optionWidget->findChild<QObject*>("radCodaStand"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("radCodaGS1"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("radCodaHIBC"), SIGNAL(clicked( bool )), SLOT(update_preview()));
 	}
 
 	if(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_CODE16K)
 	{
-		options = true;
-		grpC16k->show();
-	} else {
-		grpC16k->hide();
+		QFile file(":/grpC16k.ui");
+		if (!file.open(QIODevice::ReadOnly))
+			return;
+		m_optionWidget=uiload.load(&file);
+		file.close();
+		tabMain->insertTab(1,m_optionWidget,tr("Options"));
+		connect(m_optionWidget->findChild<QObject*>("radC16kStand"), SIGNAL(toggled( bool )), SLOT(update_preview()));
 	}
 
 	if(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_DATAMATRIX)
 	{
-		options = true;
+		QFile file(":/grpDM.ui");
+		if (!file.open(QIODevice::ReadOnly))
+			return;
+		m_optionWidget=uiload.load(&file);
+		file.close();
+		tabMain->insertTab(1,m_optionWidget,tr("Options"));
+		connect(m_optionWidget->findChild<QObject*>("cmbDMMode"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("cmbDMMode"), SIGNAL(currentIndexChanged( int )), SLOT(datamatrix_options()));
+		connect(m_optionWidget->findChild<QObject*>("radDM200Stand"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("radDM200GS1"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("radDM200HIBC"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("cmbDM200Size"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("cmbDMNon200Size"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
 		datamatrix_options();
-		grpDM->show();
-	} else {
-		grpDM->hide();
 	}
 
 	if(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_QRCODE)
 	{
-		options = true;
-		grpQR->show();
-	} else {
-		grpQR->hide();
+		QFile file(":/grpQR.ui");
+		if (!file.open(QIODevice::ReadOnly))
+			return;
+		m_optionWidget=uiload.load(&file);
+		file.close();
+		tabMain->insertTab(1,m_optionWidget,tr("Options"));
+		connect(m_optionWidget->findChild<QObject*>("radQRAuto"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("radQRSize"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("radQRECC"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("cmbQRSize"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("cmbQRECC"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("chkQRHIBC"), SIGNAL(stateChanged( int )), SLOT(update_preview()));
 	}
 
 	if(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_MICROQR)
 	{
-		options = true;
-		grpMQR->show();
-	} else {
-		grpMQR->hide();
+		QFile file(":/grpMQR.ui");
+		if (!file.open(QIODevice::ReadOnly))
+			return;
+		m_optionWidget=uiload.load(&file);
+		file.close();
+		tabMain->insertTab(1,m_optionWidget,tr("Options"));
+		connect(m_optionWidget->findChild<QObject*>("radMQRAuto"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("radMQRSize"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("radMQRECC"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("cmbMQRSize"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("cmbMQRECC"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
 	}
 
 	if(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_MAXICODE)
 	{
-		grpMaxiCode->show();
-	} else {
-		grpMaxiCode->hide();
+		QFile file(":/grpMaxiCode.ui");
+		if (!file.open(QIODevice::ReadOnly))
+			return;
+		m_optionWidget=uiload.load(&file);
+		file.close();
+		tabMain->insertTab(1,m_optionWidget,tr("Options"));
 	}
 	
 	if(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_CHANNEL)
 	{
-		options = true;
-		grpChannel->show();
-	} else {
-		grpChannel->hide();
+		QFile file(":/grpChannel.ui");
+		if (!file.open(QIODevice::ReadOnly))
+			return;
+		m_optionWidget=uiload.load(&file);
+		file.close();
+		tabMain->insertTab(1,m_optionWidget,tr("Options"));
+		connect(m_optionWidget->findChild<QObject*>("cmbChannel"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
 	}
 
-
-	if(options == true) {
-		lblNoOption->hide();
-	} else {
-		lblNoOption->show();
-	}
 
 	switch(metaObject()->enumerator(0).value(bstyle->currentIndex()))
 	{
@@ -406,17 +436,22 @@ void MainWindow::change_options()
 			grpComposite->hide();
 			break;
 	}
+	tabMain->setCurrentIndex(0);
 }
 
 void MainWindow::composite_enable()
 {
-	if(chkComposite->isChecked() == true) {
+	if(chkComposite->isChecked() == true) 
+	{
 		lblCompType->setEnabled(true);
 		cmbCompType->setEnabled(true);
 		lblComposite->setEnabled(true);
 		txtComposite->setEnabled(true);
-		radC128EAN->setChecked(true);
-	} else {
+		if (metaObject()->enumerator(0).value(bstyle->currentIndex())==BARCODE_CODE128)
+			m_optionWidget->findChild<QRadioButton*>("radC128EAN")->setChecked(true);
+	}
+	else
+	{
 		lblCompType->setEnabled(false);
 		cmbCompType->setEnabled(false);
 		lblComposite->setEnabled(false);
@@ -426,73 +461,26 @@ void MainWindow::composite_enable()
 
 void MainWindow::composite_ean_check()
 {
-	if(radC128EAN->isChecked() == false) {
+	if (metaObject()->enumerator(0).value(bstyle->currentIndex())!=BARCODE_CODE128)
+		return;
+	if(!m_optionWidget->findChild<QRadioButton*>("radC128EAN")->isChecked())
 		chkComposite->setChecked(false);
-	}
 }
 
-void MainWindow::aztec_size()
-{
-	if(radAztecSize->isChecked() == true) {
-		cmbAztecSize->setEnabled(true);
-	} else {
-		cmbAztecSize->setEnabled(false);
-	}
-}
-
-void MainWindow::aztec_errorcorrect()
-{
-	if(radAztecECC->isChecked() == true) {
-		cmbAztecECC->setEnabled(true);
-	} else {
-		cmbAztecECC->setEnabled(false);
-	}
-}
-
-void MainWindow::qr_size()
-{
-	if(radQRSize->isChecked() == true) {
-		cmbQRSize->setEnabled(true);
-	} else {
-		cmbQRSize->setEnabled(false);
-	}
-}
-
-void MainWindow::mqr_errorcorrect()
-{
-	if(radMQRECC->isChecked() == true) {
-		cmbMQRECC->setEnabled(true);
-	} else {
-		cmbMQRECC->setEnabled(false);
-	}
-}
-
-void MainWindow::mqr_size()
-{
-	if(radMQRSize->isChecked() == true) {
-		cmbMQRSize->setEnabled(true);
-	} else {
-		cmbMQRSize->setEnabled(false);
-	}
-}
-
-void MainWindow::qr_errorcorrect()
-{
-	if(radQRECC->isChecked() == true) {
-		cmbQRECC->setEnabled(true);
-	} else {
-		cmbQRECC->setEnabled(false);
-	}
-}
 
 void MainWindow::datamatrix_options()
 {
-	if(cmbDMMode->currentIndex() == 0) {
-		grpDMNon200->hide();
-		grpDM200->show();
-	} else {
-		grpDM200->hide();
-		grpDMNon200->show();
+	if (metaObject()->enumerator(0).value(bstyle->currentIndex())!=BARCODE_DATAMATRIX)
+		return;
+	if(m_optionWidget->findChild<QComboBox*>("cmbDMMode")->currentIndex() == 0)
+	{
+		m_optionWidget->findChild<QGroupBox*>("grpDMNon200")->hide();
+		m_optionWidget->findChild<QGroupBox*>("grpDM200")->show();
+	}
+	else
+	{
+		m_optionWidget->findChild<QGroupBox*>("grpDM200")->hide();
+		m_optionWidget->findChild<QGroupBox*>("grpDMNon200")->show();
 	}
 }
 
@@ -524,224 +512,231 @@ void MainWindow::update_preview()
 	switch(metaObject()->enumerator(0).value(bstyle->currentIndex()))
 	{
 		case BARCODE_CODE128:
-			if(radC128Stand->isChecked() == true) {
+			if(m_optionWidget->findChild<QRadioButton*>("radC128Stand")->isChecked())
 				m_bc.bc.setSymbol(BARCODE_CODE128);
-			}
-			if(radC128CSup->isChecked() == true) {
+
+			if(m_optionWidget->findChild<QRadioButton*>("radC128CSup")->isChecked())
 				m_bc.bc.setSymbol(BARCODE_CODE128B);
-			}
-			if(radC128EAN->isChecked() == true) {
-				if(chkComposite->isChecked() == true) {
+
+			if(m_optionWidget->findChild<QRadioButton*>("radC128EAN")->isChecked()) 
+			{
+				if(chkComposite->isChecked()) 
 					m_bc.bc.setSymbol(BARCODE_EAN128_CC);
-				} else {
+				else
 					m_bc.bc.setSymbol(BARCODE_EAN128);
-				}
 			}
-			if(radC128HIBC->isChecked() == true) {
+
+			if(m_optionWidget->findChild<QRadioButton*>("radC128HIBC")->isChecked())
 				m_bc.bc.setSymbol(BARCODE_HIBC_128);
-			}
 			break;
+
 		case BARCODE_EANX:
-			if(chkComposite->isChecked() == true) {
+			if(chkComposite->isChecked())
 				m_bc.bc.setSymbol(BARCODE_EANX_CC);
-			} else {
+			else
 				m_bc.bc.setSymbol(BARCODE_EANX);
-			}
 			break;
+
 		case BARCODE_UPCA:
-			if(chkComposite->isChecked() == true) {
+			if(chkComposite->isChecked())
 				m_bc.bc.setSymbol(BARCODE_UPCA_CC);
-			} else {
+			else
 				m_bc.bc.setSymbol(BARCODE_UPCA);
-			}
 			break;
+
 		case BARCODE_UPCE:
-			if(chkComposite->isChecked() == true) {
+			if(chkComposite->isChecked())
 				m_bc.bc.setSymbol(BARCODE_UPCE_CC);
-			} else {
+			else
 				m_bc.bc.setSymbol(BARCODE_UPCE);
-			}
 			break;
+
 		case BARCODE_RSS14:
-			if(chkComposite->isChecked() == true) {
+			if(chkComposite->isChecked())
 				m_bc.bc.setSymbol(BARCODE_RSS14_CC);
-			} else {
+			else
 				m_bc.bc.setSymbol(BARCODE_RSS14);
-			}
 			break;
+
 		case BARCODE_RSS_LTD:
-			if(chkComposite->isChecked() == true) {
+			if(chkComposite->isChecked())
 				m_bc.bc.setSymbol(BARCODE_RSS_LTD_CC);
-			} else {
+			else
 				m_bc.bc.setSymbol(BARCODE_RSS_LTD);
-			}
 			break;
+
 		case BARCODE_RSS_EXP:
-			if(chkComposite->isChecked() == true) {
+			if(chkComposite->isChecked())
 				m_bc.bc.setSymbol(BARCODE_RSS_EXP_CC);
-			} else {
+			else
 				m_bc.bc.setSymbol(BARCODE_RSS_EXP);
-			}
 			break;
+
 		case BARCODE_RSS14STACK:
-			if(chkComposite->isChecked() == true) {
+			if(chkComposite->isChecked())
 				m_bc.bc.setSymbol(BARCODE_RSS14STACK_CC);
-			} else {
+			else
 				m_bc.bc.setSymbol(BARCODE_RSS14STACK);
-			}
 			break;
+
 		case BARCODE_RSS14STACK_OMNI:
-			if(chkComposite->isChecked() == true) {
+			if(chkComposite->isChecked())
 				m_bc.bc.setSymbol(BARCODE_RSS14_OMNI_CC);
-			} else {
+			else
 				m_bc.bc.setSymbol(BARCODE_RSS14STACK_OMNI);
-			}
 			break;
+
 		case BARCODE_RSS_EXPSTACK:
-			if(chkComposite->isChecked() == true) {
+			if(chkComposite->isChecked())
 				m_bc.bc.setSymbol(BARCODE_RSS_EXPSTACK_CC);
-			} else {
+			else
 				m_bc.bc.setSymbol(BARCODE_RSS_EXPSTACK);
-			}
 			break;
+
 		case BARCODE_PDF417:
-			m_bc.bc.setWidth(cmbPDFCols->currentIndex());
-			m_bc.bc.setSecurityLevel(cmbPDFECC->currentIndex() - 1);
-			m_bc.bc.setPdf417CodeWords(codewords->value());
-			if(radPDFStand->isChecked() == true) {
+			m_bc.bc.setWidth(m_optionWidget->findChild<QComboBox*>("cmbPDFCols")->currentIndex());
+			m_bc.bc.setSecurityLevel(m_optionWidget->findChild<QComboBox*>("cmbPDFECC")->currentIndex()-1);
+			m_bc.bc.setPdf417CodeWords(m_optionWidget->findChild<QSpinBox*>("codewords")->value());
+			if(m_optionWidget->findChild<QRadioButton*>("radPDFStand")->isChecked())
 				m_bc.bc.setSymbol(BARCODE_PDF417);
-			}
-			if(radPDFTruncated->isChecked() == true) {
+
+			if(m_optionWidget->findChild<QRadioButton*>("radPDFTruncated")->isChecked())
 				m_bc.bc.setSymbol(BARCODE_PDF417TRUNC);
-			}
-			if(radPDFHIBC->isChecked() == true) {
+
+			if(m_optionWidget->findChild<QRadioButton*>("radPDFHIBC")->isChecked())
 				m_bc.bc.setSymbol(BARCODE_HIBC_PDF);
-			}
 			break;
+
 		case BARCODE_MICROPDF417:
-			m_bc.bc.setWidth(cmbMPDFCols->currentIndex());
-			if(radMPDFStand->isChecked() == true) {
+			m_bc.bc.setWidth(m_optionWidget->findChild<QComboBox*>("cmbMPDFCols")->currentIndex());
+			if(m_optionWidget->findChild<QRadioButton*>("radMPDFStand")->isChecked())
 				m_bc.bc.setSymbol(BARCODE_MICROPDF417);
-			}
-			if(radMPDFHIBC->isChecked() == true) {
+
+			if(m_optionWidget->findChild<QRadioButton*>("radMPDFHIBC")->isChecked())
 				m_bc.bc.setSymbol(BARCODE_HIBC_MICPDF);
-			}
 			break;
+
 		case BARCODE_AZTEC:
 			m_bc.bc.setSymbol(BARCODE_AZTEC);
-			if(radAztecSize->isChecked() == true) {
-				m_bc.bc.setWidth(cmbAztecSize->currentIndex() + 1);
-			}
-			if(radAztecECC->isChecked() == true) {
-				m_bc.bc.setSecurityLevel(cmbAztecECC->currentIndex() + 1);
-			}
-			if(chkAztecMode->isChecked() == true) {
+			if(m_optionWidget->findChild<QRadioButton*>("radAztecSize")->isChecked())
+				m_bc.bc.setWidth(m_optionWidget->findChild<QComboBox*>("cmbAztecSize")->currentIndex() + 1);
+
+			if(m_optionWidget->findChild<QRadioButton*>("radAztecECC")->isChecked())
+				m_bc.bc.setSecurityLevel(m_optionWidget->findChild<QComboBox*>("cmbAztecECC")->currentIndex() + 1);
+
+			if(m_optionWidget->findChild<QCheckBox*>("chkAztecMode")->isChecked())
 				m_bc.bc.setInputMode(GS1_MODE);
-			}
 			break;
+
 		case MSI_PLESSEY:
 			m_bc.bc.setSymbol(BARCODE_MSI_PLESSEY);
-			m_bc.bc.setWidth(cmbMSICheck->currentIndex());
+			m_bc.bc.setWidth(m_optionWidget->findChild<QComboBox*>("cmbMSICheck")->currentIndex());
 			break;
+
 		case BARCODE_CODE39:
-			if(radC39HIBC->isChecked() == false) {
+			if(m_optionWidget->findChild<QRadioButton*>("radC39HIBC")->isChecked())
+			{
 				m_bc.bc.setSymbol(BARCODE_CODE39);
-				if(radC39Check->isChecked() == true) {
+				if(m_optionWidget->findChild<QRadioButton*>("radC39Check")->isChecked())
 					m_bc.bc.setWidth(1);
-				}
-			} else {
+			} 
+			else
 				m_bc.bc.setSymbol(BARCODE_HIBC_39);
-			}
 			break;
+
 		case BARCODE_EXCODE39:
 			m_bc.bc.setSymbol(BARCODE_EXCODE39);
-			if(radC39Check->isChecked() == true) {
+			if(m_optionWidget->findChild<QRadioButton*>("radC39Check")->isChecked())
 				m_bc.bc.setWidth(1);
-			}
+
 			break;
 		case BARCODE_CODE16K:
 			m_bc.bc.setSymbol(BARCODE_CODE16K);
-			if(radC16kStand->isChecked() == true) {
+			if(m_optionWidget->findChild<QRadioButton*>("radC16kStand")->isChecked())
 				m_bc.bc.setInputMode(UNICODE_MODE);
-			} else {
+			else
 				m_bc.bc.setInputMode(GS1_MODE);
-			}
 			break;
+
 		case BARCODE_CODABLOCKF:
-			if(radCodaGS1->isChecked() == true) {
+			if(m_optionWidget->findChild<QRadioButton*>("radCodaGS1")->isChecked())
 				m_bc.bc.setInputMode(GS1_MODE);
-			}
-			if(radCodaHIBC->isChecked() == false) {
-				m_bc.bc.setSymbol(BARCODE_CODABLOCKF);
-			} else {
+
+			if(m_optionWidget->findChild<QRadioButton*>("radCodaHIBC")->isChecked())
 				m_bc.bc.setSymbol(BARCODE_HIBC_BLOCKF);
-			}
+			else
+				m_bc.bc.setSymbol(BARCODE_CODABLOCKF);
 			break;
+
 		case BARCODE_DATAMATRIX:
-			m_bc.bc.setSecurityLevel(cmbDMMode->currentIndex() + 1);
-			if(cmbDMMode->currentIndex() == 0) {
-				/* ECC 200 */
-				if(radDM200HIBC->isChecked() == true) {
+			m_bc.bc.setSecurityLevel(m_optionWidget->findChild<QComboBox*>("cmbDMMode")->currentIndex() + 1);
+			if(m_optionWidget->findChild<QComboBox*>("cmbDMMode")->currentIndex() == 0) 
+			{	/* ECC 200 */
+				if(m_optionWidget->findChild<QRadioButton*>("radDM200HIBC")->isChecked())
 					m_bc.bc.setSymbol(BARCODE_HIBC_DM);
-				} else {
+				else
 					m_bc.bc.setSymbol(BARCODE_DATAMATRIX);
-				}
-				if(radDM200GS1->isChecked() == true) {
+
+				if(m_optionWidget->findChild<QRadioButton*>("radDM200GS1")->isChecked())
 					m_bc.bc.setInputMode(GS1_MODE);
-				}
-				m_bc.bc.setWidth(cmbDM200Size->currentIndex());
-			} else {
-				/* Not ECC 200 */
+
+				m_bc.bc.setWidth(m_optionWidget->findChild<QComboBox*>("cmbDM200Size")->currentIndex());
+			} 
+			else
+			{	/* Not ECC 200 */
 				m_bc.bc.setSymbol(BARCODE_DATAMATRIX);
-				m_bc.bc.setWidth(cmbDMNon200Size->currentIndex());
+				m_bc.bc.setWidth(m_optionWidget->findChild<QComboBox*>("cmbDMNon200Size")->currentIndex());
 			}
 			break;
+
 		case BARCODE_QRCODE:
-			if(chkQRHIBC->isChecked() == true) {
+			if(m_optionWidget->findChild<QCheckBox*>("chkQRHIBC")->isChecked())
 				m_bc.bc.setSymbol(BARCODE_HIBC_QR);
-			} else {
+			else
 				m_bc.bc.setSymbol(BARCODE_QRCODE);
-			}
-			if(radQRSize->isChecked() == true) {
-				m_bc.bc.setWidth(cmbQRSize->currentIndex() + 1);
-			}
-			if(radQRECC->isChecked() == true) {
-				m_bc.bc.setSecurityLevel(cmbQRECC->currentIndex() + 1);
-			}
+
+			if(m_optionWidget->findChild<QRadioButton*>("radQRSize")->isChecked())
+				m_bc.bc.setWidth(m_optionWidget->findChild<QComboBox*>("cmbQRSize")->currentIndex() + 1);
+
+			if(m_optionWidget->findChild<QRadioButton*>("radQRECC")->isChecked())
+				m_bc.bc.setSecurityLevel(m_optionWidget->findChild<QComboBox*>("cmbQRECC")->currentIndex() + 1);
 			break;
+
 		case BARCODE_MICROQR:
 			m_bc.bc.setSymbol(BARCODE_MICROQR);
-			if(radMQRSize->isChecked() == true) {
-				m_bc.bc.setWidth(cmbMQRSize->currentIndex() + 1);
-			}
-			if(radMQRECC->isChecked() == true) {
-				m_bc.bc.setSecurityLevel(cmbMQRECC->currentIndex() + 1);
-			}
+			if(m_optionWidget->findChild<QRadioButton*>("radMQRSize")->isChecked())
+				m_bc.bc.setWidth(m_optionWidget->findChild<QComboBox*>("cmbMQRSize")->currentIndex() + 1);
+
+			if(m_optionWidget->findChild<QRadioButton*>("radMQRECC")->isChecked())
+				m_bc.bc.setSecurityLevel(m_optionWidget->findChild<QComboBox*>("cmbMQRECC")->currentIndex() + 1);
 			break;
+
 		case BARCODE_MAXICODE:
 			m_bc.bc.setSymbol(BARCODE_MAXICODE);
-			if(cmbMaxiMode->currentIndex() == 0) {
+			if(cmbMaxiMode->currentIndex() == 0)
+			{
 				m_bc.bc.setSecurityLevel(2);
 				m_bc.bc.setPrimaryMessage(txtMaxiPrimary->text());
-			} else {
-				m_bc.bc.setSecurityLevel(cmbMaxiMode->currentIndex() + 3);
 			}
+			else
+				m_bc.bc.setSecurityLevel(cmbMaxiMode->currentIndex() + 3);
 			break;
+
 		case BARCODE_CHANNEL:
 			m_bc.bc.setSymbol(BARCODE_CHANNEL);
-			if(cmbChannel->currentIndex() == 0) {
+			if(m_optionWidget->findChild<QComboBox*>("cmbChannel")->currentIndex() == 0) 
 				m_bc.bc.setWidth(0);
-			} else {
-				m_bc.bc.setWidth(cmbChannel->currentIndex() + 2);
-			}
+			else
+				m_bc.bc.setWidth(m_optionWidget->findChild<QComboBox*>("cmbChannel")->currentIndex() + 2);
 			break;
 		default:
 			m_bc.bc.setSymbol(metaObject()->enumerator(0).value(bstyle->currentIndex()));
 			break;
 	}
-	if(chkComposite->isChecked() == true) {
+
+	if(chkComposite->isChecked())
 		m_bc.bc.setSecurityLevel(cmbCompType->currentIndex());
-	}
+
 	m_bc.bc.setBorderType((Zint::QZint::BorderType)(btype->currentIndex()*2));
 	m_bc.bc.setBorderWidth(bwidth->value());
 	m_bc.bc.setHeight(heightb->value());
