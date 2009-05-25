@@ -19,7 +19,7 @@ add_dependencies(QZint_frontend QZint zint)
 
 link_directories( "${CMAKE_BINARY_DIR}/backend" "${CMAKE_BINARY_DIR}/backend_qt4" )
 
-target_link_libraries(QZint_frontend zint QZint ${QT_QTUITOOLS_LIBRARY} ${QT_QTGUI_LIBRARY}
+target_link_libraries(QZint_frontend zint QZint ${QT_QTUITOOLS_LIBRARY} ${QT_QTXML_LIBRARY} ${QT_QTGUI_LIBRARY}
      ${QT_QTCORE_LIBRARY} )
 
 install(TARGETS QZint_frontend DESTINATION "${BIN_INSTALL_DIR}" RUNTIME)
