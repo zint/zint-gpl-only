@@ -4,17 +4,15 @@ This package was debianized by:
 
 It was downloaded from:
 
-    <url://example.com>
+    <http://www.sourceforge.net/projects/zint>
 
 Upstream Author(s):
 
-    <put author's name and email here>
-    <likewise for another author>
+    Robin Stuart <robin@zint.org.uk>
 
 Copyright:
 
-    <Copyright (C) YYYY Firstname Lastname>
-    <likewise for another author>
+    <Copyright (C) 2006-2009 Robin Stuart>
 
 License:
 
@@ -39,6 +37,3 @@ The Debian packaging is:
     Copyright (C) 2009 BogDan Vatra <bogdan@licentia.eu>
 
 and is licensed under the GPL version 3, see above.
-
-# Please also look if there are files or directories which have a
-# different copyright/license attached and list them here.
