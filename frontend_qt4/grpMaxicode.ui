@@ -1,0 +1,108 @@
+<ui version="4.0" >
+ <class>Form</class>
+ <widget class="QWidget" name="Form" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>436</width>
+    <height>180</height>
+   </rect>
+  </property>
+  <property name="sizePolicy" >
+   <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <widget class="QWidget" name="gridLayoutWidget" >
+   <property name="geometry" >
+    <rect>
+     <x>18</x>
+     <y>15</y>
+     <width>400</width>
+     <height>69</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout" >
+    <item row="0" column="1" >
+     <widget class="QComboBox" name="cmbMaxiMode" >
+      <property name="sizePolicy" >
+       <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="currentIndex" >
+       <number>1</number>
+      </property>
+      <item>
+       <property name="text" >
+        <string>Structured Carrier Message (Mode 2 or 3)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>Standard Symbol, SEC (Mode 4)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>Full ECC Symbol (Mode 5)</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>Reader Program, SEC (Mode 6)</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="1" column="1" >
+     <widget class="QLineEdit" name="txtMaxiPrimary" >
+      <property name="enabled" >
+       <bool>false</bool>
+      </property>
+      <property name="sizePolicy" >
+       <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text" >
+       <string>Primary Data Here!</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0" >
+     <widget class="QLabel" name="lblMaxiMode" >
+      <property name="text" >
+       <string>Encoding Mode:</string>
+      </property>
+      <property name="alignment" >
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" >
+     <widget class="QLabel" name="lblMaxiPrimary" >
+      <property name="enabled" >
+       <bool>false</bool>
+      </property>
+      <property name="text" >
+       <string>Primary Data:</string>
+      </property>
+      <property name="alignment" >
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

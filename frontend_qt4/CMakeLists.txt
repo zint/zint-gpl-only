@@ -10,7 +10,8 @@ QT4_WRAP_CPP(QZint_frontend_SRCS mainwindow.h)
 QT4_WRAP_UI(QZint_frontend_SRCS mainWindow.ui )
 #				grpAztec.ui  grpC39.ui        grpDM.ui        grpMSICheck.ui
 #				grpC128.ui   grpChannel.ui    grpMicroPDF.ui  grpPDF417.ui
-#				grpC16k.ui   grpCodablock.ui  grpMQR.ui       grpQR.ui)
+#				grpC16k.ui   grpCodablock.ui  grpMQR.ui       grpQR.ui
+#				grpMaxicode.ui)
 
 QT4_ADD_RESOURCES(QZint_frontend_SRCS resources.qrc)
 
