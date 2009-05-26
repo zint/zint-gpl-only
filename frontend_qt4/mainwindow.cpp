@@ -119,9 +119,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 	connect(cmbCompType, SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
 	connect(rotateSlider, SIGNAL(valueChanged(int)), SLOT(scaleRotate()));
 	connect(scaleSlider, SIGNAL(valueChanged(int)), SLOT(scaleRotate()));
-	connect(cmbMaxiMode, SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
-	connect(cmbMaxiMode, SIGNAL(currentIndexChanged( int )), SLOT(maxi_primary()));
-	connect(txtMaxiPrimary, SIGNAL(textChanged( const QString& )), SLOT(update_preview()));
 	connect(spnWhitespace, SIGNAL(valueChanged( int )), SLOT(update_preview()));
 	connect(btnAbout, SIGNAL(clicked( bool )), SLOT(about()));
 	connect(btnSave, SIGNAL(clicked( bool )), SLOT(save()));
@@ -397,12 +394,15 @@ void MainWindow::change_options()
 
 	if(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_MAXICODE)
 	{
-		QFile file(":/grpMaxiCode.ui");
+		QFile file(":/grpMaxicode.ui");
 		if (!file.open(QIODevice::ReadOnly))
 			return;
 		m_optionWidget=uiload.load(&file);
 		file.close();
 		tabMain->insertTab(1,m_optionWidget,tr("Options"));
+		connect(m_optionWidget->findChild<QObject*>("cmbMaxiMode"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("cmbMaxiMode"), SIGNAL(currentIndexChanged( int )), SLOT(maxi_primary()));
+		connect(m_optionWidget->findChild<QObject*>("txtMaxiPrimary"), SIGNAL(textChanged( const QString& )), SLOT(update_preview()));
 	}
 	
 	if(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_CHANNEL)
@@ -486,12 +486,14 @@ void MainWindow::datamatrix_options()
 
 void MainWindow::maxi_primary()
 {
-	if(cmbMaxiMode->currentIndex() == 0) {
-		lblMaxiPrimary->setEnabled(true);
-		txtMaxiPrimary->setEnabled(true);
+	if (metaObject()->enumerator(0).value(bstyle->currentIndex())!=BARCODE_MAXICODE)
+		return;
+	if(m_optionWidget->findChild<QComboBox*>("cmbMaxiMode")->currentIndex() == 0) {
+		m_optionWidget->findChild<QLabel*>("lblMaxiPrimary")->setEnabled(true);
+		m_optionWidget->findChild<QLineEdit*>("txtMaxiPrimary")->setEnabled(true);
 	} else {
-		lblMaxiPrimary->setEnabled(false);
-		txtMaxiPrimary->setEnabled(false);
+		m_optionWidget->findChild<QLabel*>("lblMaxiPrimary")->setEnabled(false);
+		m_optionWidget->findChild<QLineEdit*>("txtMaxiPrimary")->setEnabled(false);
 	}
 }
 
@@ -713,13 +715,13 @@ void MainWindow::update_preview()
 
 		case BARCODE_MAXICODE:
 			m_bc.bc.setSymbol(BARCODE_MAXICODE);
-			if(cmbMaxiMode->currentIndex() == 0)
+			if(m_optionWidget->findChild<QComboBox*>("cmbMaxiMode")->currentIndex() == 0)
 			{
 				m_bc.bc.setSecurityLevel(2);
-				m_bc.bc.setPrimaryMessage(txtMaxiPrimary->text());
+				m_bc.bc.setPrimaryMessage(m_optionWidget->findChild<QLineEdit*>("txtMaxiPrimary")->text());
 			}
 			else
-				m_bc.bc.setSecurityLevel(cmbMaxiMode->currentIndex() + 3);
+				m_bc.bc.setSecurityLevel(m_optionWidget->findChild<QComboBox*>("cmbMaxiMode")->currentIndex() + 3);
 			break;
 
 		case BARCODE_CHANNEL:

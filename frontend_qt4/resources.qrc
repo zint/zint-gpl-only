@@ -11,6 +11,7 @@
     <file>grpC128.ui</file>
     <file>grpChannel.ui</file>
     <file>grpMicroPDF.ui</file>
+    <file>grpMaxicode.ui</file>
     <file>grpPDF417.ui</file>
     <file>grpC16k.ui</file>
     <file>grpCodablock.ui</file>
