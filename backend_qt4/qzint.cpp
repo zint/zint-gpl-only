@@ -223,6 +223,9 @@ bool QZint::save_to_file(QString filename)
 {
 	if (m_zintSymbol)
 		ZBarcode_Delete(m_zintSymbol);
+	
+	QString fg_colour_hash = m_fgColor.name();
+	QString bg_colour_hash = m_bgColor.name();
 
 	m_lastError.clear();
 	m_zintSymbol = ZBarcode_Create();
@@ -241,6 +244,10 @@ bool QZint::save_to_file(QString filename)
 	QByteArray fstr=filename.left(255).toAscii();
 	strcpy(m_zintSymbol->primary,pstr.data());
 	strcpy(m_zintSymbol->outfile,fstr.data());
+	QByteArray fgcol=fg_colour_hash.right(6).toAscii();
+	QByteArray bgcol=bg_colour_hash.right(6).toAscii();
+	strcpy(m_zintSymbol->fgcolour,fgcol.data());
+	strcpy(m_zintSymbol->bgcolour,bgcol.data());
 	int error = ZBarcode_Encode_and_Print(m_zintSymbol, (unsigned char*)bstr.data());
 	if (error > WARN_INVALID_OPTION)
 		m_lastError=m_zintSymbol->errtxt;
