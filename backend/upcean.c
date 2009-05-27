@@ -153,7 +153,7 @@ void upce(struct zint_symbol *symbol, unsigned char source[], char dest[])
 			equivalent[10] = source[4];
 			if(((source[2] == '0') || (source[2] == '1')) || (source[2] == '2')) {
 				/* Note 1 - "X3 shall not be equal to 0, 1 or 2" */
-				strcpy(symbol->errtxt, "Invalid UPC-E data [371]");
+				strcpy(symbol->errtxt, "Invalid UPC-E data");
 			}
 			break;
 		case '4':
@@ -162,7 +162,7 @@ void upce(struct zint_symbol *symbol, unsigned char source[], char dest[])
 			equivalent[10] = source[4];
 			if(source[3] == '0') {
 				/* Note 2 - "X4 shall not be equal to 0" */
-				strcpy(symbol->errtxt, "Invalid UPC-E data [372]");
+				strcpy(symbol->errtxt, "Invalid UPC-E data");
 			}
 			break;
 		case '5':
@@ -176,7 +176,7 @@ void upce(struct zint_symbol *symbol, unsigned char source[], char dest[])
 			equivalent[10] = emode;
 			if(source[4] == '0') {
 				/* Note 3 - "X5 shall not be equal to 0" */
-				strcpy(symbol->errtxt, "Invalid UPC-E data [373]");
+				strcpy(symbol->errtxt, "Invalid UPC-E data");
 			}
 			break;
 	}
@@ -409,14 +409,14 @@ int isbn(struct zint_symbol *symbol, unsigned char source[], char dest[]) /* Mak
 	to_upper(source);
 	errno = is_sane("0123456789X", source);
 	if(errno == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Invalid characters in input [691]");
+		strcpy(symbol->errtxt, "Invalid characters in input");
 		return errno;
 	}
 
 	/* Input must be 9, 10 or 13 characters */
 	if(((ustrlen(source) < 9) || (ustrlen(source) > 13)) || ((ustrlen(source) > 10) && (ustrlen(source) < 13)))
 	{
-		strcpy(symbol->errtxt, "Input wrong length [692]");
+		strcpy(symbol->errtxt, "Input wrong length");
 		return ERROR_TOO_LONG;
 	}
 
@@ -425,14 +425,14 @@ int isbn(struct zint_symbol *symbol, unsigned char source[], char dest[]) /* Mak
 		if(!(((source[0] == '9') && (source[1] == '7')) &&
 				     ((source[2] == '8') || (source[2] == '9'))))
 		{
-			strcpy(symbol->errtxt, "Invalid ISBN [693]");
+			strcpy(symbol->errtxt, "Invalid ISBN");
 			return ERROR_INVALID_DATA;
 		}
 
 		check_digit = isbn13_check(source);
 		if (source[ustrlen(source) - 1] != check_digit)
 		{
-			strcpy(symbol->errtxt, "Incorrect ISBN check [694]");
+			strcpy(symbol->errtxt, "Incorrect ISBN check");
 			return ERROR_INVALID_CHECK;
 		}
 		source[12] = '\0';
@@ -445,7 +445,7 @@ int isbn(struct zint_symbol *symbol, unsigned char source[], char dest[]) /* Mak
 		check_digit = isbn_check(source);
 		if(check_digit != source[ustrlen(source) - 1])
 		{
-			strcpy(symbol->errtxt, "Incorrect ISBN check [695]");
+			strcpy(symbol->errtxt, "Incorrect ISBN check");
 			return ERROR_INVALID_CHECK;
 		}
 		for(i = 13; i > 0; i--)
@@ -473,7 +473,7 @@ int isbn(struct zint_symbol *symbol, unsigned char source[], char dest[]) /* Mak
 		check_digit = isbn_check(source);
 		if(check_digit != source[ustrlen(source) - 1])
 		{
-			strcpy(symbol->errtxt, "Incorrect SBN check [696]");
+			strcpy(symbol->errtxt, "Incorrect SBN check");
 			return ERROR_INVALID_CHECK;
 		}
 
@@ -493,10 +493,89 @@ int isbn(struct zint_symbol *symbol, unsigned char source[], char dest[]) /* Mak
 	return errno;
 }
 
+void ean_leading_zeroes(struct zint_symbol *symbol, unsigned char source[], unsigned char local_source[]) {
+	/* Add leading zeroes to EAN and UPC strings */
+	unsigned char first_part[20], second_part[20], zfirst_part[20], zsecond_part[20];
+	int with_addon = 0;
+	int first_len = 0, second_len = 0, zfirst_len = 0, zsecond_len = 0, i;
+	
+	for(i = 0; i < ustrlen(source); i++) {
+		if(source[i] == '+') {
+			with_addon = 1;
+		} else {
+			if(with_addon == 0) {
+				first_len++;
+			} else {
+				second_len++;
+			}
+		}
+	}
+	
+	ustrcpy(first_part, (unsigned char *)"");
+	ustrcpy(second_part, (unsigned char *)"");
+	ustrcpy(zfirst_part, (unsigned char *)"");
+	ustrcpy(zsecond_part, (unsigned char *)"");
+	
+	/* Split input into two strings */
+	for(i = 0; i < first_len; i++) {
+		first_part[i] = source[i];
+		first_part[i + 1] = '\0';
+	}
+	
+	for(i = 0; i < second_len; i++) {
+		second_part[i] = source[i + first_len + 1];
+		second_part[i + 1] = '\0';
+	}
+	
+	/* Calculate target lengths */
+	switch(symbol->symbology) {
+		case BARCODE_EANX:
+		case BARCODE_EANX_CC:
+			if(first_len <= 12) { zfirst_len = 12; }
+			if(first_len <= 7) { zfirst_len = 7; }
+			if(first_len <= 5) { zfirst_len = 5; }
+			if(first_len <= 2) { zfirst_len = 2; }
+			break;
+		case BARCODE_UPCA:
+		case BARCODE_UPCA_CC:
+			zfirst_len = 11;
+			break;
+		case BARCODE_UPCE:
+		case BARCODE_UPCE_CC:
+			if(first_len == 7) { zfirst_len = 7; }
+			if(first_len <= 6) { zfirst_len = 6; }
+			break;
+		case BARCODE_ISBNX:
+			if(first_len <= 11) { zfirst_len = 11; }
+			break;
+	}
+	if(second_len <= 5) { zsecond_len = 5; }
+	if(second_len <= 2) { zsecond_len = 2; }
+	if(second_len == 0) { zsecond_len = 0; }
+	
+	/* Add leading zeroes */
+	for(i = 0; i < (zfirst_len - first_len); i++) {
+		uconcat(zfirst_part, (unsigned char *)"0");
+	}
+	uconcat(zfirst_part, first_part);
+	for(i = 0; i < (zsecond_len - second_len); i++) {
+		uconcat(zsecond_part, (unsigned char *)"0");
+	}
+	uconcat(zsecond_part, second_part);
+	
+	/* Copy adjusted data back to local_source */
+	uconcat(local_source, zfirst_part);
+	if(zsecond_len != 0) {
+		uconcat(local_source, (unsigned char *)"+");
+		uconcat(local_source, zsecond_part);
+	}
+}
+
 int eanx(struct zint_symbol *symbol, unsigned char source[])
 {
 	/* splits string to parts before and after '+' parts */
 	unsigned char first_part[20], second_part[20], dest[1000];
+	unsigned char local_source[20];
 	unsigned int latch, reader, writer, with_addon;
 	int errno, i;
 	
@@ -510,19 +589,23 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 	writer = 0;
 
 	if(ustrlen(source) > 19) {
-		strcpy(symbol->errtxt, "Input too long [131]");
+		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	if(symbol->symbology != BARCODE_ISBNX) {
 		/* ISBN has it's own checking routine */
 		errno = is_sane(NASET, source);
 		if(errno == ERROR_INVALID_DATA) {
-			strcpy(symbol->errtxt, "Invalid characters in data [132]");
+			strcpy(symbol->errtxt, "Invalid characters in data");
 			return errno;
 		}
 	}
+
+	/* Add leading zeroes */
+	ustrcpy(local_source, (unsigned char *)"");
+	ean_leading_zeroes(symbol, source, local_source);
 	
-	for(reader = 0; reader <= ustrlen(source); reader++)
+	for(reader = 0; reader <= ustrlen(local_source); reader++)
 	{
 		if(source[reader] == '+') { with_addon = TRUE; }
 	}
@@ -530,7 +613,7 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 	reader = 0;
 	if(with_addon) {
 		do {
-			if(source[reader] == '+') {
+			if(local_source[reader] == '+') {
 				first_part[writer] = '\0';
 				latch = TRUE;
 				reader++;
@@ -538,17 +621,17 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 			}
 
 			if(latch) {
-				second_part[writer] = source[reader];
+				second_part[writer] = local_source[reader];
 				reader++;
 				writer++;
 			} else {
-				first_part[writer] = source[reader];
+				first_part[writer] = local_source[reader];
 				reader++;
 				writer++;
 			}
-		} while (reader <= ustrlen(source));
+		} while (reader <= ustrlen(local_source));
 	} else {
-		strcpy((char*)first_part, (char*)source);
+		strcpy((char*)first_part, (char*)local_source);
 	}
 
 
@@ -561,7 +644,7 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 				case 5: add_on(first_part, (char*)dest, 0); ustrcpy(symbol->text, first_part); break;
 				case 7: ean8(symbol, first_part, (char*)dest); break;
 				case 12: ean13(symbol, first_part, (char*)dest); break;
-				default: strcpy(symbol->errtxt, "Invalid length input [133]"); return ERROR_TOO_LONG; break;
+				default: strcpy(symbol->errtxt, "Invalid length input"); return ERROR_TOO_LONG; break;
 			}
 			break;
 		case BARCODE_EANX_CC:
@@ -589,14 +672,14 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 					symbol->row_height[symbol->rows + 2] = 2;
 					symbol->rows += 3;
 					ean13(symbol, first_part, (char*)dest); break;
-					default: strcpy(symbol->errtxt, "Invalid length EAN input [134]"); return ERROR_TOO_LONG; break;
+					default: strcpy(symbol->errtxt, "Invalid length EAN input"); return ERROR_TOO_LONG; break;
 			}
 			break;
 		case BARCODE_UPCA:
 			if(ustrlen(first_part) == 11) {
 				upca(symbol, first_part, (char*)dest);
 			} else {
-				strcpy(symbol->errtxt, "Input wrong length [135]");
+				strcpy(symbol->errtxt, "Input wrong length");
 				return ERROR_TOO_LONG;
 			}
 			break;
@@ -614,7 +697,7 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 				symbol->rows += 3;
 				upca(symbol, first_part, (char*)dest);
 			} else {
-				strcpy(symbol->errtxt, "UPCA input wrong length [136]");
+				strcpy(symbol->errtxt, "UPCA input wrong length");
 				return ERROR_TOO_LONG;
 			}
 			break;
@@ -622,7 +705,7 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 			if((ustrlen(first_part) >= 6) && (ustrlen(first_part) <= 7)) {
 				upce(symbol, first_part, (char*)dest);
 			} else {
-				strcpy(symbol->errtxt, "Input wrong length [137]");
+				strcpy(symbol->errtxt, "Input wrong length");
 				return ERROR_TOO_LONG;
 			}
 			break;
@@ -640,7 +723,7 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 				symbol->rows += 3;
 				upce(symbol, first_part, (char*)dest);
 			} else {
-				strcpy(symbol->errtxt, "UPCE input wrong length [138]");
+				strcpy(symbol->errtxt, "UPCE input wrong length");
 				return ERROR_TOO_LONG;
 			}
 			break;
@@ -665,7 +748,7 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 			uconcat(symbol->text, second_part);
 			break;
 		default:
-			strcpy(symbol->errtxt, "Invalid length input [139]");
+			strcpy(symbol->errtxt, "Invalid length input");
 			return ERROR_TOO_LONG;
 			break;
 	}
