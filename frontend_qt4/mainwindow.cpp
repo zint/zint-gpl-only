@@ -227,7 +227,7 @@ void MainWindow::change_options()
 			return;
 		m_optionWidget=uiload.load(&file);
 		file.close();
-		tabMain->insertTab(1,m_optionWidget,tr("Options"));
+		tabMain->insertTab(1,m_optionWidget,tr("Code 128"));
 		chkComposite->setText(tr("Add 2D Component (GS1-128 only)"));
 		connect(m_optionWidget->findChild<QObject*>("radC128EAN"), SIGNAL(toggled( bool )), SLOT(composite_ean_check()));
 		connect(m_optionWidget->findChild<QObject*>("radC128Stand"), SIGNAL(clicked( bool )), SLOT(update_preview()));
@@ -246,7 +246,7 @@ void MainWindow::change_options()
 			return;
 		m_optionWidget=uiload.load(&file);
 		file.close();
-		tabMain->insertTab(1,m_optionWidget,tr("Options"));
+		tabMain->insertTab(1,m_optionWidget,tr("PDF417"));
 		connect(m_optionWidget->findChild<QObject*>("codewords"),  SIGNAL(valueChanged( int )), SLOT(update_preview()));
 		connect(m_optionWidget->findChild<QObject*>("cmbPDFECC"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
 		connect(m_optionWidget->findChild<QObject*>("cmbPDFCols"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
@@ -262,7 +262,7 @@ void MainWindow::change_options()
 			return;
 		m_optionWidget=uiload.load(&file);
 		file.close();
-		tabMain->insertTab(1,m_optionWidget,tr("Options"));
+		tabMain->insertTab(1,m_optionWidget,tr("Micro PDF417"));
 		connect(m_optionWidget->findChild<QObject*>("cmbMPDFCols"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
 		connect(m_optionWidget->findChild<QObject*>("radMPDFStand"), SIGNAL(toggled( bool )), SLOT(update_preview()));
 	}
@@ -274,7 +274,7 @@ void MainWindow::change_options()
 			return;
 		m_optionWidget=uiload.load(&file);
 		file.close();
-		tabMain->insertTab(1,m_optionWidget,tr("Options"));
+		tabMain->insertTab(1,m_optionWidget,tr("Aztec Code"));
 		connect(m_optionWidget->findChild<QObject*>("radAztecAuto"), SIGNAL(clicked( bool )), SLOT(update_preview()));
 		connect(m_optionWidget->findChild<QObject*>("radAztecSize"), SIGNAL(clicked( bool )), SLOT(update_preview()));
 		connect(m_optionWidget->findChild<QObject*>("radAztecECC"), SIGNAL(clicked( bool )), SLOT(update_preview()));
@@ -290,7 +290,7 @@ void MainWindow::change_options()
 			return;
 		m_optionWidget=uiload.load(&file);
 		file.close();
-		tabMain->insertTab(1,m_optionWidget,tr("Options"));
+		tabMain->insertTab(1,m_optionWidget,tr("MSI Plessey"));
 		connect(m_optionWidget->findChild<QObject*>("cmbMSICheck"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
 	}
 
@@ -302,7 +302,7 @@ void MainWindow::change_options()
 			return;
 		m_optionWidget=uiload.load(&file);
 		file.close();
-		tabMain->insertTab(1,m_optionWidget,tr("Options"));
+		tabMain->insertTab(1,m_optionWidget,tr("Code 39"));
 		connect(m_optionWidget->findChild<QObject*>("radC39Stand"), SIGNAL(clicked( bool )), SLOT(update_preview()));
 		connect(m_optionWidget->findChild<QObject*>("radC39Check"), SIGNAL(clicked( bool )), SLOT(update_preview()));
 		connect(m_optionWidget->findChild<QObject*>("radC39HIBC"), SIGNAL(clicked( bool )), SLOT(update_preview()));
@@ -326,7 +326,7 @@ void MainWindow::change_options()
 			return;
 		m_optionWidget=uiload.load(&file);
 		file.close();
-		tabMain->insertTab(1,m_optionWidget,tr("Options"));
+		tabMain->insertTab(1,m_optionWidget,tr("Codablock-F"));
 		connect(m_optionWidget->findChild<QObject*>("radCodaStand"), SIGNAL(clicked( bool )), SLOT(update_preview()));
 		connect(m_optionWidget->findChild<QObject*>("radCodaGS1"), SIGNAL(clicked( bool )), SLOT(update_preview()));
 		connect(m_optionWidget->findChild<QObject*>("radCodaHIBC"), SIGNAL(clicked( bool )), SLOT(update_preview()));
@@ -339,7 +339,7 @@ void MainWindow::change_options()
 			return;
 		m_optionWidget=uiload.load(&file);
 		file.close();
-		tabMain->insertTab(1,m_optionWidget,tr("Options"));
+		tabMain->insertTab(1,m_optionWidget,tr("Code 16K"));
 		connect(m_optionWidget->findChild<QObject*>("radC16kStand"), SIGNAL(toggled( bool )), SLOT(update_preview()));
 	}
 
@@ -350,7 +350,7 @@ void MainWindow::change_options()
 			return;
 		m_optionWidget=uiload.load(&file);
 		file.close();
-		tabMain->insertTab(1,m_optionWidget,tr("Options"));
+		tabMain->insertTab(1,m_optionWidget,tr("Data Matrix"));
 		connect(m_optionWidget->findChild<QObject*>("cmbDMMode"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
 		connect(m_optionWidget->findChild<QObject*>("cmbDMMode"), SIGNAL(currentIndexChanged( int )), SLOT(datamatrix_options()));
 		connect(m_optionWidget->findChild<QObject*>("radDM200Stand"), SIGNAL(clicked( bool )), SLOT(update_preview()));
@@ -368,7 +368,7 @@ void MainWindow::change_options()
 			return;
 		m_optionWidget=uiload.load(&file);
 		file.close();
-		tabMain->insertTab(1,m_optionWidget,tr("Options"));
+		tabMain->insertTab(1,m_optionWidget,tr("QR Code"));
 		connect(m_optionWidget->findChild<QObject*>("radQRAuto"), SIGNAL(clicked( bool )), SLOT(update_preview()));
 		connect(m_optionWidget->findChild<QObject*>("radQRSize"), SIGNAL(clicked( bool )), SLOT(update_preview()));
 		connect(m_optionWidget->findChild<QObject*>("radQRECC"), SIGNAL(clicked( bool )), SLOT(update_preview()));
@@ -384,7 +384,7 @@ void MainWindow::change_options()
 			return;
 		m_optionWidget=uiload.load(&file);
 		file.close();
-		tabMain->insertTab(1,m_optionWidget,tr("Options"));
+		tabMain->insertTab(1,m_optionWidget,tr("Micro QR Code"));
 		connect(m_optionWidget->findChild<QObject*>("radMQRAuto"), SIGNAL(clicked( bool )), SLOT(update_preview()));
 		connect(m_optionWidget->findChild<QObject*>("radMQRSize"), SIGNAL(clicked( bool )), SLOT(update_preview()));
 		connect(m_optionWidget->findChild<QObject*>("radMQRECC"), SIGNAL(clicked( bool )), SLOT(update_preview()));
@@ -399,7 +399,7 @@ void MainWindow::change_options()
 			return;
 		m_optionWidget=uiload.load(&file);
 		file.close();
-		tabMain->insertTab(1,m_optionWidget,tr("Options"));
+		tabMain->insertTab(1,m_optionWidget,tr("Maxicode"));
 		connect(m_optionWidget->findChild<QObject*>("cmbMaxiMode"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
 		connect(m_optionWidget->findChild<QObject*>("cmbMaxiMode"), SIGNAL(currentIndexChanged( int )), SLOT(maxi_primary()));
 		connect(m_optionWidget->findChild<QObject*>("txtMaxiPrimary"), SIGNAL(textChanged( const QString& )), SLOT(update_preview()));
@@ -412,7 +412,7 @@ void MainWindow::change_options()
 			return;
 		m_optionWidget=uiload.load(&file);
 		file.close();
-		tabMain->insertTab(1,m_optionWidget,tr("Options"));
+		tabMain->insertTab(1,m_optionWidget,tr("Channel Code"));
 		connect(m_optionWidget->findChild<QObject*>("cmbChannel"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
 	}
 
