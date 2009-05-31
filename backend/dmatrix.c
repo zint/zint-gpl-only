@@ -1241,41 +1241,41 @@ int matrix89(struct zint_symbol *symbol, unsigned char source[])
 	
 	symbol->row_height[0] = 1;
 	/* Fill corners */
-	symbol->encoded_data[0][0] = '1';
-	symbol->encoded_data[0][width + 1] = '1';
-	symbol->encoded_data[width + 1][0] = '1';
-	symbol->encoded_data[width + 1][width + 1] = '1';
+	set_module(symbol, 0, 0);
+	set_module(symbol, 0, width + 1);
+	set_module(symbol, width + 1, 0);
+	set_module(symbol, width + 1, width + 1);
 	for(i = 0; i < width; i++) {
 		/* Fill sides */
-		symbol->encoded_data[i + 1][0] = '1';
-		symbol->encoded_data[width + 1][i + 1] = '1';
+		set_module(symbol, i + 1, 0);
+		set_module(symbol, width + 1, i + 1);
 		if((i % 2) == 0) {
-			symbol->encoded_data[i][width + 1] = '1';
-			symbol->encoded_data[0][i] = '1';
+			set_module(symbol, i, width + 1);
+			set_module(symbol, 0, i);
 		}
 		for(j = 0; j < width; j++) {
 			switch(symbol_size) {
-				case 0: symbol->encoded_data[i + 1][j + 1] = randomized_stream[tableh1[(i * width) + j]]; break;
-				case 1: symbol->encoded_data[i + 1][j + 1] = randomized_stream[tableh2[(i * width) + j]]; break;
-				case 2: symbol->encoded_data[i + 1][j + 1] = randomized_stream[tableh3[(i * width) + j]]; break;
-				case 3: symbol->encoded_data[i + 1][j + 1] = randomized_stream[tableh4[(i * width) + j]]; break;
-				case 4: symbol->encoded_data[i + 1][j + 1] = randomized_stream[tableh5[(i * width) + j]]; break;
-				case 5: symbol->encoded_data[i + 1][j + 1] = randomized_stream[tableh6[(i * width) + j]]; break;
-				case 6: symbol->encoded_data[i + 1][j + 1] = randomized_stream[tableh7[(i * width) + j]]; break;
-				case 7: symbol->encoded_data[i + 1][j + 1] = randomized_stream[tableh8[(i * width) + j]]; break;
-				case 8: symbol->encoded_data[i + 1][j + 1] = randomized_stream[tableh9[(i * width) + j]]; break;
-				case 9: symbol->encoded_data[i + 1][j + 1] = randomized_stream[tableh10[(i * width) + j]]; break;
-				case 10: symbol->encoded_data[i + 1][j + 1] = randomized_stream[tableh11[(i * width) + j]]; break;
-				case 11: symbol->encoded_data[i + 1][j + 1] = randomized_stream[tableh12[(i * width) + j]]; break;
-				case 12: symbol->encoded_data[i + 1][j + 1] = randomized_stream[tableh13[(i * width) + j]]; break;
-				case 13: symbol->encoded_data[i + 1][j + 1] = randomized_stream[tableh14[(i * width) + j]]; break;
-				case 14: symbol->encoded_data[i + 1][j + 1] = randomized_stream[tableh15[(i * width) + j]]; break;
-				case 15: symbol->encoded_data[i + 1][j + 1] = randomized_stream[tableh16[(i * width) + j]]; break;
-				case 16: symbol->encoded_data[i + 1][j + 1] = randomized_stream[tableh17[(i * width) + j]]; break;
-				case 17: symbol->encoded_data[i + 1][j + 1] = randomized_stream[tableh18[(i * width) + j]]; break;
-				case 18: symbol->encoded_data[i + 1][j + 1] = randomized_stream[tableh19[(i * width) + j]]; break;
-				case 19: symbol->encoded_data[i + 1][j + 1] = randomized_stream[tableh20[(i * width) + j]]; break;
-				case 20: symbol->encoded_data[i + 1][j + 1] = randomized_stream[tableh21[(i * width) + j]]; break;
+				case 0: if(randomized_stream[tableh1[(i * width) + j]] == '1') { set_module(symbol, i + 1, j + 1); } break;
+				case 1: if(randomized_stream[tableh2[(i * width) + j]] == '1') { set_module(symbol, i + 1, j + 1); } break;
+				case 2: if(randomized_stream[tableh3[(i * width) + j]] == '1') { set_module(symbol, i + 1, j + 1); } break;
+				case 3: if(randomized_stream[tableh4[(i * width) + j]] == '1') { set_module(symbol, i + 1, j + 1); } break;
+				case 4: if(randomized_stream[tableh5[(i * width) + j]] == '1') { set_module(symbol, i + 1, j + 1); } break;
+				case 5: if(randomized_stream[tableh6[(i * width) + j]] == '1') { set_module(symbol, i + 1, j + 1); } break;
+				case 6: if(randomized_stream[tableh7[(i * width) + j]] == '1') { set_module(symbol, i + 1, j + 1); } break;
+				case 7: if(randomized_stream[tableh8[(i * width) + j]] == '1') { set_module(symbol, i + 1, j + 1); } break;
+				case 8: if(randomized_stream[tableh9[(i * width) + j]] == '1') { set_module(symbol, i + 1, j + 1); } break;
+				case 9: if(randomized_stream[tableh10[(i * width) + j]] == '1') { set_module(symbol, i + 1, j + 1); } break;
+				case 10: if(randomized_stream[tableh11[(i * width) + j]] == '1') { set_module(symbol, i + 1, j + 1); } break;
+				case 11: if(randomized_stream[tableh12[(i * width) + j]] == '1') { set_module(symbol, i + 1, j + 1); } break;
+				case 12: if(randomized_stream[tableh13[(i * width) + j]] == '1') { set_module(symbol, i + 1, j + 1); } break;
+				case 13: if(randomized_stream[tableh14[(i * width) + j]] == '1') { set_module(symbol, i + 1, j + 1); } break;
+				case 14: if(randomized_stream[tableh15[(i * width) + j]] == '1') { set_module(symbol, i + 1, j + 1); } break;
+				case 15: if(randomized_stream[tableh16[(i * width) + j]] == '1') { set_module(symbol, i + 1, j + 1); } break;
+				case 16: if(randomized_stream[tableh17[(i * width) + j]] == '1') { set_module(symbol, i + 1, j + 1); } break;
+				case 17: if(randomized_stream[tableh18[(i * width) + j]] == '1') { set_module(symbol, i + 1, j + 1); } break;
+				case 18: if(randomized_stream[tableh19[(i * width) + j]] == '1') { set_module(symbol, i + 1, j + 1); } break;
+				case 19: if(randomized_stream[tableh20[(i * width) + j]] == '1') { set_module(symbol, i + 1, j + 1); } break;
+				case 20: if(randomized_stream[tableh21[(i * width) + j]] == '1') { set_module(symbol, i + 1, j + 1); } break;
 			}
 		}
 		symbol->row_height[i + 1] = 1;

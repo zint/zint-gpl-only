@@ -592,7 +592,7 @@ int codablock(struct zint_symbol *symbol, unsigned char source[])
 	final_mode = MODEA;
 	
 	if(input_length > 5450) {
-		strcpy(symbol->errtxt, "Input data too long [741]");
+		strcpy(symbol->errtxt, "Input data too long");
 		return ERROR_TOO_LONG;
 	}
 	
@@ -624,7 +624,7 @@ int codablock(struct zint_symbol *symbol, unsigned char source[])
 	columns_needed = (estimate_codelength + 2) / rows_needed;
 	if(columns_needed < 4) { columns_needed = 4; }
 	if(columns_needed > 62) { 
-		strcpy(symbol->errtxt, "Input data too long [742]");
+		strcpy(symbol->errtxt, "Input data too long");
 		return ERROR_TOO_LONG;
 	}
 	
@@ -632,7 +632,7 @@ int codablock(struct zint_symbol *symbol, unsigned char source[])
 	error_number = data_encode_blockf(source, subset_selector, blockmatrix, &columns_needed, &rows_needed, &final_mode, symbol->nullchar, gs1);
 	if(error_number > 0) {
 		if(error_number == ERROR_TOO_LONG) {
-			strcpy(symbol->errtxt, "Input data too long [743]");
+			strcpy(symbol->errtxt, "Input data too long");
 		}
 		return error_number;
 	}
@@ -736,10 +736,9 @@ int codablock(struct zint_symbol *symbol, unsigned char source[])
 		for (j = 0; j < strlen(row_pattern); j++) {
 			for(k = 0; k < ctoi(row_pattern[j]); k++) {
 				if(flip_flop == 1) {
-					symbol->encoded_data[i][writer] = '1';
+					set_module(symbol, i, writer);
 					writer++;
 				} else {
-					symbol->encoded_data[i][writer] = '0';
 					writer++;
 				}
 			}

@@ -41,4 +41,7 @@ int posn(char set_string[], char data);
 void expand(struct zint_symbol *symbol, char data[]);
 int is_stackable(int symbology);
 int roundup(float input);
+int module_is_set(struct zint_symbol *symbol, int y_coord, int x_coord);
+void set_module(struct zint_symbol *symbol, int y_coord, int x_coord);
+void unset_module(struct zint_symbol *symbol, int y_coord, int x_coord);
 

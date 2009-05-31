@@ -89,6 +89,7 @@ public:
 	bool save_to_file(QString filename);
 private:
 	void encode();
+	int module_set(int y_coords, int x_coords);
 
 private:
 	int m_symbol;

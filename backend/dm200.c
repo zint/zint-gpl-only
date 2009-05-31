@@ -842,9 +842,8 @@ int data_matrix_200(struct zint_symbol *symbol, unsigned char source[])
 			int x;
 			for(x = 0; x < W; x++) {
 				if(grid[W * y + x]) {
-					symbol->encoded_data[(H - y) - 1][x] = '1'; }
-					else {
-						symbol->encoded_data[(H - y) - 1][x] = '0'; }
+					set_module(symbol, (H - y) - 1, x);
+				}
 			}
 			symbol->row_height[(H - y) - 1] = 1;
 		}

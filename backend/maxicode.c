@@ -579,19 +579,19 @@ int maxicode(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	if((mode < 2) || (mode > 6)) { /* Only codes 2 to 6 supported */
-		strcpy(symbol->errtxt, "Invalid Maxicode Mode [571]");
+		strcpy(symbol->errtxt, "Invalid Maxicode Mode");
 		return ERROR_INVALID_OPTION;
 	}
 	
 	if((mode == 2) || (mode == 3)) { /* Modes 2 and 3 need data in symbol->primary */
 		if(strlen(symbol->primary) != 15) {
-			strcpy(symbol->errtxt, "Invalid Primary String [572]");
+			strcpy(symbol->errtxt, "Invalid Primary String");
 			return ERROR_INVALID_DATA;
 		}
 	
 		for(i = 9; i < 15; i++) { /* check that country code and service are numeric */
 			if((symbol->primary[i] < 48) || (symbol->primary[i] > 57)) {
-				strcpy(symbol->errtxt, "Invalid Primary String [573]");
+				strcpy(symbol->errtxt, "Invalid Primary String");
 				return ERROR_INVALID_DATA;
 			}
 		}
@@ -630,7 +630,7 @@ int maxicode(struct zint_symbol *symbol, unsigned char source[])
 	
 	i = maxi_text_process(mode, source, symbol->nullchar);
 	if(i == ERROR_TOO_LONG ) {
-		strcpy(symbol->errtxt, "Input data too long [574]");
+		strcpy(symbol->errtxt, "Input data too long");
 		return i;
 	}
 
@@ -648,7 +648,6 @@ int maxicode(struct zint_symbol *symbol, unsigned char source[])
 	/* Copy data into symbol grid */
 	for(i = 0; i < 33; i++) {
 		for(j = 0; j < 30; j++) {
-			symbol->encoded_data[i][j] = '0';
 			block = (MaxiGrid[(i * 30) + j] + 5) / 6;
 			bit = (MaxiGrid[(i * 30) + j] + 5) % 6;
 			
@@ -662,26 +661,26 @@ int maxicode(struct zint_symbol *symbol, unsigned char source[])
 				bit_pattern[5] =  (maxi_codeword[block - 1] & 0x1);
 				
 				if(bit_pattern[bit] != 0) {
-					symbol->encoded_data[i][j] = '1';
+					set_module(symbol, i, j);
 				}
 			}
 		}
 	}
 
 	/* Add orientation markings */
-	symbol->encoded_data[0][28] = '1'; // Top right filler
-	symbol->encoded_data[0][29] = '1';
-	symbol->encoded_data[9][10] = '1'; // Top left marker
-	symbol->encoded_data[9][11] = '1';
-	symbol->encoded_data[10][11] = '1';
-	symbol->encoded_data[15][7] = '1'; // Left hand marker
-	symbol->encoded_data[16][8] = '1';
-	symbol->encoded_data[16][20] = '1'; // Right hand marker
-	symbol->encoded_data[17][20] = '1';
-	symbol->encoded_data[22][10] = '1'; // Bottom left marker
-	symbol->encoded_data[23][10] = '1';
-	symbol->encoded_data[22][17] = '1'; // Bottom right marker
-	symbol->encoded_data[23][17] = '1';
+	set_module(symbol, 0, 28); // Top right filler
+	set_module(symbol, 0, 29);
+	set_module(symbol, 9, 10); // Top left marker
+	set_module(symbol, 0, 11);
+	set_module(symbol, 10, 11);
+	set_module(symbol, 15, 7); // Left hand marker
+	set_module(symbol, 16, 8);
+	set_module(symbol, 16, 20); // Right hand marker
+	set_module(symbol, 17, 20);
+	set_module(symbol, 22, 10); // Bottom left marker
+	set_module(symbol, 23, 10);
+	set_module(symbol, 22, 17); // Bottom right marker
+	set_module(symbol, 23, 17);
 	
 	symbol->width = 30;
 	symbol->rows = 33;

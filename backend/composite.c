@@ -299,7 +299,7 @@ int cc_a(struct zint_symbol *symbol, unsigned char source[], int cc_width)
 		
 		/* so now pattern[] holds the string of '1's and '0's. - copy this to the symbol */
 		for(loop = 0; loop < strlen(pattern); loop++) {
-			symbol->encoded_data[i][loop] = pattern[loop];
+			if(pattern[loop] == '1') { set_module(symbol, i, loop); }
 		}
 		symbol->row_height[i] = 2;
 		symbol->rows++;
@@ -527,7 +527,7 @@ int cc_b(struct zint_symbol *symbol, unsigned char source[], int cc_width)
 		
 		/* so now pattern[] holds the string of '1's and '0's. - copy this to the symbol */
 		for(loop = 0; loop < strlen(pattern); loop++) {
-			symbol->encoded_data[i][loop] = pattern[loop];
+			if(pattern[loop] == '1') { set_module(symbol, i, loop); }
 		}
 		symbol->row_height[i] = 2;
 		
@@ -683,7 +683,7 @@ int cc_c(struct zint_symbol *symbol, unsigned char source[], int cc_width, int e
 			lookup(BRSET, PDFttf, codebarre[loop], pattern);
 		}
 		for(loop = 0; loop < strlen(pattern); loop++) {
-			symbol->encoded_data[i][loop] = pattern[loop];
+			if(pattern[loop] == '1') { set_module(symbol, i, loop); }
 		}
 		symbol->row_height[i] = 3;
 	}
@@ -1851,10 +1851,10 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 		/* Move the 2d component of the symbol horizontally */
 		for(i = 0; i <= symbol->rows; i++) {
 			for(j = (symbol->width + top_shift); j >= top_shift; j--) {
-				symbol->encoded_data[i][j] = symbol->encoded_data[i][j - top_shift];
+				if(module_is_set(symbol, i, j - top_shift)) { set_module(symbol, i, j); } else { unset_module(symbol, i, j); }
 			}
 			for(j = 0; j < top_shift; j++) {
-				symbol->encoded_data[i][j] = '0';
+				unset_module(symbol, i, j);
 			}
 		}
 	} 
@@ -1863,7 +1863,7 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 	for(i = 0; i <= linear->rows; i++) {
 		symbol->row_height[symbol->rows + i] = linear->row_height[i];
 		for(j = 0; j <= linear->width; j++) {
-			symbol->encoded_data[i + symbol->rows][j + bottom_shift] = linear->encoded_data[i][j];
+			if(module_is_set(linear, i, j)) { set_module(symbol, i + symbol->rows, j + bottom_shift); } else { unset_module(symbol, i + symbol->rows, j + bottom_shift); }
 		}
 	}
 	if((linear->width + bottom_shift) > symbol->width) {

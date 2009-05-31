@@ -128,17 +128,17 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[])
 			case 16: strcpy(fcc, "59"); error_number = is_sane(NESET, source); break;
 			case 18: strcpy(fcc, "62"); break;
 			case 23: strcpy(fcc, "62"); error_number = is_sane(NESET, source); break;
-			default: strcpy(symbol->errtxt, "Auspost input is wrong length [631]");
+			default: strcpy(symbol->errtxt, "Auspost input is wrong length");
 			return ERROR_TOO_LONG;
 				break;
 		}
 		if(error_number == ERROR_INVALID_DATA) {
-			strcpy(symbol->errtxt, "Invalid characters in data [632]");
+			strcpy(symbol->errtxt, "Invalid characters in data");
 			return error_number;
 		}
 	} else {
 		if(ustrlen(source) > 8) {
-			strcpy(symbol->errtxt, "Auspost input is too long [633]");
+			strcpy(symbol->errtxt, "Auspost input is too long");
 			return ERROR_TOO_LONG;
 		}
 		switch(symbol->symbology) {
@@ -157,7 +157,7 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[])
 	concat(localstr, (char*)source);
 	error_number = is_sane(GDSET, (unsigned char *)localstr);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Invalid characters in data [634]");
+		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
 	
@@ -168,7 +168,7 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[])
 	dpid[8] = '\0';
 	error_number = is_sane(NESET, (unsigned char *)dpid);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Invalid characters in DPID [635]");
+		strcpy(symbol->errtxt, "Invalid characters in DPID");
 		return error_number;
 	}
 
@@ -227,12 +227,12 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[])
 	{
 		if((data_pattern[loopey] == '1') || (data_pattern[loopey] == '0'))
 		{
-			symbol->encoded_data[0][writer] = '1';
+			set_module(symbol, 0, writer);
 		}
-		symbol->encoded_data[1][writer] = '1';
+		set_module(symbol, 1, writer);
 		if((data_pattern[loopey] == '2') || (data_pattern[loopey] == '0'))
 		{
-			symbol->encoded_data[2][writer] = '1';
+			set_module(symbol, 2, writer);
 		}
 		writer += 2;
 	}

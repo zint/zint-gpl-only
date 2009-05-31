@@ -650,23 +650,23 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 		case BARCODE_EANX_CC:
 			switch(ustrlen(first_part))
 			{ /* Adds vertical separator bars according to ISO/IEC 24723 section 11.4 */
-				case 7: symbol->encoded_data[symbol->rows][1] = '1';
-					symbol->encoded_data[symbol->rows][67] = '1';
-					symbol->encoded_data[symbol->rows + 1][0] = '1';
-					symbol->encoded_data[symbol->rows + 1][68] = '1';
-					symbol->encoded_data[symbol->rows + 2][1] = '1';
-					symbol->encoded_data[symbol->rows + 2][67] = '1';
+				case 7: set_module(symbol, symbol->rows, 1);
+					set_module(symbol, symbol->rows, 67);
+					set_module(symbol, symbol->rows + 1, 0);
+					set_module(symbol, symbol->rows + 1, 68);
+					set_module(symbol, symbol->rows + 2, 1);
+					set_module(symbol, symbol->rows + 1, 67);
 					symbol->row_height[symbol->rows] = 2;
 					symbol->row_height[symbol->rows + 1] = 2;
 					symbol->row_height[symbol->rows + 2] = 2;
 					symbol->rows += 3;
 					ean8(symbol, first_part, (char*)dest); break;
-				case 12:symbol->encoded_data[symbol->rows][1] = '1';
-					symbol->encoded_data[symbol->rows][95] = '1';
-					symbol->encoded_data[symbol->rows + 1][0] = '1';
-					symbol->encoded_data[symbol->rows + 1][96] = '1';
-					symbol->encoded_data[symbol->rows + 2][1] = '1';
-					symbol->encoded_data[symbol->rows + 2][95] = '1';
+				case 12:set_module(symbol, symbol->rows, 1);
+					set_module(symbol, symbol->rows, 95);
+					set_module(symbol, symbol->rows + 1, 0);
+					set_module(symbol, symbol->rows + 1, 96);
+					set_module(symbol, symbol->rows + 2, 1);
+					set_module(symbol, symbol->rows + 2, 95);
 					symbol->row_height[symbol->rows] = 2;
 					symbol->row_height[symbol->rows + 1] = 2;
 					symbol->row_height[symbol->rows + 2] = 2;
@@ -685,12 +685,12 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 			break;
 		case BARCODE_UPCA_CC:
 			if(ustrlen(first_part) == 11) {
-				symbol->encoded_data[symbol->rows][1] = '1';
-				symbol->encoded_data[symbol->rows][95] = '1';
-				symbol->encoded_data[symbol->rows + 1][0] = '1';
-				symbol->encoded_data[symbol->rows + 1][96] = '1';
-				symbol->encoded_data[symbol->rows + 2][1] = '1';
-				symbol->encoded_data[symbol->rows + 2][95] = '1';
+				set_module(symbol, symbol->rows, 1);
+				set_module(symbol, symbol->rows, 95);
+				set_module(symbol, symbol->rows + 1, 0);
+				set_module(symbol, symbol->rows + 1, 96);
+				set_module(symbol, symbol->rows + 2, 1);
+				set_module(symbol, symbol->rows + 2, 95);
 				symbol->row_height[symbol->rows] = 2;
 				symbol->row_height[symbol->rows + 1] = 2;
 				symbol->row_height[symbol->rows + 2] = 2;
@@ -711,12 +711,12 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 			break;
 		case BARCODE_UPCE_CC:
 			if((ustrlen(first_part) >= 6) && (ustrlen(first_part) <= 7)) {
-				symbol->encoded_data[symbol->rows][1] = '1';
-				symbol->encoded_data[symbol->rows][51] = '1';
-				symbol->encoded_data[symbol->rows + 1][0] = '1';
-				symbol->encoded_data[symbol->rows + 1][52] = '1';
-				symbol->encoded_data[symbol->rows + 2][1] = '1';
-				symbol->encoded_data[symbol->rows + 2][51] = '1';
+				set_module(symbol, symbol->rows, 1);
+				set_module(symbol, symbol->rows, 51);
+				set_module(symbol, symbol->rows + 1, 0);
+				set_module(symbol, symbol->rows + 1, 52);
+				set_module(symbol, symbol->rows + 2, 1);
+				set_module(symbol, symbol->rows + 2, 51);
 				symbol->row_height[symbol->rows] = 2;
 				symbol->row_height[symbol->rows + 1] = 2;
 				symbol->row_height[symbol->rows + 2] = 2;
@@ -761,9 +761,13 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 		case BARCODE_UPCE_CC:
 			/* shift the symbol to the right one space to allow for separator bars */
 			for(i = (symbol->width + 1); i >= 1; i--) {
-				symbol->encoded_data[symbol->rows - 1][i] = symbol->encoded_data[symbol->rows - 1][i - 1];
+				if(module_is_set(symbol, symbol->rows - 1, i - 1)) {
+					set_module(symbol, symbol->rows - 1, i);
+				} else {
+					unset_module(symbol, symbol->rows - 1, i);
+				}
 			}
-			symbol->encoded_data[symbol->rows - 1][0] = '0';
+			unset_module(symbol, symbol->rows - 1, 0);
 			symbol->width += 2;
 			break;
 	}

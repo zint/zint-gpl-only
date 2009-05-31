@@ -701,7 +701,7 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 			lookup(BRSET, PDFttf, codebarre[loop], pattern);
 		}
 		for(loop = 0; loop < strlen(pattern); loop++) {
-			symbol->encoded_data[i][loop] = pattern[loop];
+			if(pattern[loop] == '1') { set_module(symbol, i, loop); }
 		}
 		symbol->row_height[i] = 3;
 	}
@@ -720,12 +720,12 @@ int pdf417enc(struct zint_symbol *symbol, unsigned char source[])
 	errno = 0;
 	
 	if((symbol->option_1 < -1) || (symbol->option_1 > 8)) {
-		strcpy(symbol->errtxt, "Security value out of range [551]");
+		strcpy(symbol->errtxt, "Security value out of range");
 		symbol->option_1 = -1;
 		errno = WARN_INVALID_OPTION;
 	}
 	if((symbol->option_2 < 0) || (symbol->option_2 > 30)) {
-		strcpy(symbol->errtxt, "Number of columns out of range [552]");
+		strcpy(symbol->errtxt, "Number of columns out of range");
 		symbol->option_2 = 0;
 		errno = WARN_INVALID_OPTION;
 	}
@@ -737,23 +737,23 @@ int pdf417enc(struct zint_symbol *symbol, unsigned char source[])
 	if(codeerr != 0) {
 		switch(codeerr) {
 			case 1:
-				strcpy(symbol->errtxt, "No such file or file unreadable [553]");
+				strcpy(symbol->errtxt, "No such file or file unreadable");
 				errno = ERROR_INVALID_OPTION;
 				break;
 			case 2:
-				strcpy(symbol->errtxt, "Input string too long [554]");
+				strcpy(symbol->errtxt, "Input string too long");
 				errno = ERROR_TOO_LONG;
 				break;
 			case 3:
-				strcpy(symbol->errtxt, "Number of codewords per row too small [555]");
+				strcpy(symbol->errtxt, "Number of codewords per row too small");
 				errno = WARN_INVALID_OPTION;
 				break;
 			case 4:
-				strcpy(symbol->errtxt, "Data too long for specified number of columns [556]");
+				strcpy(symbol->errtxt, "Data too long for specified number of columns");
 				errno = ERROR_TOO_LONG;
 				break;
 			default:
-				strcpy(symbol->errtxt, "Something strange happened [557]");
+				strcpy(symbol->errtxt, "Something strange happened");
 				errno = ERROR_ENCODING_PROBLEM;
 				break;
 		}
@@ -821,11 +821,11 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 	/* This is where it all changes! */
 	
 	if(mclength > 126) {
-		strcpy(symbol->errtxt, "Input data too long [841]");
+		strcpy(symbol->errtxt, "Input data too long");
 		return ERROR_TOO_LONG;
 	}
 	if(symbol->option_2 > 4) {
-		strcpy(symbol->errtxt, "Specified width out of range [842]");
+		strcpy(symbol->errtxt, "Specified width out of range");
 		symbol->option_2 = 0;
 		codeerr = WARN_INVALID_OPTION;
 	}
@@ -837,21 +837,21 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 	if((symbol->option_2 == 1) && (mclength > 20)) {
 		/* the user specified 1 column but the data doesn't fit - go to automatic */
 		symbol->option_2 = 0;
-		strcpy(symbol->errtxt, "Specified symbol size too small for data [843]");
+		strcpy(symbol->errtxt, "Specified symbol size too small for data");
 		codeerr = WARN_INVALID_OPTION;
 	}
 	
 	if((symbol->option_2 == 2) && (mclength > 37)) {
 		/* the user specified 2 columns but the data doesn't fit - go to automatic */
 		symbol->option_2 = 0;
-		strcpy(symbol->errtxt, "Specified symbol size too small for data [844]");
+		strcpy(symbol->errtxt, "Specified symbol size too small for data");
 		codeerr = WARN_INVALID_OPTION;
 	}
 	
 	if((symbol->option_2 == 3) && (mclength > 82)) {
 		/* the user specified 3 columns but the data doesn't fit - go to automatic */
 		symbol->option_2 = 0;
-		strcpy(symbol->errtxt, "Specified symbol size too small for data [845]");
+		strcpy(symbol->errtxt, "Specified symbol size too small for data");
 		codeerr = WARN_INVALID_OPTION;
 	}
 	
@@ -1038,7 +1038,7 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 		
 		/* so now pattern[] holds the string of '1's and '0's. - copy this to the symbol */
 		for(loop = 0; loop < strlen(pattern); loop++) {
-			symbol->encoded_data[i][loop] = pattern[loop];
+			if(pattern[loop] == '1') { set_module(symbol, i, loop); }
 		}
 		symbol->row_height[i] = 2;
 		

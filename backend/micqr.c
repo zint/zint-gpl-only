@@ -940,7 +940,7 @@ int microqr(struct zint_symbol *symbol, unsigned char source[])
 	/* Copy data into symbol */
 	for(i = 0; i < width; i++) {
 		for(j = 0; j < width; j++) {
-			symbol->encoded_data[i][j] = candidate[i][j];
+			if(candidate[i][j] == '1') { set_module(symbol, i, j); }
 		}
 		symbol->row_height[i] = 1;
 	}
