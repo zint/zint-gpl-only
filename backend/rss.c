@@ -669,6 +669,12 @@ int rsslimited(struct zint_symbol *symbol, unsigned char source[])
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
+	if(ustrlen(source) == 13) {
+		if((source[0] != '0') && (source[0] != '1')) {
+			strcpy(symbol->errtxt, "Input out of range");
+			return ERROR_INVALID_DATA;
+		}
+	}
 	
 	/* make some room for a separator row for composite symbols */
 	if(symbol->symbology == BARCODE_RSS_LTD_CC) {
