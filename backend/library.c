@@ -585,14 +585,14 @@ int ZBarcode_Print(struct zint_symbol *symbol)
 	int error_number;
 	char output[4];
 
-	int i, j;
+	/* int i, j;
 	
 	for(i = 0; i < symbol->rows; i++) {
 		for(j = 0; j < symbol->width / 7; j++) {
 			printf("%2.2X ", symbol->encoded_data[i][j]);
 		}
 		printf("\n");
-	}
+	} */
 	
 	if(strlen(symbol->outfile) > 3) {
 		output[0] = symbol->outfile[strlen(symbol->outfile) - 3];
