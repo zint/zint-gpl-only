@@ -54,7 +54,7 @@ struct zint_symbol *ZBarcode_Create()
 	strcpy(symbol->primary, "");
 	for(i = 0; i < 178; i++) {
 		for(j = 0; j < 1000; j++) {
-			symbol->encoded_data[i][j] = '0';
+			unset_module(symbol, i, j);
 		}
 		symbol->row_height[i] = 0;
 	}
@@ -585,6 +585,15 @@ int ZBarcode_Print(struct zint_symbol *symbol)
 	int error_number;
 	char output[4];
 
+	int i, j;
+	
+	for(i = 0; i < symbol->rows; i++) {
+		for(j = 0; j < symbol->width / 7; j++) {
+			printf("%2.2X ", symbol->encoded_data[i][j]);
+		}
+		printf("\n");
+	}
+	
 	if(strlen(symbol->outfile) > 3) {
 		output[0] = symbol->outfile[strlen(symbol->outfile) - 3];
 		output[1] = symbol->outfile[strlen(symbol->outfile) - 2];

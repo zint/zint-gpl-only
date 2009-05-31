@@ -44,8 +44,8 @@ struct zint_symbol {
 	int rows;
 	int width;
 	char primary[100];
-	char encoded_data[178][1000];
-	int row_height[155];
+	unsigned char encoded_data[178][143];
+	int row_height[178]; /* Largest symbol is 177x177 QR Code */
 	char errtxt[100];
 	char nullchar;
 };

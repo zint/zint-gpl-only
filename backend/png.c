@@ -396,7 +396,7 @@ int maxi_png_plot(struct zint_symbol *symbol, int rotate_angle)
 		yposn = row * 9;
 		for(column = 0; column < symbol->width; column++) {
 			xposn = column * 10;
-			if(symbol->encoded_data[row][column] == '1') {
+			if(module_is_set(symbol, row, column)) {
 				if((row % 2) == 0) {
 					/* Even (full) row */
 					draw_hexagon(pixelbuf, image_width, xposn + (scaler * xoffset), yposn + (scaler * yoffset));
@@ -501,7 +501,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 		symbol->height = preset_height;
 	}
 	
-	while(symbol->encoded_data[symbol->rows - 1][comp_offset] != '1') {
+	while(!(module_is_set(symbol, symbol->rows - 1, comp_offset))) {
 		comp_offset++;
 	}
 
@@ -597,7 +597,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 		plot_yposn = (int)row_posn;
 		
 		i = 0;
-		if(symbol->encoded_data[this_row][0] == '1') {
+		if(module_is_set(symbol, this_row, 0)) {
 			latch = 1;
 		} else {
 			latch = 0;
@@ -607,7 +607,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 			block_width = 0;
 			do {
 				block_width++;
-			} while (symbol->encoded_data[this_row][i + block_width] == symbol->encoded_data[this_row][i]);
+			} while (module_is_set(symbol, this_row, i + block_width) == module_is_set(symbol, this_row, i));
 			if((addon_latch == 0) && (r == 0) && (i > main_width)) {
 				plot_height = (int)(row_height - 5.0);
 				plot_yposn = (int)(row_posn - 5.0);
@@ -718,7 +718,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 			block_width = 0;
 			do {
 				block_width++;
-			} while (symbol->encoded_data[symbol->rows - 1][i + block_width] == symbol->encoded_data[symbol->rows - 1][i]);
+			} while (module_is_set(symbol, symbol->rows - 1, i + block_width) == module_is_set(symbol, symbol->rows - 1, i));
 			if(latch == 1) {
 				/* a bar */
 				draw_bar(pixelbuf, (i + xoffset - comp_offset) * scaler, block_width * scaler, (4 + (int)yoffset) * scaler, 5 * scaler, image_width, image_height);
@@ -737,7 +737,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 			block_width = 0;
 			do {
 				block_width++;
-			} while (symbol->encoded_data[symbol->rows - 1][i + block_width] == symbol->encoded_data[symbol->rows - 1][i]);
+			} while (module_is_set(symbol, symbol->rows - 1, i + block_width) == module_is_set(symbol, symbol->rows - 1, i));
 			if(latch == 1) {
 				/* a bar */
 				draw_bar(pixelbuf, (i + xoffset - comp_offset) * scaler, block_width * scaler, (4 + (int)yoffset) * scaler, 5 * scaler, image_width, image_height);

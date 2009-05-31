@@ -254,6 +254,27 @@ bool QZint::save_to_file(QString filename)
 	if(error == 0) { return true; } else { return false; }
 }
 
+int QZint::module_set(int y_coord, int x_coord)
+{
+	int x_char, x_sub, result;
+	
+	x_char = x_coord / 7;
+	x_sub = x_coord % 7;
+	result = 0;
+	
+	switch(x_sub) {
+		case 0: if((m_zintSymbol->encoded_data[y_coord][x_char] & 0x01) != 0) { result = 1; } break;
+		case 1: if((m_zintSymbol->encoded_data[y_coord][x_char] & 0x02) != 0) { result = 1; } break;
+		case 2: if((m_zintSymbol->encoded_data[y_coord][x_char] & 0x04) != 0) { result = 1; } break;
+		case 3: if((m_zintSymbol->encoded_data[y_coord][x_char] & 0x08) != 0) { result = 1; } break;
+		case 4: if((m_zintSymbol->encoded_data[y_coord][x_char] & 0x10) != 0) { result = 1; } break;
+		case 5: if((m_zintSymbol->encoded_data[y_coord][x_char] & 0x20) != 0) { result = 1; } break;
+		case 6: if((m_zintSymbol->encoded_data[y_coord][x_char] & 0x40) != 0) { result = 1; } break;
+	}
+	
+	return result;
+}
+
 void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode mode)
 {
 	encode();
@@ -375,7 +396,7 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 		}
 	}
 
-	while(m_zintSymbol->encoded_data[m_zintSymbol->rows - 1][comp_offset] != '1') {
+	while(!(module_set(m_zintSymbol->rows - 1, comp_offset))) {
 		comp_offset++;
 	}
 	xoffset = comp_offset;
@@ -425,7 +446,7 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 		{
 			for (int c=0;c<m_zintSymbol->width;c++)
 			{
-				if (m_zintSymbol->encoded_data[r][c]=='1')
+				if (module_set(r, c))
 				{
 					qreal col=(qreal)c*(maxi_width+1)+(r%2)*((maxi_width+1)/2);
 					qreal row=(qreal)r*(maxi_width+1)*0.868;
@@ -456,15 +477,15 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 		for (int row=0;row<m_zintSymbol->rows;row++)
 		{
 			for (int i=0;i<m_zintSymbol->width;i++) {
-				if (m_zintSymbol->encoded_data[row][i]!='0')
+				if (module_set(row, i))
 				{
-					int ed=m_zintSymbol->encoded_data[row][i];
+					int ed = module_set(row, i);
 					int linewidth=0;
 					for (int j=i;j<m_zintSymbol->width;j++,linewidth++)
-						if (ed!=m_zintSymbol->encoded_data[row][j])
+						if (ed != module_set(row, j))
 							break;
 					QColor color;
-					switch(ed)
+					/* switch(ed)
 					{
 						case 'R':
 							color=qRgb(0xff,0x00,0x00);
@@ -490,10 +511,10 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 							color=qRgb(0xff,0xff,0x00);
 							break;
 
-						default:
+						default: */
 							color=m_fgColor;
-							break;
-					}
+							/* break;
+					} */
 					if(!((i > main_width) && (row == m_zintSymbol->rows - 1)))  {
 						painter.fillRect(i,y,linewidth,m_zintSymbol->row_height[row],QBrush(color));
 					} else {
@@ -574,7 +595,7 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 			block_width = 0;
 			do {
 				block_width++;
-			} while (m_zintSymbol->encoded_data[m_zintSymbol->rows - 1][j + block_width] == m_zintSymbol->encoded_data[m_zintSymbol->rows - 1][j]);
+			} while (module_set(m_zintSymbol->rows - 1, j + block_width) == module_set(m_zintSymbol->rows - 1, j));
 			if(latch == true) {
 				/* a bar */
 				painter.fillRect(j + xoffset - comp_offset,m_zintSymbol->height,block_width,5,QBrush(m_fgColor));
@@ -593,7 +614,7 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 			block_width = 0;
 			do {
 				block_width++;
-			} while (m_zintSymbol->encoded_data[m_zintSymbol->rows - 1][j + block_width] == m_zintSymbol->encoded_data[m_zintSymbol->rows - 1][j]);
+			} while (module_set(m_zintSymbol->rows - 1, j + block_width) == module_set(m_zintSymbol->rows - 1, j));
 			if(latch == true) {
 				/* a bar */
 				painter.fillRect(j + xoffset - comp_offset,m_zintSymbol->height,block_width,5,QBrush(m_fgColor));

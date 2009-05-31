@@ -120,6 +120,67 @@ void lookup(char set_string[], char *table[], char data, char dest[])
 		if (data == set_string[i]) { concat(dest, table[i]); } }
 }
 
+int module_is_set(struct zint_symbol *symbol, int y_coord, int x_coord)
+{
+	int x_char, x_sub, result;
+	
+	x_char = x_coord / 7;
+	x_sub = x_coord % 7;
+	result = 0;
+	
+	switch(x_sub) {
+		case 0: if((symbol->encoded_data[y_coord][x_char] & 0x01) != 0) { result = 1; } break;
+		case 1: if((symbol->encoded_data[y_coord][x_char] & 0x02) != 0) { result = 1; } break;
+		case 2: if((symbol->encoded_data[y_coord][x_char] & 0x04) != 0) { result = 1; } break;
+		case 3: if((symbol->encoded_data[y_coord][x_char] & 0x08) != 0) { result = 1; } break;
+		case 4: if((symbol->encoded_data[y_coord][x_char] & 0x10) != 0) { result = 1; } break;
+		case 5: if((symbol->encoded_data[y_coord][x_char] & 0x20) != 0) { result = 1; } break;
+		case 6: if((symbol->encoded_data[y_coord][x_char] & 0x40) != 0) { result = 1; } break;
+	}
+	
+	return result;
+}
+
+void set_module(struct zint_symbol *symbol, int y_coord, int x_coord)
+{
+	if(module_is_set(symbol, y_coord, x_coord)) { return; }
+	
+	int x_char, x_sub;
+	
+	x_char = x_coord / 7;
+	x_sub = x_coord % 7;
+	
+	switch(x_sub) {
+		case 0: symbol->encoded_data[y_coord][x_char] += 0x01; break;
+		case 1: symbol->encoded_data[y_coord][x_char] += 0x02; break;
+		case 2: symbol->encoded_data[y_coord][x_char] += 0x04; break;
+		case 3: symbol->encoded_data[y_coord][x_char] += 0x08; break;
+		case 4: symbol->encoded_data[y_coord][x_char] += 0x10; break;
+		case 5: symbol->encoded_data[y_coord][x_char] += 0x20; break;
+		case 6: symbol->encoded_data[y_coord][x_char] += 0x40; break;
+	} /* The last binary digit is reserved for colour barcodes */
+}
+
+void unset_module(struct zint_symbol *symbol, int y_coord, int x_coord)
+{
+	if(!(module_is_set(symbol, y_coord, x_coord))) { return; }
+	
+	int x_char, x_sub;
+	
+	x_char = x_coord / 7;
+	x_sub = x_coord % 7;
+	
+	switch(x_sub) {
+		case 0: symbol->encoded_data[y_coord][x_char] -= 0x01; break;
+		case 1: symbol->encoded_data[y_coord][x_char] -= 0x02; break;
+		case 2: symbol->encoded_data[y_coord][x_char] -= 0x04; break;
+		case 3: symbol->encoded_data[y_coord][x_char] -= 0x08; break;
+		case 4: symbol->encoded_data[y_coord][x_char] -= 0x10; break;
+		case 5: symbol->encoded_data[y_coord][x_char] -= 0x20; break;
+		case 6: symbol->encoded_data[y_coord][x_char] -= 0x40; break;
+	} /* The last binary digit is reserved for colour barcodes */
+}
+
 void expand(struct zint_symbol *symbol, char data[])
 { /* Expands from a width pattern to a bit pattern */
 	
@@ -131,7 +192,7 @@ void expand(struct zint_symbol *symbol, char data[])
 	
 	for(reader = 0; reader < strlen(data); reader++) {
 		for(i = 0; i < ctoi(data[reader]); i++) {
-			symbol->encoded_data[symbol->rows][writer] = latch;
+			if(latch == '1') { set_module(symbol, symbol->rows, writer); }
 			writer++;
 		}
 		if(latch == '1') {

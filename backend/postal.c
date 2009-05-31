@@ -67,12 +67,12 @@ int postnet(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	error_number = 0;
 
 	if(ustrlen(source) > 38) {
-		strcpy(symbol->errtxt, "Input too long [401]");
+		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Invalid characters in data [402]");
+		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
 	sum = 0;
@@ -116,9 +116,9 @@ int post_plot(struct zint_symbol *symbol, unsigned char source[])
 	{
 		if(height_pattern[loopey] == 'L')
 		{
-			symbol->encoded_data[0][writer] = '1';
+			set_module(symbol, 0, writer);
 		}
-		symbol->encoded_data[1][writer] = '1';
+		set_module(symbol, 1, writer);
 		writer += 3;
 	}
 	symbol->row_height[0] = 6;
@@ -138,12 +138,12 @@ int planet(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	error_number = 0;
 	
 	if(ustrlen(source) > 38) {
-		strcpy(symbol->errtxt, "Input too long [821]");
+		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Invalid characters in data [822]");
+		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
 	sum = 0;
@@ -187,9 +187,9 @@ int planet_plot(struct zint_symbol *symbol, unsigned char source[])
 	{
 		if(height_pattern[loopey] == 'L')
 		{
-			symbol->encoded_data[0][writer] = '1';
+			set_module(symbol, 0, writer);
 		}
-		symbol->encoded_data[1][writer] = '1';
+		set_module(symbol, 1, writer);
 		writer += 3;
 	}
 	symbol->row_height[0] = 6;
@@ -208,12 +208,12 @@ int korea_post(struct zint_symbol *symbol, unsigned char source[])
 	error_number = 0;
 	h = ustrlen(source);
 	if(h > 6) { 
-		strcpy(symbol->errtxt, "Input too long [771]");
+		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Invalid characters in data [772]");
+		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
 	strcpy(localstr, "");
@@ -255,12 +255,12 @@ int fim(struct zint_symbol *symbol, unsigned char source[])
 	
 	to_upper(source);
 	if(ustrlen(source) > 1) {
-		strcpy(symbol->errtxt, "Input too long [491]");
+		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(BESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Invalid characters in data [492]");
+		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
 	lookup(BESET, FIMTable, source[0], dest);
@@ -317,12 +317,12 @@ int royal_plot(struct zint_symbol *symbol, unsigned char source[])
 	
 	to_upper(source);
 	if(ustrlen(source) > 120) {
-		strcpy(symbol->errtxt, "Input too long [701]");
+		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(KRSET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Invalid characters in data [702]");
+		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
 	check = rm4scc((char*)source, (unsigned char*)height_pattern);
@@ -332,12 +332,12 @@ int royal_plot(struct zint_symbol *symbol, unsigned char source[])
 	{
 		if((height_pattern[loopey] == '1') || (height_pattern[loopey] == '0'))
 		{
-			symbol->encoded_data[0][writer] = '1';
+			set_module(symbol, 0, writer);
 		}
-		symbol->encoded_data[1][writer] = '1';
+		set_module(symbol, 1, writer);
 		if((height_pattern[loopey] == '2') || (height_pattern[loopey] == '0'))
 		{
-			symbol->encoded_data[2][writer] = '1';
+			set_module(symbol, 2, writer);
 		}
 		writer += 2;
 	}
@@ -366,12 +366,12 @@ int kix_code(struct zint_symbol *symbol, unsigned char source[])
 	
 	to_upper(source);
 	if(ustrlen(source) > 11) {
-		strcpy(symbol->errtxt, "Input too long [901]");
+		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(KRSET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Invalid characters in data [902]");
+		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
 	
@@ -392,12 +392,12 @@ int kix_code(struct zint_symbol *symbol, unsigned char source[])
 	{
 		if((height_pattern[loopey] == '1') || (height_pattern[loopey] == '0'))
 		{
-			symbol->encoded_data[0][writer] = '1';
+			set_module(symbol, 0, writer);
 		}
-		symbol->encoded_data[1][writer] = '1';
+		set_module(symbol, 1, writer);
 		if((height_pattern[loopey] == '2') || (height_pattern[loopey] == '0'))
 		{
-			symbol->encoded_data[2][writer] = '1';
+			set_module(symbol, 2, writer);
 		}
 		writer += 2;
 	}
@@ -447,12 +447,12 @@ int daft_code(struct zint_symbol *symbol, unsigned char source[])
 	{
 		if((height_pattern[loopey] == '1') || (height_pattern[loopey] == '0'))
 		{
-			symbol->encoded_data[0][writer] = '1';
+			set_module(symbol, 0, writer);
 		}
-		symbol->encoded_data[1][writer] = '1';
+		set_module(symbol, 1, writer);
 		if((height_pattern[loopey] == '2') || (height_pattern[loopey] == '0'))
 		{
-			symbol->encoded_data[2][writer] = '1';
+			set_module(symbol, 2, writer);
 		}
 		writer += 2;
 	}
@@ -476,12 +476,12 @@ int flattermarken(struct zint_symbol *symbol, unsigned char source[])
 	strcpy(dest, "");
 	
 	if(ustrlen(source) > 90) {
-		strcpy(symbol->errtxt, "Input too long [281]");
+		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Invalid characters in data [282]");
+		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
 	
@@ -570,12 +570,12 @@ int japan_post(struct zint_symbol *symbol, unsigned char source[])
 	{
 		if((pattern[loopey] == '2') || (pattern[loopey] == '1'))
 		{
-			symbol->encoded_data[0][writer] = '1';
+			set_module(symbol, 0, writer);
 		}
-		symbol->encoded_data[1][writer] = '1';
+		set_module(symbol, 1, writer);
 		if((pattern[loopey] == '3') || (pattern[loopey] == '1'))
 		{
-			symbol->encoded_data[2][writer] = '1';
+			set_module(symbol, 2, writer);
 		}
 		writer += 2;
 	}

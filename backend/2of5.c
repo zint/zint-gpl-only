@@ -45,12 +45,12 @@ int matrix_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	strcpy(dest, "");
 	
 	if(ustrlen(source) > 80) {
-		strcpy(symbol->errtxt, "Input too long [021]");
+		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Invalid characters in data [022]");
+		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
 	
@@ -79,12 +79,12 @@ int industrial_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	strcpy(dest, "");
 	
 	if(ustrlen(source) > 45) {
-		strcpy(symbol->errtxt, "Input too long [071]");
+		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Invalid character in data [072]");
+		strcpy(symbol->errtxt, "Invalid character in data");
 		return error_number;
 	}
 	
@@ -112,12 +112,12 @@ int iata_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	strcpy(dest, "");
 	
 	if(ustrlen(source) > 45) {
-		strcpy(symbol->errtxt, "Input too long [041]");
+		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Invalid characters in data [042]");
+		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
 	
@@ -146,12 +146,12 @@ int logic_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	strcpy(dest, "");
 
 	if(ustrlen(source) > 80) {
-		strcpy(symbol->errtxt, "Input too long [061]");
+		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Invalid characters in data [062]");
+		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
 
@@ -180,12 +180,12 @@ int interleaved_two_of_five(struct zint_symbol *symbol, unsigned char source[])
 	strcpy(dest, "");
 	
 	if(ustrlen(source) > 90) {
-		strcpy(symbol->errtxt, "Input too long [031]");
+		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if (error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Invalid characters in data [032]");
+		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
 	
@@ -252,13 +252,13 @@ int itf14(struct zint_symbol *symbol, unsigned char source[])
 	h = ustrlen(source);
 	
 	if(h > 13) {
-		strcpy(symbol->errtxt, "Input too long [891]");
+		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Invalid character in data [892]");
+		strcpy(symbol->errtxt, "Invalid character in data");
 		return error_number;
 	}
 
@@ -302,12 +302,12 @@ int dpleit(struct zint_symbol *symbol, unsigned char source[])
 	count = 0;
 	h = ustrlen(source);
 	if(h > 13) {
-		strcpy(symbol->errtxt, "Input wrong length [211]");
+		strcpy(symbol->errtxt, "Input wrong length");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Invalid characters in data [212]");
+		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
 
@@ -345,12 +345,12 @@ int dpident(struct zint_symbol *symbol, unsigned char source[])
 	count = 0;
 	h = ustrlen(source);
 	if(h > 11) {
-		strcpy(symbol->errtxt, "Input wrong length [221]");
+		strcpy(symbol->errtxt, "Input wrong length");
 		return ERROR_TOO_LONG;
 	}
 	error_number = is_sane(NESET, source);
 	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Invalid characters in data [222]");
+		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
 

@@ -1107,11 +1107,11 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 		for(y = AztecCompactOffset[layers - 1]; y < (27 - AztecCompactOffset[layers - 1]); y++) {
 			for(x = AztecCompactOffset[layers - 1]; x < (27 - AztecCompactOffset[layers - 1]); x++) {
 				if(CompactAztecMap[(y * 27) + x] == 1) {
-					symbol->encoded_data[y - AztecCompactOffset[layers - 1]][x - AztecCompactOffset[layers - 1]] = '1';
+					set_module(symbol, y - AztecCompactOffset[layers - 1], x - AztecCompactOffset[layers - 1]);
 				}
 				if(CompactAztecMap[(y * 27) + x] >= 2) {
 					if(bit_pattern[CompactAztecMap[(y * 27) + x] - 2] == '1') {
-						symbol->encoded_data[y - AztecCompactOffset[layers - 1]][x - AztecCompactOffset[layers - 1]] = '1';
+						set_module(symbol, y - AztecCompactOffset[layers - 1], x - AztecCompactOffset[layers - 1]);
 					}
 				}
 			}
@@ -1124,11 +1124,11 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 		for(y = AztecOffset[layers - 1]; y < (151 - AztecOffset[layers - 1]); y++) {
 			for(x = AztecOffset[layers - 1]; x < (151 - AztecOffset[layers - 1]); x++) {
 				if(AztecMap[(y * 151) + x] == 1) {
-					symbol->encoded_data[y - AztecOffset[layers - 1]][x - AztecOffset[layers - 1]] = '1';
+					set_module(symbol, y - AztecOffset[layers - 1], x - AztecOffset[layers - 1]);
 				}
 				if(AztecMap[(y * 151) + x] >= 2) {
 					if(bit_pattern[AztecMap[(y * 151) + x] - 2] == '1') {
-						symbol->encoded_data[y - AztecOffset[layers - 1]][x - AztecOffset[layers - 1]] = '1';
+						set_module(symbol, y - AztecOffset[layers - 1], x - AztecOffset[layers - 1]);
 					}
 				}
 			}
@@ -1218,11 +1218,11 @@ int aztec_runes(struct zint_symbol *symbol, unsigned char source[])
 	for(y = 8; y < 19; y++) {
 		for(x = 8; x < 19; x++) {
 			if(CompactAztecMap[(y * 27) + x] == 1) {
-				symbol->encoded_data[y - 8][x - 8] = '1';
+				set_module(symbol, y - 8, x - 8);
 			}
 			if(CompactAztecMap[(y * 27) + x] >= 2) {
 				if(binary_string[CompactAztecMap[(y * 27) + x] - 2000] == '1') {
-					symbol->encoded_data[y - 8][x - 8] = '1';
+					set_module(symbol, y - 8, x - 8);
 				}
 			}
 		}

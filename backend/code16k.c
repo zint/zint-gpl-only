@@ -537,10 +537,9 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 		for (mx_reader = 0; mx_reader < strlen(width_pattern); mx_reader++) {
 			for(looper = 0; looper < ctoi(width_pattern[mx_reader]); looper++) {
 				if(flip_flop == 1) {
-					symbol->encoded_data[current_row][writer] = '1';
+					set_module(symbol, current_row, writer);
 					writer++; }
 				else {
-					symbol->encoded_data[current_row][writer] = '0';
 					writer++; }
 			}
 			if(flip_flop == 0) { flip_flop = 1; } else { flip_flop = 0; }

@@ -112,7 +112,7 @@ int svg_plot(struct zint_symbol *symbol)
 		symbol->height = preset_height;
 	}
 	
-	while(symbol->encoded_data[symbol->rows - 1][comp_offset] != '1') {
+	while(!(module_is_set(symbol, symbol->rows - 1, comp_offset))) {
 		comp_offset++;
 	}
 
@@ -222,7 +222,7 @@ int svg_plot(struct zint_symbol *symbol)
 		fprintf(fsvg, "      <circle cx=\"%.2f\" cy=\"%.2f\" r=\"%.2f\" fill=\"#%s\" />\n", (35.76 + xoffset) * scaler, (35.60 + yoffset) * scaler, 1.43 * scaler, symbol->bgcolour);
 		for(r = 0; r < symbol->rows; r++) {
 			for(i = 0; i < symbol->width; i++) {
-				if(symbol->encoded_data[r][i] == '1') {
+				if(module_is_set(symbol, r, i)) {
 					/* Dump a hexagon */
 					my = r * 2.135 + 1.43;
 					ay = my + 1.0 + yoffset;
@@ -271,7 +271,7 @@ int svg_plot(struct zint_symbol *symbol)
 			row_posn += yoffset;
 			
 			i = 0;
-			if(symbol->encoded_data[this_row][0] == '1') {
+			if(module_is_set(symbol, this_row, 0)) {
 				latch = 1;
 			} else {
 				latch = 0;
@@ -281,7 +281,7 @@ int svg_plot(struct zint_symbol *symbol)
 				block_width = 0;
 				do {
 					block_width++;
-				} while (symbol->encoded_data[this_row][i + block_width] == symbol->encoded_data[this_row][i]);
+				} while (module_is_set(symbol, this_row, i + block_width) == module_is_set(symbol, this_row, i));
 				if((addon_latch == 0) && (r == 0) && (i > main_width)) {
 					addon_text_posn = 9.0 + symbol->border_width;
 					addon_latch = 1;
@@ -423,7 +423,7 @@ int svg_plot(struct zint_symbol *symbol)
 			block_width = 0;
 			do {
 				block_width++;
-			} while (symbol->encoded_data[symbol->rows - 1][i + block_width] == symbol->encoded_data[symbol->rows - 1][i]);
+			} while (module_is_set(symbol, symbol->rows - 1, i + block_width) == module_is_set(symbol, symbol->rows - 1, i));
 			if(latch == 1) {
 				/* a bar */
 				fprintf(fsvg, "      <rect x=\"%.2f\" y=\"%.2f\" width=\"%.2f\" height=\"%.2f\" />\n", (i + xoffset - comp_offset) * scaler, row_posn, block_width * scaler, 5.0 * scaler);
@@ -442,7 +442,7 @@ int svg_plot(struct zint_symbol *symbol)
 			block_width = 0;
 			do {
 				block_width++;
-			} while (symbol->encoded_data[symbol->rows - 1][i + block_width] == symbol->encoded_data[symbol->rows - 1][i]);
+			} while (module_is_set(symbol, symbol->rows - 1, i + block_width) == module_is_set(symbol, symbol->rows - 1, i));
 			if(latch == 1) {
 				/* a bar */
 				fprintf(fsvg, "      <rect x=\"%.2f\" y=\"%.2f\" width=\"%.2f\" height=\"%.2f\" />\n", (i + xoffset - comp_offset) * scaler, row_posn, block_width * scaler, 5.0 * scaler);

@@ -313,12 +313,12 @@ int imail(struct zint_symbol *symbol, unsigned char source[])
 	errno = 0;
 
 	if(ustrlen(source) > 32) {
-		strcpy(symbol->errtxt, "Input too long [851]");
+		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	errno = is_sane(NASET, source);
 	if(errno == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Invalid characters in data [852]");
+		strcpy(symbol->errtxt, "Invalid characters in data");
 		return errno;
 	}
 	
@@ -361,11 +361,11 @@ int imail(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	if(strlen(tracker) != 20) {
-		strcpy(symbol->errtxt, "Invalid length tracking code [853]");
+		strcpy(symbol->errtxt, "Invalid length tracking code");
 		return ERROR_INVALID_DATA;
 	}
 	if(strlen(zip) > 11) {
-		strcpy(symbol->errtxt, "Invalid ZIP code [854]");
+		strcpy(symbol->errtxt, "Invalid ZIP code");
 		return ERROR_INVALID_DATA;
 	}
 	
@@ -672,12 +672,12 @@ int imail(struct zint_symbol *symbol, unsigned char source[])
 	{
 		if((data_pattern[i] == '1') || (data_pattern[i] == '0'))
 		{
-			symbol->encoded_data[0][read] = '1';
+			set_module(symbol, 0, read);
 		}
-		symbol->encoded_data[1][read] = '1';
+		set_module(symbol, 1, read);
 		if((data_pattern[i] == '2') || (data_pattern[i] == '0'))
 		{
-			symbol->encoded_data[2][read] = '1';
+			set_module(symbol, 2, read);
 		}
 		read += 2;
 	}

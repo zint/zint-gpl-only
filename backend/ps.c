@@ -116,7 +116,7 @@ int ps_plot(struct zint_symbol *symbol)
 		symbol->height = preset_height;
 	}
 	
-	while(symbol->encoded_data[symbol->rows - 1][comp_offset] != '1') {
+	while(!(module_is_set(symbol, symbol->rows - 1, comp_offset))) {
 		comp_offset++;
 	}
 
@@ -238,7 +238,7 @@ int ps_plot(struct zint_symbol *symbol)
 		fprintf(feps, "%.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f TC\n", (35.76 + xoffset) * scaler, (35.60 + yoffset) * scaler, 3.31 * scaler, (35.76 + xoffset) * scaler, (35.60 + yoffset) * scaler, 1.43 * scaler, (37.19 + xoffset) * scaler, (35.60 + yoffset) * scaler);
 		for(r = 0; r < symbol->rows; r++) {
 			for(i = 0; i < symbol->width; i++) {
-				if(symbol->encoded_data[r][i] == '1') {
+				if(module_is_set(symbol, r, i)) {
 					/* Dump a hexagon */
 					my = ((symbol->rows - r - 1)) * 2.135 + 1.43;
 					ay = my + 1.0 + yoffset;
@@ -290,7 +290,7 @@ int ps_plot(struct zint_symbol *symbol)
 			fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
 			fprintf(feps, "%.2f %.2f ", row_height * scaler, row_posn * scaler);
 			i = 0;
-			if(symbol->encoded_data[this_row][0] == '1') {
+			if(module_is_set(symbol, this_row, 0)) {
 				latch = 1;
 			} else {
 				latch = 0;
@@ -300,7 +300,7 @@ int ps_plot(struct zint_symbol *symbol)
 				block_width = 0;
 				do {
 					block_width++;
-				} while (symbol->encoded_data[this_row][i + block_width] == symbol->encoded_data[this_row][i]);
+				} while (module_is_set(symbol, this_row, i + block_width) == module_is_set(symbol, this_row, i));
 				if((addon_latch == 0) && (r == 0) && (i > main_width)) {
 					fprintf(feps, "TE\n");
 					fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
@@ -498,7 +498,7 @@ int ps_plot(struct zint_symbol *symbol)
 			block_width = 0;
 			do {
 				block_width++;
-			} while (symbol->encoded_data[symbol->rows - 1][i + block_width] == symbol->encoded_data[symbol->rows - 1][i]);
+			} while (module_is_set(symbol, symbol->rows - 1, i + block_width) == module_is_set(symbol, symbol->rows - 1, i));
 			if(latch == 1) {
 				/* a bar */
 				fprintf(feps, "TB %.2f %.2f TR\n", (i + xoffset - comp_offset) * scaler, block_width * scaler);
@@ -517,7 +517,7 @@ int ps_plot(struct zint_symbol *symbol)
 			block_width = 0;
 			do {
 				block_width++;
-			} while (symbol->encoded_data[symbol->rows - 1][i + block_width] == symbol->encoded_data[symbol->rows - 1][i]);
+			} while (module_is_set(symbol, symbol->rows - 1, i + block_width) == module_is_set(symbol, symbol->rows - 1, i));
 			if(latch == 1) {
 				/* a bar */
 				fprintf(feps, "TB %.2f %.2f TR\n", (i + xoffset - comp_offset) * scaler, block_width * scaler);
