@@ -25,7 +25,7 @@
 
 #define SSET	"0123456789ABCDEF"
 
-int ustrlen(unsigned char data[]) {
+const int ustrlen(unsigned char data[]) {
 	/* Local replacement for strlen() with unsigned char strings */
 	int i;
 	for (i=0;data[i];i++);

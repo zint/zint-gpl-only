@@ -21,6 +21,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef _MSC_VER
+#include <malloc.h> 
+#endif
 #include "common.h"
 #include "gs1.h"
 #include "sjis.h"
@@ -32,7 +35,7 @@ struct zint_symbol *ZBarcode_Create()
 	struct zint_symbol *symbol;
 	int i, j;
 	
-	symbol = malloc(sizeof(*symbol));
+	symbol = (struct zint_symbol*)malloc(sizeof(*symbol));
 	if (!symbol) return NULL;
 
 	memset(symbol, 0, sizeof(*symbol));
@@ -386,7 +389,11 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source)
 	int input_length;
 	
 	input_length = ustrlen(source);
+#ifndef _MSC_VER
 	unsigned char preprocessed[input_length];
+#else
+        unsigned char* preprocessed = (unsigned char*)_alloca(input_length + 1);
+#endif
 
 	if(ustrlen(source) == 0) {
 		strcpy(symbol->errtxt, "No input data");

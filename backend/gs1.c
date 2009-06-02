@@ -22,7 +22,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#ifdef _MSC_VER
+#include <malloc.h> 
+#endif
 #include "common.h"
+#include "gs1.h"
 
 /* This code does some checks on the integrity of GS1 data. It is not intended
    to be bulletproof, nor does it report very accurately what problem was found
@@ -257,7 +261,11 @@ int gs1_verify(struct zint_symbol *symbol, unsigned char source[], char reduced[
 int ugs1_verify(struct zint_symbol *symbol, unsigned char source[], unsigned char reduced[])
 {
 	/* Only to keep the compiler happy */
+#ifndef _MSC_VER
 	char temp[ustrlen(source) + 5];
+#else
+        char* temp = (char*)_alloca(ustrlen(source) + 5);
+#endif
 	int error_number, i;
 	
 	error_number = gs1_verify(symbol, source, temp);

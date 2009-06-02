@@ -22,6 +22,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#ifdef _MSC_VER
+#include <malloc.h> 
+#endif
 #include "common.h"
 
 #define BESET	"ABCD"
@@ -101,8 +104,8 @@ int post_plot(struct zint_symbol *symbol, unsigned char source[])
 	char height_pattern[200];
 	unsigned int loopey;
 	int writer;
-	strcpy(height_pattern, "");
 	int error_number;
+	strcpy(height_pattern, "");
 	
 	error_number = 0;
 
@@ -503,8 +506,14 @@ int japan_post(struct zint_symbol *symbol, unsigned char source[])
 	input_length = ustrlen(source);
 	inter_length = input_length * 2;
 	if(inter_length < 20) { inter_length = 20; }
+#ifndef _MSC_VER
 	char inter[inter_length];
-	char local_source[input_length];
+        char local_source[input_length];
+#else
+	char* inter = (char*)_alloca(inter_length);
+        char* local_source = (char*)_alloca(inter_length);
+#endif
+	
 	inter_posn = 0;
 	error_number = 0;
 

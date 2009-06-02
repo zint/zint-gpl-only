@@ -41,6 +41,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#ifdef _MSC_VER
+#include <malloc.h> 
+#endif
 #include "common.h"
 #include "large.h"
 #include "composite.h"
@@ -330,7 +333,11 @@ int cc_a(struct zint_symbol *symbol, unsigned char source[], int cc_width)
 int cc_b(struct zint_symbol *symbol, unsigned char source[], int cc_width)
 { /* CC-B 2D component */
 	int length, i, binloc;
+#ifndef _MSC_VER
 	unsigned char data_string[(ustrlen(source) / 8) + 3];
+#else
+        unsigned char* data_string = (unsigned char*)_alloca((ustrlen(source) / 8) + 3);
+#endif
 	int chainemc[180], mclength;
 	int k, j, longueur, mccorrection[50], offset;
 	int total, dummy[5];
@@ -557,7 +564,11 @@ int cc_b(struct zint_symbol *symbol, unsigned char source[], int cc_width)
 int cc_c(struct zint_symbol *symbol, unsigned char source[], int cc_width, int ecc_level)
 { /* CC-C 2D component - byte compressed PDF417 */
 	int length, i, binloc;
-	unsigned char data_string[(ustrlen(source) / 8) + 4];
+#ifndef _MSC_VER
+        unsigned char data_string[(ustrlen(source) / 8) + 4];
+#else
+        unsigned char* data_string = (unsigned char*)_alloca((ustrlen(source) / 8) + 4);
+#endif
 	int chainemc[1000], mclength, k;
 	int offset, longueur, loop, total, j, mccorrection[520];
 	int c1, c2, c3, dummy[35];
@@ -693,14 +704,19 @@ int cc_c(struct zint_symbol *symbol, unsigned char source[], int cc_width, int e
 	return 0;	
 }
 
-int cc_binary_string(struct zint_symbol *symbol, char source[], char binary_string[], int cc_mode, int *cc_width, int *ecc, int lin_width)
+int cc_binary_string(struct zint_symbol *symbol, const char source[], char binary_string[], int cc_mode, int *cc_width, int *ecc, int lin_width)
 { /* Handles all data encodation from section 5 of ISO/IEC 24723 */
 	int encoding_method, read_posn, d1, d2, value, alpha_pad;
 	int i, j, mask, ai_crop, ai_crop_posn, fnc1_latch;
 	long int group_val;
 	int ai90_mode, latch, remainder, binary_length;
 	char date_str[4];
-	char general_field[strlen(source)], general_field_type[strlen(source)];
+#ifndef _MSC_VER
+	char general_field[strlen(source) + 1], general_field_type[strlen(source) + 1];
+#else
+        char* general_field = (char*)_alloca(strlen(source) + 1);
+        char* general_field_type = (char*)_alloca(strlen(source) + 1);
+#endif
 	int target_bitsize;
 	
 	encoding_method = 1;
@@ -710,7 +726,7 @@ int cc_binary_string(struct zint_symbol *symbol, char source[], char binary_stri
 	fnc1_latch = 0;
 	alpha_pad = 0;
 	ai90_mode = 0;
-	*(ecc) = 0;
+	*ecc = 0;
 	value = 0;
 	target_bitsize = 0;
 
@@ -783,7 +799,12 @@ int cc_binary_string(struct zint_symbol *symbol, char source[], char binary_stri
 
 	if (encoding_method == 3) {
 		/* Encodation Method field of "11" - AI 90 */
-		char ninety[strlen(source)], numeric_part[4];
+#ifndef _MSC_VER		
+                char ninety[strlen(source) + 1];
+#else
+                char* ninety = (char*)_alloca(strlen(source) + 1);
+#endif
+                char numeric_part[4];
 		int alpha, alphanum, numeric, test1, test2, test3, next_ai_posn;
 		int numeric_value, table3_letter, mask;
 		
@@ -796,7 +817,7 @@ int cc_binary_string(struct zint_symbol *symbol, char source[], char binary_stri
 		do {
 			ninety[i] = source[i + 2];
 			i++;
-		} while ((source[i + 2] != '[') && ((i + 2) < strlen(source)));
+		} while ((strlen(source) > i + 2) && ('[' != source[i + 2]));
 		ninety[i] = '\0';
 		
 		/* Find out if the AI 90 data is alphabetic or numeric or both */
@@ -1675,8 +1696,13 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 {
 	int error_number, cc_mode, cc_width, ecc_level;
 	int j, i, k, separator_row;
+#ifndef _MSC_VER
 	char reduced[ustrlen(source)];
 	char binary_string[10 * ustrlen(source)];
+#else
+        char* reduced = (char*)_alloca(ustrlen(source) + 1);
+        char* binary_string = (char*)_alloca(20 * (ustrlen(source) + 1));
+#endif
 	struct zint_symbol *linear;
 	int top_shift, bottom_shift;
 
@@ -1762,7 +1788,7 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 		case BARCODE_RSS_EXPSTACK_CC: cc_width = 4; break;
 	}
 	
-	strcpy(binary_string, "");
+	memset(binary_string, 0, sizeof(binary_string));
 	
 	if(cc_mode < 1 || cc_mode > 3) { cc_mode = 1; }
 
@@ -1875,7 +1901,11 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 	symbol->rows += linear->rows;
 	ustrcpy(symbol->text, (unsigned char *)linear->text);
 	
+//#ifdef _MSC_VER
+//        free(reduced);
+//        free(binary_string);
+//#endif
 	ZBarcode_Delete(linear);
-	
+
 	return error_number;
 }

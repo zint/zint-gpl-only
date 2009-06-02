@@ -55,7 +55,7 @@ int plessey(struct zint_symbol *symbol, unsigned char source[])
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
-	checkptr = calloc (1, ustrlen(source) * 4 + 8);
+	checkptr = (unsigned char *)calloc (1, ustrlen(source) * 4 + 8);
 
 	/* Start character */
 	concat(dest, "31311331");

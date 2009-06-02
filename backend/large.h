@@ -18,13 +18,23 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+#ifndef __LARGE_H
+#define __LARGE_H
 
-void binary_load(short int reg[], char data[]);
-void binary_add(short int accumulator[], short int input_buffer[]);
-void binary_subtract(short int accumulator[], short int input_buffer[]);
-void shiftdown(short int buffer[]);
-void shiftup(short int buffer[]);
-short int islarger(short int accum[], short int reg[]);
-void hex_dump(short int input_buffer[]);
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
+extern void binary_load(short int reg[], char data[]);
+extern void binary_add(short int accumulator[], short int input_buffer[]);
+extern void binary_subtract(short int accumulator[], short int input_buffer[]);
+extern void shiftdown(short int buffer[]);
+extern void shiftup(short int buffer[]);
+extern short int islarger(short int accum[], short int reg[]);
+extern void hex_dump(short int input_buffer[]);
 
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* __LARGE_H */

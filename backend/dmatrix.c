@@ -21,10 +21,16 @@
 
 #include <string.h>
 #include <stdio.h>
+#ifdef _MSC_VER
+#include <malloc.h> 
+#endif
 #include "dmatrix.h"
 #include "common.h"
-
-int data_matrix_200(struct zint_symbol *symbol, unsigned char source[]);
+#ifdef _MSC_VER
+#include "dm200.h"
+#else
+extern int data_matrix_200(struct zint_symbol *symbol, unsigned char source[]);
+#endif
 
 #define B11SET " 0123456789"
 #define B27SET " ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -36,8 +42,13 @@ void crc_machine(char data_prefix_bitstream[], int scheme, unsigned char source[
 	int input_length, i;
 	input_length = ustrlen(source);
 	char xor_register[17];
+#ifndef _MSC_VER
 	char precrc_bitstream[(input_length * 8) + 16];
 	char precrc_bitstream_reversed[(input_length * 8) + 16];
+#else
+        char* precrc_bitstream = (char*)_alloca((input_length * 8) + 16);
+	char* precrc_bitstream_reversed = (char*)_alloca((input_length * 8) + 16);
+#endif
 	int machine_cycles;
 	char input_bit, out1, out2, out3;
 	

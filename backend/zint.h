@@ -159,15 +159,27 @@ struct zint_symbol {
 #define ERROR_FILE_ACCESS	10
 #define ERROR_MEMORY		11
 
-extern struct zint_symbol *ZBarcode_Create();
-extern int ZBarcode_Delete(struct zint_symbol *symbol);
-extern int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input);
-extern int ZBarcode_Print(struct zint_symbol *symbol);
-extern int ZBarcode_Encode_and_Print(struct zint_symbol *symbol, unsigned char *input);
-extern int ZBarcode_Encode_and_Print_Rotated(struct zint_symbol *symbol, unsigned char *input, int rotate_angle);
+#if defined(__WIN32__) || defined(_WIN32) || defined(WIN32) || defined(_MSC_VER)
+#  if defined (DLL_EXPORT) || defined(PIC) || defined(_USRDLL)
+# 	 define ZINT_EXTERN __declspec(dllexport)
+#  elif defined(ZINT_DLL)
+#	 define ZINT_EXTERN __declspec(dllimport)
+#  else
+#    define ZINT_EXTERN extern
+#  endif
+#else
+#  define ZINT_EXTERN extern	
+#endif
+
+ZINT_EXTERN struct zint_symbol *ZBarcode_Create(void);
+ZINT_EXTERN int ZBarcode_Delete(struct zint_symbol *symbol);
+ZINT_EXTERN int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input);
+ZINT_EXTERN int ZBarcode_Print(struct zint_symbol *symbol);
+ZINT_EXTERN int ZBarcode_Encode_and_Print(struct zint_symbol *symbol, unsigned char *input);
+ZINT_EXTERN int ZBarcode_Encode_and_Print_Rotated(struct zint_symbol *symbol, unsigned char *input, int rotate_angle);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif
+#endif /* ZINT_H */
