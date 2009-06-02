@@ -113,15 +113,15 @@ void regroupe(int *indexliste)
 /* 478 */
 void pdfsmooth(int *indexliste)
 {
-	int i, this, last, next, length;
+	int i, crnt, last, next, length;
 	
 	for(i = 0; i < *(indexliste); i++) {
-		this = liste[1][i];
+		crnt = liste[1][i];
 		length = liste[0][i];
 		if(i != 0) { last = liste[1][i - 1]; } else { last = FALSE; }
 		if(i != *(indexliste) - 1) { next = liste[1][i + 1]; } else { next = FALSE; }
 		
-		if(this == NUM) {
+		if(crnt == NUM) {
 			if(i == 0) { /* first block */
 				if(*(indexliste) > 1) { /* and there are others */
 					if((next == TEX) && (length < 8)) { liste[1][i] = TEX;}
@@ -143,12 +143,12 @@ void pdfsmooth(int *indexliste)
 	regroupe(indexliste);
 	/* 520 */
 	for(i = 0; i < *(indexliste); i++) {
-		this = liste[1][i];
+		crnt = liste[1][i];
 		length = liste[0][i];
 		if(i != 0) { last = liste[1][i - 1]; } else { last = FALSE; }
 		if(i != *(indexliste) - 1) { next = liste[1][i + 1]; } else { next = FALSE; }
 		
-		if((this == TEX) && (i > 0)) { /* not the first */
+		if((crnt == TEX) && (i > 0)) { /* not the first */
 			if(i == *(indexliste) - 1) { /* the last one */
 				if((last == BYT) && (length == 1)) { liste[1][i] = BYT; }
 			} else { /* not the last one */
@@ -554,7 +554,7 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 	if(symbol->option_2 < 1) {
 		/* This is a much more simple formula to Grand Zebu's - 
 		   it does not try to make the symbol square */
-		symbol->option_2 = 0.5 + sqrt((longueur + k) / 3);
+		symbol->option_2 = 0.5 + sqrt((longueur + k) / 3.0);
 	}
 	if(((longueur + k) / symbol->option_2) > 90) {
 		/* stop the symbol from becoming too high */

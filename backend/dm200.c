@@ -31,6 +31,9 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#ifdef _MSC_VER
+#include <malloc.h> 
+#endif
 #include "reedsol.h"
 #include "common.h"
 #include "dm200.h"
@@ -191,7 +194,7 @@ static void ecc200(unsigned char *binary, int bytes, int datablock, int rsblock)
 
 float dmroundup(float input)
 {
-	float fraction, output;
+	float fraction, output = 0.0;
 	
 	fraction = input - (int)input;
 	if(fraction > 0.01) { output = (input - fraction) + 1.0; } else { output = input; }
@@ -358,8 +361,11 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 	int text_buffer[6], text_p;
 	int x12_buffer[6], x12_p;
 	int edifact_buffer[8], edifact_p;
-	char binary[2 * inputlen];
-	
+#ifndef _MSC_VER
+        char binary[2 * inputlen];
+#else
+        char* binary = (char*)_alloca(2 * inputlen);
+#endif
 	sp = 0;
 	tp = 0;
 	memset(c40_buffer, 0, 6);
@@ -813,9 +819,9 @@ int data_matrix_200(struct zint_symbol *symbol, unsigned char source[])
 		int x, y, NC, NR, *places;
 		NC = W - 2 * (W / FW);
 		NR = H - 2 * (H / FH);
-		places = safemalloc(NC * NR * sizeof(int));
+		places = (int*)safemalloc(NC * NR * sizeof(int));
 		ecc200placement(places, NR, NC);
-		grid = safemalloc(W * H);
+		grid = (unsigned char*)safemalloc(W * H);
 		memset(grid, 0, W * H);
 		for (y = 0; y < H; y += FH) {
 			for (x = 0; x < W; x++)

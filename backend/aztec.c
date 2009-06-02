@@ -22,6 +22,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#ifdef _MSC_VER
+#include <malloc.h> 
+#endif
 #include "common.h"
 #include "aztec.h"
 #include "reedsol.h"
@@ -50,10 +53,17 @@ void insert(char binary_string[], int posn, char newbit)
 int aztec_text_process(unsigned char source[], char binary_string[], int gs1)
 { /* Encode input data into a binary string */
 	int i, j, k, bytes;
-	int charmap[ustrlen(source)], typemap[ustrlen(source)], maplength;
-	int curtable, newtable, lasttable, chartype;
-	int blockmap[2][ustrlen(source)], blocks, debug;
-
+	int curtable, newtable, lasttable, chartype, maplength, blocks, debug;
+#ifndef _MSC_VER
+	int charmap[ustrlen(source)], typemap[ustrlen(source)];
+	int blockmap[2][ustrlen(source)];
+#else
+        int* charmap = (int*)_alloca(ustrlen(source) * sizeof(int));
+        int* typemap = (int*)_alloca(ustrlen(source) * sizeof(int));
+        int* blockmap[2];
+        blockmap[0] = (int*)_alloca(ustrlen(source) * sizeof(int));
+        blockmap[1] = (int*)_alloca(ustrlen(source) * sizeof(int));
+#endif
 	/* Lookup input string in encoding table */
 	maplength = 0;
 	debug = 0;

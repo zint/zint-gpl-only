@@ -40,6 +40,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#ifdef _MSC_VER
+#include <malloc.h> 
+#endif
 #include "common.h"
 #include "large.h"
 #include "rss.h"
@@ -951,7 +954,7 @@ int general_rules(char field[], char type[])
 	
 	for(i = 0; i < block_count; i++) {
 		current = block[1][i];
-		next = block[1][i + 1];
+		next = (block[1][i + 1] & 0xFF);
 		
 		if((current == ISOIEC) && (i != (block_count - 1))) {
 			if((next == ANY_ENC) && (block[0][i + 1] >= 4)) {
@@ -1039,7 +1042,12 @@ int general_rules(char field[], char type[])
 int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_string[])
 { /* Handles all data encodation from section 7.2.5 of ISO/IEC 24724 */
 	int encoding_method, i, mask, j, read_posn, latch;
+#ifndef _MSC_VER
 	char general_field[strlen(source)], general_field_type[strlen(source)];
+#else
+	char* general_field = (char*)_alloca(strlen(source));
+        char* general_field_type = (char*)_alloca(strlen(source));
+#endif
 	int remainder, d1, d2, value;
 	char padstring[14];
 
@@ -1853,13 +1861,18 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 int rssexpanded(struct zint_symbol *symbol, unsigned char source[])
 { /* GS1 DataBar Expanded */
 	int i, j, k, l, data_chars, vs[21], group[21], v_odd[21], v_even[21];
-	char binary_string[7 * ustrlen(source)], substring[21][14], latch;
+	char substring[21][14], latch;
 	int char_widths[21][8], checksum, check_widths[8], c_group;
 	int check_char, c_odd, c_even, elements[235], pattern_width, reader, writer;
 	int row, elements_in_sub, special_case_row, left_to_right;
 	int codeblocks, sub_elements[235], stack_rows, current_row, current_block;
 	int separator_row;
-	char reduced[ustrlen(source)];
+#ifndef _MSC_VER
+	char reduced[ustrlen(source)], binary_string[7 * ustrlen(source)];
+#else
+        char* reduced = (char*)_alloca(ustrlen(source));
+        char* binary_string = (char*)_alloca(7 * ustrlen(source));
+#endif
 	
 	separator_row = 0;
 	reader=0;

@@ -22,9 +22,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifndef _MSC_VER
 #include <getopt.h>
 #include <zint.h>
-
+#else
+#include "getopt.h"
+#include "zint.h"
+#endif
 #define NESET "0123456789"
 
 void types(void) {
@@ -92,16 +96,6 @@ void usage(void)
 	, ZINT_VERSION);
 }
 
-int ustrlen(unsigned char data[]) {
-	/* Local replacement for strlen() with unsigned char strings */
-	int i;
-	
-	i = -1;
-	do { i++; } while (data[i] != '\0');
-
-	return i;
-}
-
 int validator(char test_string[], char source[])
 { /* Verifies that a string only uses valid characters */
 	unsigned int i, j, latch;
@@ -146,23 +140,23 @@ int main(int argc, char **argv)
 			{"directeps", 0, 0, 0},
 			{"directpng", 0, 0, 0},
 			{"directsvg", 0, 0, 0},
-			{"barcode=", 1, 0, 'b'},
-			{"height=", 1, 0, 0},
-			{"whitesp=", 1, 0, 'w'},
-			{"border=", 1, 0, 0},
-			{"data=", 1, 0, 'd'},
-			{"output=", 1, 0, 'o'},
-			{"fg=", 1, 0, 0},
-			{"bg=", 1, 0, 0},
-			{"cols=", 1, 0, 0},
-			{"vers=", 1, 0, 0},
-			{"rotate=", 1, 0, 0},
-			{"secure=", 1, 0, 0},
+			{"barcode", 1, 0, 'b'},
+			{"height", 1, 0, 0},
+			{"whitesp", 1, 0, 'w'},
+			{"border", 1, 0, 0},
+			{"data", 1, 0, 'd'},
+			{"output", 1, 0, 'o'},
+			{"fg", 1, 0, 0},
+			{"bg", 1, 0, 0},
+			{"cols", 1, 0, 0},
+			{"vers", 1, 0, 0},
+			{"rotate", 1, 0, 0},
+			{"secure", 1, 0, 0},
 			{"reverse", 1, 0, 'r'},
-			{"mode=", 1, 0, 0},
-			{"primary=", 1, 0, 0},
-			{"scale=", 1, 0, 0},
-			{"null=", 1, 0, 0},
+			{"mode", 1, 0, 0},
+			{"primary", 1, 0, 0},
+			{"scale", 1, 0, 0},
+			{"null", 1, 0, 0},
 			{"gs1", 0, 0, 0},
 			{"kanji", 0, 0, 0},
 			{"sjis", 0, 0, 0},
@@ -200,13 +194,13 @@ int main(int argc, char **argv)
 				if(!strcmp(long_options[option_index].name, "sjis")) {
 					my_symbol->input_mode = SJIS_MODE;
 				}
-				if(!strcmp(long_options[option_index].name, "fg=")) {
+				if(!strcmp(long_options[option_index].name, "fg")) {
 					strncpy(my_symbol->fgcolour, optarg, 7);
 				}
-				if(!strcmp(long_options[option_index].name, "bg=")) {
+				if(!strcmp(long_options[option_index].name, "bg")) {
 					strncpy(my_symbol->bgcolour, optarg, 7);
 				}
-				if(!strcmp(long_options[option_index].name, "scale=")) {
+				if(!strcmp(long_options[option_index].name, "scale")) {
 					my_symbol->scale = (float)(atof(optarg));
 					if(my_symbol->scale < 0.01) {
 						/* Zero and negative values are not permitted */
@@ -214,7 +208,7 @@ int main(int argc, char **argv)
 						my_symbol->scale = 1.0;
 					}
 				}
-				if(!strcmp(long_options[option_index].name, "border=")) {
+				if(!strcmp(long_options[option_index].name, "border")) {
 					error_number = validator(NESET, optarg);
 					if(error_number == ERROR_INVALID_DATA) {
 						fprintf(stderr, "Invalid border width\n");
@@ -226,7 +220,7 @@ int main(int argc, char **argv)
 						fprintf(stderr, "Border width out of range\n");
 					}
 				}
-				if(!strcmp(long_options[option_index].name, "null=")) {
+				if(!strcmp(long_options[option_index].name, "null")) {
 					error_number = validator(NESET, optarg);
 					if(error_number == ERROR_INVALID_DATA) {
 						fprintf(stderr, "Invalid NULL replacement\n");
@@ -238,7 +232,7 @@ int main(int argc, char **argv)
 						fprintf(stderr, "Invalid NULL replacement\n");
 					}
 				}
-				if(!strcmp(long_options[option_index].name, "height=")) {
+				if(!strcmp(long_options[option_index].name, "height")) {
 					error_number = validator(NESET, optarg);
 					if(error_number == ERROR_INVALID_DATA) {
 						fprintf(stderr, "Invalid symbol height\n");
@@ -251,35 +245,35 @@ int main(int argc, char **argv)
 					}
 				}
 
-				if(!strcmp(long_options[option_index].name, "cols=")) {
+				if(!strcmp(long_options[option_index].name, "cols")) {
 					if((atoi(optarg) >= 1) && (atoi(optarg) <= 30)) {
 						my_symbol->option_2 = atoi(optarg);
 					} else {
 						fprintf(stderr, "Number of columns out of range\n");
 					}
 				}
-				if(!strcmp(long_options[option_index].name, "vers=")) {
+				if(!strcmp(long_options[option_index].name, "vers")) {
 					if((atoi(optarg) >= 1) && (atoi(optarg) <= 40)) {
 						my_symbol->option_2 = atoi(optarg);
 					} else {
 						fprintf(stderr, "Invalid QR Code version\n");
 					}
 				}
-				if(!strcmp(long_options[option_index].name, "secure=")) {
+				if(!strcmp(long_options[option_index].name, "secure")) {
 					if((atoi(optarg) >= 1) && (atoi(optarg) <= 8)) {
 						my_symbol->option_1 = atoi(optarg);
 					} else {
 						fprintf(stderr, "ECC level out of range\n");
 					}
 				}
-				if(!strcmp(long_options[option_index].name, "primary=")) {
+				if(!strcmp(long_options[option_index].name, "primary")) {
 					if(strlen(optarg) <= 90) {
 						strcpy(my_symbol->primary, optarg);
 					} else {
 						fprintf(stderr, "Primary data string too long");
 					}
 				}
-				if(!strcmp(long_options[option_index].name, "mode=")) {
+				if(!strcmp(long_options[option_index].name, "mode")) {
 					/* Don't allow specification of modes 2 and 3 - do it
 					automagically instead */
 					if((optarg[0] >= '0') && (optarg[0] <= '6')) {
@@ -288,7 +282,7 @@ int main(int argc, char **argv)
 						fprintf(stderr, "Invalid mode\n");
 					}
 				}
-				if(!strcmp(long_options[option_index].name, "rotate=")) {
+				if(!strcmp(long_options[option_index].name, "rotate")) {
 					/* Only certain inputs allowed */
 					error_number = validator(NESET, optarg);
 					if(error_number == ERROR_INVALID_DATA) {

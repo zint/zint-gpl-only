@@ -18,6 +18,18 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+#ifndef __GS1_H
+#define __GS1_H
 
-int gs1_verify(struct zint_symbol *symbol, unsigned char source[], char reduced[]);
-int ugs1_verify(struct zint_symbol *symbol, unsigned char source[], unsigned char reduced[]);
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+extern int gs1_verify(struct zint_symbol *symbol, unsigned char source[], char reduced[]);
+extern int ugs1_verify(struct zint_symbol *symbol, unsigned char source[], unsigned char reduced[]);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* __GS1_H */

@@ -23,8 +23,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include "common.h"
-#include "micqr.h"
 #include "reedsol.h"
+#include "micqr.h"
 
 #define NUMERIC		1
 #define ALPHANUM	2

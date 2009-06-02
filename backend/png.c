@@ -22,9 +22,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "png.h"        /* libpng header; includes zlib.h and setjmp.h */
 #include "common.h"
+
+#ifdef _MSC_VER
+#include <malloc.h> 
+#endif /* _MSC_VER */
+
+#ifndef NO_PNG
+#include "png.h"        /* libpng header; includes zlib.h and setjmp.h */
 #include "maxipng.h"	/* Maxicode shapes */
+#endif /* NO_PNG */
+
 #include "font.h"	/* Font for human readable text */
 
 #define SSET	"0123456789ABCDEF"
@@ -43,7 +51,7 @@ static void writepng_error_handler(png_structp png_ptr, png_const_charp msg)
     fprintf(stderr, "writepng libpng error: %s\n", msg);
     fflush(stderr);
 
-    graphic = png_get_error_ptr(png_ptr);
+    graphic = (struct mainprog_info_type*)png_get_error_ptr(png_ptr);
     if (graphic == NULL) {         /* we are completely hosed now */
         fprintf(stderr,
           "writepng severe error:  jmpbuf not recoverable; terminating.\n");
@@ -57,7 +65,11 @@ int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, c
 {
 	struct mainprog_info_type wpng_info;
 	struct mainprog_info_type *graphic;
+#ifndef _MSC_VER
 	unsigned char outdata[image_width * 3];
+#else
+	unsigned char* outdata = (unsigned char*)_alloca(image_width * 3);
+#endif
 	png_structp  png_ptr;
 	png_infop  info_ptr;
 	graphic = &wpng_info;
@@ -472,7 +484,11 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 	int error_number;
 	int scaler = (int)(2 * symbol->scale);
 	int default_text_posn;
+#ifndef _MSC_VER
 	unsigned char local_text[ustrlen(symbol->text)];
+#else
+	unsigned char* local_text = (unsigned char*)_alloca(ustrlen(symbol->text));
+#endif
 	
 	to_latin1(symbol->text, local_text);
 
@@ -561,7 +577,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 	image_height = scaler * (symbol->height + textoffset + yoffset + yoffset);
 	
 	if (!(pixelbuf = (char *) malloc(image_width * image_height))) {
-		printf("Insifficient memory for pixel buffer");
+		printf("Insufficient memory for pixel buffer");
 		return ERROR_ENCODING_PROBLEM;
 	} else {
 		for(i = 0; i < (image_width * image_height); i++) {

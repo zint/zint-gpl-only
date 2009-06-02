@@ -40,13 +40,13 @@
 
 #include <stdio.h>		// only needed for debug (main)
 #include <stdlib.h>		// only needed for malloc/free
-
+#include "reedsol.h"
 static int gfpoly;
 static int symsize;		// in bits
 static int logmod;		// 2**symsize - 1
 static int rlen;
 
-static int *log = NULL, *alog = NULL, *rspoly = NULL;
+static int *logt = NULL, *alog = NULL, *rspoly = NULL;
 
 // rs_init_gf(poly) initialises the parameters for the Galois Field.
 // The symbol size is determined from the highest bit set in poly
@@ -72,12 +72,12 @@ void rs_init_gf(int poly)
 
 	// Calculate the log/alog tables
 	logmod = (1 << m) - 1;
-	log = (int *)malloc(sizeof(int) * (logmod + 1));
+	logt = (int *)malloc(sizeof(int) * (logmod + 1));
 	alog = (int *)malloc(sizeof(int) * logmod);
 
 	for (p = 1, v = 0; v < logmod; v++) {
 		alog[v] = p;
-		log[p] = v;
+		logt[p] = v;
 		p <<= 1;
 		if (p & b)
 			p ^= poly;
@@ -104,10 +104,10 @@ void rs_init_code(int nsym, int index)
 		rspoly[i] = 1;
 		for (k = i - 1; k > 0; k--) {
 			if (rspoly[k])
-				rspoly[k] = alog[(log[rspoly[k]] + index) % logmod];
+				rspoly[k] = alog[(logt[rspoly[k]] + index) % logmod];
 			rspoly[k] ^= rspoly[k - 1];
 		}
-		rspoly[0] = alog[(log[rspoly[0]] + index) % logmod];
+		rspoly[0] = alog[(logt[rspoly[0]] + index) % logmod];
 		index++;
 	}
 }
@@ -121,12 +121,12 @@ void rs_encode(int len, unsigned char *data, unsigned char *res)
 		m = res[rlen - 1] ^ data[i];
 		for (k = rlen - 1; k > 0; k--) {
 			if (m && rspoly[k])
-				res[k] = res[k - 1] ^ alog[(log[m] + log[rspoly[k]]) % logmod];
+				res[k] = res[k - 1] ^ alog[(logt[m] + logt[rspoly[k]]) % logmod];
 			else
 				res[k] = res[k - 1];
 		}
 		if (m && rspoly[0])
-			res[0] = alog[(log[m] + log[rspoly[0]]) % logmod];
+			res[0] = alog[(logt[m] + logt[rspoly[0]]) % logmod];
 		else
 			res[0] = 0;
 	}
@@ -141,20 +141,20 @@ void rs_encode_long(int len, unsigned int *data, unsigned int *res)
 		m = res[rlen - 1] ^ data[i];
 		for (k = rlen - 1; k > 0; k--) {
 			if (m && rspoly[k])
-				res[k] = res[k - 1] ^ alog[(log[m] + log[rspoly[k]]) % logmod];
+				res[k] = res[k - 1] ^ alog[(logt[m] + logt[rspoly[k]]) % logmod];
 			else
 				res[k] = res[k - 1];
 		}
 		if (m && rspoly[0])
-			res[0] = alog[(log[m] + log[rspoly[0]]) % logmod];
+			res[0] = alog[(logt[m] + logt[rspoly[0]]) % logmod];
 		else
 			res[0] = 0;
 	}
 }
 
-void rs_free()
+void rs_free(void)
 { /* Free memory */
-	free(log);
+	free(logt);
 	free(alog);
 	free(rspoly);
 	rspoly = NULL;

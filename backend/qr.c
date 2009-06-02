@@ -63,7 +63,7 @@ QRcode *encode(int security, int size, const unsigned char *intext, int kanji)
 int qr_code(struct zint_symbol *symbol, unsigned char source[])
 {
 	QRcode *code;
-	int errno = 0;
+	/*int errno = 0;*/
 	int i, j;
 	int kanji;
 	
@@ -89,7 +89,7 @@ int qr_code(struct zint_symbol *symbol, unsigned char source[])
 	
 	QRcode_free(code);
 	
-	return errno;
+	return 0;
 }
 
 #else

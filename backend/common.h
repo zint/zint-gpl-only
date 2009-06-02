@@ -20,28 +20,45 @@
 */
 
 /* Used in some logic */
+#ifndef __COMMON_H
+#define __COMMON_H
+
+#ifndef FALSE
 #define FALSE		0
+#endif
+
+#ifndef TRUE
 #define TRUE		1
+#endif
 
 /* The most commonly used set */
 #define NESET		"0123456789"
 
 #include "zint.h"
 
-int ustrlen(unsigned char source[]);
-void ustrcpy(unsigned char target[], unsigned char source[]);
-void concat(char dest[], char source[]);
-void uconcat(unsigned char dest[], unsigned char source[]);
-int ctoi(char source);
-char itoc(int source);
-void to_upper(unsigned char source[]);
-int is_sane(char test_string[], unsigned char source[]);
-void lookup(char set_string[], char *table[], char data, char dest[]);
-int posn(char set_string[], char data);
-void expand(struct zint_symbol *symbol, char data[]);
-int is_stackable(int symbology);
-int roundup(float input);
-int module_is_set(struct zint_symbol *symbol, int y_coord, int x_coord);
-void set_module(struct zint_symbol *symbol, int y_coord, int x_coord);
-void unset_module(struct zint_symbol *symbol, int y_coord, int x_coord);
+#ifdef __cplusplus
+extern "C"
+{
+#endif /* __cplusplus */
 
+extern const int ustrlen(unsigned char source[]);
+extern void ustrcpy(unsigned char target[], unsigned char source[]);
+extern void concat(char dest[], char source[]);
+extern void uconcat(unsigned char dest[], unsigned char source[]);
+extern int ctoi(char source);
+extern char itoc(int source);
+extern void to_upper(unsigned char source[]);
+extern int is_sane(char test_string[], unsigned char source[]);
+extern void lookup(char set_string[], char *table[], char data, char dest[]);
+extern int posn(char set_string[], char data);
+extern void expand(struct zint_symbol *symbol, char data[]);
+extern int is_stackable(int symbology);
+extern int roundup(float input);
+extern int module_is_set(struct zint_symbol *symbol, int y_coord, int x_coord);
+extern void set_module(struct zint_symbol *symbol, int y_coord, int x_coord);
+extern void unset_module(struct zint_symbol *symbol, int y_coord, int x_coord);
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* __COMMON_H */

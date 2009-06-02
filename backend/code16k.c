@@ -41,7 +41,7 @@
 #define CANDB 98
 #define CANDBB 99
 
-int list[2][170];
+static int list[2][170];
 
 /* EN 12323 Table 1 - "Code 16K" character encodations */
 static char *C16KTable[107] = {"212222", "222122", "222221", "121223", "121322", "131222", "122213",

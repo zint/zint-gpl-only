@@ -23,8 +23,17 @@
 
 #ifndef __IEC16022ECC200_H
 #define __IEC16022ECC200_H
+#ifdef __cplusplus
+extern "C"
+{
+#endif /* __cplusplus */
 
-int data_matrix_200(struct zint_symbol *symbol, unsigned char source[]);
+extern int data_matrix_200(struct zint_symbol *symbol, unsigned char source[]);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
 #define MAXBARCODE 3116
 
 #define DM_ASCII	1

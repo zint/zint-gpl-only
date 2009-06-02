@@ -23,6 +23,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#ifdef _MSC_VER
+#include <malloc.h> 
+#endif
 #include "common.h"
 #include "gs1.h"
 
@@ -39,7 +42,7 @@
 
 #define DPDSET	"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ*"
 
-int list[2][170];
+static int list[2][170];
 
 /* Code 128 tables checked against ISO/IEC 15417:2007 */
 
@@ -582,11 +585,15 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 { /* Handle EAN-128 (Now known as GS1-128) */
 	int i, j, e_count, values[170], bar_characters, read, total_sum;
 	int error_number, indexchaine, indexliste, sourcelen;
-	char set[170], mode, last_set, reduced[ustrlen(source)];
+	char set[170], mode, last_set;
 	float glyph_count;
 	char dest[1000];
 	int separator_row, linkage_flag;
-
+#ifndef _MSC_VER
+        char reduced[ustrlen(source)];
+#else
+        char* reduced = (char*)_alloca(ustrlen(source));
+#endif
 	error_number = 0;
 	strcpy(dest, "");
 	linkage_flag = 0;
