@@ -66,8 +66,69 @@ static int C16KStartValues[16] = {0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7
 static int C16KStopValues[16] = {0, 1, 2, 3, 4, 5, 6, 7, 4, 5, 6, 7, 0, 1, 2, 3};
 
 int parunmodd(unsigned char llyth, char nullchar);
-void grwp(int *indexliste);
-void dxsmooth(int *indexliste);
+
+void grwp16(int *indexliste)
+{
+	int i, j;
+	
+	/* bring together same type blocks */
+	if(*(indexliste) > 1) {
+		i = 1;
+		while(i < *(indexliste)) {
+			if(list[1][i - 1] == list[1][i]) {
+				/* bring together */
+				list[0][i - 1] = list[0][i - 1] + list[0][i];
+				j = i + 1;
+				
+				/* decreace the list */
+				while(j < *(indexliste)) {
+					list[0][j - 1] = list[0][j];
+					list[1][j - 1] = list[1][j];
+					j++;
+				}
+				*(indexliste) = *(indexliste) - 1;
+				i--;
+			}
+			i++;
+		}
+	}
+}
+
+void dxsmooth16(int *indexliste)
+{ /* Implements rules from ISO 15417 Annex E */
+	int i, current, last, next, length;
+	
+	for(i = 0; i < *(indexliste); i++) {
+		current = list[1][i];
+		length = list[0][i];
+		if(i != 0) { last = list[1][i - 1]; } else { last = FALSE; }
+		if(i != *(indexliste) - 1) { next = list[1][i + 1]; } else { next = FALSE; }
+		
+		if(i == 0) { /* first block */
+			if((*(indexliste) == 1) && ((length == 2) && (current == ABORC))) { /* Rule 1a */ list[1][i] = LATCHC; }
+			if(current == ABORC) { 
+				if(length >= 4) {/* Rule 1b */ list[1][i] = LATCHC; } else { list[1][i] = AORB; current = AORB; }
+			}
+			if(current == SHIFTA) { /* Rule 1c */ list[1][i] = LATCHA; }
+			if((current == AORB) && (next == SHIFTA)) { /* Rule 1c */ list[1][i] = LATCHA; current = LATCHA; }
+			if(current == AORB) { /* Rule 1d */ list[1][i] = LATCHB; }
+		} else {
+			if((current == ABORC) && (length >= 4)) { /* Rule 3 */ list[1][i] = LATCHC; current = LATCHC; }
+			if(current == ABORC) { list[1][i] = AORB; current = AORB; }
+			if((current == AORB) && (last == LATCHA)) { list[1][i] = LATCHA; current = LATCHA; }
+			if((current == AORB) && (last == LATCHB)) { list[1][i] = LATCHB; current = LATCHB; }
+			if((current == AORB) && (next == SHIFTA)) { list[1][i] = LATCHA; current = LATCHA; }
+			if((current == AORB) && (next == SHIFTB)) { list[1][i] = LATCHB; current = LATCHB; }
+			if(current == AORB) { list[1][i] = LATCHB; current = LATCHB; }
+			if((current == SHIFTA) && (length > 1)) { /* Rule 4 */ list[1][i] = LATCHA; current = LATCHA; }
+			if((current == SHIFTB) && (length > 1)) { /* Rule 5 */ list[1][i] = LATCHB; current = LATCHB; }
+			if((current == SHIFTA) && (last == LATCHA)) { list[1][i] = LATCHA; current = LATCHA; }
+			if((current == SHIFTB) && (last == LATCHB)) { list[1][i] = LATCHB; current = LATCHB; }
+		} /* Rule 2 is implimented elsewhere, Rule 6 is implied */
+	}
+	grwp16(indexliste);
+
+}
 
 void c16k_set_a(unsigned char source, unsigned int values[], unsigned int *bar_chars, char nullchar)
 {
@@ -169,7 +230,6 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 		}
 	}
 	
-	
 	/* Decide if it is worth reverting to 646 encodation for a few characters */
 	if(input_length > 1) {
 		for(i = 1; i < input_length; i++) {
@@ -207,7 +267,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 		indexliste++;
 	} while (indexchaine < input_length);
 	
-	dxsmooth(&indexliste);
+	dxsmooth16(&indexliste);
 	
 	/* Resolve odd length LATCHC blocks */
 	if((list[1][0] == LATCHC) && ((list[0][0] % 2) == 1)) {
@@ -243,7 +303,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 			read++;
 		}
 	}
-
+	
 	/* Adjust for strings which start with shift characters - make them latch instead */
 	if(set[0] == 'a') {
 		i = 0;
@@ -384,6 +444,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	read = 0;
+	
 	/* Encode the data */
 	do {
 
@@ -413,7 +474,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 					break;
 			}
 		}
-
+		/* printf("tp8\n"); */
 		if(read != 0) {
 			if((fset[read] == 'F') && (f_state == 0)) {
 				/* Latch beginning of extended mode */
@@ -488,7 +549,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 			bar_characters++;
 			read++;
 		}
-		
+		/* printf("tp9 read=%d surrent set=%c\n", read, set[read]); */
 	} while (read < ustrlen(source));
 	
 	pads_needed = 5 - ((bar_characters + 2) % 5);
@@ -546,7 +607,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 		}
 		symbol->row_height[current_row] = 10;
 	}
-
+	
 	symbol->rows = rows_needed;
 	symbol->width = 70;
 	return errornum;
