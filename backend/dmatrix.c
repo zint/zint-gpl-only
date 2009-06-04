@@ -1208,10 +1208,11 @@ int matrix89(struct zint_symbol *symbol, unsigned char source[])
 		symbol->option_2 = 0;
 	}
 	
-	if(symbol->option_2 > symbol_size) {
-		symbol_size = symbol->option_2;
+	if((symbol->option_2 - 1) > symbol_size) {
+		symbol_size = (symbol->option_2 - 1);
 	}
-	if((symbol->option_2 < symbol_size) && (symbol->option_2 != 0)) {
+
+	if(((symbol->option_2 - 1) < symbol_size) && ((symbol->option_2 - 1) != 0)) {
 		strcpy(symbol->errtxt, "Unable to fit data in specified symbol size");
 		error_number = WARN_INVALID_OPTION;
 	}
@@ -1265,6 +1266,7 @@ int matrix89(struct zint_symbol *symbol, unsigned char source[])
 			set_module(symbol, 0, i);
 		}
 		for(j = 0; j < width; j++) {
+			
 			switch(symbol_size) {
 				case 0: if(randomized_stream[tableh1[(i * width) + j]] == '1') { set_module(symbol, i + 1, j + 1); } break;
 				case 1: if(randomized_stream[tableh2[(i * width) + j]] == '1') { set_module(symbol, i + 1, j + 1); } break;
