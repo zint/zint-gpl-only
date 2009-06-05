@@ -12,7 +12,7 @@ TARGET = QtZint
 INCLUDEPATH += ../backend
 
 #EDIT THIS !!!!
-DEFINES += NO_PNG NO_QR
+DEFINES += NO_PNG NO_QR ZINT_VERSION=\"2.1.3\"
 
 !contains(DEFINES, NO_PNG) {
     SOURCES += ../backend/png.c
@@ -46,10 +46,13 @@ SOURCES += qrencode/bitstream.c \
 }
 
 HEADERS +=  ../backend/aztec.h \
+            ../backend/code49.h \
             ../backend/common.h \
             ../backend/composite.h \
             ../backend/dm200.h \
             ../backend/dmatrix.h \
+            ../backend/font.h \
+            ../backend/gs1.h \
             ../backend/large.h \
             ../backend/maxicode.h \
             ../backend/maxipng.h \
@@ -57,6 +60,7 @@ HEADERS +=  ../backend/aztec.h \
             ../backend/pdf417.h \
             ../backend/reedsol.h \
             ../backend/rss.h \
+            ../backend/sjis.h \
             ../backend/zint.h \
             qzint.h
 
@@ -67,10 +71,12 @@ SOURCES += ../backend/2of5.c \
            ../backend/code.c \
            ../backend/code128.c \
            ../backend/code16k.c \
+           ../backend/code49.c \
            ../backend/common.c \
            ../backend/composite.c \
            ../backend/dm200.c \
            ../backend/dmatrix.c \
+           ../backend/gs1.c \
            ../backend/imail.c \
            ../backend/large.c \
            ../backend/library.c \
@@ -83,12 +89,14 @@ SOURCES += ../backend/2of5.c \
            ../backend/ps.c \
            ../backend/reedsol.c \
            ../backend/rss.c \
+           ../backend/svg.c \
            ../backend/telepen.c \
            ../backend/upcean.c \
            ../backend/qr.c \
+           ../backend/dllversion.c \
            qzint.cpp
 
-VERSION = 1.6.0
+VERSION = 2.1.3
 
 #DESTDIR = .
 

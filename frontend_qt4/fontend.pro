@@ -2,7 +2,8 @@ TEMPLATE = app
 
 CONFIG += warn_on \
 	  thread \
-          qt
+          qt \
+          uitools
 
 TARGET = qtFontend
 
@@ -15,4 +16,5 @@ SOURCES += main.cpp \
 HEADERS += mainwindow.h \
  barcodeitem.h
 
-LIBS += -lQZint
+LIBS += -lQtZint2
+RESOURCES = resources.qrc
