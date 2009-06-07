@@ -106,11 +106,3 @@ Coming Soon
 	Features which it is hoped will appear in this library soon:
 	* Extended Channel Interpretations (this has been delayed - see the website)
 	* Code One
-
-Known Problems
---------------
-	A curious fault has developed in composite symbols with 2D components starting
-	with date fields such as AI [17]. When compiled with make directly this works
-	properly - when compiled with cmake this sigfaults. Why?
-
-	Large Data Matrix symbols which are not ECC200 seem to do strange things.
