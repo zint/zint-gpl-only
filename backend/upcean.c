@@ -546,7 +546,7 @@ void ean_leading_zeroes(struct zint_symbol *symbol, unsigned char source[], unsi
 			if(first_len <= 6) { zfirst_len = 6; }
 			break;
 		case BARCODE_ISBNX:
-			if(first_len <= 11) { zfirst_len = 11; }
+			if(first_len <= 9) { zfirst_len = 9; }
 			break;
 	}
 	if(second_len <= 5) { zsecond_len = 5; }
