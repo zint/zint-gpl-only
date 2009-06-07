@@ -117,7 +117,7 @@ int encode928(UINT bitString[], UINT codeWords[], int bitLng) {
 	return (cwLng);
 }
 
-int cc_a(struct zint_symbol *symbol, unsigned char source[], int cc_width)
+int cc_a(struct zint_symbol *symbol, char source[], int cc_width)
 { /* CC-A 2D component */
 	int i, strpos, segment, bitlen, cwCnt, variant, rows;
 	int k, offset, j, total, rsCodeWords[8];
@@ -127,37 +127,37 @@ int cc_a(struct zint_symbol *symbol, unsigned char source[], int cc_width)
 	UINT codeWords[28];
 	UINT bitStr[13];
 	char codebarre[100], pattern[580];
+	char local_source[210]; /* A copy of source but with padding zeroes to make 208 bits */
 
 	variant=0;
 
 	for(i = 0; i < 13; i++) { bitStr[i] = 0; }
 	for(i = 0; i < 28; i++) { codeWords[i] = 0; }
 	
-	bitlen = ustrlen(source);
+	bitlen = strlen(source);
 	
-	for(i = bitlen; i < 208; i++) {
-		source[i] = '0';
-	}
-	source[208] = '\0';
+	for(i = 0; i < 208; i++) { local_source[i] = '0'; }
+	for(i = 0; i < bitlen; i++) { local_source[i] = source[i]; }
+	local_source[208] = '\0';
 	
 	for(segment = 0; segment < 13; segment++) {
 		strpos = segment * 16;
-		if(source[strpos] == '1') { bitStr[segment] += 0x8000; }
-		if(source[strpos + 1] == '1') { bitStr[segment] += 0x4000; }
-		if(source[strpos + 2] == '1') { bitStr[segment] += 0x2000; }
-		if(source[strpos + 3] == '1') { bitStr[segment] += 0x1000; }
-		if(source[strpos + 4] == '1') { bitStr[segment] += 0x800; }
-		if(source[strpos + 5] == '1') { bitStr[segment] += 0x400; }
-		if(source[strpos + 6] == '1') { bitStr[segment] += 0x200; }
-		if(source[strpos + 7] == '1') { bitStr[segment] += 0x100; }
-		if(source[strpos + 8] == '1') { bitStr[segment] += 0x80; }
-		if(source[strpos + 9] == '1') { bitStr[segment] += 0x40; }
-		if(source[strpos + 10] == '1') { bitStr[segment] += 0x20; }
-		if(source[strpos + 11] == '1') { bitStr[segment] += 0x10; }
-		if(source[strpos + 12] == '1') { bitStr[segment] += 0x08; }
-		if(source[strpos + 13] == '1') { bitStr[segment] += 0x04; }
-		if(source[strpos + 14] == '1') { bitStr[segment] += 0x02; }
-		if(source[strpos + 15] == '1') { bitStr[segment] += 0x01; }
+		if(local_source[strpos] == '1') { bitStr[segment] += 0x8000; }
+		if(local_source[strpos + 1] == '1') { bitStr[segment] += 0x4000; }
+		if(local_source[strpos + 2] == '1') { bitStr[segment] += 0x2000; }
+		if(local_source[strpos + 3] == '1') { bitStr[segment] += 0x1000; }
+		if(local_source[strpos + 4] == '1') { bitStr[segment] += 0x800; }
+		if(local_source[strpos + 5] == '1') { bitStr[segment] += 0x400; }
+		if(local_source[strpos + 6] == '1') { bitStr[segment] += 0x200; }
+		if(local_source[strpos + 7] == '1') { bitStr[segment] += 0x100; }
+		if(local_source[strpos + 8] == '1') { bitStr[segment] += 0x80; }
+		if(local_source[strpos + 9] == '1') { bitStr[segment] += 0x40; }
+		if(local_source[strpos + 10] == '1') { bitStr[segment] += 0x20; }
+		if(local_source[strpos + 11] == '1') { bitStr[segment] += 0x10; }
+		if(local_source[strpos + 12] == '1') { bitStr[segment] += 0x08; }
+		if(local_source[strpos + 13] == '1') { bitStr[segment] += 0x04; }
+		if(local_source[strpos + 14] == '1') { bitStr[segment] += 0x02; }
+		if(local_source[strpos + 15] == '1') { bitStr[segment] += 0x01; }
 	}
 	
 	init928();
@@ -330,13 +330,13 @@ int cc_a(struct zint_symbol *symbol, unsigned char source[], int cc_width)
 	return 0;
 }
 
-int cc_b(struct zint_symbol *symbol, unsigned char source[], int cc_width)
+int cc_b(struct zint_symbol *symbol, char source[], int cc_width)
 { /* CC-B 2D component */
 	int length, i, binloc;
 #ifndef _MSC_VER
-	unsigned char data_string[(ustrlen(source) / 8) + 3];
+	unsigned char data_string[(strlen(source) / 8) + 3];
 #else
-        unsigned char* data_string = (unsigned char*)_alloca((ustrlen(source) / 8) + 3);
+        unsigned char* data_string = (unsigned char*)_alloca((strlen(source) / 8) + 3);
 #endif
 	int chainemc[180], mclength;
 	int k, j, longueur, mccorrection[50], offset;
@@ -345,7 +345,7 @@ int cc_b(struct zint_symbol *symbol, unsigned char source[], int cc_width)
 	int variant, LeftRAPStart, CentreRAPStart, RightRAPStart, StartCluster;
 	int LeftRAP, CentreRAP, RightRAP, Cluster, writer, flip, loop;
 	
-	length = ustrlen(source) / 8;
+	length = strlen(source) / 8;
 	
 	for(i = 0; i < length; i++) {
 		binloc = i * 8;
@@ -561,20 +561,20 @@ int cc_b(struct zint_symbol *symbol, unsigned char source[], int cc_width)
 	return 0;
 }
 
-int cc_c(struct zint_symbol *symbol, unsigned char source[], int cc_width, int ecc_level)
+int cc_c(struct zint_symbol *symbol, char source[], int cc_width, int ecc_level)
 { /* CC-C 2D component - byte compressed PDF417 */
 	int length, i, binloc;
 #ifndef _MSC_VER
-        unsigned char data_string[(ustrlen(source) / 8) + 4];
+        unsigned char data_string[(strlen(source) / 8) + 4];
 #else
-        unsigned char* data_string = (unsigned char*)_alloca((ustrlen(source) / 8) + 4);
+        unsigned char* data_string = (unsigned char*)_alloca((strlen(source) / 8) + 4);
 #endif
 	int chainemc[1000], mclength, k;
 	int offset, longueur, loop, total, j, mccorrection[520];
 	int c1, c2, c3, dummy[35];
 	char codebarre[100], pattern[580];
 	
-	length = ustrlen(source) / 8;
+	length = strlen(source) / 8;
 	
 	for(i = 0; i < length; i++) {
 		binloc = i * 8;
@@ -1108,7 +1108,7 @@ int cc_binary_string(struct zint_symbol *symbol, const char source[], char binar
 		j++;
 	}
 	general_field[j] = '\0';
-	
+
 	if(strlen(general_field) != 0) { alpha_pad = 0; }
 	
 	latch = 0;
@@ -1819,9 +1819,9 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 	}
 
 	switch(cc_mode) { /* Note that ecc_level is only relevant to CC-C */
-		case 1: error_number = cc_a(symbol, (unsigned char*)binary_string, cc_width); break;
-		case 2: error_number = cc_b(symbol, (unsigned char*)binary_string, cc_width); break;
-		case 3: error_number = cc_c(symbol, (unsigned char*)binary_string, cc_width, ecc_level); break;
+		case 1: error_number = cc_a(symbol, binary_string, cc_width); break;
+		case 2: error_number = cc_b(symbol, binary_string, cc_width); break;
+		case 3: error_number = cc_c(symbol, binary_string, cc_width, ecc_level); break;
 	}
 
 	if(error_number != 0) {
@@ -1856,7 +1856,8 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 		case BARCODE_RSS14_CC: bottom_shift = 4; break;
 		case BARCODE_RSS_LTD_CC: bottom_shift = 9; break;
 		case BARCODE_RSS_EXP_CC: k = 1;
-			while((linear->encoded_data[1][k - 1] != '1') && (linear->encoded_data[1][k] != '0')) {
+			while((!(module_is_set(linear, 1, k - 1))) && module_is_set(linear, 1, k)) {
+			/* while((linear->encoded_data[1][k - 1] != '1') && (linear->encoded_data[1][k] != '0')) { */
 				k++;
 			}
 			top_shift = k;
@@ -1866,7 +1867,8 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 		case BARCODE_RSS14STACK_CC: top_shift = 1; break;
 		case BARCODE_RSS14_OMNI_CC: top_shift = 1; break;
 		case BARCODE_RSS_EXPSTACK_CC: k = 1;
-			while((linear->encoded_data[1][k - 1] != '1') && (linear->encoded_data[1][k] != '0')) {
+			while((!(module_is_set(linear, 1, k - 1))) && module_is_set(linear, 1, k)) {
+			/* while((linear->encoded_data[1][k - 1] != '1') && (linear->encoded_data[1][k] != '0')) { */
 				k++;
 			}
 			top_shift = k;
