@@ -1212,7 +1212,7 @@ int matrix89(struct zint_symbol *symbol, unsigned char source[])
 		symbol_size = (symbol->option_2 - 1);
 	}
 
-	if(((symbol->option_2 - 1) < symbol_size) && ((symbol->option_2 - 1) != 0)) {
+	if(((symbol->option_2 - 1) < symbol_size) && (symbol->option_2 != 0)) {
 		strcpy(symbol->errtxt, "Unable to fit data in specified symbol size");
 		error_number = WARN_INVALID_OPTION;
 	}
