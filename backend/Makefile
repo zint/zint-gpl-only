@@ -51,6 +51,8 @@ install:
 	install -d $(DESTDIR)$(libdir)
 	mv libzint.* $(DESTDIR)$(libdir)
 	install -D -p --mode=0644 zint.h $(DESTDIR)$(includedir)/zint.h
+	ln -s /usr/local/lib/libqrencode.so /usr/lib/libqrencode.so
+	ln -s /usr/local/lib/libqrencode.so.3 /usr/lib/libqrencode.so.3
 
 uninstall:
 	rm $(DESTDIR)$(libdir)/libzint.*
