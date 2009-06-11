@@ -206,7 +206,7 @@ int korea_post(struct zint_symbol *symbol, unsigned char source[])
 { /* Korean Postal Authority */
 
 	int total, h, loop, check, zeroes, error_number;
-	char localstr[7], checkstr[3], dest[80];
+	char localstr[8], checkstr[3], dest[80];
 
 	error_number = 0;
 	h = ustrlen(source);
@@ -499,19 +499,16 @@ int flattermarken(struct zint_symbol *symbol, unsigned char source[])
 int japan_post(struct zint_symbol *symbol, unsigned char source[])
 { /* Japanese Postal Code (Kasutama Barcode) */
 	int input_length, error_number;
-	char pattern[65];
-	int writer, loopey, inter_posn, i, inter_length, sum, check;
+	char pattern[69];
+	int writer, loopey, inter_posn, i, sum, check;
 	char check_char;
+	char inter[23];
 
 	input_length = ustrlen(source);
-	inter_length = input_length * 2;
-	if(inter_length < 20) { inter_length = 20; }
 #ifndef _MSC_VER
-	char inter[inter_length];
-        char local_source[input_length];
+        char local_source[input_length + 1];
 #else
-	char* inter = (char*)_alloca(inter_length);
-        char* local_source = (char*)_alloca(inter_length);
+        char* local_source = (char*)_alloca(input_length + 1);
 #endif
 	
 	inter_posn = 0;
@@ -526,11 +523,14 @@ int japan_post(struct zint_symbol *symbol, unsigned char source[])
 		return error_number;
 	}
 
-	for(i = 0; i < inter_length; i++) {
+	for(i = 0; i < 20; i++) {
 		inter[i] = 'd'; /* Pad character CC4 */
 	}
+	inter[20] = '\0';
 
-	for(i = 0; i < input_length; i++) {
+	i = 0;
+	inter_posn = 0;
+	do {
 		if(((local_source[i] >= '0') && (local_source[i] <= '9')) || (local_source[i] == '-')) {
 			inter[inter_posn] = local_source[i];
 			inter_posn++;
@@ -551,7 +551,9 @@ int japan_post(struct zint_symbol *symbol, unsigned char source[])
 				inter_posn += 2;
 			}
 		}
-	}
+		i++;
+	}while((i < input_length) && (inter_posn < 20));
+	inter[20] = '\0';
 
 	strcpy(pattern, "13"); /* Start */
 	

@@ -259,7 +259,7 @@ int pharmazentral(struct zint_symbol *symbol, unsigned char source[])
 	
 	int i, error_number;
 	unsigned int h, count, check_digit;
-	char localstr[8], checkstr[3];
+	char localstr[10], checkstr[3];
 	int zeroes;
 	
 	error_number = 0;
@@ -371,19 +371,20 @@ int c93(struct zint_symbol *symbol, unsigned char source[])
 	strcpy(buffer, "");
 	int ascii_value;
 	char dest[1000];
+	unsigned char local_source[47];
 	
 	error_number = 0;
 	strcpy(dest, "");
 
-	if(ustrlen(source) > 45) {
+	if(ustrlen(local_source) > 45) {
 		/* This stops rediculously long input - the actual length of the barcode
 		depends on the type of data */
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	
-	for(i = 0; i < ustrlen(source); i++) {
-		if(source[i] > 127) {
+	for(i = 0; i < ustrlen(local_source); i++) {
+		if(local_source[i] > 127) {
 			/* Cannot encode extended ASCII */
 			strcpy(symbol->errtxt, "Invalid characters in input data");
 			return ERROR_INVALID_DATA;
@@ -394,8 +395,8 @@ int c93(struct zint_symbol *symbol, unsigned char source[])
 	concat(dest, "111141");
 
 	/* Message Content */
-	for(i = 0; i < ustrlen(source); i++) {
-		ascii_value = source[i];
+	for(i = 0; i < ustrlen(local_source); i++) {
+		ascii_value = local_source[i];
 		if(ascii_value == symbol->nullchar) {
 			concat(buffer, C93Ctrl[0]);
 		} else {
@@ -463,12 +464,12 @@ int c93(struct zint_symbol *symbol, unsigned char source[])
 	/* Stop character */
 	concat(dest, "1111411");
 	
-	h = ustrlen(source);
-	source[h] = set_copy[c];
-	source[h + 1] = set_copy[k];
-	source[h + 2] = '\0';
+	h = ustrlen(local_source);
+	local_source[h] = set_copy[c];
+	local_source[h + 1] = set_copy[k];
+	local_source[h + 2] = '\0';
 	expand(symbol, dest);
-	ustrcpy(symbol->text, source);
+	ustrcpy(symbol->text, local_source);
 	for(i = 0; i < ustrlen(symbol->text); i++) {
 		if(symbol->text[i] == symbol->nullchar) {
 			symbol->text[i] = ' ';
