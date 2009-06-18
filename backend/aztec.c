@@ -55,11 +55,11 @@ int aztec_text_process(unsigned char source[], char binary_string[], int gs1)
 	int i, j, k, bytes;
 	int curtable, newtable, lasttable, chartype, maplength, blocks, debug;
 #ifndef _MSC_VER
-	int charmap[ustrlen(source)], typemap[ustrlen(source)];
+	int charmap[ustrlen(source) * 2], typemap[ustrlen(source) * 2];
 	int blockmap[2][ustrlen(source)];
 #else
-        int* charmap = (int*)_alloca(ustrlen(source) * sizeof(int));
-        int* typemap = (int*)_alloca(ustrlen(source) * sizeof(int));
+        int* charmap = (int*)_alloca((ustrlen(source) * 2) * sizeof(int));
+        int* typemap = (int*)_alloca((ustrlen(source) * 2) * sizeof(int));
         int* blockmap[2];
         blockmap[0] = (int*)_alloca(ustrlen(source) * sizeof(int));
         blockmap[1] = (int*)_alloca(ustrlen(source) * sizeof(int));

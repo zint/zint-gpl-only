@@ -53,6 +53,7 @@ extern void lookup(char set_string[], char *table[], char data, char dest[]);
 extern int posn(char set_string[], char data);
 extern void expand(struct zint_symbol *symbol, char data[]);
 extern int is_stackable(int symbology);
+extern int is_extendable(int symbology);
 extern int roundup(float input);
 extern int module_is_set(struct zint_symbol *symbol, int y_coord, int x_coord);
 extern void set_module(struct zint_symbol *symbol, int y_coord, int x_coord);

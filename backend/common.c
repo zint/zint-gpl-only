@@ -92,7 +92,7 @@ int is_sane(char test_string[], unsigned char source[])
 { /* Verifies that a string only uses valid characters */
 	unsigned int i, j, latch;
 
-	for(i = 0; i < ustrlen(source); i++) {
+	for(i = 0; i < ustrlen(source) - 1; i++) {
 		latch = FALSE;
 		for(j = 0; j < strlen(test_string); j++) {
 			if (source[i] == test_string[j]) { latch = TRUE; } }
@@ -227,6 +227,19 @@ int is_stackable(int symbology) {
 	if(symbology == BARCODE_TELEPEN_NUM) { return 1; }
 	if(symbology == BARCODE_ITF14) { return 1; }
 	if(symbology == BARCODE_CODE32) { return 1; }
+	
+	return 0;
+}
+
+int is_extendable(int symbology) {
+	/* Indicates which symbols can have addon */
+	if(symbology == BARCODE_EANX) { return 1; }
+	if(symbology == BARCODE_UPCA) { return 1; }
+	if(symbology == BARCODE_UPCE) { return 1; }
+	if(symbology == BARCODE_ISBNX) { return 1; }
+	if(symbology == BARCODE_UPCA_CC) { return 1; }
+	if(symbology == BARCODE_UPCE_CC) { return 1; }
+	if(symbology == BARCODE_EANX_CC) { return 1; }
 	
 	return 0;
 }

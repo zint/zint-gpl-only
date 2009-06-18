@@ -169,10 +169,12 @@ int c39(struct zint_symbol *symbol, unsigned char source[])
 	char check_digit;
 	int h, error_number;
 	char dest[1000];
+	char localstr[3];
 	
 	error_number = 0;
 	counter = 0;
 	strcpy(dest, "");
+	strcpy(localstr, "");
 
 	if((symbol->option_2 < 0) || (symbol->option_2 > 1)) {
 		symbol->option_2 = 0;
@@ -226,8 +228,8 @@ int c39(struct zint_symbol *symbol, unsigned char source[])
 		}
 		
 		h = ustrlen(source);
-		source[h] = check_digit;
-		source[h + 1] = '\0';
+		localstr[0] = check_digit;
+		localstr[1] = '\0';
 	}
 	
 	/* Stop character */
@@ -247,9 +249,11 @@ int c39(struct zint_symbol *symbol, unsigned char source[])
 	if(symbol->symbology == BARCODE_CODE39) {
 		ustrcpy(symbol->text, (unsigned char*)"*");
 		uconcat(symbol->text, source);
+		uconcat(symbol->text, (unsigned char*)localstr);
 		uconcat(symbol->text, (unsigned char*)"*");
 	} else {
 		ustrcpy(symbol->text, source);
+		uconcat(symbol->text, (unsigned char*)localstr);
 	}
 	return error_number;
 }

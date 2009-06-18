@@ -389,6 +389,7 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source)
 	int input_length;
 	
 	input_length = ustrlen(source);
+	
 #ifndef _MSC_VER
 	unsigned char preprocessed[input_length];
 #else
@@ -595,7 +596,7 @@ int ZBarcode_Print(struct zint_symbol *symbol)
 	/* int i, j;
 	
 	for(i = 0; i < symbol->rows; i++) {
-		for(j = 0; j < symbol->width / 7; j++) {
+		for(j = 0; j <= symbol->width / 7; j++) {
 			printf("%2.2X ", symbol->encoded_data[i][j]);
 		}
 		printf("\n");
