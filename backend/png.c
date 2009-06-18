@@ -555,13 +555,15 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 	latch = 0;
 	r = 0;
 	/* Isolate add-on text */
-	for(i = 0; i < ustrlen(local_text); i++) {
-		if (latch == 1) {
-			addon[r] = local_text[i];
-			r++;
-		}
-		if (symbol->text[i] == '+') {
-			latch = 1;
+	if(is_extendable(symbol->symbology)) {
+		for(i = 0; i < ustrlen(local_text); i++) {
+			if (latch == 1) {
+				addon[r] = local_text[i];
+				r++;
+			}
+			if (symbol->text[i] == '+') {
+				latch = 1;
+			}
 		}
 	}
 	addon[r] = '\0';
