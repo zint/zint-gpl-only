@@ -2,7 +2,7 @@
 
 /*
     libzint - the open source barcode library
-    Copyright (C) 2008 Robin Stuart <robin@zint.org.uk>
+    Copyright (C) 2009 Robin Stuart <robin@zint.org.uk>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -658,10 +658,10 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 	int x, y, i, j, data_blocks, ecc_blocks, layers, total_bits;
 	char binary_string[20000], bit_pattern[20045], descriptor[42];
 	char adjusted_string[20000];
-	unsigned int data_part[1500], ecc_part[840];
 	unsigned char desc_data[4], desc_ecc[6];
 	int err_code, ecc_level, compact, data_length, data_maxsize, codeword_size, adjusted_length;
 	int remainder, padbits, count, gs1, adjustment_size;
+	int debug = 0;
 	
 	memset(binary_string,0,20000);
 	memset(adjusted_string,0,20000);
@@ -902,9 +902,26 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 	} else {
 		ecc_blocks = AztecSizes[layers - 1] - data_blocks;
 	}
+	
+	if(debug) {
+		printf("Generating a ");
+		if(compact) { printf("compact"); } else { printf("full-size"); }
+		printf(" symbol with %d layers\n", layers);
+		printf("Requires ");
+		if(compact) { printf("%d", AztecCompactSizes[layers - 1]); } else { printf("%d", AztecSizes[layers - 1]); }
+		printf(" codewords of %d-bits\n", codeword_size);
+		printf("    (%d data words, %d ecc words)\n", data_blocks, ecc_blocks);
+	}
+	
+#ifndef _MSC_VER
+	unsigned int data_part[data_blocks], ecc_part[ecc_blocks];
+#else
+	unsigned int* data_part = (unsigned int*)_alloca(data_blocks * sizeof(unsigned int));
+	unsigned int* ecc_part = (unsigned int*)_alloca(ecc_blocks * sizeof(unsigned int));
+#endif
 	/* Copy across data into separate integers */
-	memset(data_part,0,1500*sizeof(int));
-	memset(ecc_part,0,840*sizeof(int));
+	memset(data_part,0,(data_blocks + 2)*sizeof(int));
+	memset(ecc_part,0,(ecc_blocks + 2)*sizeof(int));
 	
 	/* Split into codewords and calculate reed-colomon error correction codes */
 	switch(codeword_size) {
