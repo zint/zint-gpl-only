@@ -179,7 +179,7 @@ bool MainWindow::save()
 void MainWindow::about()
 {
 	QMessageBox::about(this, tr("About Zint"),
-			   tr("<h2>Zint Barcode Studio 0.2</h2>"
+			   tr("<h2>Zint Barcode Studio 0.3</h2>"
 					   "<p>A simple barcode generator"
 					   "<p>Requires libzint 2.1.3 or greater."
 					   "<p>Visit the <a href=\"http://www.zint.org.uk\">Zint Project Homepage</a> for more information."
@@ -637,13 +637,13 @@ void MainWindow::update_preview()
 
 		case BARCODE_CODE39:
 			if(m_optionWidget->findChild<QRadioButton*>("radC39HIBC")->isChecked())
+				m_bc.bc.setSymbol(BARCODE_HIBC_39);
+			else
 			{
 				m_bc.bc.setSymbol(BARCODE_CODE39);
 				if(m_optionWidget->findChild<QRadioButton*>("radC39Check")->isChecked())
 					m_bc.bc.setWidth(1);
-			} 
-			else
-				m_bc.bc.setSymbol(BARCODE_HIBC_39);
+			}
 			break;
 
 		case BARCODE_EXCODE39:
