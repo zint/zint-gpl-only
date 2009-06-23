@@ -117,7 +117,10 @@ int code_11(struct zint_symbol *symbol, unsigned char source[])
 	/* Draw main body of barcode */
 	for(i = 0; i < ustrlen(source); i++) {
 		lookup(NASET, C11Table, source[i], dest);
-		weight[i] = ctoi(source[i]);
+		if(source[i] == '-')
+			weight[i] = 10;
+		else
+			weight[i] = ctoi(source[i]);
 	}
 
 	/* Calculate C checksum */
