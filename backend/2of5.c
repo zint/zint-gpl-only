@@ -272,11 +272,11 @@ int itf14(struct zint_symbol *symbol, unsigned char source[])
 	
 	/* Calculate the check digit - the same method used for EAN-13 */
 
-	for (i = h - 1; i >= 0; i--)
+	for (i = 12; i >= 0; i--)
 	{
 		count += ctoi(localstr[i]);
 
-		if (!((i%2) == 0))
+		if ((i%2) == 0)
 		{
 			count += 2 * ctoi(localstr[i]);
 		}
