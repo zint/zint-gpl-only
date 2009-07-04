@@ -36,6 +36,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 		"Aztec Code",
 		"Aztec Runes",
 		"Channel Code",
+		"Codabar",
+		"Codablock-F",
 		"Code 11",
 		"Code 128",
 		"Code 16k",
@@ -49,8 +51,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 		"Code 39 Extended",
 		"Code 49",
 		"Code 93", 
-		"Codabar",
-		"Codablock-F",
+		"Code One",
 		"Databar",
 		"Databar Expanded",
 		"Databar Expanded Stacked",
@@ -103,7 +104,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 		bstyle->addItem(metaObject()->enumerator(0).key(i));
 		bstyle->setItemText(i,bstyle_text[i]);
 	}
-	bstyle->setCurrentIndex(8);
+	bstyle->setCurrentIndex(10);
 	change_options();
 	update_preview();
 	view->scene()->addItem(&m_bc);

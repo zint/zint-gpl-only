@@ -259,3 +259,24 @@ int roundup(float input)
 	return integer_part;
 }
 
+int istwodigits(unsigned char source[], int position)
+{
+	if((source[position] >= '0') && (source[position] <= '9')) {
+		if((source[position + 1] >= '0') && (source[position + 1] <= '9')) {
+			return 1;
+		}
+	}
+	
+	return 0;
+}
+
+float froundup(float input)
+{
+	float fraction, output = 0.0;
+	
+	fraction = input - (int)input;
+	if(fraction > 0.01) { output = (input - fraction) + 1.0; } else { output = input; }
+	
+	return output;
+}
+

@@ -138,6 +138,7 @@ struct zint_symbol {
 #define BARCODE_RSS14_OMNI_CC	138
 #define BARCODE_RSS_EXPSTACK_CC	139
 #define BARCODE_CHANNEL		140
+#define BARCODE_CODEONE		141
 
 #define BARCODE_NO_ASCII	1
 #define BARCODE_BIND		2

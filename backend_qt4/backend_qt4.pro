@@ -94,6 +94,7 @@ SOURCES += ../backend/2of5.c \
            ../backend/upcean.c \
            ../backend/qr.c \
            ../backend/dllversion.c \
+           ../backend/code1.c \
            qzint.cpp
 
 VERSION = 2.1.3
