@@ -58,6 +58,8 @@ extern int roundup(float input);
 extern int module_is_set(struct zint_symbol *symbol, int y_coord, int x_coord);
 extern void set_module(struct zint_symbol *symbol, int y_coord, int x_coord);
 extern void unset_module(struct zint_symbol *symbol, int y_coord, int x_coord);
+extern int istwodigits(unsigned char source[], int position);
+extern float froundup(float input);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

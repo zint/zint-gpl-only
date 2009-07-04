@@ -125,6 +125,7 @@ extern int korea_post(struct zint_symbol *symbol, unsigned char source[]); /* Ko
 extern int japan_post(struct zint_symbol *symbol, unsigned char source[]); /* Japanese Post */
 extern int code_49(struct zint_symbol *symbol, unsigned char source[]); /* Code 49 */
 extern int channel_code(struct zint_symbol *symbol, unsigned char source[]); /* Channel Code */
+extern int code_one(struct zint_symbol *symbol, unsigned char source[]); /* Code One */
 
 #ifndef NO_PNG
 int png_handle(struct zint_symbol *symbol, int rotate_angle);
@@ -438,7 +439,7 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source)
 	if(symbol->symbology == 111) { symbol->symbology = BARCODE_HIBC_BLOCKF; }
 	if((symbol->symbology >= 112) && (symbol->symbology <= 127)) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
 	/* Everything from 128 up is Zint-specific */
-	if(symbol->symbology >= 141) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
+	if(symbol->symbology >= 142) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
 	
 	if(error_number > 4) {
 		error_tag(symbol->errtxt, error_number);
@@ -575,6 +576,7 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source)
 		case BARCODE_JAPANPOST: error_number = japan_post(symbol, preprocessed); break;
 		case BARCODE_CODE49: error_number = code_49(symbol, preprocessed); break;
 		case BARCODE_CHANNEL: error_number = channel_code(symbol, preprocessed); break;
+		case BARCODE_CODEONE: error_number = code_one(symbol, preprocessed); break;
 	}
 	
 	if((symbol->symbology == BARCODE_CODE128) || (symbol->symbology == BARCODE_CODE128B)) {

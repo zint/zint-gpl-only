@@ -291,6 +291,7 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 
 	painter.save();
 	painter.setClipRect(paintRect,Qt::IntersectClip);
+	painter.setRenderHint(QPainter::Antialiasing);
 	qreal xtr=paintRect.x();
 	qreal ytr=paintRect.y();
 
