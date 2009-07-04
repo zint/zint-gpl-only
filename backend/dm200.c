@@ -192,27 +192,6 @@ static void ecc200(unsigned char *binary, int bytes, int datablock, int rsblock)
 	rs_free();
 }
 
-float dmroundup(float input)
-{
-	float fraction, output = 0.0;
-	
-	fraction = input - (int)input;
-	if(fraction > 0.01) { output = (input - fraction) + 1.0; } else { output = input; }
-	
-	return output;
-}
-
-int istwodigits(unsigned char source[], int position)
-{
-	if((source[position] >= '0') && (source[position] <= '9')) {
-		if((source[position + 1] >= '0') && (source[position + 1] <= '9')) {
-			return 1;
-		}
-	}
-	
-	return 0;
-}
-
 int isx12(unsigned char source)
 {
 	if(source == 13) { return 1; }
@@ -316,8 +295,6 @@ int look_ahead_test(unsigned char source[], int sourcelen, int position, int cur
 		
 	}
 	
-	/* Round up all the counts to round numbers */
-	
 	best_count = ascii_count;
 	best_scheme = DM_ASCII;
 	
@@ -419,7 +396,7 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 					}
 				} else {
 					if(source[sp] > 127) {
-						target[tp] = 235;
+						target[tp] = 235; /* FNC4 */
 						tp++;
 						target[tp] = (source[sp] - 128) + 1;
 						tp++; concat(binary, "  ");
