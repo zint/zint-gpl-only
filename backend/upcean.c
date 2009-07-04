@@ -133,6 +133,7 @@ void upce(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	for(i = 0; i < 11; i++) {
 		equivalent[i] = '0';
 	}
+	if(num_system == 1) { equivalent[0] = temp[0]; }
 	equivalent[1] = source[0];
 	equivalent[2] = source[1];
 	equivalent[11] = '\0';
