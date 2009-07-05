@@ -17,5 +17,6 @@
     <file>grpCodablock.ui</file>
     <file>grpMQR.ui</file>
     <file>grpQR.ui</file>
+    <file>grpCodeOne.ui</file>
 </qresource>
 </RCC>

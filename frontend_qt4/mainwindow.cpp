@@ -416,6 +416,17 @@ void MainWindow::change_options()
 		tabMain->insertTab(1,m_optionWidget,tr("Channel Code"));
 		connect(m_optionWidget->findChild<QObject*>("cmbChannel"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
 	}
+	
+	if(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_CODEONE)
+	{
+		QFile file(":/grpCodeOne.ui");
+		if (!file.open(QIODevice::ReadOnly))
+			return;
+		m_optionWidget=uiload.load(&file);
+		file.close();
+		tabMain->insertTab(1,m_optionWidget,tr("Code One"));
+		connect(m_optionWidget->findChild<QObject*>("cmbC1Size"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
+	}
 
 
 	switch(metaObject()->enumerator(0).value(bstyle->currentIndex()))
@@ -732,6 +743,12 @@ void MainWindow::update_preview()
 			else
 				m_bc.bc.setWidth(m_optionWidget->findChild<QComboBox*>("cmbChannel")->currentIndex() + 2);
 			break;
+			
+		case BARCODE_CODEONE:
+			m_bc.bc.setSymbol(BARCODE_CODEONE);
+			m_bc.bc.setWidth(m_optionWidget->findChild<QComboBox*>("cmbC1Size")->currentIndex());
+			break;
+			
 		default:
 			m_bc.bc.setSymbol(metaObject()->enumerator(0).value(bstyle->currentIndex()));
 			break;
