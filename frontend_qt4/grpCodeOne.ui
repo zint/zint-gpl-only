@@ -74,32 +74,12 @@
        </item>
        <item>
         <property name="text" >
-         <string>9 x 13 (Version S-10)</string>
+         <string>8X height (Version S)</string>
         </property>
        </item>
        <item>
         <property name="text" >
-         <string>9 x 23 (Version S-20)</string>
-        </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>9 x 33 (Version S-30)</string>
-        </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>17 x 19 (Version T-16)</string>
-        </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>17 x 35 (Version T-32)</string>
-        </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>17 x 51 (Version T-48)</string>
+         <string>16X height (Version T)</string>
         </property>
        </item>
       </widget>

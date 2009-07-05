@@ -22,6 +22,7 @@
 #include "common.h"
 #include "code1.h"
 #include "reedsol.h"
+#include "large.h"
 #include <stdio.h>
 #include <string.h>
 #include <malloc.h>
@@ -1017,119 +1018,267 @@ void block_copy(struct zint_symbol *symbol, char grid[][120], int start_row, int
 int code_one(struct zint_symbol *symbol, unsigned char source[])
 {
 	int size = 1, i, j, data_blocks;
-	unsigned int data[1500], ecc[600];
-	unsigned int sub_data[190], sub_ecc[75];
-	unsigned int stream[2100];
-	int data_length;
+
 	char datagrid[136][120];
 	int row, col;
+	int sub_version = 0;
 	
-	if((symbol->option_2 < 0) || (symbol->option_2 > 8)) {
+	if((symbol->option_2 < 0) || (symbol->option_2 > 10)) {
 		strcpy(symbol->errtxt, "Invalid symbol size");
 		return ERROR_INVALID_OPTION;
 	}
 	
-	for(i = 0; i < 1500; i++) { data[i] = 0; }
-	data_length = c1_encode(symbol, source, data);
-	
-	if(data_length == 0) {
-		return ERROR_TOO_LONG;
-	}
-	
-	for(i = 7; i >= 0; i--) {
-		if(c1_data_length[i] >= data_length) {
-			size = i + 1;
+	if(symbol->option_2 == 9) {
+		/* Version S */
+		int codewords;
+		short int elreg[112];
+		unsigned int data[15], ecc[15];
+		int stream[30];
+		int block_width;
+		
+		if(is_sane(NESET, source) == ERROR_INVALID_DATA) {
+			strcpy(symbol->errtxt, "Invalid input data (Version S encodes numeric input only)");
+			return ERROR_INVALID_DATA;
 		}
-	}
-	
-	if(symbol->option_2 > size) {
-		size = symbol->option_2;
-	}
-	
-	for(i = data_length; i < c1_data_length[size - 1]; i++) {
-		data[i] = 129; /* Pad */
-	}
-	
-	/* Calculate error correction data */
-	data_length = c1_data_length[size - 1];
-	for(i = 0; i < 190; i++) { sub_data[i] = 0; }
-	for(i = 0; i < 75; i++) { sub_ecc[i] = 0; }
-	
-	data_blocks = c1_blocks[size - 1];
-	
-	/*
-	Section 2.2.5.1 states:
-	   "The polynomial arithmetic... is calculated using bit-wise modulo 2 arithmetic
-	    and byte-wise modulo 100101101 arithmetic (this is a Galois Field of 2^8 with
-	    100101101 representing the field's prime modulus polynomial:
-	    x^8 + x^5 + x^3 + x^2 + 1)."
-	This is the same as Data Matrix (ISO/IEC 16022) however the calculations in Appendix F
-	of the Code One specification do not agree with those in Annex E of ISO/IEC 16022.
-	For example Code One Appendix F states:
-	   "The polynomial divisor for generating ten check characters for Version T-16
-	    and Version A is:
-	    g(x)=x^10 + 136x^9 + 141x^8 + 113x^7 + 76x^6 + 218x^5 + 43x^4 + 85x^3
-	    + 182x^2 + 31x + 52."
-	Whereas ISO/IEC 16022 Annex E states:
-	   "The polynomial divisor for generating 10 check characters is:
-	    g(x)=x^10 + 61x^9 + 110x^8 + 255x^7 + 116x^6 + 248x^5 + 223x^4 + 166x^3
-	    + 185x^2 + 24x + 28."
-	For this code I have assumed that ISO/IEC 16022 is correct and the USS Code One
-	specifications are incorrect
-	*/
-	
-	rs_init_gf(0x12d);
-	rs_init_code(c1_ecc_blocks[size - 1], 1);	
-	for(i = 0; i < data_blocks; i++) {
-		for(j = 0; j < c1_data_blocks[size - 1]; j++) {
-			
-			sub_data[j] = data[j * data_blocks + i];
+		if(ustrlen(source) > 18) {
+			strcpy(symbol->errtxt, "Input data too long");
+			return ERROR_TOO_LONG;
 		}
-		rs_encode_long(c1_data_blocks[size - 1], sub_data, sub_ecc);
-		for(j = 0; j < c1_ecc_blocks[size - 1]; j++) {
-			ecc[c1_ecc_length[size - 1] - (j * data_blocks + i) - 1] = sub_ecc[j];
+		
+		sub_version = 3; codewords = 12; block_width = 6; /* Version S-30 */
+		if(ustrlen(source) <= 12) { sub_version = 2; codewords = 8; block_width = 4; } /* Version S-20 */
+		if(ustrlen(source) <= 6) { sub_version = 1; codewords = 4; block_width = 2; } /* Version S-10 */
+		
+		binary_load(elreg, (char *)source);
+		hex_dump(elreg);
+		
+		for(i = 0; i < 15; i++) {
+			data[i] = 0;
+			ecc[i] = 0;
 		}
-	}
-	rs_free();
-	
-	/* "Stream" combines data and error correction data */
-	for(i = 0; i < data_length; i++) {
-		stream[i] = data[i];
-	}
-	for(i = 0; i < c1_ecc_length[size - 1]; i++) {
-		stream[data_length + i] = ecc[i];
-	}
-
-	for(i = 0; i < 136; i++) {
-		for(j = 0; j < 120; j++) {
-			datagrid[i][j] = '0';
+		
+		for(i = 0; i < codewords; i++) {
+			data[codewords - i - 1] += 1 * elreg[(i * 5)];
+			data[codewords - i - 1] += 2 * elreg[(i * 5) + 1];
+			data[codewords - i - 1] += 4 * elreg[(i * 5) + 2];
+			data[codewords - i - 1] += 8 * elreg[(i * 5) + 3];
+			data[codewords - i - 1] += 16 * elreg[(i * 5) + 4];
 		}
+		
+		rs_init_gf(0x25);
+		rs_init_code(codewords, 1);
+		rs_encode_long(codewords, data, ecc);
+		rs_free();
+		
+		for(i = 0; i < codewords; i++) {
+			stream[i] = data[i];
+			stream[i + codewords] = ecc[codewords - i - 1];
+		}
+		
+		for(i = 0; i < 136; i++) {
+			for(j = 0; j < 120; j++) {
+				datagrid[i][j] = '0';
+			}
+		}
+		
+		i = 0;
+		for(row = 0; row < 2; row++) {
+			for(col = 0; col < block_width; col++) {
+				if(stream[i] & 0x10) { datagrid[row * 2][col * 5] = '1'; }
+				if(stream[i] & 0x08) { datagrid[row * 2][(col * 5) + 1] = '1'; }
+				if(stream[i] & 0x04) { datagrid[row * 2][(col * 5) + 2] = '1'; }
+				if(stream[i] & 0x02) { datagrid[(row * 2) + 1][col * 5] = '1'; }
+				if(stream[i] & 0x01) { datagrid[(row * 2) + 1][(col * 5) + 1] = '1'; }
+				if(stream[i + 1] & 0x10) { datagrid[row * 2][(col * 5) + 3] = '1'; }
+				if(stream[i + 1] & 0x08) { datagrid[row * 2][(col * 5) + 4] = '1'; }
+				if(stream[i + 1] & 0x04) { datagrid[(row * 2) + 1][(col * 5) + 2] = '1'; }
+				if(stream[i + 1] & 0x02) { datagrid[(row * 2) + 1][(col * 5) + 3] = '1'; }
+				if(stream[i + 1] & 0x01) { datagrid[(row * 2) + 1][(col * 5) + 4] = '1'; }
+				i += 2;
+			}
+		}
+		
+		size = 9;	
+		symbol->rows = 8;
+		symbol->width = 10 * sub_version + 1;
 	}
 	
-	i = 0;
-	for(row = 0; row < c1_grid_height[size - 1]; row++) {
-		for(col = 0; col < c1_grid_width[size - 1]; col++) {
-			if(stream[i] & 0x80) { datagrid[row * 2][col * 4] = '1'; }
-			if(stream[i] & 0x40) { datagrid[row * 2][(col * 4) + 1] = '1'; }
-			if(stream[i] & 0x20) { datagrid[row * 2][(col * 4) + 2] = '1'; }
-			if(stream[i] & 0x10) { datagrid[row * 2][(col * 4) + 3] = '1'; }
-			if(stream[i] & 0x08) { datagrid[(row * 2) + 1][col * 4] = '1'; }
-			if(stream[i] & 0x04) { datagrid[(row * 2) + 1][(col * 4) + 1] = '1'; }
-			if(stream[i] & 0x02) { datagrid[(row * 2) + 1][(col * 4) + 2] = '1'; }
-			if(stream[i] & 0x01) { datagrid[(row * 2) + 1][(col * 4) + 3] = '1'; }
-			i++;
+	if(symbol->option_2 == 10) {
+		/* Version T */
+		unsigned int data[40], ecc[25];
+		unsigned int stream[65];
+		int data_length;
+		int data_cw, ecc_cw, block_width;
+		
+		for(i = 0; i < 40; i++) { data[i] = 0; }
+		data_length = c1_encode(symbol, source, data);
+		
+		if(data_length == 0) {
+			return ERROR_TOO_LONG;
 		}
+		
+		if(data_length > 38) {
+			strcpy(symbol->errtxt, "Input data too long");
+			return ERROR_TOO_LONG;
+		}
+		
+		size = 10;
+		sub_version = 3; data_cw = 38; ecc_cw = 22; block_width = 12;
+		if(data_length <= 24) { sub_version = 2; data_cw = 24; ecc_cw = 16; block_width = 8; }
+		if(data_length <= 10) { sub_version = 1; data_cw = 10; ecc_cw = 10; block_width = 4; }
+		
+		for(i = data_length; i < data_cw; i++) {
+			data[i] = 129; /* Pad */
+		}
+		
+		/* Calculate error correction data */
+		rs_init_gf(0x12d);
+		rs_init_code(ecc_cw, 1);	
+		rs_encode_long(data_cw, data, ecc);
+		rs_free();
+		
+		/* "Stream" combines data and error correction data */
+		for(i = 0; i < data_cw; i++) {
+			stream[i] = data[i];
+		}
+		for(i = 0; i < ecc_cw; i++) {
+			stream[data_cw + i] = ecc[ecc_cw - i - 1];
+		}
+	
+		for(i = 0; i < 136; i++) {
+			for(j = 0; j < 120; j++) {
+				datagrid[i][j] = '0';
+			}
+		}
+		
+		i = 0;
+		for(row = 0; row < 5; row++) {
+			for(col = 0; col < block_width; col++) {
+				if(stream[i] & 0x80) { datagrid[row * 2][col * 4] = '1'; }
+				if(stream[i] & 0x40) { datagrid[row * 2][(col * 4) + 1] = '1'; }
+				if(stream[i] & 0x20) { datagrid[row * 2][(col * 4) + 2] = '1'; }
+				if(stream[i] & 0x10) { datagrid[row * 2][(col * 4) + 3] = '1'; }
+				if(stream[i] & 0x08) { datagrid[(row * 2) + 1][col * 4] = '1'; }
+				if(stream[i] & 0x04) { datagrid[(row * 2) + 1][(col * 4) + 1] = '1'; }
+				if(stream[i] & 0x02) { datagrid[(row * 2) + 1][(col * 4) + 2] = '1'; }
+				if(stream[i] & 0x01) { datagrid[(row * 2) + 1][(col * 4) + 3] = '1'; }
+				i++;
+			}
+		}
+		
+		symbol->rows = 16;
+		symbol->width = (sub_version * 16) + 1;
 	}
-	
-	/* for(i = 0; i < (c1_grid_height[size - 1] * 2); i++) {
-		for(j = 0; j < (c1_grid_width[size - 1] * 4); j++) {
-			printf("%c", datagrid[i][j]);
+		
+	if((symbol->option_2 != 9) && (symbol->option_2 != 10)) {
+		/* Version A to H or T */
+		unsigned int data[1500], ecc[600];
+		unsigned int sub_data[190], sub_ecc[75];
+		unsigned int stream[2100];
+		int data_length;
+				
+		for(i = 0; i < 1500; i++) { data[i] = 0; }
+		data_length = c1_encode(symbol, source, data);
+		
+		if(data_length == 0) {
+			return ERROR_TOO_LONG;
 		}
-		printf("\n");
-	} */
+		
+		for(i = 7; i >= 0; i--) {
+			if(c1_data_length[i] >= data_length) {
+				size = i + 1;
+			}
+		}
+		
+		if(symbol->option_2 > size) {
+			size = symbol->option_2;
+		}
+		
+		for(i = data_length; i < c1_data_length[size - 1]; i++) {
+			data[i] = 129; /* Pad */
+		}
+		
+		/* Calculate error correction data */
+		data_length = c1_data_length[size - 1];
+		for(i = 0; i < 190; i++) { sub_data[i] = 0; }
+		for(i = 0; i < 75; i++) { sub_ecc[i] = 0; }
+		
+		data_blocks = c1_blocks[size - 1];
+		
+		/*
+		Section 2.2.5.1 states:
+		"The polynomial arithmetic... is calculated using bit-wise modulo 2 arithmetic
+		and byte-wise modulo 100101101 arithmetic (this is a Galois Field of 2^8 with
+		100101101 representing the field's prime modulus polynomial:
+		x^8 + x^5 + x^3 + x^2 + 1)."
+		This is the same as Data Matrix (ISO/IEC 16022) however the calculations in Appendix F
+		of the Code One specification do not agree with those in Annex E of ISO/IEC 16022.
+		For example Code One Appendix F states:
+		"The polynomial divisor for generating ten check characters for Version T-16
+		and Version A is:
+		g(x)=x^10 + 136x^9 + 141x^8 + 113x^7 + 76x^6 + 218x^5 + 43x^4 + 85x^3
+		+ 182x^2 + 31x + 52."
+		Whereas ISO/IEC 16022 Annex E states:
+		"The polynomial divisor for generating 10 check characters is:
+		g(x)=x^10 + 61x^9 + 110x^8 + 255x^7 + 116x^6 + 248x^5 + 223x^4 + 166x^3
+		+ 185x^2 + 24x + 28."
+		For this code I have assumed that ISO/IEC 16022 is correct and the USS Code One
+		specifications are incorrect
+		*/
+		
+		rs_init_gf(0x12d);
+		rs_init_code(c1_ecc_blocks[size - 1], 1);	
+		for(i = 0; i < data_blocks; i++) {
+			for(j = 0; j < c1_data_blocks[size - 1]; j++) {
+				
+				sub_data[j] = data[j * data_blocks + i];
+			}
+			rs_encode_long(c1_data_blocks[size - 1], sub_data, sub_ecc);
+			for(j = 0; j < c1_ecc_blocks[size - 1]; j++) {
+				ecc[c1_ecc_length[size - 1] - (j * data_blocks + i) - 1] = sub_ecc[j];
+			}
+		}
+		rs_free();
+		
+		/* "Stream" combines data and error correction data */
+		for(i = 0; i < data_length; i++) {
+			stream[i] = data[i];
+		}
+		for(i = 0; i < c1_ecc_length[size - 1]; i++) {
+			stream[data_length + i] = ecc[i];
+		}
 	
-	symbol->rows = c1_height[size - 1];
-	symbol->width = c1_width[size - 1];
+		for(i = 0; i < 136; i++) {
+			for(j = 0; j < 120; j++) {
+				datagrid[i][j] = '0';
+			}
+		}
+		
+		i = 0;
+		for(row = 0; row < c1_grid_height[size - 1]; row++) {
+			for(col = 0; col < c1_grid_width[size - 1]; col++) {
+				if(stream[i] & 0x80) { datagrid[row * 2][col * 4] = '1'; }
+				if(stream[i] & 0x40) { datagrid[row * 2][(col * 4) + 1] = '1'; }
+				if(stream[i] & 0x20) { datagrid[row * 2][(col * 4) + 2] = '1'; }
+				if(stream[i] & 0x10) { datagrid[row * 2][(col * 4) + 3] = '1'; }
+				if(stream[i] & 0x08) { datagrid[(row * 2) + 1][col * 4] = '1'; }
+				if(stream[i] & 0x04) { datagrid[(row * 2) + 1][(col * 4) + 1] = '1'; }
+				if(stream[i] & 0x02) { datagrid[(row * 2) + 1][(col * 4) + 2] = '1'; }
+				if(stream[i] & 0x01) { datagrid[(row * 2) + 1][(col * 4) + 3] = '1'; }
+				i++;
+			}
+		}
+		
+		/* for(i = 0; i < (c1_grid_height[size - 1] * 2); i++) {
+			for(j = 0; j < (c1_grid_width[size - 1] * 4); j++) {
+				printf("%c", datagrid[i][j]);
+			}
+			printf("\n");
+		} */
+		
+		symbol->rows = c1_height[size - 1];
+		symbol->width = c1_width[size - 1];
+	}
 	
 	switch(size) {
 		case 1: /* Version A */
@@ -1317,6 +1466,70 @@ int code_one(struct zint_symbol *symbol, unsigned char source[])
 			block_copy(symbol, datagrid, 68, 78, 68, 18, 12, 10);
 			block_copy(symbol, datagrid, 68, 96, 68, 18, 12, 12);
 			block_copy(symbol, datagrid, 68, 114, 68, 6, 12, 14);
+			break;
+		case 9: /* Version S */
+			horiz(symbol, 5, 1);
+			horiz(symbol, 7, 1);
+			set_module(symbol, 6, 0);
+			set_module(symbol, 6, symbol->width - 1);
+			unset_module(symbol, 7, 1);
+			unset_module(symbol, 7, symbol->width - 2);
+			switch(sub_version) {
+				case 1: /* Version S-10 */
+					set_module(symbol, 0, 5);
+					block_copy(symbol, datagrid, 0, 0, 4, 5, 0, 0);
+					block_copy(symbol, datagrid, 0, 5, 4, 5, 0, 1);
+					break;
+				case 2: /* Version S-20 */
+					set_module(symbol, 0, 10);
+					set_module(symbol, 4, 10);
+					block_copy(symbol, datagrid, 0, 0, 4, 10, 0, 0);
+					block_copy(symbol, datagrid, 0, 10, 4, 10, 0, 1);
+					break;
+				case 3: /* Version S-30 */
+					set_module(symbol, 0, 15);
+					set_module(symbol, 4, 15);
+					set_module(symbol, 6, 15);
+					block_copy(symbol, datagrid, 0, 0, 4, 15, 0, 0);
+					block_copy(symbol, datagrid, 0, 15, 4, 15, 0, 1);
+					break;
+			}
+			break;
+		case 10: /* Version T */
+			horiz(symbol, 11, 1);
+			horiz(symbol, 13, 1);
+			horiz(symbol, 15, 1);
+			set_module(symbol, 12, 0);
+			set_module(symbol, 12, symbol->width - 1);
+			set_module(symbol, 14, 0);
+			set_module(symbol, 14, symbol->width - 1);
+			unset_module(symbol, 13, 1);
+			unset_module(symbol, 13, symbol->width - 2);
+			unset_module(symbol, 15, 1);
+			unset_module(symbol, 15, symbol->width - 2);
+			switch(sub_version) {
+				case 1: /* Version T-16 */
+					set_module(symbol, 0, 8);
+					set_module(symbol, 10, 8);
+					block_copy(symbol, datagrid, 0, 0, 10, 8, 0, 0);
+					block_copy(symbol, datagrid, 0, 8, 10, 8, 0, 1);
+					break;
+				case 2: /* Version T-32 */
+					set_module(symbol, 0, 16);
+					set_module(symbol, 10, 16);
+					set_module(symbol, 12, 16);
+					block_copy(symbol, datagrid, 0, 0, 10, 16, 0, 0);
+					block_copy(symbol, datagrid, 0, 16, 10, 16, 0, 1);
+					break;
+				case 3: /* Verion T-48 */
+					set_module(symbol, 0, 24);
+					set_module(symbol, 10, 24);
+					set_module(symbol, 12, 24);
+					set_module(symbol, 14, 24);
+					block_copy(symbol, datagrid, 0, 0, 10, 24, 0, 0);
+					block_copy(symbol, datagrid, 0, 24, 10, 24, 0, 1);
+					break;
+			}
 			break;
 	}
 	
