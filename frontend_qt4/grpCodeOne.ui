@@ -1,0 +1,126 @@
+<ui version="4.0" >
+ <class>grpChannel</class>
+ <widget class="QWidget" name="grpChannel" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>310</width>
+    <height>78</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout" >
+     <item>
+      <widget class="QLabel" name="lblChannel" >
+       <property name="text" >
+        <string>Symbol Size:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="cmbC1Size" >
+       <item>
+        <property name="text" >
+         <string>Automatic</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>16 x 18 (Version A)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>22 x 22 (Version B)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>28 x 32 (Version C)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>40 x 42 (Version D)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>52 x 54 (Version E)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>70 x 76 (Version F)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>104 x 98 (Version G)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>148 x 134 (Version H)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>9 x 13 (Version S-10)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>9 x 23 (Version S-20)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>9 x 33 (Version S-30)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>17 x 19 (Version T-16)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>17 x 35 (Version T-32)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>17 x 51 (Version T-48)</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <spacer name="verticalSpacer" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>30</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
