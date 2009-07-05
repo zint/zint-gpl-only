@@ -281,7 +281,7 @@ int c1_encode(struct zint_symbol *symbol, unsigned char source[], unsigned int t
 	int text_buffer[6], text_p;
 	int edi_buffer[6], edi_p;
 	char decimal_binary[40];
-	int byte_start;
+	int byte_start = 0;
 	
 	if(symbol->nullchar != 0x00) {
 		for(i = 0; i < inputlen; i++) {
@@ -1036,15 +1036,11 @@ int code_one(struct zint_symbol *symbol, unsigned char source[])
 		return ERROR_TOO_LONG;
 	}
 	
-	printf("len: %d\n", data_length);
-	
 	for(i = 7; i >= 0; i--) {
 		if(c1_data_length[i] >= data_length) {
 			size = i + 1;
 		}
 	}
-	
-	printf("size %d\n", size);
 	
 	if(symbol->option_2 > size) {
 		size = symbol->option_2;
@@ -1061,7 +1057,28 @@ int code_one(struct zint_symbol *symbol, unsigned char source[])
 	
 	data_blocks = c1_blocks[size - 1];
 	
-	rs_init_gf(0x12D);
+	/*
+	Section 2.2.5.1 states:
+	   "The polynomial arithmetic... is calculated using bit-wise modulo 2 arithmetic
+	    and byte-wise modulo 100101101 arithmetic (this is a Galois Field of 2^8 with
+	    100101101 representing the field's prime modulus polynomial:
+	    x^8 + x^5 + x^3 + x^2 + 1)."
+	This is the same as Data Matrix (ISO/IEC 16022) however the calculations in Appendix F
+	of the Code One specification do not agree with those in Annex E of ISO/IEC 16022.
+	For example Code One Appendix F states:
+	   "The polynomial divisor for generating ten check characters for Version T-16
+	    and Version A is:
+	    g(x)=x^10 + 136x^9 + 141x^8 + 113x^7 + 76x^6 + 218x^5 + 43x^4 + 85x^3
+	    + 182x^2 + 31x + 52."
+	Whereas ISO/IEC 16022 Annex E states:
+	   "The polynomial divisor for generating 10 check characters is:
+	    g(x)=x^10 + 61x^9 + 110x^8 + 255x^7 + 116x^6 + 248x^5 + 223x^4 + 166x^3
+	    + 185x^2 + 24x + 28."
+	For this code I have assumed that ISO/IEC 16022 is correct and the USS Code One
+	specifications are incorrect
+	*/
+	
+	rs_init_gf(0x12d);
 	rs_init_code(c1_ecc_blocks[size - 1], 1);	
 	for(i = 0; i < data_blocks; i++) {
 		for(j = 0; j < c1_data_blocks[size - 1]; j++) {
@@ -1104,17 +1121,12 @@ int code_one(struct zint_symbol *symbol, unsigned char source[])
 		}
 	}
 	
-	for(i = 0; i < (c1_grid_height[size - 1] * 2); i++) {
+	/* for(i = 0; i < (c1_grid_height[size - 1] * 2); i++) {
 		for(j = 0; j < (c1_grid_width[size - 1] * 4); j++) {
 			printf("%c", datagrid[i][j]);
 		}
 		printf("\n");
-	}
-	
-	for(i = 0; i < c1_ecc_length[size - 1] + data_length; i++) {
-		printf("%d ",stream[i]);
-	}
-	printf("\n");
+	} */
 	
 	symbol->rows = c1_height[size - 1];
 	symbol->width = c1_width[size - 1];
