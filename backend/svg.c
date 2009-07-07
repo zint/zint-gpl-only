@@ -284,8 +284,8 @@ int svg_plot(struct zint_symbol *symbol)
 				do {
 					block_width++;
 				} while (module_is_set(symbol, this_row, i + block_width) == module_is_set(symbol, this_row, i));
-				if((addon_latch == 0) && (r == 0) && (i > main_width)) {
-					addon_text_posn = 9.0 + symbol->border_width;
+				if((addon_latch == 0) && (r == (symbol->rows - 1)) && (i > main_width)) {
+					addon_text_posn = (row_posn + 8.0) * scaler;
 					addon_latch = 1;
 				} 
 				if(latch == 1) { 
