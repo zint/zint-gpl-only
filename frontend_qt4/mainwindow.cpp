@@ -20,7 +20,6 @@
 #include <QColorDialog>
 #include <QUiLoader>
 #include <QFile>
-#include <QClipboard>
 
 #include "mainwindow.h"
 #include <stdio.h>
@@ -126,7 +125,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 	connect(btnSave, SIGNAL(clicked( bool )), SLOT(save()));
 	connect(spnScale, SIGNAL(valueChanged( double )), SLOT(change_print_scale()));
 	connect(btnExit, SIGNAL(clicked( bool )), SLOT(quit_now()));
-	connect(btnCopy, SIGNAL(clicked( bool )), SLOT(copy_to_clipboard()));
 }
 
 MainWindow::~MainWindow()
@@ -156,18 +154,6 @@ bool MainWindow::save()
 		QMessageBox::critical(this,tr("Save Error"),m_bc.bc.error_message());
 	}
 	return status;
-}
-
-void MainWindow::copy_to_clipboard()
-{
-	QClipboard *clipboard = QApplication::clipboard();
-	QString clip_data_str = m_bc.bc.copy_to_clipboard();
-	QByteArray clip_data_ba = clip_data_str.toUtf8();
-	QMimeData *clip_data_mime = new QMimeData;
-	clip_data_mime->setData("image/svg+xml", clip_data_ba);
-	clipboard->setMimeData(clip_data_mime, QClipboard::Clipboard);
-	
-	return;
 }
 
 void MainWindow::about()
