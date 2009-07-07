@@ -566,16 +566,6 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="btnCopy" >
-       <property name="enabled" >
-        <bool>true</bool>
-       </property>
-       <property name="text" >
-        <string>Copy</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="btnExit" >
        <property name="text" >
         <string>E&amp;xit</string>
