@@ -122,7 +122,7 @@ private slots:
 	bool save();
 	void about();
 	void quit_now();
-
+	void copy_to_clipboard();
 
 private:
 /*	void createActions();

@@ -87,9 +87,16 @@ public:
 	bool hasErrors();
 
 	bool save_to_file(QString filename);
+	QString copy_to_clipboard();
 private:
 	void encode();
-	int module_set(int y_coords, int x_coords);
+	int module_set(int y_coord, int x_coord);
+	void to_upper(unsigned char source[]);
+	int ustrlen(unsigned char data[]);
+	int ctoi(char source);
+	int is_stackable(int symbology);
+	int is_extendable(int symbology);
+	int roundup(float input);
 
 private:
 	int m_symbol;
