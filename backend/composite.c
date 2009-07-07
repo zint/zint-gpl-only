@@ -1692,6 +1692,66 @@ int cc_binary_string(struct zint_symbol *symbol, const char source[], char binar
 	return 0;
 }
 
+void add_leading_zeroes(struct zint_symbol *symbol)
+{
+	char source[100];
+	char first_part[20], second_part[20], zfirst_part[20], zsecond_part[20];
+	int with_addon = 0;
+	int first_len = 0, second_len = 0, zfirst_len = 0, zsecond_len = 0, i;
+	
+	strcpy(source, symbol->primary);
+	for(i = 0; i < strlen(source); i++) {
+		if(source[i] == '+') {
+			with_addon = 1;
+		} else {
+			if(with_addon == 0) {
+				first_len++;
+			} else {
+				second_len++;
+			}
+		}
+	}
+	
+	strcpy(first_part, "");
+	strcpy(second_part, "");
+	strcpy(zfirst_part, "");
+	strcpy(zsecond_part, "");
+	
+	/* Split input into two strings */
+	for(i = 0; i < first_len; i++) {
+		first_part[i] = source[i];
+		first_part[i + 1] = '\0';
+	}
+	
+	for(i = 0; i < second_len; i++) {
+		second_part[i] = source[i + first_len + 1];
+		second_part[i + 1] = '\0';
+	}
+	
+	/* Calculate target lengths */
+	if(first_len <= 12) { zfirst_len = 12; }
+	if(first_len <= 7) { zfirst_len = 7; }
+	if(second_len <= 5) { zsecond_len = 5; }
+	if(second_len <= 2) { zsecond_len = 2; }
+	if(second_len == 0) { zsecond_len = 0; }
+	
+	/* Add leading zeroes */
+	for(i = 0; i < (zfirst_len - first_len); i++) {
+		concat(zfirst_part, "0");
+	}
+	concat(zfirst_part, first_part);
+	for(i = 0; i < (zsecond_len - second_len); i++) {
+		concat(zsecond_part, "0");
+	}
+	concat(zsecond_part, second_part);
+	
+	strcpy(symbol->primary, zfirst_part);
+	if(zsecond_len != 0) {
+		concat(symbol->primary, "+");
+		concat(symbol->primary, zsecond_part);
+	}
+}
+
 int composite(struct zint_symbol *symbol, unsigned char source[])
 {
 	int error_number, cc_mode, cc_width, ecc_level;
@@ -1708,10 +1768,14 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 
 	error_number = 0;
 	separator_row = 0;
-	
+
 	if(strlen(symbol->primary) == 0) {
 		strcpy(symbol->errtxt, "No primary (linear) message in 2D composite");
 		return ERROR_INVALID_OPTION;
+	}
+
+	if(symbol->symbology == BARCODE_EANX_CC) {
+		add_leading_zeroes(symbol);
 	}
 	
 	if(ustrlen(source) > 2990) {
