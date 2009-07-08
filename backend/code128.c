@@ -588,7 +588,7 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 	char set[170], mode, last_set;
 	float glyph_count;
 	char dest[1000];
-	int separator_row, linkage_flag;
+	int separator_row, linkage_flag, c_count;
 #ifndef _MSC_VER
         char reduced[ustrlen(source)];
 #else
@@ -655,29 +655,7 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 	
 	dxsmooth(&indexliste);
 	
-	/* Resolve odd length LATCHC blocks */
-	if((list[1][0] == LATCHC) && ((list[0][0] % 2) == 1)) {
-		/* Rule 2 */
-		list[0][1]++;
-		list[0][0]--;
-		if(indexliste == 1) {
-			list[0][1] = 1;
-			list[1][1] = LATCHB;
-			indexliste = 2;
-		}
-	}	
-	if(indexliste > 1) {
-		for(i = 1; i < indexliste; i++) {
-			if((list[1][i] == LATCHC) && ((list[0][i] % 2) == 1)) {
-				/* Rule 3b */
-				list[0][i - 1]++;
-				list[0][i]--;
-			}
-		}
-	}
-	
 	/* Put set data into set[] */
-	
 	read = 0;
 	for(i = 0; i < indexliste; i++) {
 		for(j = 0; j < list[0][i]; j++) {
@@ -691,20 +669,29 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 			read++;
 		}
 	}
-	
-	/* We have a problem with FNC1 in Code Set C to resolve */
+
+	/* Watch out for odd-length Mode C blocks */
+	c_count = 0;
 	for(i = 0; i < read; i++) {
-		if((set[i] == 'C') && (reduced[i] == '[')) {
-			int c_count;
-			
+		if(set[i] == 'C') {
+			if(reduced[i] == '[') {
+				if(c_count % 2) {
+					set[i - c_count] = 'B';
+					c_count = 0;
+				} else {
+					c_count += 2;
+				}
+			} else {
+				c_count++;
+			}
+		} else {
+			if(c_count % 2)
+				set[i - c_count] = 'B';
 			c_count = 0;
-			for(j = 0; j < i; j++) {
-				if(set[j] == 'C') { c_count++; } else { c_count = 0; }
-			}
-			if((c_count % 2) == 1) {
-				set[i - 1] = 'B';
-			}
 		}
+	}
+	if(c_count % 2) {
+		set[i - c_count] = 'B';
 	}
 	
 	/* Now we can calculate how long the barcode is going to be - and stop it from
@@ -754,7 +741,7 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 	concat(dest, C128Table[102]);
 	values[1] = 102;
 	bar_characters++;
-	
+
 	/* Encode the data */
 	read = 0;
 	do {
