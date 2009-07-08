@@ -871,7 +871,7 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 	/* Add the separator pattern for composite symbols */
 	if(symbol->symbology == BARCODE_EAN128_CC) {
 		for(i = 0; i < symbol->width; i++) {
-			if(module_is_set(symbol, separator_row + 1, i)) {
+			if(!(module_is_set(symbol, separator_row + 1, i))) {
 				set_module(symbol, separator_row, i);
 			}
 		}
