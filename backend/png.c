@@ -675,11 +675,11 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 				textdone = 1;
 				switch(strlen(addon)) {
 					case 2:	
-						textpos = scaler * (symbol->width + xoffset - 10);
+						textpos = scaler * (xoffset + 86);
 						draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * scaler) - 13, image_width, image_height);
 						break;
 					case 5:
-						textpos = scaler * (symbol->width + xoffset - 23);
+						textpos = scaler * (xoffset + 100);
 						draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * scaler) - 13, image_width, image_height);
 						break;
 				}
@@ -714,11 +714,11 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 				textdone = 1;
 				switch(strlen(addon)) {
 					case 2:	
-						textpos = scaler * (symbol->width + xoffset - 10);
+						textpos = scaler * (xoffset + 114);
 						draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * scaler) - 13, image_width, image_height);
 						break;
 					case 5:
-						textpos = scaler * (symbol->width + xoffset - 23);
+						textpos = scaler * (xoffset + 128);
 						draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * scaler) - 13, image_width, image_height);
 						break;
 				}
@@ -789,11 +789,11 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 		textdone = 1;
 		switch(strlen(addon)) {
 			case 2:	
-				textpos = scaler * (symbol->width + xoffset - 10);
+				textpos = scaler * (xoffset + 116);
 				draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * scaler) - 13, image_width, image_height);
 				break;
 			case 5:
-				textpos = scaler * (symbol->width + xoffset - 23);
+				textpos = scaler * (xoffset + 130);
 				draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * scaler) - 13, image_width, image_height);
 				break;
 		}
@@ -825,11 +825,11 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 		textdone = 1;
 		switch(strlen(addon)) {
 			case 2:	
-				textpos = scaler * (symbol->width + xoffset - 10);
+				textpos = scaler * (xoffset + 70);
 				draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * scaler) - 13, image_width, image_height);
 				break;
 			case 5:
-				textpos = scaler * (symbol->width + xoffset - 23);
+				textpos = scaler * (xoffset + 84);
 				draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * scaler) - 13, image_width, image_height);
 				break;
 		}
