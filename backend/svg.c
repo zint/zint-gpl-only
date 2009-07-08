@@ -344,14 +344,14 @@ int svg_plot(struct zint_symbol *symbol)
 				textdone = 1;
 				switch(strlen(addon)) {
 					case 2:	
-						textpos = symbol->width + xoffset - 10;
+						textpos = xoffset + 86;
 						fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", textpos * scaler, addon_text_posn * scaler);
 						fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 11.0 * scaler, symbol->fgcolour);
 						fprintf(fsvg, "         %s\n", addon);
 						fprintf(fsvg, "      </text>\n");
 						break;
 					case 5:
-						textpos = symbol->width + xoffset - 23;
+						textpos = xoffset + 100;
 						fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", textpos * scaler, addon_text_posn * scaler);
 						fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 11.0 * scaler, symbol->fgcolour);
 						fprintf(fsvg, "         %s\n", addon);
@@ -397,14 +397,14 @@ int svg_plot(struct zint_symbol *symbol)
 				textdone = 1;
 				switch(strlen(addon)) {
 					case 2:	
-						textpos = symbol->width + xoffset - 10;
+						textpos = xoffset + 114;
 						fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", textpos * scaler, addon_text_posn * scaler);
 						fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 11.0 * scaler, symbol->fgcolour);
 						fprintf(fsvg, "         %s\n", addon);
 						fprintf(fsvg, "      </text>\n");
 						break;
 					case 5:
-						textpos = symbol->width + xoffset - 23;
+						textpos = xoffset + 128;
 						fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", textpos * scaler, addon_text_posn * scaler);
 						fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 11.0 * scaler, symbol->fgcolour);
 						fprintf(fsvg, "         %s\n", addon);
@@ -490,14 +490,14 @@ int svg_plot(struct zint_symbol *symbol)
 		textdone = 1;
 		switch(strlen(addon)) {
 			case 2:	
-				textpos = symbol->width + xoffset - 10;
+				textpos = xoffset + 116;
 				fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", textpos * scaler, addon_text_posn * scaler);
 				fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 11.0 * scaler, symbol->fgcolour);
 				fprintf(fsvg, "         %s\n", addon);
 				fprintf(fsvg, "      </text>\n");
 				break;
 			case 5:
-				textpos = symbol->width + xoffset - 23;
+				textpos = xoffset + 130;
 				fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", textpos * scaler, addon_text_posn * scaler);
 				fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 11.0 * scaler, symbol->fgcolour);
 				fprintf(fsvg, "         %s\n", addon);
@@ -540,14 +540,14 @@ int svg_plot(struct zint_symbol *symbol)
 		textdone = 1;
 		switch(strlen(addon)) {
 			case 2:	
-				textpos = symbol->width + xoffset - 10;
+				textpos = xoffset + 70;
 				fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", textpos * scaler, addon_text_posn * scaler);
 				fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 11.0 * scaler, symbol->fgcolour);
 				fprintf(fsvg, "         %s\n", addon);
 				fprintf(fsvg, "      </text>\n");
 				break;
 			case 5:
-				textpos = symbol->width + xoffset - 23;
+				textpos = xoffset + 84;
 				fprintf(fsvg, "      <text x=\"%.2f\" y=\"%.2f\" text-anchor=\"middle\"\n", textpos * scaler, addon_text_posn * scaler);
 				fprintf(fsvg, "         font-family=\"Helvetica\" font-size=\"%.1f\" fill=\"#%s\" >\n", 11.0 * scaler, symbol->fgcolour);
 				fprintf(fsvg, "         %s\n", addon);
