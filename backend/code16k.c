@@ -186,7 +186,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	float glyph_count;
 	int errornum, first_sum, second_sum;
 	int input_length;
-	int gs1;
+	int gs1, c_count;
 
 	errornum = 0;
 	input_length = ustrlen(source);
@@ -269,26 +269,6 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	
 	dxsmooth16(&indexliste);
 	
-	/* Resolve odd length LATCHC blocks */
-	if((list[1][0] == LATCHC) && ((list[0][0] % 2) == 1)) {
-		for(i = indexliste; i > 0; i--) {
-			list[0][i] = list[0][i - 1];
-			list[1][i] = list[1][i - 1];
-		}
-		list[0][1]--;
-		list[0][0] = 1;
-		list[1][0] = LATCHB;
-		indexliste++;
-	}
-	if(indexliste > 1) {
-		for(i = 1; i < indexliste; i++) {
-			if((list[1][i] == LATCHC) && ((list[0][i] % 2) == 1)) {
-				list[0][i - 1]++;
-				list[0][i]--;
-			}
-		}
-	}
-	
 	/* Put set data into set[] */
 	read = 0;
 	for(i = 0; i < indexliste; i++) {
@@ -321,20 +301,23 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 		} while (set[i] == 'b');
 	}
 	
-	/* We have a problem with FNC1 in Code Set C to resolve */
-	for(i = 0; i < input_length; i++) {
-		if((set[i] == 'C') && (source[i] == '[')) {
-			int c_count;
-			
+	/* Watch out for odd-length Mode C blocks */
+	c_count = 0;
+	for(i = 0; i < read; i++) {
+		if(set[i] == 'C') {
+			if((reduced[i] == '[') && gs1) {
+				if(c_count % 2) { set[i - c_count] = 'B'; }
+				c_count = 0;
+			} else {
+				c_count++;
+			}
+		} else {
+			if(c_count % 2) { set[i - c_count] = 'B'; }
 			c_count = 0;
-			for(j = 0; j < i; j++) {
-				if(set[j] == 'C') { c_count++; } else { c_count = 0; }
-			}
-			if((c_count % 2) == 1) {
-				set[i - 1] = 'B';
-			}
 		}
 	}
+	if(c_count % 2) { set[i - c_count] = 'B'; }
+
 	
 	/* Make sure the data will fit in the symbol */
 	last_set = ' ';
