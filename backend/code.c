@@ -383,6 +383,8 @@ int c93(struct zint_symbol *symbol, unsigned char source[])
 	error_number = 0;
 	strcpy(dest, "");
 
+	strcpy(local_source, (char *) source);
+	
 	if(ustrlen(local_source) > 45) {
 		/* This stops rediculously long input - the actual length of the barcode
 		depends on the type of data */
