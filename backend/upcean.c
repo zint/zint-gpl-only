@@ -529,13 +529,18 @@ void ean_leading_zeroes(struct zint_symbol *symbol, unsigned char source[], unsi
 	}
 	
 	/* Calculate target lengths */
+	if(second_len <= 5) { zsecond_len = 5; }
+	if(second_len <= 2) { zsecond_len = 2; }
+	if(second_len == 0) { zsecond_len = 0; }
 	switch(symbol->symbology) {
 		case BARCODE_EANX:
 		case BARCODE_EANX_CC:
 			if(first_len <= 12) { zfirst_len = 12; }
 			if(first_len <= 7) { zfirst_len = 7; }
-			if(first_len <= 5) { zfirst_len = 5; }
-			if(first_len <= 2) { zfirst_len = 2; }
+			if(second_len == 0) {
+				if(first_len <= 5) { zfirst_len = 5; }
+				if(first_len <= 2) { zfirst_len = 2; }
+			}
 			break;
 		case BARCODE_UPCA:
 		case BARCODE_UPCA_CC:
@@ -550,9 +555,7 @@ void ean_leading_zeroes(struct zint_symbol *symbol, unsigned char source[], unsi
 			if(first_len <= 9) { zfirst_len = 9; }
 			break;
 	}
-	if(second_len <= 5) { zsecond_len = 5; }
-	if(second_len <= 2) { zsecond_len = 2; }
-	if(second_len == 0) { zsecond_len = 0; }
+
 	
 	/* Add leading zeroes */
 	for(i = 0; i < (zfirst_len - first_len); i++) {
