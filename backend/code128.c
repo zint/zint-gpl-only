@@ -675,24 +675,21 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 	for(i = 0; i < read; i++) {
 		if(set[i] == 'C') {
 			if(reduced[i] == '[') {
-				if(c_count % 2) {
-					set[i - c_count] = 'B';
-					c_count = 0;
-				} else {
-					c_count += 2;
-				}
+				if(c_count % 2) { set[i - c_count] = 'B'; }
+				c_count = 0;
 			} else {
 				c_count++;
 			}
 		} else {
-			if(c_count % 2)
-				set[i - c_count] = 'B';
+			if(c_count % 2) { set[i - c_count] = 'B'; }
 			c_count = 0;
 		}
 	}
-	if(c_count % 2) {
-		set[i - c_count] = 'B';
-	}
+	if(c_count % 2) { set[i - c_count] = 'B'; }
+
+	/* for(i = 0; i < read; i++) {
+		printf("char %c  mode %c\n", reduced[i], set[i]);
+	} */
 	
 	/* Now we can calculate how long the barcode is going to be - and stop it from
 	being too long */
