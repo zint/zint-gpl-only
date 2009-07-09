@@ -305,7 +305,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	c_count = 0;
 	for(i = 0; i < read; i++) {
 		if(set[i] == 'C') {
-			if((reduced[i] == '[') && gs1) {
+			if((source[i] == '[') && gs1) {
 				if(c_count % 2) { set[i - c_count] = 'B'; }
 				c_count = 0;
 			} else {
