@@ -25,8 +25,8 @@
 #include "common.h"
 #include "code49.h"
 
-#define INSET	"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%!&"
-/* "!" represents Shift 1 and "&" represents Shift 2 */
+#define INSET	"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%!&*"
+/* "!" represents Shift 1 and "&" represents Shift 2, "*" represents FNC1 */
 
 int code_49(struct zint_symbol *symbol, unsigned char source[])
 {
@@ -37,11 +37,13 @@ int code_49(struct zint_symbol *symbol, unsigned char source[])
 	int w_grid[8][4]; /* Refets to table 2 */
 	int pad_count = 0;
 	char pattern[40];
+	int gs1;
 
 	if(ustrlen(source) > 81) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
+	if(symbol->input_mode == GS1_MODE) { gs1 = 1; } else { gs1 = 0; }
 
 	strcpy(intermediate, "");
 	for(i = 0; i < ustrlen(source); i++) {
@@ -49,10 +51,17 @@ int code_49(struct zint_symbol *symbol, unsigned char source[])
 			strcpy(symbol->errtxt, "Invalid characters in input data");
 			return ERROR_INVALID_DATA;
 		}
+		if(gs1 && (i = 0)) {
+			concat(intermediate, "*"); /* FNC1 */
+		}
 		if(source[i] == symbol->nullchar) {
 			concat(intermediate, c49_table7[0]);
 		} else {
-			concat(intermediate, c49_table7[source[i]]);
+			if(gs1 && (source[i] == '[')) {
+				concat(intermediate, "*"); /* FNC1 */
+			} else {
+				concat(intermediate, c49_table7[source[i]]);
+			}
 		}
 	}
 
