@@ -704,6 +704,11 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[])
 			set[i - 1] = 'B';
 		}
 	}
+	for(i = 1; i < read - 1; i++) {
+		if((set[i] == 'C') && ((set[i - 1] == 'B') && (set[i + 1] == 'B'))) {
+			set[i] = 'B';
+		}
+	}
 
 	/* for(i = 0; i < read; i++) {
 		printf("char %c  mode %c\n", reduced[i], set[i]);
