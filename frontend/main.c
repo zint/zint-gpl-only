@@ -84,6 +84,7 @@ void usage(void)
 		"  --scale=NUMBER        Adjust size of output image.\n"
 		"  --directpng           Send PNG output to stdout\n"
 		"  --directeps           Send EPS output to stdout\n"
+		"  --directsvg           Send SVG output to stdout\n"
 		"  --rotate=NUMBER       Rotate symbol (PNG output only).\n"
 		"  --cols=NUMBER         (PDF417) Number of columns.\n"
 		"  --vers=NUMBER         (QR Code) Version\n"
