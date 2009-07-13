@@ -1171,7 +1171,7 @@ int code_one(struct zint_symbol *symbol, unsigned char source[])
 	}
 		
 	if((symbol->option_2 != 9) && (symbol->option_2 != 10)) {
-		/* Version A to H or T */
+		/* Version A to H */
 		unsigned int data[1500], ecc[600];
 		unsigned int sub_data[190], sub_ecc[75];
 		unsigned int stream[2100];

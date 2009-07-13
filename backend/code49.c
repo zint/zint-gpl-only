@@ -51,7 +51,7 @@ int code_49(struct zint_symbol *symbol, unsigned char source[])
 			strcpy(symbol->errtxt, "Invalid characters in input data");
 			return ERROR_INVALID_DATA;
 		}
-		if(gs1 && (i = 0)) {
+		if(gs1 && (i == 0)) {
 			concat(intermediate, "*"); /* FNC1 */
 		}
 		if(source[i] == symbol->nullchar) {
