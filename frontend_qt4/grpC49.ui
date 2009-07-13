@@ -1,0 +1,52 @@
+<ui version="4.0" >
+ <class>grpC16k</class>
+ <widget class="QWidget" name="grpC16k" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>186</width>
+    <height>123</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <item>
+    <widget class="QRadioButton" name="radC49Stand" >
+     <property name="text" >
+      <string>Standard Mode</string>
+     </property>
+     <property name="checked" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QRadioButton" name="radC49GS1" >
+     <property name="text" >
+      <string>GS-1 Data Mode</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>60</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+  <zorder>radC49Stand</zorder>
+  <zorder>radC49GS1</zorder>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

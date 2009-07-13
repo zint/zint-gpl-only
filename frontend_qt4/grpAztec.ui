@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ui version="4.0">
+<ui version="4.0" >
  <class>grpAztec</class>
- <widget class="QWidget" name="grpAztec">
-  <property name="geometry">
+ <widget class="QWidget" name="grpAztec" >
+  <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
@@ -10,277 +9,265 @@
     <height>237</height>
    </rect>
   </property>
-  <property name="windowTitle">
+  <property name="windowTitle" >
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout" >
    <item>
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0">
-      <widget class="QRadioButton" name="radAztecAuto">
-       <property name="text">
+    <layout class="QGridLayout" name="gridLayout" >
+     <item row="0" column="0" >
+      <widget class="QRadioButton" name="radAztecAuto" >
+       <property name="text" >
         <string>Automatic Resizing</string>
        </property>
-       <property name="checked">
+       <property name="checked" >
         <bool>true</bool>
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QRadioButton" name="radAztecSize">
-       <property name="text">
+     <item row="1" column="0" >
+      <widget class="QRadioButton" name="radAztecSize" >
+       <property name="text" >
         <string>Adjust Size To:</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="QComboBox" name="cmbAztecSize">
-       <property name="enabled">
+     <item row="1" column="1" >
+      <widget class="QComboBox" name="cmbAztecSize" >
+       <property name="enabled" >
         <bool>false</bool>
        </property>
        <item>
-        <property name="text">
-         <string>15 x 15*</string>
+        <property name="text" >
+         <string>15 x 15 Compact</string>
         </property>
        </item>
        <item>
-        <property name="text">
-         <string>19 x 19*</string>
+        <property name="text" >
+         <string>19 x 19 Compact</string>
         </property>
        </item>
        <item>
-        <property name="text">
-         <string>23 x 23*</string>
+        <property name="text" >
+         <string>23 x 23 Compact</string>
         </property>
        </item>
        <item>
-        <property name="text">
-         <string>27 x 27*</string>
+        <property name="text" >
+         <string>27 x 27 Compact</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>19 x 19</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>23 x 23</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>27 x 27</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>31 x 31</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>37 x 37</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>41 x 41</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>45 x 45</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>49 x 49</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>53 x 53</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>57 x 57</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>61 x 61</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>67 x 67</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>71 x 71</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>75 x 75</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>79 x 79</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>83 x 83</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>87 x 87</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>91 x 91</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>95 x 95</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>101 x 101</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>105 x 105</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>109 x 109</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>113 x 113</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>117 x 117</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>121 x 121</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>125 x 125</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>131 x 131</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>135 x 135</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>139 x 139</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>143 x 143</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>147 x 147</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>151 x 151</string>
         </property>
        </item>
       </widget>
      </item>
-     <item row="2" column="0">
-      <widget class="QRadioButton" name="radAztecECC">
-       <property name="text">
+     <item row="2" column="0" >
+      <widget class="QRadioButton" name="radAztecECC" >
+       <property name="text" >
         <string>Add Minimum Error Correction:</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="QComboBox" name="cmbAztecECC">
-       <property name="enabled">
+     <item row="2" column="1" >
+      <widget class="QComboBox" name="cmbAztecECC" >
+       <property name="enabled" >
         <bool>false</bool>
        </property>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>10% + 3 words</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>23% + 3 words</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>36% + 3 words</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>50% + 3 words</string>
         </property>
        </item>
       </widget>
      </item>
-     <item row="3" column="0">
-      <widget class="QCheckBox" name="chkAztecMode">
-       <property name="text">
+     <item row="3" column="0" >
+      <widget class="QCheckBox" name="chkAztecMode" >
+       <property name="text" >
         <string>Encode as GS-1 Data</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0" colspan="2">
-      <widget class="QLabel" name="lblAztecNote">
-       <property name="text">
-        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;* An asterisk indicates a &quot;compact&quot; symbol;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;the rest are &quot;full range&quot; symbols.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
      </item>
     </layout>
    </item>
    <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
+    <spacer name="verticalSpacer" >
+     <property name="orientation" >
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" stdset="0">
+     <property name="sizeHint" stdset="0" >
       <size>
        <width>20</width>
        <height>53</height>
@@ -298,11 +285,11 @@ p, li { white-space: pre-wrap; }
    <receiver>cmbAztecSize</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel">
+    <hint type="sourcelabel" >
      <x>85</x>
      <y>47</y>
     </hint>
-    <hint type="destinationlabel">
+    <hint type="destinationlabel" >
      <x>331</x>
      <y>47</y>
     </hint>
@@ -314,11 +301,11 @@ p, li { white-space: pre-wrap; }
    <receiver>cmbAztecECC</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel">
+    <hint type="sourcelabel" >
      <x>200</x>
      <y>80</y>
     </hint>
-    <hint type="destinationlabel">
+    <hint type="destinationlabel" >
      <x>366</x>
      <y>80</y>
     </hint>

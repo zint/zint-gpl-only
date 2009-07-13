@@ -159,9 +159,9 @@ bool MainWindow::save()
 void MainWindow::about()
 {
 	QMessageBox::about(this, tr("About Zint"),
-			   tr("<h2>Zint Barcode Studio 0.3</h2>"
+			   tr("<h2>Zint Barcode Studio 1.0</h2>"
 					   "<p>A simple barcode generator"
-					   "<p>Requires libzint 2.1.3 or greater."
+					   "<p>Requires libzint 2.2 or greater."
 					   "<p>Visit the <a href=\"http://www.zint.org.uk\">Zint Project Homepage</a> for more information."
 					   "<p>Copyright &copy; 2009 Robin Stuart &amp; Bogdan Vatra.<br>"
 					   "QR Code support by Kentaro Fukuchi.<br>"
@@ -405,8 +405,19 @@ void MainWindow::change_options()
 		file.close();
 		tabMain->insertTab(1,m_optionWidget,tr("Code One"));
 		connect(m_optionWidget->findChild<QObject*>("cmbC1Size"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("radC1GS1"), SIGNAL(toggled( bool )), SLOT(update_preview()));
 	}
 
+	if(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_CODE49)
+	{
+		QFile file(":/grpC49.ui");
+		if (!file.open(QIODevice::ReadOnly))
+			return;
+		m_optionWidget=uiload.load(&file);
+		file.close();
+		tabMain->insertTab(1,m_optionWidget,tr("Code 49"));
+		connect(m_optionWidget->findChild<QObject*>("radC49GS1"), SIGNAL(toggled( bool )), SLOT(update_preview()));
+	}
 
 	switch(metaObject()->enumerator(0).value(bstyle->currentIndex()))
 	{
@@ -725,7 +736,15 @@ void MainWindow::update_preview()
 			
 		case BARCODE_CODEONE:
 			m_bc.bc.setSymbol(BARCODE_CODEONE);
+			if(m_optionWidget->findChild<QRadioButton*>("radC1GS1")->isChecked())
+				m_bc.bc.setInputMode(GS1_MODE);
 			m_bc.bc.setWidth(m_optionWidget->findChild<QComboBox*>("cmbC1Size")->currentIndex());
+			break;
+			
+		case BARCODE_CODE49:
+			m_bc.bc.setSymbol(BARCODE_CODE49);
+			if(m_optionWidget->findChild<QRadioButton*>("radC49GS1")->isChecked())
+				m_bc.bc.setInputMode(GS1_MODE);
 			break;
 			
 		default:
