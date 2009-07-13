@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>310</width>
-    <height>78</height>
+    <height>124</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -85,6 +85,23 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QRadioButton" name="radC1Stand" >
+     <property name="text" >
+      <string>Standard Mode</string>
+     </property>
+     <property name="checked" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QRadioButton" name="radC1GS1" >
+     <property name="text" >
+      <string>GS-1 Data Mode</string>
+     </property>
+    </widget>
    </item>
    <item>
     <spacer name="verticalSpacer" >
