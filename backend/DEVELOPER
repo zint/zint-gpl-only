@@ -48,6 +48,9 @@ code.c:
 	LOGMARS
 	Channel Code
 
+code1.c:
+	Code One
+
 code49.c:
 	Code 49
 
