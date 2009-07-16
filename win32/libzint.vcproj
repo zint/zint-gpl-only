@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1250"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="libzint"
 	ProjectGUID="{63287BBA-3B4C-44A8-B538-B2E8530B2BE6}"
 	RootNamespace="libzint"
@@ -209,6 +209,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\backend\code1.c"
+				>
+			</File>
+			<File
 				RelativePath="..\backend\code128.c"
 				>
 			</File>
@@ -316,6 +320,10 @@
 			>
 			<File
 				RelativePath="..\backend\aztec.h"
+				>
+			</File>
+			<File
+				RelativePath="..\backend\code1.h"
 				>
 			</File>
 			<File
