@@ -914,10 +914,10 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 #ifndef _MSC_VER
-	unsigned int data_part[data_blocks], ecc_part[ecc_blocks];
+	unsigned int data_part[data_blocks + 3], ecc_part[ecc_blocks + 3];
 #else
-	unsigned int* data_part = (unsigned int*)_alloca(data_blocks * sizeof(unsigned int));
-	unsigned int* ecc_part = (unsigned int*)_alloca(ecc_blocks * sizeof(unsigned int));
+	unsigned int* data_part = (unsigned int*)_alloca((data_blocks + 3) * sizeof(unsigned int));
+	unsigned int* ecc_part = (unsigned int*)_alloca((ecc_blocks + 3) * sizeof(unsigned int));
 #endif
 	/* Copy across data into separate integers */
 	memset(data_part,0,(data_blocks + 2)*sizeof(int));
