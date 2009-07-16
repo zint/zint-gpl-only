@@ -16,7 +16,7 @@
    <item>
     <widget class="QRadioButton" name="radC49Stand" >
      <property name="text" >
-      <string>Standard Mode</string>
+      <string>S&amp;tandard Mode</string>
      </property>
      <property name="checked" >
       <bool>true</bool>
@@ -26,7 +26,7 @@
    <item>
     <widget class="QRadioButton" name="radC49GS1" >
      <property name="text" >
-      <string>GS-1 Data Mode</string>
+      <string>&amp;GS-1 Data Mode</string>
      </property>
     </widget>
    </item>
@@ -44,8 +44,6 @@
     </spacer>
    </item>
   </layout>
-  <zorder>radC49Stand</zorder>
-  <zorder>radC49GS1</zorder>
  </widget>
  <resources/>
  <connections/>

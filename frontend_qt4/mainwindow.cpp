@@ -125,11 +125,22 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 	connect(btnSave, SIGNAL(clicked( bool )), SLOT(save()));
 	connect(spnScale, SIGNAL(valueChanged( double )), SLOT(change_print_scale()));
 	connect(btnExit, SIGNAL(clicked( bool )), SLOT(quit_now()));
+	connect(btnReset, SIGNAL(clicked( bool )), SLOT(reset_view()));
 }
 
 MainWindow::~MainWindow()
 {
 }
+
+void MainWindow::reset_view()
+{
+	scaleSlider->setSliderPosition( 100 );
+	rotateSlider->setSliderPosition( 0 );
+	m_fgcolor=qRgb(0,0,0);
+	m_bgcolor=qRgb(0xff,0xff,0xff);
+	update_preview();
+}
+
 void MainWindow::scaleRotate()
 {
 	view->resetTransform();

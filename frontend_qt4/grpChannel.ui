@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<ui version="4.0">
+<ui version="4.0" >
  <class>grpChannel</class>
- <widget class="QWidget" name="grpChannel">
-  <property name="geometry">
+ <widget class="QWidget" name="grpChannel" >
+  <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
@@ -10,56 +9,59 @@
     <height>78</height>
    </rect>
   </property>
-  <property name="windowTitle">
+  <property name="windowTitle" >
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout" >
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout" >
      <item>
-      <widget class="QLabel" name="lblChannel">
-       <property name="text">
-        <string>Number of Channels:</string>
+      <widget class="QLabel" name="lblChannel" >
+       <property name="text" >
+        <string>&amp;Number of Channels:</string>
        </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       <property name="alignment" >
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy" >
+        <cstring>cmbChannel</cstring>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="cmbChannel">
+      <widget class="QComboBox" name="cmbChannel" >
        <item>
-        <property name="text">
+        <property name="text" >
          <string>Automatic</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>3</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>4</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>5</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>6</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>7</string>
         </property>
        </item>
        <item>
-        <property name="text">
+        <property name="text" >
          <string>8</string>
         </property>
        </item>
@@ -68,11 +70,11 @@
     </layout>
    </item>
    <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
+    <spacer name="verticalSpacer" >
+     <property name="orientation" >
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" stdset="0">
+     <property name="sizeHint" stdset="0" >
       <size>
        <width>20</width>
        <height>30</height>

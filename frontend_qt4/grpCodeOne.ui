@@ -18,10 +18,13 @@
      <item>
       <widget class="QLabel" name="lblChannel" >
        <property name="text" >
-        <string>Symbol Size:</string>
+        <string>S&amp;ymbol Size:</string>
        </property>
        <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy" >
+        <cstring>cmbC1Size</cstring>
        </property>
       </widget>
      </item>
@@ -89,7 +92,7 @@
    <item>
     <widget class="QRadioButton" name="radC1Stand" >
      <property name="text" >
-      <string>Standard Mode</string>
+      <string>S&amp;tandard Mode</string>
      </property>
      <property name="checked" >
       <bool>true</bool>
@@ -99,7 +102,7 @@
    <item>
     <widget class="QRadioButton" name="radC1GS1" >
      <property name="text" >
-      <string>GS-1 Data Mode</string>
+      <string>&amp;GS-1 Data Mode</string>
      </property>
     </widget>
    </item>
@@ -118,6 +121,11 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>cmbC1Size</tabstop>
+  <tabstop>radC1Stand</tabstop>
+  <tabstop>radC1GS1</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

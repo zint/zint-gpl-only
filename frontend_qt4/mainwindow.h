@@ -122,6 +122,7 @@ private slots:
 	bool save();
 	void about();
 	void quit_now();
+	void reset_view();
 
 private:
 /*	void createActions();
