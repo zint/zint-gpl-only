@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>749</width>
-    <height>744</height>
+    <height>747</height>
    </rect>
   </property>
   <property name="maximumSize" >
@@ -18,9 +18,19 @@
   <property name="windowTitle" >
    <string>Zint Barcode Studio</string>
   </property>
+  <property name="windowIcon" >
+   <iconset resource="resources.qrc" >
+    <normaloff>:/zico.png</normaloff>:/zico.png</iconset>
+  </property>
+  <property name="styleSheet" >
+   <string notr="true" >background-image: url(:/blueback.png);</string>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout_5" >
    <item>
     <widget class="QGroupBox" name="groupPreview" >
+     <property name="autoFillBackground" >
+      <bool>false</bool>
+     </property>
      <property name="title" >
       <string>Preview</string>
      </property>
@@ -32,6 +42,9 @@
           <width>0</width>
           <height>300</height>
          </size>
+        </property>
+        <property name="autoFillBackground" >
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -190,6 +203,12 @@
        <width>16777215</width>
        <height>350</height>
       </size>
+     </property>
+     <property name="autoFillBackground" >
+      <bool>false</bool>
+     </property>
+     <property name="styleSheet" >
+      <string notr="true" />
      </property>
      <property name="currentIndex" >
       <number>0</number>
