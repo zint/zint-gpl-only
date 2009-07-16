@@ -23,7 +23,7 @@
     <rect>
      <x>18</x>
      <y>15</y>
-     <width>400</width>
+     <width>413</width>
      <height>69</height>
     </rect>
    </property>
@@ -80,10 +80,13 @@
     <item row="0" column="0" >
      <widget class="QLabel" name="lblMaxiMode" >
       <property name="text" >
-       <string>Encoding Mode:</string>
+       <string>Encoding &amp;Mode:</string>
       </property>
       <property name="alignment" >
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+      </property>
+      <property name="buddy" >
+       <cstring>cmbMaxiMode</cstring>
       </property>
      </widget>
     </item>
@@ -93,10 +96,13 @@
        <bool>false</bool>
       </property>
       <property name="text" >
-       <string>Primary Data:</string>
+       <string>&amp;Primary Data:</string>
       </property>
       <property name="alignment" >
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+      </property>
+      <property name="buddy" >
+       <cstring>txtMaxiPrimary</cstring>
       </property>
      </widget>
     </item>

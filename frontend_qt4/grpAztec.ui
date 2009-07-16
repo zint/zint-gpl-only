@@ -18,7 +18,7 @@
      <item row="0" column="0" >
       <widget class="QRadioButton" name="radAztecAuto" >
        <property name="text" >
-        <string>Automatic Resizing</string>
+        <string>A&amp;utomatic Resizing</string>
        </property>
        <property name="checked" >
         <bool>true</bool>
@@ -28,7 +28,7 @@
      <item row="1" column="0" >
       <widget class="QRadioButton" name="radAztecSize" >
        <property name="text" >
-        <string>Adjust Size To:</string>
+        <string>Adjust Si&amp;ze To:</string>
        </property>
       </widget>
      </item>
@@ -222,7 +222,7 @@
      <item row="2" column="0" >
       <widget class="QRadioButton" name="radAztecECC" >
        <property name="text" >
-        <string>Add Minimum Error Correction:</string>
+        <string>Add Minimum &amp;Error Correction:</string>
        </property>
       </widget>
      </item>
@@ -256,7 +256,7 @@
      <item row="3" column="0" >
       <widget class="QCheckBox" name="chkAztecMode" >
        <property name="text" >
-        <string>Encode as GS-1 Data</string>
+        <string>Encode as &amp;GS-1 Data</string>
        </property>
       </widget>
      </item>
