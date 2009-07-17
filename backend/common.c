@@ -92,7 +92,7 @@ int is_sane(char test_string[], unsigned char source[])
 { /* Verifies that a string only uses valid characters */
 	unsigned int i, j, latch;
 
-	for(i = 0; i < ustrlen(source) - 1; i++) {
+	for(i = 0; i < ustrlen(source); i++) {
 		latch = FALSE;
 		for(j = 0; j < strlen(test_string); j++) {
 			if (source[i] == test_string[j]) { latch = TRUE; } }
