@@ -1,9 +1,8 @@
 Zint and libzint 2.2
 --------------------
-
-Zint is a front end program and library which provides support for over 40 barcode symbologies
-in an open source package released under the GNU General Public License. Currently supported
-symbologies include:
+Zint is a suite of programs to allow easy encoding of data in any of the wide range of public domain
+barcode standards and to allow integration of this capability into your own programs. This version
+of Zint is able to encode data in the following formats:
 
 Code 11, Standard Code 2 of 5, IATA Code 2 of 5, Industrial Code 2 of 5, Interleaved Code 2 of 5,
 Code 2 of 5 Data Logic, ITF-14, Deutche Post Leitcode, Deutche Post Identcode, UPC-A, UPC-E, EAN-2,
@@ -16,73 +15,91 @@ Korea Post Barcode, HIBC Code 128, HIBC Code 39, HIBC Data Matrix, HIBC PDF417, 
 HIBC QR Code, HIBC Codablock-F, Japanese Postal Code, Code 49, Channel Code, Code One, FIM and
 Flattermarken.
 
-Full documentation is now available from the project website at http://www.zint.org.uk
-
-SUPPORT ZINT
-------------
-
-The Zint project is committed to providing the open source community with encoding software for
-all public domain barcode standards. For this we need access to the standard documentation and,
-unfortunately, this is not free. Your donation will contribute towards the purchase of standard documents
-from ANSI. Standards which we hope to add to Zint in this way include Aztec Mesas, Supercode,
-Code One and many others.
-
-To donate to this project go to: http://sourceforge.net/project/project_donations.php?group_id=199350
+Full documentation is available at project website: http://www.zint.org.uk
 
 
-QT FRONT END
-------------
-This package includes a Qt4 GUI front end. This feature is still under development but if you would
-like to give it a try then here is how to get to it: You will need Qt4 and cmake to compile the code.
-cd to the folder that contains this README file then...
+PROJECT STATUS
+--------------
+With the release of version 2.2 of this project the status will change to a "maintainance mode".
+This means that for the near future I do not expect to be adding new features and development work
+will consist of fixing bugs when they appear. In the long term the only advances planned are the
+addition of six more public domain barcode standards: Dot Code A, PosiCode, SuperCode, DataStrip,
+Aztec Mesas and Grid Matrix. If you would like to see this process accelerated then please consider
+donating to this project at http://sourceforge.net/project/project_donations.php?group_id=199350
 
-mkdir 'build'
-cd build
-cmake ..
-make -j2
-
-This will make libzint library and a Qt specific version of the library. To install these do the following
-as root:
-
-make install
-
-You can then execute the Qt front end with
-
-./frontend_qt4/QZint_frontend
+If you would like to see this project expanded in other ways then your suggestions are very
+welcome. Contact details are given below. If you want to expand it yourself there are some
+ideas below and I am very happy to answer questions regarding the code or the barcode standards
+which are supported.
 
 
-CONTACT ME
-----------
+COMPILING THE CODE
+------------------
+This package includes files for compiling in a number of ways depending on what functionality you
+want and what platform you are targeting. Zint has been tested on both 32 and 64-bit systems.
+It does not use any unusual memory manipulation and so should easily port to a wide range of hardware.
 
-The home of libzint is
+GNU/Linux and OpenBSD:
+To compile the Zint library for you will need libpng and libz pre-installed. You can compile
+with or without QR Code support. If you want QR Code support you will need qrencode installed. Then:
 
-http://www.sourceforge.net/projects/zint
+	make
+	make install
 
-and the home for information about Zint is at:
+If you do not want QR Code support:
 
-http://www.zint.org.uk
+	make zint_noqr
+	make install
 
-I am keen to hear your ideas / recieve bug reports at robin@zint.org.uk
+For some distributions it may be necessary to run
 
-Thanks for your interest in libzint.
-Happy encoding.
+	ldconfig
 
-Robin.
+as root before libzint can be used.
+
+To install the GUI interface you will need Qt4 and cmake. Follow these steps:
+
+	cd build
+	cmake ..
+	make -j2
+	make install
+
+The command line program can be accessed by typing
+
+	zint {options} -d {data}
+
+Notice that the data needs to be entered after all other options. Any options given after the
+data will be ignored. The GUI can be accessed by typing
+
+	zint-qt
+
+MS Windows:
+On the Windows platform you have the choice of compiling with MinGW or with the native compiler,
+Microsoft Visual C++. To compile with MinGW follow the instructions for Linux above substituting
+the MinGW makefiles for the default Linux ones. For compiling with MS Visual Studio open the
+libzint.vcproj project file in the win32 folder and compile in the usual way.
+
+Mac OSX:
+To compile on Macintosh you will need Qt4 and cmake. Follow the steps for the GUI interface
+as given in the Linux section above.
 
 
 THINGS TO DO
 ------------
+If you are interested in improving this package then here are a few ideas.
 
-If you are interested in expanding the functionality of this package then here are a few
-things which need to be done!
+Backend
+-------
+	* Create filters for more output file formats.
+	* Add ECI character support to allow encoding in more languages than are covered
+	  by the Latin-1 character set.
+	* The code was developed to be easy to understand rather than efficient so may benefit
+	  from some memory optimisation for embedded systems.
 
-Frontend
---------
-	* Allow copying of generated barcodes to the clipboard with "Copy" button
+GUI Frontend
+------------
+	* Allow copying of generated barcodes to the clipboard with a "Copy" button.
 	* Allow dragging and dropping to external apps.
-	NOTE: Although I have tried to add these functions I have not been succesful in
-	      making them useful. Therefore, although I would like to see this added,
-	      I have abandoned this.
 
 Packaging
 ---------
@@ -103,6 +120,23 @@ Research
 	* DPD Code
 	* Italian Postal Code
 
-Coming Soon
------------
-	The next symbology to be added may be Dot Code A or ISS PosiCode
+
+CONTACT ME
+----------
+The home of libzint is:
+
+	http://www.sourceforge.net/projects/zint
+
+and the home for information about Zint is:
+
+	http://www.zint.org.uk
+
+I am keen to hear your ideas / recieve bug reports at robin@zint.org.uk
+
+Thanks for your interest in libzint.
+Happy encoding.
+
+Robin.
+
+
+
