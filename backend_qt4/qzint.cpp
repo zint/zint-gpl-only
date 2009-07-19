@@ -16,13 +16,15 @@
 
 #include "qzint.h"
 #include <stdio.h>
-#define SSET	"0123456789ABCDEF"
 
 namespace Zint
 {
 
 static const qreal maxi_diagonal=11;
 static const qreal maxi_width=1.73205807568877*maxi_diagonal/2;
+static const char* fontstyle="Ariel";
+static const int fontPixelSizeSmall=6;
+static const int fontPixelSizeLarge=8;
 
 QZint::QZint()
 {
@@ -283,16 +285,20 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 	int comp_offset = 0, xoffset = m_whitespace, j, main_width = 0, addon_text_height = 0;
 	int yoffset = 0;
 	QString caption = (const char*)m_zintSymbol->text;
+	QFont fontSmall(fontstyle);
+	fontSmall.setPixelSize(fontPixelSizeSmall);
+	QFont fontLarge(fontstyle);
+	fontLarge.setPixelSize(fontPixelSizeLarge);
 
 	if (m_lastError.length())
 	{
+		painter.setFont(fontLarge);
 		painter.drawText(paintRect,Qt::AlignCenter,m_lastError);
 		return;
 	}
 
 	painter.save();
 	painter.setClipRect(paintRect,Qt::IntersectClip);
-	painter.setRenderHint(QPainter::Antialiasing);
 	qreal xtr=paintRect.x();
 	qreal ytr=paintRect.y();
 
@@ -538,7 +544,7 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 
 	textdone = false;
 	
-	painter.setFont(QFont("Ariel", 4));
+	painter.setFont(fontSmall);
 	if(((m_zintSymbol->symbology == BARCODE_EANX) || (m_zintSymbol->symbology == BARCODE_EANX_CC)) ||
 		(m_zintSymbol->symbology == BARCODE_ISBNX)) {
 		/* Add bridge and format text for EAN */
@@ -552,12 +558,12 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 				painter.fillRect(34 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
 				painter.fillRect(64 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
 				painter.fillRect(66 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
-				painter.setFont(QFont("Ariel", 6));
+				painter.setFont(fontLarge);
 				painter.drawText(3 + xoffset, m_zintSymbol->height + yoffset, 29, 9,Qt::AlignCenter, caption.mid(0,4));
 				painter.drawText(35 + xoffset, m_zintSymbol->height + yoffset, 29, 9,Qt::AlignCenter, caption.mid(4,4));
 				if(caption.size() == 11) { /* EAN-2 */ painter.drawText(76 + xoffset, addon_text_height, 20, 9,Qt::AlignCenter, caption.mid(9,2)); };
 				if(caption.size() == 14) { /* EAN-5 */ painter.drawText(76 + xoffset, addon_text_height, 47, 9,Qt::AlignCenter, caption.mid(9,5)); };
-				painter.setFont(QFont("Ariel", 4));
+				painter.setFont(fontSmall);
 				textdone = true;
 				break;
 			case 13:
@@ -569,20 +575,20 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 				painter.fillRect(48 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
 				painter.fillRect(92 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
 				painter.fillRect(94 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
-				painter.setFont(QFont("Ariel", 6));
+				painter.setFont(fontLarge);
 				painter.drawText(xoffset - 7, m_zintSymbol->height + yoffset, 7, 9,Qt::AlignCenter, caption.mid(0,1));
 				painter.drawText(3 + xoffset, m_zintSymbol->height + yoffset, 43, 9,Qt::AlignCenter, caption.mid(1,6));
 				painter.drawText(49 + xoffset, m_zintSymbol->height + yoffset, 43, 9,Qt::AlignCenter, caption.mid(7,6));
 				if(caption.size() == 16) { /* EAN-2 */ painter.drawText(104 + xoffset, addon_text_height, 20, 9,Qt::AlignCenter, caption.mid(14,2)); };
 				if(caption.size() == 19) { /* EAN-5 */ painter.drawText(104 + xoffset, addon_text_height, 47, 9,Qt::AlignCenter, caption.mid(14,5)); };
-				painter.setFont(QFont("Ariel", 4));
+				painter.setFont(fontSmall);
 				textdone = true;
 				break;
 		}
 		if(textdone == false) {
-			painter.setFont(QFont("Ariel", 6));
+			painter.setFont(fontLarge);
 			painter.drawText(0, m_zintSymbol->height, m_zintSymbol->width, 9,Qt::AlignCenter, caption);
-			painter.setFont(QFont("Ariel", 4));
+			painter.setFont(fontSmall);
 			textdone = true;
 		}
 	}
@@ -629,12 +635,12 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 		} while (j < 96 + comp_offset);
 		painter.drawText(xoffset - 7, m_zintSymbol->height + yoffset, 7, 7,Qt::AlignCenter, caption.mid(0,1));
 		painter.drawText(96 + xoffset, m_zintSymbol->height + yoffset, 7, 7,Qt::AlignCenter, caption.mid(11,1));
-		painter.setFont(QFont("Ariel", 6));
+		painter.setFont(fontLarge);
 		painter.drawText(11 + xoffset, m_zintSymbol->height + yoffset, 35, 9,Qt::AlignCenter, caption.mid(1,5));
 		painter.drawText(49 + xoffset, m_zintSymbol->height + yoffset, 35, 9,Qt::AlignCenter, caption.mid(6,5));
 		if(caption.size() == 15) { /* EAN-2 */ painter.drawText(104 + xoffset, addon_text_height, 20, 9,Qt::AlignCenter, caption.mid(13,2)); };
 		if(caption.size() == 18) { /* EAN-5 */ painter.drawText(104 + xoffset, addon_text_height, 47, 9,Qt::AlignCenter, caption.mid(13,5)); };
-		painter.setFont(QFont("Ariel", 4));
+		painter.setFont(fontSmall);
 		textdone = true;
 	}
 	
@@ -647,11 +653,11 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 		painter.fillRect(50 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
 		painter.drawText(xoffset - 7, m_zintSymbol->height + yoffset, 7, 7,Qt::AlignCenter, caption.mid(0,1));
 		painter.drawText(51 + xoffset, m_zintSymbol->height + yoffset, 7, 7,Qt::AlignCenter, caption.mid(7,1));
-		painter.setFont(QFont("Ariel", 6));
+		painter.setFont(fontLarge);
 		painter.drawText(3 + xoffset, m_zintSymbol->height + yoffset, 43, 9,Qt::AlignCenter, caption.mid(1,6));
 		if(caption.size() == 11) { /* EAN-2 */ painter.drawText(60 + xoffset, addon_text_height, 20, 9,Qt::AlignCenter, caption.mid(9,2)); };
 		if(caption.size() == 14) { /* EAN-2 */ painter.drawText(60 + xoffset, addon_text_height, 47, 9,Qt::AlignCenter, caption.mid(9,5)); };
-		painter.setFont(QFont("Ariel", 4));
+		painter.setFont(fontSmall);
 		textdone = true;
 	}
 	
