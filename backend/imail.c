@@ -308,18 +308,18 @@ void breakup(short int fcs_bit[], unsigned short usps_crc)
 int imail(struct zint_symbol *symbol, unsigned char source[])
 {
 	char data_pattern[200];
-	int errno;
+	int error_number;
 	
-	errno = 0;
+	error_number = 0;
 
 	if(ustrlen(source) > 32) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	errno = is_sane(NASET, source);
-	if(errno == ERROR_INVALID_DATA) {
+	error_number = is_sane(NASET, source);
+	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
-		return errno;
+		return error_number;
 	}
 	
 	int i, j, read;
@@ -688,5 +688,5 @@ int imail(struct zint_symbol *symbol, unsigned char source[])
 
 	symbol->rows = 3;
 	symbol->width = read - 1;
-	return errno;
+	return error_number;
 }
