@@ -338,6 +338,7 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 	int text_buffer[6], text_p;
 	int x12_buffer[6], x12_p;
 	int edifact_buffer[8], edifact_p;
+	int debug = 0;
 #ifndef _MSC_VER
         char binary[2 * inputlen];
 #else
@@ -369,7 +370,11 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 	
 	if(symbol->input_mode == GS1_MODE) { gs1 = 1; } else { gs1 = 0; }
 	
-	if(gs1) { target[tp] = 232; tp++; concat(binary, " "); } /* FNC1 */
+	if(gs1) {
+		target[tp] = 232; tp++;
+		concat(binary, " ");
+		if(debug) printf("FN1 ");
+	} /* FNC1 */
 	
 	while (sp < inputlen) {
 		
@@ -381,6 +386,7 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 			
 			if(istwodigits(source, sp) && ((sp + 1) != inputlen)) {
 				target[tp] = (10 * ctoi(source[sp])) + ctoi(source[sp + 1]) + 130;
+				if(debug) printf("N%d ", target[tp] - 130);
 				tp++; concat(binary, " ");
 				sp += 2;
 			} else {
@@ -388,23 +394,32 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 				
 				if(next_mode != DM_ASCII) {
 					switch(next_mode) {
-						case DM_C40: target[tp] = 230; tp++; concat(binary, " "); break;
-						case DM_TEXT: target[tp] = 239; tp++; concat(binary, " "); break;
-						case DM_X12: target[tp] = 238; tp++; concat(binary, " "); break;
-						case DM_EDIFACT: target[tp] = 240; tp++; concat(binary, " "); break;
-						case DM_BASE256: target[tp] = 231; tp++; concat(binary, " "); break;
+						case DM_C40: target[tp] = 230; tp++; concat(binary, " ");
+							if(debug) printf("C40 "); break;
+						case DM_TEXT: target[tp] = 239; tp++; concat(binary, " ");
+							if(debug) printf("TEX "); break;
+						case DM_X12: target[tp] = 238; tp++; concat(binary, " ");
+							if(debug) printf("X12 "); break;
+						case DM_EDIFACT: target[tp] = 240; tp++; concat(binary, " ");
+							if(debug) printf("EDI "); break;
+						case DM_BASE256: target[tp] = 231; tp++; concat(binary, " ");
+							if(debug) printf("BAS "); break;
 					}
 				} else {
 					if(source[sp] > 127) {
 						target[tp] = 235; /* FNC4 */
+						if(debug) printf("FN4 ");
 						tp++;
 						target[tp] = (source[sp] - 128) + 1;
+						if(debug) printf("A%02X ", target[tp] - 1);
 						tp++; concat(binary, "  ");
 					} else {
 						if(gs1 && (source[sp] == '[')) {
 							target[tp] = 232; /* FNC1 */
+							if(debug) printf("FN1 ");
 						} else {
 							target[tp] = source[sp] + 1;
+							if(debug) printf("A%02X ", target[tp] - 1);
 						}
 						tp++; 
 						concat(binary, " ");
@@ -426,6 +441,8 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 			
 			if(next_mode != DM_C40) {
 				target[tp] = 254; tp++; concat(binary, " ");/* Unlatch */
+				next_mode = DM_ASCII;
+				if (debug) printf("ASC ");
 			} else {
 				if(source[sp] > 127) {
 					c40_buffer[c40_p] = 1; c40_p++;
@@ -454,6 +471,7 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 					target[tp] = iv / 256; tp++;
 					target[tp] = iv % 256; tp++;
 					concat(binary, "  ");
+					if (debug) printf("[%d %d %d] ", c40_buffer[0], c40_buffer[1], c40_buffer[2]);
 					
 					c40_buffer[0] = c40_buffer[3];
 					c40_buffer[1] = c40_buffer[4];
@@ -478,6 +496,8 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 			
 			if(next_mode != DM_TEXT) {
 				target[tp] = 254; tp++; concat(binary, " ");/* Unlatch */
+				next_mode = DM_ASCII;
+				if (debug) printf("ASC ");
 			} else {
 				if(source[sp] > 127) {
 					text_buffer[text_p] = 1; text_p++;
@@ -506,6 +526,7 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 					target[tp] = iv / 256; tp++;
 					target[tp] = iv % 256; tp++;
 					concat(binary, "  ");
+					if (debug) printf("[%d %d %d] ", text_buffer[0], text_buffer[1], text_buffer[2]);
 					
 					text_buffer[0] = text_buffer[3];
 					text_buffer[1] = text_buffer[4];
@@ -530,6 +551,8 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 			
 			if(next_mode != DM_X12) {
 				target[tp] = 254; tp++; concat(binary, " ");/* Unlatch */
+				next_mode = DM_ASCII;
+				if (debug) printf("ASC ");
 			} else {
 				if(source[sp] == 13) { value = 0; }
 				if(source[sp] == '*') { value = 1; }
@@ -547,6 +570,7 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 					target[tp] = iv / 256; tp++;
 					target[tp] = iv % 256; tp++;
 					concat(binary, "  ");
+					if (debug) printf("[%d %d %d] ", x12_buffer[0], x12_buffer[1], x12_buffer[2]);
 					
 					x12_buffer[0] = x12_buffer[3];
 					x12_buffer[1] = x12_buffer[4];
@@ -571,6 +595,7 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 			
 			if(next_mode != DM_EDIFACT) {
 				edifact_buffer[edifact_p] = 31; edifact_p++;
+				next_mode = DM_ASCII;
 			} else {
 				if((source[sp] >= '@') && (source[sp] <= '^')) { value = source[sp] - '@'; }
 				if((source[sp] >= ' ') && (source[sp] <= '?')) { value = source[sp]; }
@@ -584,6 +609,7 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 				target[tp] = ((edifact_buffer[1] & 0x0f) << 4) + ((edifact_buffer[2] & 0x3c) >> 2); tp++;
 				target[tp] = ((edifact_buffer[2] & 0x03) << 6) + edifact_buffer[3]; tp++;
 				concat(binary, "   ");
+				if (debug) printf("[%d %d %d %d] ", edifact_buffer[0], edifact_buffer[1], edifact_buffer[2], edifact_buffer[3]);
 				
 				edifact_buffer[0] = edifact_buffer[4];
 				edifact_buffer[1] = edifact_buffer[5];
@@ -603,11 +629,13 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 			
 			if(next_mode == DM_BASE256) {
 				target[tp] = source[sp];
+				if(debug) printf("B%02X ", target[tp]);
 				tp++;
 				sp++;
 				concat(binary, "b");
 			} else {
 				next_mode = DM_ASCII;
+				if(debug) printf("ASC ");
 			}
 		}
 		
@@ -623,12 +651,14 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 		target[tp] = source[inputlen - 2] + 1; tp++;
 		target[tp] = source[inputlen - 1] + 1; tp++;
 		concat(binary, "   ");
+		if(debug) printf("ASC A%02X A%02X ", target[tp - 2] - 1, target[tp - 1] - 1);
 		current_mode = DM_ASCII;
 	}
 	if(c40_p == 1) {
 		target[tp] = 254; tp++; /* unlatch */
 		target[tp] = source[inputlen - 1] + 1; tp++;
 		concat(binary, "  ");
+		if(debug) printf("ASC A%02X ", target[tp - 1] - 1);
 		current_mode = DM_ASCII;
 	}
 	
@@ -637,12 +667,14 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 		target[tp] = source[inputlen - 2] + 1; tp++;
 		target[tp] = source[inputlen - 1] + 1; tp++;
 		concat(binary, "   ");
+		if(debug) printf("ASC A%02X A%02X ", target[tp - 2] - 1, target[tp - 1] - 1);
 		current_mode = DM_ASCII;
 	}
 	if(text_p == 1) {
 		target[tp] = 254; tp++; /* unlatch */
 		target[tp] = source[inputlen - 1] + 1; tp++;
 		concat(binary, "  ");
+		if(debug) printf("ASC A%02X ", target[tp - 1] - 1);
 		current_mode = DM_ASCII;
 	}
 	
@@ -651,12 +683,14 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 		target[tp] = source[inputlen - 2] + 1; tp++;
 		target[tp] = source[inputlen - 1] + 1; tp++;
 		concat(binary, "   ");
+		if(debug) printf("ASC A%02X A%02X ", target[tp - 2] - 1, target[tp - 1] - 1);
 		current_mode = DM_ASCII;
 	}
 	if(x12_p == 1) {
 		target[tp] = 254; tp++; /* unlatch */
 		target[tp] = source[inputlen - 1] + 1; tp++;
 		concat(binary, "  ");
+		if(debug) printf("ASC A%02X ", target[tp - 1] - 1);
 		current_mode = DM_ASCII;
 	}
 
@@ -694,12 +728,13 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 		}
 	}
 	
-	/*
-	for(i = 0; i < tp; i++){
-		printf("%02X ", target[i]);
+	if(debug) {
+		printf("\n\n");
+		for(i = 0; i < tp; i++){
+			printf("%02X ", target[i]);
+		}
+		printf("\n");
 	}
-	printf("\n");
-	*/
 	
 	*(last_mode) = current_mode;
 	return tp;
