@@ -772,6 +772,7 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 	char codebarre[100], pattern[580];
 	int variant, LeftRAPStart, CentreRAPStart, RightRAPStart, StartCluster;
 	int LeftRAP, CentreRAP, RightRAP, Cluster, writer, flip, loop;
+	int debug = 0;
 
 	/* Encoding starts out the same as PDF417, so use the same code */
 	codeerr = 0;
@@ -796,9 +797,22 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 		}
 		indexliste++;
 	} while (indexchaine < ustrlen(chaine));
-	
+
 	/* 474 */
 	pdfsmooth(&indexliste);
+
+	if(debug) {
+		printf("Initial mapping:\n");
+		for(i = 0; i < indexliste; i++) {
+			printf("len: %d   type: ", liste[0][i]);
+			switch(liste[1][i]) {
+				case TEX: printf("TEXT\n"); break;
+				case BYT: printf("BYTE\n"); break;
+				case NUM: printf("NUMBER\n"); break;
+				default: printf("*ERROR*\n"); break;
+			}
+		}
+	}
 	
 	/* 541 - now compress the data */
 	indexchaine = 0;
@@ -828,6 +842,14 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 		strcpy(symbol->errtxt, "Specified width out of range");
 		symbol->option_2 = 0;
 		codeerr = WARN_INVALID_OPTION;
+	}
+
+	if(debug) {
+		printf("\nEncoded Data Stream:\n");
+		for(i = 0; i < mclength; i++) {
+			printf("0x%02X ", chainemc[i]);
+		}
+		printf("\n");
 	}
 	
 	/* Now figure out which variant of the symbol to use and load values accordingly */
@@ -914,7 +936,7 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 			}
 		}
 	}
-	
+
 	/* Now we have the variant we can load the data */
 	variant --;
 	symbol->option_2 = MicroVariants[variant]; /* columns */
@@ -923,7 +945,14 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 	longueur = (symbol->option_2 * symbol->rows) - k; /* number of non-EC CWs */
 	i = longueur - mclength; /* amount of padding required */
 	offset = MicroVariants[variant + 102]; /* coefficient offset */
-	
+
+	if(debug) {
+		printf("\nChoose symbol size:\n");
+		printf("%d columns x %d rows\n", symbol->option_2, symbol->rows);
+		printf("%d data codewords (including %d pads), %d ecc codewords\n", longueur, i, k);
+		printf("\n");
+	}
+
 	/* We add the padding */
 	while (i > 0) {
 		chainemc[mclength] = 900;
@@ -956,6 +985,14 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 		chainemc[mclength] = mccorrection[i];
 		mclength++;
 	}
+
+	if(debug) {
+		printf("Encoded Data Stream with ECC:\n");
+		for(i = 0; i < mclength; i++) {
+			printf("0x%02X ", chainemc[i]);
+		}
+		printf("\n");
+	}
 	
 	/* Now get the RAP (Row Address Pattern) start values */
 	LeftRAPStart = RAPTable[variant];
@@ -970,7 +1007,9 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 	RightRAP = RightRAPStart;
 	Cluster = StartCluster; /* Cluster can be 0, 1 or 2 for Cluster(0), Cluster(3) and Cluster(6) */
 	
+	if(debug) printf("\nInternal row representation:\n");
 	for(i = 0; i < symbol->rows; i++) {
+		if(debug) printf("row %d: ", i);
 		strcpy(codebarre, "");
 		offset = 929 * Cluster;
 		for(j = 0; j < 5; j++) {
@@ -978,7 +1017,9 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 		}
 		for(j = 0; j < symbol->option_2 ; j++) {
 			dummy[j + 1] = chainemc[i * symbol->option_2 + j];
+			if(debug) printf("[%d] ", dummy[j + 1]);
 		}
+		
 		/* Copy the data into codebarre */
 		concat(codebarre, RAPLR[LeftRAP]);
 		concat(codebarre, "1");
@@ -987,7 +1028,7 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 		if(symbol->option_2 == 3) {
 			concat(codebarre, RAPC[CentreRAP]);
 		}
-		if(dummy[2] != 0) {
+		if(symbol->option_2 >= 2) {
 			concat(codebarre, "1");
 			concat(codebarre, codagemc[offset + dummy[2]]);
 			concat(codebarre, "1");
@@ -995,18 +1036,19 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 		if(symbol->option_2 == 4) {
 			concat(codebarre, RAPC[CentreRAP]);
 		}
-		if(dummy[3] != 0) {
+		if(symbol->option_2 >= 3) {
 			concat(codebarre, "1");
 			concat(codebarre, codagemc[offset + dummy[3]]);
 			concat(codebarre, "1");
 		}
-		if(dummy[4] != 0) {
+		if(symbol->option_2 == 4) {
 			concat(codebarre, "1");
 			concat(codebarre, codagemc[offset + dummy[4]]);
 			concat(codebarre, "1");
 		}
 		concat(codebarre, RAPLR[RightRAP]);
 		concat(codebarre, "1"); /* stop */
+		if(debug) printf("%s\n", codebarre);
 		
 		/* Now codebarre is a mixture of letters and numbers */
 		
