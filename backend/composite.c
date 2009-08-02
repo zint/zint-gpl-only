@@ -251,7 +251,7 @@ int cc_a(struct zint_symbol *symbol, char source[], int cc_width)
 		concat(codebarre, "1");
 		concat(codebarre, codagemc[offset + dummy[1]]);
 		concat(codebarre, "1");
-		if(dummy[2] != 0) {
+		if(cc_width >= 2) {
 			concat(codebarre, "1");
 			concat(codebarre, codagemc[offset + dummy[2]]);
 			concat(codebarre, "1");
@@ -259,12 +259,12 @@ int cc_a(struct zint_symbol *symbol, char source[], int cc_width)
 		if(CentreRAPStart != 0) {
 			concat(codebarre, RAPC[CentreRAP]);
 		}
-		if(dummy[3] != 0) {
+		if(cc_width >= 3) {
 			concat(codebarre, "1");
 			concat(codebarre, codagemc[offset + dummy[3]]);
 			concat(codebarre, "1");
 		}
-		if(dummy[4] != 0) {
+		if(cc_width == 4) {
 			concat(codebarre, "1");
 			concat(codebarre, codagemc[offset + dummy[4]]);
 			concat(codebarre, "1");
@@ -483,7 +483,7 @@ int cc_b(struct zint_symbol *symbol, char source[], int cc_width)
 		if(cc_width == 3) {
 			concat(codebarre, RAPC[CentreRAP]);
 		}
-		if(dummy[2] != 0) {
+		if(cc_width >= 2) {
 			concat(codebarre, "1");
 			concat(codebarre, codagemc[offset + dummy[2]]);
 			concat(codebarre, "1");
@@ -491,12 +491,12 @@ int cc_b(struct zint_symbol *symbol, char source[], int cc_width)
 		if(cc_width == 4) {
 			concat(codebarre, RAPC[CentreRAP]);
 		}
-		if(dummy[3] != 0) {
+		if(cc_width >= 3) {
 			concat(codebarre, "1");
 			concat(codebarre, codagemc[offset + dummy[3]]);
 			concat(codebarre, "1");
 		}
-		if(dummy[4] != 0) {
+		if(cc_width == 4) {
 			concat(codebarre, "1");
 			concat(codebarre, codagemc[offset + dummy[4]]);
 			concat(codebarre, "1");
