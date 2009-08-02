@@ -485,9 +485,9 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 	int scaler = (int)(2 * symbol->scale);
 	int default_text_posn;
 #ifndef _MSC_VER
-	unsigned char local_text[ustrlen(symbol->text)];
+	unsigned char local_text[ustrlen(symbol->text) + 1];
 #else
-	unsigned char* local_text = (unsigned char*)_alloca(ustrlen(symbol->text));
+	unsigned char* local_text = (unsigned char*)_alloca(ustrlen(symbol->text) + 1);
 #endif
 	
 	to_latin1(symbol->text, local_text);
