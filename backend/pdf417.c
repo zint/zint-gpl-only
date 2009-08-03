@@ -313,18 +313,24 @@ void byteprocess(int *chainemc, int *mclength, unsigned char chaine[], int start
 	
 	int i, j, k, l, longueur;
 	short int accum[112], x_reg[112], y_reg[112];
+	int debug = 0;
 	
+	if(debug) printf("\nEntering byte mode at position %d\n", start);
+
 	if(length == 1) {
 		chainemc[*(mclength)] = 913;
 		chainemc[*(mclength) + 1] = chaine[start];
+		if(debug) { printf("913 %d\n", chainemc[*(mclength) + 1]); }
 		*(mclength) = *(mclength) + 2;
 	} else {
 		/* select the switch for multiple of 6 bytes */
 		if (length % 6 == 0) {
 			chainemc[*(mclength)] = 924;
+			if(debug) printf("924 ");
 			*(mclength) = *(mclength) + 1;
 		} else {
 			chainemc[*(mclength)] = 901;
+			if(debug) printf("901 ");
 			*(mclength) = *(mclength) + 1;
 		}
 		
@@ -342,6 +348,7 @@ void byteprocess(int *chainemc, int *mclength, unsigned char chaine[], int start
 					y_reg[i] = 0;
 				}
 				
+				/* Load 6 bytes of data into the Y register */
 				longueur = 6;
 				for(k = 0; k < longueur; k++) {
 					for(i = 0; i < 8; i++) {
@@ -387,7 +394,7 @@ void byteprocess(int *chainemc, int *mclength, unsigned char chaine[], int start
 						}
 						shiftdown(x_reg);
 					}
-		
+					
 					cw[l] =   (accum[9] * 512) + (accum[8] * 256) +
 							(accum[7] * 128) + (accum[6] * 64) + (accum[5] * 32) +
 							(accum[4] * 16) + (accum[3] * 8) + (accum[2] * 4) +
@@ -400,20 +407,47 @@ void byteprocess(int *chainemc, int *mclength, unsigned char chaine[], int start
 						(y_reg[4] * 16) + (y_reg[3] * 8) + (y_reg[2] * 4) +
 						(y_reg[1] * 2) + y_reg[0];
 				
+				for(i = 0; i < 4; i++) {
+					if(cw[i] == 900) {
+						cw[i] = 0;
+						cw[i + 1]++;
+					}
+				}
+				
 				for(i = 0; i < 5; i++) {
 					chainemc[*(mclength)] = cw[4 - i];
 					*(mclength) = *(mclength) + 1;
 				}
 				
+				if(debug) {
+					for(k = 0; k < longueur; k++) {
+						printf("%d ", chaine[start + j + k]);
+					}
+					printf(">> ");
+					for(i = 0; i < 5; i++) {
+						printf("%d ", cw[4 - i]);
+					}
+					printf("\n");
+				}
+
 			} else {
 				/* If there remains a group of less than 6 bytes */
 				for(k = 0; k < longueur; k++) {
 					chainemc[*(mclength)] = chaine[start + j + k];
 					*(mclength) = *(mclength) + 1;
 				}
+				if(debug) {
+					for(k = 0; k < longueur; k++) {
+						printf("%d ", chaine[start + j + k]);
+					}
+					printf(">> ");
+					for(k = 0; k < longueur; k++) {
+						printf("%d ", chaine[start + j + k]);
+					}
+					printf("\n");
+				}
 			}
 			j += longueur;
-			
 		}
 	}
 }
@@ -488,6 +522,7 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 	int i, k, j, indexchaine, indexliste, mode, longueur, loop, mccorrection[520], offset;
 	int total, chainemc[2700], mclength, c1, c2, c3, dummy[35], codeerr;
 	char codebarre[100], pattern[580];
+	int debug = 0;
 
 	codeerr = 0;
 
@@ -514,6 +549,19 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 	
 	/* 474 */
 	pdfsmooth(&indexliste);
+
+	if(debug) {
+		printf("Initial block pattern:\n");
+		for(i = 0; i < indexliste; i++) {
+			printf("Len: %d  Type: ", liste[0][i]);
+			switch(liste[1][i]) {
+				case TEX: printf("Text\n"); break;
+				case BYT: printf("Byte\n"); break;
+				case NUM: printf("Number\n"); break;
+				default: printf("ERROR\n"); break;
+			}
+		}
+	}
 	
 	/* 541 - now compress the data */
 	indexchaine = 0;
@@ -531,6 +579,14 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 				break;
 		}
 		indexchaine = indexchaine + liste[0][i];
+	}
+
+	if(debug) {
+		printf("\nCompressed data stream:\n");
+		for(i = 0; i < mclength; i++) {
+			printf("%d ", chainemc[i]);
+		}
+		printf("\n\n");
 	}
 
 	/* 752 - Now take care of the number of CWs per row */

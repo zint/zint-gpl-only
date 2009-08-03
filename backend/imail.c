@@ -595,6 +595,13 @@ int imail(struct zint_symbol *symbol, unsigned char source[])
 			(y_reg[4] * 16) + (y_reg[3] * 8) + (y_reg[2] * 4) +
 			(y_reg[1] * 2) + y_reg[0];
 	
+	for(i = 0; i < 8; i++) {
+		if(codeword[i] == 1365) {
+			codeword[i] = 0;
+			codeword[i + 1]++;
+		}
+	}
+
 	/* printf("Codewords  3: ");
 	for(i = 0; i < 10; i++) {
 		printf("%d ", codeword[i]);
