@@ -774,31 +774,54 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 			if((layers >= 9) && (layers <= 22)) { codeword_size = 10; }
 			if(layers >= 23) { codeword_size = 12; }
 			
-			j = 0;
-			count = 0;
-			for(i = 0; i <= data_length; i++) {
-				remainder = i % codeword_size;
-				if(remainder == codeword_size - 1) {
+			j = 0; i = 0;
+			do {
+				if((j + 1) % codeword_size == 0) {
 					/* Last bit of codeword */
-					if(count == codeword_size - 1) {
-						/* All 1s - add 0 */
+					int t, done = 0;
+					count = 0;
+					
+					/* Discover how many '1's in current codeword */
+					for(t = 0; t < (codeword_size - 1); t++) {
+						if(binary_string[(i - (codeword_size - 1)) + t] == '1') count++;
+					}
+					
+					if(count == (codeword_size - 1)) {
 						adjusted_string[j] = '0';
 						j++;
+						done = 1;
 					}
+					
 					if(count == 0) {
-						/* All 0s - add 1 */
 						adjusted_string[j] = '1';
 						j++;
+						done = 1;
 					}
-					count = 0;
+					
+					if(done == 0) {
+						adjusted_string[j] = binary_string[i];
+						j++;
+						i++;
+					}
 				}
-				if(binary_string[i] == '1') count++;
 				adjusted_string[j] = binary_string[i];
 				j++;
-			}
+				i++;
+			} while (i <= (data_length + 1));
 			adjusted_string[j] = '\0';
 			adjusted_length = strlen(adjusted_string);
 			adjustment_size = adjusted_length - data_length;
+			
+			if(debug) {
+				printf("Codewords:\n");
+				for(i = 0; i < (adjusted_length / codeword_size); i++) {
+					for(j = 0; j < codeword_size; j++) {
+						printf("%c", adjusted_string[(i * codeword_size) + j]);
+					}
+					printf("\n");
+				}
+			}
+			
 				/* Only important if this loop is repeated */
 			
 			remainder = adjusted_length % codeword_size;
@@ -842,28 +865,40 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 		if((layers >= 9) && (layers <= 22)) { codeword_size = 10; }
 		if(layers >= 23) { codeword_size = 12; }
 		
-		j = 0;
-		count = 0;
-		for(i = 0; i <= data_length; i++) {
-			remainder = i % codeword_size;
-			if(remainder == codeword_size - 1) {
+		j = 0; i = 0;
+		do {
+			if((j + 1) % codeword_size == 0) {
 				/* Last bit of codeword */
-				if(count == codeword_size - 1) {
-					/* All 1s - add 0 */
+				int t, done = 0;
+				count = 0;
+					
+				/* Discover how many '1's in current codeword */
+				for(t = 0; t < (codeword_size - 1); t++) {
+					if(binary_string[(i - (codeword_size - 1)) + t] == '1') count++;
+				}
+					
+				if(count == (codeword_size - 1)) {
 					adjusted_string[j] = '0';
 					j++;
+					done = 1;
 				}
+					
 				if(count == 0) {
-					/* All 0s - add 1 */
 					adjusted_string[j] = '1';
 					j++;
+					done = 1;
 				}
-				count = 0;
+					
+				if(done == 0) {
+					adjusted_string[j] = binary_string[i];
+					j++;
+					i++;
+				}
 			}
-			if(binary_string[i] == '1') count++;
 			adjusted_string[j] = binary_string[i];
 			j++;
-		}
+			i++;
+		} while (i <= (data_length + 1));
 		adjusted_string[j] = '\0';
 		adjusted_length = strlen(adjusted_string);
 			
