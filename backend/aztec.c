@@ -573,6 +573,7 @@ int aztec_text_process(unsigned char source[], char binary_string[], int gs1)
 						do{
 							bytes++;
 						}while(typemap[i + (bytes - 1)] == BINARY);
+						bytes--;
 		
 						if(bytes > 2079) {
 							return ERROR_TOO_LONG;
