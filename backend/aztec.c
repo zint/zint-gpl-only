@@ -78,13 +78,6 @@ int aztec_text_process(unsigned char source[], char binary_string[], int gs1)
 			typemap[maplength] = PUNC;
 			maplength++;
 		}
-		if(source[i] > 127) {
-			charmap[maplength] = source[i];
-			typemap[maplength] = BINARY;
-		} else {
-			charmap[maplength] = AztecSymbolChar[source[i]];
-			typemap[maplength] = AztecCodeSet[source[i]];
-		}
 		if((gs1) && (source[i] == '[')) {
 			/* FNC1 represented by FLG(0) */
 			charmap[maplength] = 0;
@@ -92,6 +85,14 @@ int aztec_text_process(unsigned char source[], char binary_string[], int gs1)
 			maplength++;
 			charmap[maplength] = 400;
 			typemap[maplength] = PUNC;
+		} else {
+			if(source[i] > 127) {
+				charmap[maplength] = source[i];
+				typemap[maplength] = BINARY;
+			} else {
+				charmap[maplength] = AztecSymbolChar[source[i]];
+				typemap[maplength] = AztecCodeSet[source[i]];
+			}
 		}
 		maplength++;
 	}
