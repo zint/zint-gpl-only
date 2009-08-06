@@ -447,7 +447,7 @@ void to_latin1(unsigned char source[], unsigned char preprocessed[])
 	j = 0;
 	i = 0;
 	next = 0;
-	do {
+	while (i < input_length) {
 		if(source[i] < 128) {
 			preprocessed[j] = source[i];
 			j++;
@@ -465,7 +465,7 @@ void to_latin1(unsigned char source[], unsigned char preprocessed[])
 			}
 		}
 		i = next;
-	} while(i < input_length);
+	}
 	preprocessed[j] = '\0';
 	
 	return;
