@@ -61,12 +61,12 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[]);
 
 static UINT pwr928[69][7];
 
-int min(int first, int second) {
-	if(first <= second) {
-		return first;
-	} else {
-		return second;
-	}
+int _min(int first, int second) {
+
+        if(first <= second)
+        return first;
+        else
+        return second;
 }
 
 /* gets bit in bitString at bitPos */
@@ -98,7 +98,7 @@ void init928(void) {
 int encode928(UINT bitString[], UINT codeWords[], int bitLng) {
 	int i, j, b, bitCnt, cwNdx, cwCnt, cwLng;
 	for (cwNdx = cwLng = b = 0; b < bitLng; b += 69, cwNdx += 7) {
-		bitCnt = min(bitLng-b, 69);
+		bitCnt = _min(bitLng-b, 69);
 		cwLng += cwCnt = bitCnt/10 + 1;
 		for (i = 0; i < cwCnt; i++)
 			codeWords[cwNdx+i] = 0; /* init 0 */

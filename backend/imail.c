@@ -309,7 +309,15 @@ int imail(struct zint_symbol *symbol, unsigned char source[])
 {
 	char data_pattern[200];
 	int error_number;
-	
+        int i, j, read;
+        char zip[35], tracker[35], zip_adder[11], temp[2];
+        short int accum[112], x_reg[112], y_reg[112];
+        unsigned char byte_array[13];
+        unsigned short usps_crc;
+        int codeword[10];
+        unsigned short characters[10];
+        short int bit_pattern[13], bar_map[130];
+
 	error_number = 0;
 
 	if(ustrlen(source) > 32) {
@@ -322,18 +330,10 @@ int imail(struct zint_symbol *symbol, unsigned char source[])
 		return error_number;
 	}
 	
-	int i, j, read;
-	char zip[35], tracker[35], zip_adder[11], temp[2];
-	short int accum[112], x_reg[112], y_reg[112];
-	strcpy(zip, "");
-	strcpy(tracker, "");
-	unsigned char byte_array[13];
-	unsigned short usps_crc;
-	int codeword[10];
-	unsigned short characters[10];
-	short int bit_pattern[13], bar_map[130];
-	
-	/* separate the tracking code from the routing code */
+        strcpy(zip, "");
+        strcpy(tracker, "");
+
+        /* separate the tracking code from the routing code */
 	
 	read = 0;
 	j = 0;

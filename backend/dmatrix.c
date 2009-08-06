@@ -41,16 +41,22 @@ void crc_machine(char data_prefix_bitstream[], int scheme, unsigned char source[
 {
 	int input_length, i;
 	char xor_register[17];
+	int machine_cycles;
+	char input_bit, out1, out2, out3;
+#ifdef _MSC_VER
+	char* precrc_bitstream;
+	char* precrc_bitstream_reversed;
+#endif
+
+	input_length = ustrlen(source);
+
 #ifndef _MSC_VER
 	char precrc_bitstream[(input_length * 8) + 18];
 	char precrc_bitstream_reversed[(input_length * 8) + 18];
 #else
-        char* precrc_bitstream = (char*)_alloca((input_length * 8) + 18);
-	char* precrc_bitstream_reversed = (char*)_alloca((input_length * 8) + 18);
+	precrc_bitstream = (char*)_alloca((input_length * 8) + 18);
+	precrc_bitstream_reversed = (char*)_alloca((input_length * 8) + 18);
 #endif
-	int machine_cycles;
-	char input_bit, out1, out2, out3;
-        input_length = ustrlen(source);
 
 	switch(scheme) {
 		case 11: strcpy(precrc_bitstream, "0000000100000000"); break;

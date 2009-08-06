@@ -664,7 +664,11 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 	int err_code, ecc_level, compact, data_length, data_maxsize, codeword_size, adjusted_length;
 	int remainder, padbits, count, gs1, adjustment_size;
 	int debug = 0;
-	
+#ifdef _MSC_VER
+	unsigned int* data_part;
+	unsigned int* ecc_part;
+#endif
+
 	memset(binary_string,0,20000);
 	memset(adjusted_string,0,20000);
 
@@ -953,8 +957,8 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 #ifndef _MSC_VER
 	unsigned int data_part[data_blocks + 3], ecc_part[ecc_blocks + 3];
 #else
-	unsigned int* data_part = (unsigned int*)_alloca((data_blocks + 3) * sizeof(unsigned int));
-	unsigned int* ecc_part = (unsigned int*)_alloca((ecc_blocks + 3) * sizeof(unsigned int));
+	data_part = (unsigned int*)_alloca((data_blocks + 3) * sizeof(unsigned int));
+	ecc_part = (unsigned int*)_alloca((ecc_blocks + 3) * sizeof(unsigned int));
 #endif
 	/* Copy across data into separate integers */
 	memset(data_part,0,(data_blocks + 2)*sizeof(int));
