@@ -388,15 +388,17 @@ int gs1_compliant(int symbology)
 int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source)
 {
 	int error_number, error_buffer;
-	error_number = 0;
 	int input_length;
-	
+#ifdef _MSC_VER
+        unsigned char* preprocessed;
+#endif
 	input_length = ustrlen(source);
-	
+        error_number = 0;
+
 #ifndef _MSC_VER
 	unsigned char preprocessed[input_length];
 #else
-        unsigned char* preprocessed = (unsigned char*)_alloca(input_length + 1);
+        preprocessed = (unsigned char*)_alloca(input_length + 1);
 #endif
 
 	if(ustrlen(source) == 0) {

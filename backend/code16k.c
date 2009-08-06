@@ -182,14 +182,14 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	unsigned int i, j, k, m, e_count, read, mx_reader, writer;
 	unsigned int values[160];
 	unsigned int bar_characters;
-	strcpy(width_pattern, "");
 	float glyph_count;
 	int errornum, first_sum, second_sum;
 	int input_length;
 	int gs1, c_count;
 
 	errornum = 0;
-	input_length = ustrlen(source);
+        strcpy(width_pattern, "");
+        input_length = ustrlen(source);
 	
 	if(symbol->input_mode == GS1_MODE) { gs1 = 1; } else { gs1 = 0; }
 	

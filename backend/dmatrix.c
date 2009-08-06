@@ -40,7 +40,6 @@ extern int data_matrix_200(struct zint_symbol *symbol, unsigned char source[]);
 void crc_machine(char data_prefix_bitstream[], int scheme, unsigned char source[])
 {
 	int input_length, i;
-	input_length = ustrlen(source);
 	char xor_register[17];
 #ifndef _MSC_VER
 	char precrc_bitstream[(input_length * 8) + 18];
@@ -51,7 +50,8 @@ void crc_machine(char data_prefix_bitstream[], int scheme, unsigned char source[
 #endif
 	int machine_cycles;
 	char input_bit, out1, out2, out3;
-	
+        input_length = ustrlen(source);
+
 	switch(scheme) {
 		case 11: strcpy(precrc_bitstream, "0000000100000000"); break;
 		case 27: strcpy(precrc_bitstream, "0000001000000000"); break;
@@ -1075,7 +1075,6 @@ void protect_ecc140(char protected_stream[], char unprotected_stream[])
 int matrix89(struct zint_symbol *symbol, unsigned char source[])
 {
 	int i, j, input_length, scheme;
-	input_length = ustrlen(source);
 	char unprotected_stream[2210];
 	char data_prefix_bitstream[31];
 	char protected_stream[6630];
@@ -1086,7 +1085,8 @@ int matrix89(struct zint_symbol *symbol, unsigned char source[])
 	int symbol_size, hex_segment, width;
 	int error_number;
 	
-	error_number = 0;
+        input_length = ustrlen(source);
+        error_number = 0;
 	
 	symbol_size = 0;
 	for(i = 0; i < input_length; i++) {

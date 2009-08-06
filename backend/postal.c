@@ -503,12 +503,14 @@ int japan_post(struct zint_symbol *symbol, unsigned char source[])
 	int writer, loopey, inter_posn, i, sum, check;
 	char check_char;
 	char inter[23];
-
+#ifdef _MSC_VER
+        char* local_source;
+#endif
 	input_length = ustrlen(source);
 #ifndef _MSC_VER
         char local_source[input_length + 1];
 #else
-        char* local_source = (char*)_alloca(input_length + 1);
+        local_source = (char*)_alloca(input_length + 1);
 #endif
 	
 	inter_posn = 0;

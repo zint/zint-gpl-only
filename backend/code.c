@@ -375,13 +375,13 @@ int c93(struct zint_symbol *symbol, unsigned char source[])
 	int h, weight, c, k, values[100], error_number;
 	char buffer[100], temp[2];
 	char set_copy[] = TCSET;
-	strcpy(buffer, "");
 	int ascii_value;
 	char dest[1000];
 	unsigned char local_source[47];
 	
 	error_number = 0;
-	strcpy(dest, "");
+        strcpy(buffer, "");
+        strcpy(dest, "");
 
 	ustrcpy(local_source, source);
 	
