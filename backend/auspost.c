@@ -106,17 +106,17 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[])
 	   1 = Tracker and Ascender
 	   2 = Tracker and Descender
 	   3 = Tracker only */
+	int error_number, zeroes;
+	int writer, i;
+	unsigned int loopey, reader;
 
 	char data_pattern[200];
 	char fcc[3], dpid[10];
-	unsigned int loopey, reader;
-	int writer, i;
-	strcpy (data_pattern, "");
-	int error_number, zeroes;
 	char localstr[30];
 
 	error_number = 0;
-	strcpy(localstr, "");
+        strcpy (data_pattern, "");
+        strcpy(localstr, "");
 	
 	/* Do all of the length checking first to avoid stack smashing */
 	if(symbol->symbology == BARCODE_AUSPOST) {

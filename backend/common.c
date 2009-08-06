@@ -143,10 +143,10 @@ int module_is_set(struct zint_symbol *symbol, int y_coord, int x_coord)
 
 void set_module(struct zint_symbol *symbol, int y_coord, int x_coord)
 {
-	if(module_is_set(symbol, y_coord, x_coord)) { return; }
+        int x_char, x_sub;
+        if(module_is_set(symbol, y_coord, x_coord)) { return; }
 	
-	int x_char, x_sub;
-	
+
 	x_char = x_coord / 7;
 	x_sub = x_coord % 7;
 	
@@ -163,9 +163,8 @@ void set_module(struct zint_symbol *symbol, int y_coord, int x_coord)
 
 void unset_module(struct zint_symbol *symbol, int y_coord, int x_coord)
 {
-	if(!(module_is_set(symbol, y_coord, x_coord))) { return; }
-	
-	int x_char, x_sub;
+        int x_char, x_sub;
+        if(!(module_is_set(symbol, y_coord, x_coord))) { return; }
 	
 	x_char = x_coord / 7;
 	x_sub = x_coord % 7;
