@@ -3,5 +3,7 @@
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/cmake.mk
 
-
-# Add here any variable or target overrides you need.
+DEB_DBG_PACKAGE_libzint := libzint-dbg
+DEB_DBG_PACKAGE_libqzint := libzint-dbg
+DEB_DBG_PACKAGE_zintfrontend := libzint-dbg
+DEB_DBG_PACKAGE_qzintfrontend := libzint-dbg
