@@ -1,3 +1,11 @@
+zint (2.2.1) unstable; urgency=low
+
+  * bug fixes. Affected symbologies are Data Matrix, 
+    USPS One Code, Aztec Code, PDF417, MicroPDF and Composite symbols. 
+    If you use any of these then please update.
+
+ -- BogDan Vatra <bogdan@licentia.eu>  Fri, 07 Aug 2009 15:04:12 +0300
+
 zint (2.2.0-1) unstable; urgency=low
 
   * Debian testing/sid and (*)ubuntu debug packages
