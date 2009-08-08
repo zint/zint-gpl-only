@@ -26,7 +26,7 @@
 #ifndef NO_QR
 #include <qrencode.h>
 
-QRcode *encode(int security, int size, const unsigned char *intext, int kanji)
+QRcode *encode(int security, int size, const unsigned char *intext, int kanji, char nullchar, int input_length)
 {
 	int version;
 	QRecLevel level;
@@ -55,7 +55,13 @@ QRcode *encode(int security, int size, const unsigned char *intext, int kanji)
 		version = 0;
 	}
 
-	code = QRcode_encodeString((char*)intext, version, level, hint, 1);
+	if(nullchar == '\0') {
+		/* No NULL characters in data */
+		code = QRcode_encodeString((char*)intext, version, level, hint, 1);
+	} else {
+		/* NULL characters in data */
+		code = QRcode_encodeString8bit((char*)intext, version, level, input_length);
+	}
 
 	return code;
 }
@@ -66,10 +72,30 @@ int qr_code(struct zint_symbol *symbol, unsigned char source[])
 	/*int errno = 0;*/
 	int i, j;
 	int kanji;
+	int input_length;
+	char nullify;
 	
+	input_length = ustrlen(source);
+	nullify = symbol->nullchar;
 	if((symbol->input_mode == KANJI_MODE) || (symbol->input_mode == SJIS_MODE)) { kanji = 1; } else { kanji = 0; }
 
-	code = encode(symbol->option_1, symbol->option_2, source, kanji);
+	/* Null character handling */
+	j = 0;
+	if(nullify != '\0') {
+		for(i = 0; i < input_length; i++) {
+			if(source[i] == nullify) {
+				source[i] = '\0';
+				j++;
+			}
+		}
+	}
+
+	if(j == 0) {
+		/* nullchar was set but there are no NULL characters in the input data */
+		nullify = '\0';
+	}
+
+	code = encode(symbol->option_1, symbol->option_2, source, kanji, nullify, input_length);
 	if(code == NULL) {
 		strcpy(symbol->errtxt, "libqrencode failed to encode the input data");
 		return ERROR_ENCODING_PROBLEM;
