@@ -365,7 +365,9 @@ void MainWindow::change_options()
 		connect(m_optionWidget->findChild<QObject*>("radQRECC"), SIGNAL(clicked( bool )), SLOT(update_preview()));
 		connect(m_optionWidget->findChild<QObject*>("cmbQRSize"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
 		connect(m_optionWidget->findChild<QObject*>("cmbQRECC"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
-		connect(m_optionWidget->findChild<QObject*>("chkQRHIBC"), SIGNAL(stateChanged( int )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("radQRStand"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("radQRGS1"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("radQRHIBC"), SIGNAL(clicked( bool )), SLOT(update_preview()));
 	}
 
 	if(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_MICROQR)
@@ -705,11 +707,14 @@ void MainWindow::update_preview()
 			break;
 
 		case BARCODE_QRCODE:
-			if(m_optionWidget->findChild<QCheckBox*>("chkQRHIBC")->isChecked())
+			if(m_optionWidget->findChild<QRadioButton*>("radQRHIBC")->isChecked())
 				m_bc.bc.setSymbol(BARCODE_HIBC_QR);
 			else
 				m_bc.bc.setSymbol(BARCODE_QRCODE);
 
+			if(m_optionWidget->findChild<QRadioButton*>("radQRGS1")->isChecked())
+				m_bc.bc.setInputMode(GS1_MODE);
+			
 			if(m_optionWidget->findChild<QRadioButton*>("radQRSize")->isChecked())
 				m_bc.bc.setWidth(m_optionWidget->findChild<QComboBox*>("cmbQRSize")->currentIndex() + 1);
 
