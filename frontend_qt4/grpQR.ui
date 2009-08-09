@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>441</width>
-    <height>171</height>
+    <height>208</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -273,14 +273,68 @@
        </item>
       </widget>
      </item>
-     <item row="3" column="0" >
-      <widget class="QCheckBox" name="chkQRHIBC" >
-       <property name="text" >
-        <string>&amp;HIBC QR Code</string>
-       </property>
-      </widget>
-     </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="grpAztecMode" >
+     <property name="minimumSize" >
+      <size>
+       <width>0</width>
+       <height>70</height>
+      </size>
+     </property>
+     <property name="title" >
+      <string>Data Encoding</string>
+     </property>
+     <widget class="QRadioButton" name="radQRStand" >
+      <property name="geometry" >
+       <rect>
+        <x>10</x>
+        <y>17</y>
+        <width>102</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="minimumSize" >
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="text" >
+       <string>S&amp;tandard</string>
+      </property>
+      <property name="checked" >
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radQRHIBC" >
+      <property name="geometry" >
+       <rect>
+        <x>200</x>
+        <y>14</y>
+        <width>142</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>&amp;HIBC QR Code</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radQRGS1" >
+      <property name="geometry" >
+       <rect>
+        <x>9</x>
+        <y>41</y>
+        <width>151</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text" >
+       <string>&amp;GS-1 Data Mode</string>
+      </property>
+     </widget>
+    </widget>
    </item>
    <item>
     <spacer name="verticalSpacer" >
