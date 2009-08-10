@@ -378,6 +378,7 @@ int gs1_compliant(int symbology)
 		case BARCODE_CODABLOCKF:
 		case BARCODE_CODEONE:
 		case BARCODE_CODE49:
+		case BARCODE_QRCODE:
 			result = 1;
 			break;
 	}
