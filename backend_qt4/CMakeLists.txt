@@ -8,8 +8,8 @@ set(QZint_SRCS qzint.cpp)
 
 add_library(QZint SHARED ${QZint_SRCS})
 
-set_target_properties(QZint PROPERTIES	VERSION ${ZINT_VERSION}
-                                        SOVERSION ${ZINT_VERSION})
+set_target_properties(QZint PROPERTIES	SOVERSION "${ZINT_VERSION_MAJOR}.${ZINT_VERSION_MINOR}"
+                                        VERSION ${ZINT_VERSION})
 
 add_dependencies(QZint zint)
 
