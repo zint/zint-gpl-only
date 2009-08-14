@@ -799,7 +799,7 @@ int data_matrix_200(struct zint_symbol *symbol, unsigned char source[])
 		}
 	}
 	calcsize++;
-	
+
 	if(calcsize <= optionsize) {
 		symbolsize = optionsize;
 	} else {
@@ -808,6 +808,19 @@ int data_matrix_200(struct zint_symbol *symbol, unsigned char source[])
 			/* flag an error */
 			error_number = WARN_INVALID_OPTION;
 			strcpy(symbol->errtxt, "Data does not fit in selected symbol size");
+		}
+	}
+
+	if(symbol->option_3 == DM_SQUARE) {
+		/* Force to use square symbol */
+		switch(symbolsize) {
+			case 2:
+			case 4:
+			case 6:
+			case 9:
+			case 11:
+			case 14:
+				symbolsize++;
 		}
 	}
 	
