@@ -151,6 +151,8 @@ struct zint_symbol {
 #define KANJI_MODE	3
 #define SJIS_MODE	4
 
+#define DM_SQUARE	100
+
 #define WARN_INVALID_OPTION	2
 #define ERROR_TOO_LONG		5
 #define ERROR_INVALID_DATA	6
