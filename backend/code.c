@@ -90,14 +90,14 @@ int code_11(struct zint_symbol *symbol, unsigned char source[])
 
 	unsigned int i;
 	int h, c_digit, c_weight, c_count, k_digit, k_weight, k_count;
-	int weight[1000], error_number;
-	char dest[1000];
+	int weight[125], error_number;
+	char dest[1230];
 	char checkstr[3];
 	
 	error_number = 0;
 	strcpy(dest, "");
 
-	if(ustrlen(source) > 80) {
+	if(ustrlen(source) > 121) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -171,7 +171,7 @@ int c39(struct zint_symbol *symbol, unsigned char source[])
 	unsigned int counter;
 	char check_digit;
 	int h, error_number;
-	char dest[1000];
+	char dest[775];
 	char localstr[3];
 	
 	error_number = 0;
@@ -184,9 +184,16 @@ int c39(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	to_upper(source);
-	if(ustrlen(source) > 45) {
-		strcpy(symbol->errtxt, "Input too long");
-		return ERROR_TOO_LONG;
+	if(symbol->symbology == BARCODE_LOGMARS) {
+		if(ustrlen(source) > 59) {
+			strcpy(symbol->errtxt, "Input too long");
+			return ERROR_TOO_LONG;
+		}
+	} else {
+		if(ustrlen(source) > 74) {
+			strcpy(symbol->errtxt, "Input too long");
+			return ERROR_TOO_LONG;
+		}
 	}
 	error_number = is_sane(TCSET , source);
 	if(error_number == ERROR_INVALID_DATA) {
@@ -315,18 +322,15 @@ int pharmazentral(struct zint_symbol *symbol, unsigned char source[])
 int ec39(struct zint_symbol *symbol, unsigned char source[])
 { /* Extended Code 39 - ISO/IEC 16388:2007 Annex A */
 
-	unsigned char buffer[100];
+	unsigned char buffer[150];
 	unsigned int i;
 	int ascii_value;
 	int error_number;
 
-	memset(buffer,0,100);
+	memset(buffer,0,150);
 	error_number = 0;
 
-	if(ustrlen(source) > 45) {
-		/* only stops strings which are far too long - actual length of the barcode
-		depends on the type of data being encoded - if it's too long it's picked up
-		by c39() */
+	if(ustrlen(source) > 74) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -373,24 +377,22 @@ int c93(struct zint_symbol *symbol, unsigned char source[])
 
 	unsigned int i;
 	int h, weight, c, k, values[100], error_number;
-	char buffer[100], temp[2];
+	char buffer[220], temp[2];
 	char set_copy[] = TCSET;
 	int ascii_value;
-	char dest[1000];
-	unsigned char local_source[47];
+	char dest[670];
+	unsigned char local_source[110];
 	
 	error_number = 0;
         strcpy(buffer, "");
         strcpy(dest, "");
-
-	ustrcpy(local_source, source);
 	
-	if(ustrlen(local_source) > 45) {
-		/* This stops rediculously long input - the actual length of the barcode
-		depends on the type of data */
+	if(ustrlen(source) > 107) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
+	
+	ustrcpy(local_source, source);
 	
 	for(i = 0; i < ustrlen(local_source); i++) {
 		if(local_source[i] > 127) {
@@ -414,7 +416,7 @@ int c93(struct zint_symbol *symbol, unsigned char source[])
 	}
 
 	/* Now we can check the true length of the barcode */
-	if(strlen(buffer) > 45) {
+	if(strlen(buffer) > 107) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
