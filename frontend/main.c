@@ -70,6 +70,7 @@ void usage(void)
 		"Encode input data in a barcode and save as a PNG, EPS or SVG file.\n\n"
 		"  -h, --help            Display this message.\n"
 		"  -t, --types           Display table of barcode types\n"
+		"  -i, --input=FILE      Read data from FILE.\n"
 		"  -o, --output=FILE     Write image to FILE. (default is out.png)\n"
 		"  -d, --data=DATA       Barcode content.\n"
 		"  -b, --barcode=NUMBER  Number of barcode type (default is 20 (=Code128)).\n"
@@ -95,6 +96,7 @@ void usage(void)
 		"  --gs1                 Treat input as GS1 data\n"
 		"  --kanji               Treat input as Kanji characters in Unicode\n"
 		"  --sjis                Treat input as Shift-JIS\n"
+		"  --binary              Treat input as Binary data\n"
 	, ZINT_VERSION);
 }
 
@@ -148,6 +150,7 @@ int main(int argc, char **argv)
 			{"border", 1, 0, 0},
 			{"data", 1, 0, 'd'},
 			{"output", 1, 0, 'o'},
+			{"input", 1, 0, 'i'},
 			{"fg", 1, 0, 0},
 			{"bg", 1, 0, 0},
 			{"cols", 1, 0, 0},
@@ -162,6 +165,7 @@ int main(int argc, char **argv)
 			{"gs1", 0, 0, 0},
 			{"kanji", 0, 0, 0},
 			{"sjis", 0, 0, 0},
+			{"binary", 0, 0, 0},
 			{0, 0, 0, 0}
 		};
 		c = getopt_long(argc, argv, "htb:w:d:o:i:rcmp", long_options, &option_index);
@@ -195,6 +199,9 @@ int main(int argc, char **argv)
 				}
 				if(!strcmp(long_options[option_index].name, "sjis")) {
 					my_symbol->input_mode = SJIS_MODE;
+				}
+				if(!strcmp(long_options[option_index].name, "binary")) {
+					my_symbol->input_mode = DATA_MODE;
 				}
 				if(!strcmp(long_options[option_index].name, "fg")) {
 					strncpy(my_symbol->fgcolour, optarg, 7);
@@ -344,6 +351,16 @@ int main(int argc, char **argv)
 				}
 				break;
 				
+			case 'i': /* Take data from file */
+				error_number = ZBarcode_Encode_from_File_and_Print(my_symbol, optarg, rotate_angle);
+				generated = 1;
+				if(error_number != 0) {
+					fprintf(stderr, "%s\n", my_symbol->errtxt);
+					ZBarcode_Delete(my_symbol);
+					return 1;
+				}
+				break;
+
 			case 'o':
 				strncpy(my_symbol->outfile, optarg, 250);
 				break;

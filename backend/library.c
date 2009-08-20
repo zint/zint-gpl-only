@@ -714,3 +714,89 @@ int ZBarcode_Encode_and_Print_Rotated(struct zint_symbol *symbol, unsigned char 
 	error_number = ZBarcode_Print_Rotated(symbol, rotate_angle);
 	return error_number;
 }
+
+int ZBarcode_Encode_from_File(struct zint_symbol *symbol, char *filename)
+{
+	int i;
+	FILE *file;
+	unsigned char *buffer;
+	unsigned long fileLen;
+	unsigned char used_characters[255];
+
+	file = fopen(filename, "rb");
+	if (!file) {
+		strcpy(symbol->errtxt, "Unable to read input file");
+		return ERROR_INVALID_DATA;
+	}
+	
+	/* Get file length */
+	fseek(file, 0, SEEK_END);
+	fileLen = ftell(file);
+	fseek(file, 0, SEEK_SET);
+	
+	if(fileLen > 7100) {
+		/* The largest amount of data that can be encoded is 7089 numeric digits in QR Code */
+		strcpy(symbol->errtxt, "Input file too long");
+		fclose(file);
+		return ERROR_INVALID_DATA;
+	}
+	
+	/* Allocate memory */
+	buffer = (unsigned char *)malloc((fileLen + 1)*sizeof(unsigned char));
+	if(!buffer) {
+		strcpy(symbol->errtxt, "Internal memory error");
+		fclose(file);
+		return ERROR_MEMORY;
+	}
+	
+	/* Read file contents into buffer */
+	fread(buffer, fileLen, 1, file);
+	fclose(file);
+
+	if(symbol->input_mode == DATA_MODE) {
+		/* Look for and correctly handle NULL characters */
+		
+		for (i = 0; i <= 255; i++) { used_characters[i] = 0;} 
+		for (i = 0; i < (int)fileLen; i++) { used_characters[(int)buffer[i]] = 1;}
+	
+		if (used_characters[0] == 1) { /* only if data contains a NULL */
+			
+			/* determine first unused character > 0 */
+			i = 1;
+			while (i < 255) {
+				if (used_characters[i] == 0) {
+					symbol->nullchar = (char)i;
+					break;
+				}
+				i++;
+			}
+			if(symbol->nullchar == 0x00) {
+				/* No candidate character could be found. Quit */
+				strcpy(symbol->errtxt, "Could not encode NULL character");
+				return ERROR_INVALID_OPTION;
+			}
+	
+			for(i = 0; i < fileLen; i++) {
+				if(buffer[i] == 0x00) {
+					buffer[i] = symbol->nullchar;
+				}
+			}
+		}
+	}
+
+	return ZBarcode_Encode(symbol, buffer);
+}
+
+int ZBarcode_Encode_from_File_and_Print(struct zint_symbol *symbol, char *filename, int rotate_angle)
+{
+	int error_number;
+	
+	error_number = 0;
+	
+	error_number = ZBarcode_Encode_from_File(symbol, filename);
+	if(error_number != 0) {
+		return error_number;
+	}
+	
+	return ZBarcode_Print_Rotated(symbol, rotate_angle);
+}
