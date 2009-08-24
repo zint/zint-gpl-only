@@ -40,7 +40,7 @@ static char *PNTable[10] = {"LLSSS", "SSSLL", "SSLSL", "SSLLS", "SLSSL", "SLSLS"
 static char *PLTable[10] = {"SSLLL", "LLLSS", "LLSLS", "LLSSL", "LSLLS", "LSLSL", "LSSLL", "SLLLS",
 	"SLLSL", "SLSLL"};
 
-static char *FIMTable[4] = {"12121112121", "111112111211111", "121111111111121", "13111111131"};
+static char *FIMTable[4] = {"111515111", "13111311131", "11131313111", "1111131311111"};
 
 static char *RoyalValues[36] = {"11", "12", "13", "14", "15", "10", "21", "22", "23", "24", "25",
 	"20", "31", "32", "33", "34", "35", "30", "41", "42", "43", "44", "45", "40", "51", "52",
