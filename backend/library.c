@@ -386,6 +386,63 @@ int gs1_compliant(int symbology)
 	return result;
 }
 
+int ZBarcode_Check_Supported(int symbol_id)
+{
+	/* Checks whether a symbology is supported */
+	
+	int value;
+	
+	switch(symbol_id) {
+		case 5:
+		case 10:
+		case 11:
+		case 12:
+		case 14:
+		case 15:
+		case 17:
+		case 19:
+		case 26:
+		case 27:
+		case 33:
+		case 35:
+		case 36:
+		case 38:
+		case 39:
+		case 48:
+		case 54:
+#ifdef NO_QR
+		case 58:
+#endif
+		case 59:
+		case 61:
+		case 62:
+		case 64:
+		case 65:
+		case 73:
+		case 78:
+		case 83:
+		case 88:
+		case 91:
+		case 100:
+		case 101:
+		case 103:
+		case 105:
+		case 107:
+		case 109:
+			value = 0; break;
+		default:
+			value = 1; break;
+	}
+	
+	if(symbol_id < 1) { value = 0; }
+	if(symbol_id > 141) { value = 0; }
+	if((symbol_id >= 41) && (symbol_id <= 46)) { value = 0; }
+	if((symbol_id >= 94) && (symbol_id <= 96)) { value = 0; }
+	if((symbol_id >= 111) && (symbol_id <= 127)) { value = 0; }
+	
+	return value;
+}
+
 int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source)
 {
 	int error_number, error_buffer;

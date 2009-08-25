@@ -182,6 +182,7 @@ ZINT_EXTERN int ZBarcode_Print(struct zint_symbol *symbol);
 ZINT_EXTERN int ZBarcode_Encode_and_Print(struct zint_symbol *symbol, unsigned char *input);
 ZINT_EXTERN int ZBarcode_Encode_and_Print_Rotated(struct zint_symbol *symbol, unsigned char *input, int rotate_angle);
 ZINT_EXTERN int ZBarcode_Encode_from_File_and_Print(struct zint_symbol *symbol, char *filename, int rotate_angle);
+ZINT_EXTERN int ZBarcode_Check_Supported(int symbol_id);
 
 #ifdef __cplusplus
 }
