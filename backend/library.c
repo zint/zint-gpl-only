@@ -778,7 +778,7 @@ int ZBarcode_Encode_from_File(struct zint_symbol *symbol, char *filename)
 	FILE *file;
 	unsigned char *buffer;
 	unsigned long fileLen;
-	unsigned char used_characters[255];
+	unsigned char used_characters[256];
 
 	file = fopen(filename, "rb");
 	if (!file) {
