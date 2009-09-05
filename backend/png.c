@@ -302,6 +302,27 @@ void draw_bar(char *pixelbuf, int xpos, int xlen, int ypos, int ylen, int image_
 	}
 }
 
+int bullseye_pixel(int row, int col) {
+	int block_val, block_pos, return_val;
+	
+	block_val = bullseye_compressed[(row * 12) + (col / 8)];
+	return_val = 0;
+	block_pos = col % 8;
+	
+	switch(block_pos) {
+		case 0: if((block_val & 0x80) != 0) { return_val = 1; } break;
+		case 1: if((block_val & 0x40) != 0) { return_val = 1; } break;
+		case 2: if((block_val & 0x20) != 0) { return_val = 1; } break;
+		case 3: if((block_val & 0x10) != 0) { return_val = 1; } break;
+		case 4: if((block_val & 0x08) != 0) { return_val = 1; } break;
+		case 5: if((block_val & 0x04) != 0) { return_val = 1; } break;
+		case 6: if((block_val & 0x02) != 0) { return_val = 1; } break;
+		case 7: if((block_val & 0x01) != 0) { return_val = 1; } break;
+	}
+	
+	return return_val;
+}
+
 void draw_bullseye(char *pixelbuf, int image_width, int xoffset, int yoffset)
 {
 	/* Central bullseye in Maxicode symbols */
@@ -309,7 +330,8 @@ void draw_bullseye(char *pixelbuf, int image_width, int xoffset, int yoffset)
 	
 	for(j = 103; j < 196; j++) {
 		for(i = 0; i < 93; i++) {
-			if(bullseye[(((j - 103) * 93) + i)] == 1) {
+			if(bullseye_pixel(j - 103, i)) {
+			/* if(bullseye[(((j - 103) * 93) + i)] == 1) { */
 				*(pixelbuf + (image_width * j) + (image_width * yoffset) + i + 99 + xoffset) = '1';
 			}
 		}

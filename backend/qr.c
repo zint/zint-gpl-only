@@ -39,9 +39,9 @@ QRcode *encode(int security, int size, const unsigned char *intext, int kanji, i
 	if(kanji) {
 		hint = QR_MODE_KANJI;
 	}
-	if(gs1) {
+	/* if(gs1) {
 		hint = QR_MODE_GS1;
-	}
+	} - for future expansion */
 	if(hint == 0) {
 		hint = QR_MODE_8;
 	}
@@ -67,7 +67,8 @@ QRcode *encode(int security, int size, const unsigned char *intext, int kanji, i
 		code = QRcode_encodeString((char*)intext, version, level, hint, 1);
 	} else {
 		/* NULL characters in data */
-		code = QRcode_encodeString8bit((char*)intext, version, level, input_length);
+		code = QRcode_encodeString8bit((char*)intext, version, level);
+		/* code = QRcode_encodeString8bit((char*)intext, version, level, input_length); */
 	}
 
 	return code;
