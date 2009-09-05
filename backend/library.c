@@ -378,7 +378,7 @@ int gs1_compliant(int symbology)
 		case BARCODE_CODABLOCKF:
 		case BARCODE_CODEONE:
 		case BARCODE_CODE49:
-		case BARCODE_QRCODE:
+		/* case BARCODE_QRCODE: for future expansion */
 			result = 1;
 			break;
 	}
@@ -777,7 +777,7 @@ int ZBarcode_Encode_from_File(struct zint_symbol *symbol, char *filename)
 	int i;
 	FILE *file;
 	unsigned char *buffer;
-	unsigned long fileLen;
+	unsigned long fileLen, result;
 	unsigned char used_characters[256];
 
 	file = fopen(filename, "rb");
@@ -807,7 +807,13 @@ int ZBarcode_Encode_from_File(struct zint_symbol *symbol, char *filename)
 	}
 	
 	/* Read file contents into buffer */
-	fread(buffer, fileLen, 1, file);
+	result = fread(buffer, fileLen, 1, file);
+	if(result != fileLen) {
+		strcpy(symbol->errtxt, "File read error");
+		fclose(file);
+		return ERROR_MEMORY;
+	}
+		
 	fclose(file);
 
 	if(symbol->input_mode == DATA_MODE) {
