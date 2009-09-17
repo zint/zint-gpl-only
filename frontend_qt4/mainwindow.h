@@ -123,6 +123,8 @@ private slots:
 	void about();
 	void quit_now();
 	void reset_view();
+	int open_data_dialog();
+	int open_sequence_dialog();
 
 private:
 /*	void createActions();
