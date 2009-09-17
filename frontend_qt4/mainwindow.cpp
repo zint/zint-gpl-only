@@ -22,6 +22,8 @@
 #include <QFile>
 
 #include "mainwindow.h"
+#include "datawindow.h"
+#include "sequencewindow.h"
 #include <stdio.h>
 
 MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
@@ -126,6 +128,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 	connect(spnScale, SIGNAL(valueChanged( double )), SLOT(change_print_scale()));
 	connect(btnExit, SIGNAL(clicked( bool )), SLOT(quit_now()));
 	connect(btnReset, SIGNAL(clicked( bool )), SLOT(reset_view()));
+	connect(btnMoreData, SIGNAL(clicked( bool )), SLOT(open_data_dialog()));
+	connect(btnSequence, SIGNAL(clicked( bool )), SLOT(open_sequence_dialog()));
 }
 
 MainWindow::~MainWindow()
@@ -179,6 +183,22 @@ void MainWindow::about()
 					   "Released under the GNU General Public License ver. 3"
 					   "<p>\"QR Code\" is a Registered Trademark of Denso Corp."
 			     ));
+}
+
+int MainWindow::open_data_dialog()
+{
+	int retval;
+	DataWindow dlg(txtData->text());
+	retval = dlg.exec();
+	if (dlg.Valid == 1)
+		txtData->setText(dlg.DataOutput);
+	return retval;
+}
+
+int MainWindow::open_sequence_dialog()
+{
+	SequenceWindow dlg;
+	return dlg.exec();
 }
 
 void MainWindow::on_fgcolor_clicked()
