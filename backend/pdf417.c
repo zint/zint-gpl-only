@@ -30,10 +30,17 @@
    symbol->option_2 is used to adjust the width of the resulting symbol (i.e. the
    number of codeword columns not including row start and end data) */
 
+/* @(#) $Id: pdf417.c,v 1.12 2009/09/19 08:16:21 hooper114 Exp $ */
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#ifndef _MSC_VER
+#include <stdint.h>
+#else
+#include "ms_stdint.h"
+#endif 
 #include "pdf417.h"
 #include "common.h"
 #include "large.h"
@@ -310,144 +317,61 @@ void textprocess(int *chainemc, int *mclength, char chaine[], int start, int len
 /* 671 */
 void byteprocess(int *chainemc, int *mclength, unsigned char chaine[], int start, int length, int block, char nullchar)
 {
-	
-	int i, j, k, l, longueur;
-	short int accum[112], x_reg[112], y_reg[112];
-	int debug = 0;
+	int		debug	  = 0;
+	int		len       = 0;
+	unsigned int	chunkLen  = 0;
+	uint64_t	mantisa   = 0ULL;
+	uint64_t	total     = 0ULL;
 	
 	if(debug) printf("\nEntering byte mode at position %d\n", start);
 
 	if(length == 1) {
-		chainemc[*(mclength)] = 913;
-		chainemc[*(mclength) + 1] = chaine[start];
-		if(debug) { printf("913 %d\n", chainemc[*(mclength) + 1]); }
-		*(mclength) = *(mclength) + 2;
+		chainemc[(*mclength)++] = 913;
+		chainemc[(*mclength)++] = chaine[start];
+		if(debug) { printf("913 %d\n", chainemc[*mclength - 1]); }
 	} else {
 		/* select the switch for multiple of 6 bytes */
 		if (length % 6 == 0) {
-			chainemc[*(mclength)] = 924;
+			chainemc[(*mclength)++] = 924;
 			if(debug) printf("924 ");
-			*(mclength) = *(mclength) + 1;
 		} else {
-			chainemc[*(mclength)] = 901;
+			chainemc[(*mclength)++] = 901;
 			if(debug) printf("901 ");
-			*(mclength) = *(mclength) + 1;
 		}
 		
-		j = 0;
-		while(j < length) {
-			longueur = length - j;
-			
-			if (longueur >= 6) { /* Take groups of 6 */
-				
-				int cw[5];
-				
-				for(i = 0; i < 112; i++) {
-					accum[i] = 0;
-					x_reg[i] = 0;
-					y_reg[i] = 0;
-				}
-				
-				/* Load 6 bytes of data into the Y register */
-				longueur = 6;
-				for(k = 0; k < longueur; k++) {
-					for(i = 0; i < 8; i++) {
-						shiftup(y_reg);
-					}
-					
-					if(chaine[start + j + k] == nullchar) {
-						y_reg[7] = 0;
-						y_reg[6] = 0;
-						y_reg[5] = 0;
-						y_reg[4] = 0;
-						y_reg[3] = 0;
-						y_reg[2] = 0;
-						y_reg[1] = 0;
-						y_reg[0] = 0;
-					} else {
-						if((chaine[start + j + k] & 0x80) != 0) { y_reg[7] = 1; }
-						if((chaine[start + j + k] & 0x40) != 0) { y_reg[6] = 1; }
-						if((chaine[start + j + k] & 0x20) != 0) { y_reg[5] = 1; }
-						if((chaine[start + j + k] & 0x10) != 0) { y_reg[4] = 1; }
-						if((chaine[start + j + k] & 0x08) != 0) { y_reg[3] = 1; }
-						if((chaine[start + j + k] & 0x04) != 0) { y_reg[2] = 1; }
-						if((chaine[start + j + k] & 0x02) != 0) { y_reg[1] = 1; }
-						if((chaine[start + j + k] & 0x01) != 0) { y_reg[0] = 1; }
-					}
-				}
-				
-				for(l = 0; l < 4; l++) {
-				
-					for(i = 0; i < 112; i++) {
-						accum[i] = y_reg[i];
-						y_reg[i] = 0;
-						x_reg[i] = 0;
-					}
-					x_reg[101] = 1;
-					x_reg[100] = 1;
-					x_reg[99] = 1;
-					x_reg[94] = 1;
-					for(i = 92; i >= 0; i--) {
-						y_reg[i] = islarger(accum, x_reg);
-						if(y_reg[i] == 1) {
-							binary_subtract(accum, x_reg);
-						}
-						shiftdown(x_reg);
-					}
-					
-					cw[l] =   (accum[9] * 512) + (accum[8] * 256) +
-							(accum[7] * 128) + (accum[6] * 64) + (accum[5] * 32) +
-							(accum[4] * 16) + (accum[3] * 8) + (accum[2] * 4) +
-							(accum[1] * 2) + accum[0];
-					
-				}
-				
-				cw[4] =   (y_reg[9] * 512) + (y_reg[8] * 256) +
-						(y_reg[7] * 128) + (y_reg[6] * 64) + (y_reg[5] * 32) +
-						(y_reg[4] * 16) + (y_reg[3] * 8) + (y_reg[2] * 4) +
-						(y_reg[1] * 2) + y_reg[0];
-				
-				for(i = 0; i < 4; i++) {
-					if(cw[i] == 900) {
-						cw[i] = 0;
-						cw[i + 1]++;
-					}
-				}
-				
-				for(i = 0; i < 5; i++) {
-					chainemc[*(mclength)] = cw[4 - i];
-					*(mclength) = *(mclength) + 1;
-				}
-				
-				if(debug) {
-					for(k = 0; k < longueur; k++) {
-						printf("%d ", chaine[start + j + k]);
-					}
-					printf(">> ");
-					for(i = 0; i < 5; i++) {
-						printf("%d ", cw[4 - i]);
-					}
-					printf("\n");
+		while (len < length)
+		{
+			chunkLen = length - len;
+			if (6 <= chunkLen)  /* Take groups of 6 */
+			{
+				chunkLen	= 6;
+				len		+= chunkLen;
+				total		= 0ULL;
+
+				while (chunkLen--)
+				{
+					mantisa = chaine[start++];
+					total   |= mantisa << (uint64_t)(chunkLen * 8ULL);
 				}
 
-			} else {
-				/* If there remains a group of less than 6 bytes */
-				for(k = 0; k < longueur; k++) {
-					chainemc[*(mclength)] = chaine[start + j + k];
-					*(mclength) = *(mclength) + 1;
+				chunkLen = 5;
+
+				while (chunkLen--)
+				{
+					chainemc[*mclength + chunkLen] = (int)(total % 900ULL);
+					total /= 900ULL;
 				}
-				if(debug) {
-					for(k = 0; k < longueur; k++) {
-						printf("%d ", chaine[start + j + k]);
-					}
-					printf(">> ");
-					for(k = 0; k < longueur; k++) {
-						printf("%d ", chaine[start + j + k]);
-					}
-					printf("\n");
+				*mclength += 5;
+			}
+			else	/*  If it remain a group of less than 6 bytes   */
+			{
+				len += chunkLen;
+
+				while (chunkLen--)
+				{
+					chainemc[(*mclength)++] = chaine[start++];
 				}
 			}
-			j += longueur;
 		}
 	}
 }
@@ -677,22 +601,15 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 	total = 0;
 	for(i = 0; i < longueur; i++) {
 		total = (chainemc[i] + mccorrection[k - 1]) % 929;
-		for(j = k - 1; j >= 0; j--) {
-			if(j == 0) {
-				mccorrection[j] = (929 - (total * coefrs[offset + j]) % 929) % 929;
-			} else {
-				mccorrection[j] = (mccorrection[j - 1] + 929 - (total * coefrs[offset + j]) % 929) % 929;
-			}
+		for(j = k - 1; j > 0; j--) {
+			mccorrection[j] = (mccorrection[j - 1] + 929 - (total * coefrs[offset + j]) % 929) % 929;
 		}
+		mccorrection[0] = (929 - (total * coefrs[offset + j]) % 929) % 929;
 	}
 	
-	for(j = 0; j < k; j++) {
-		if(mccorrection[j] != 0) { mccorrection[j] = 929 - mccorrection[j]; }
-	}
 	/* we add these codes to the string */
 	for(i = k - 1; i >= 0; i--) {
-		chainemc[mclength] = mccorrection[i];
-		mclength++;
+		chainemc[mclength++] = mccorrection[i] ? 929 - mccorrection[i] : 0;
 	}
 	
 	/* 818 - The CW string is finished */
