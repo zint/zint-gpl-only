@@ -17,29 +17,17 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#ifndef SEQUENCEWINDOW_H
-#define SEQUENCEWINDOW_H
+#include <QDebug>
+#include <QUiLoader>
 
-#include "ui_extSequence.h"
+#include "exportwindow.h"
 
-class SequenceWindow : public QDialog, private Ui::SequenceDialog
+ExportWindow::ExportWindow()
 {
-	Q_OBJECT
+	setupUi(this);
+}
 
-public:
-	SequenceWindow();
-	~SequenceWindow();
-
-private:
-	QString apply_format(QString raw_number);
+ExportWindow::~ExportWindow()
+{
 	
-private slots:
-	void quit_now();
-	void reset_preview();
-	void create_sequence();
-	void check_generate();
-	void import();
-	void generate_sequence();
-};
-
-#endif
+}
