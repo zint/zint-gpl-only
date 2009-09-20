@@ -13,22 +13,6 @@
   <property name="windowTitle">
    <string>Export Barcodes</string>
   </property>
-  <widget class="QDialogButtonBox" name="buttonBox">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>130</y>
-     <width>431</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-   </property>
-  </widget>
   <widget class="QLineEdit" name="linDestPath">
    <property name="geometry">
     <rect>
@@ -48,6 +32,9 @@
      <height>22</height>
     </rect>
    </property>
+   <property name="text">
+    <string>bcs_</string>
+   </property>
   </widget>
   <widget class="QComboBox" name="cmbFileName">
    <property name="geometry">
@@ -58,6 +45,16 @@
      <height>22</height>
     </rect>
    </property>
+   <item>
+    <property name="text">
+     <string>Same as Data</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Serial Number</string>
+    </property>
+   </item>
   </widget>
   <widget class="QComboBox" name="cmbFileFormat">
    <property name="geometry">
@@ -68,6 +65,21 @@
      <height>22</height>
     </rect>
    </property>
+   <item>
+    <property name="text">
+     <string>Portable Network Graphic (*.png)</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Embedded Post Script (*.eps)</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Scalable Vector Graphic (*.svg)</string>
+    </property>
+   </item>
   </widget>
   <widget class="QToolButton" name="btnDestPath">
    <property name="geometry">
@@ -112,7 +124,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>80</y>
+     <y>70</y>
      <width>111</width>
      <height>16</height>
     </rect>
@@ -125,7 +137,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>110</y>
+     <y>100</y>
      <width>111</width>
      <height>16</height>
     </rect>
@@ -134,40 +146,33 @@
     <string>File Format:</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="btnCancel">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>130</y>
+     <width>80</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Cancel</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnOK">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>130</y>
+     <width>80</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>OK</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>ExportDialog</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>ExportDialog</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>286</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

@@ -21,9 +21,11 @@
 #include <QFile>
 #include <QUiLoader>
 #include <QFileDialog>
+#include <QMessageBox>
 
 #include "sequencewindow.h"
 #include "exportwindow.h"
+#include <stdio.h>
 
 SequenceWindow::SequenceWindow()
 {
@@ -124,6 +126,7 @@ void SequenceWindow::create_sequence()
 	step = incval.toInt(&ok, 10);
 	
 	if((stop <= start) || (step <= 0)) {
+		QMessageBox::critical(this, tr("Sequence Error"), tr("One or more of the input values is incorrect."));
 		return;
 	}
 	
@@ -153,9 +156,8 @@ void SequenceWindow::import()
 	QString fileName;
 	QFileDialog fdialog;
 	QFile file;
-	char *streamdata;
-	int streamlen;
-	QString utfstream;
+	QString outstream;
+	char *c;
 	
 	fdialog.setFileMode(QFileDialog::ExistingFile);
 	
@@ -166,14 +168,16 @@ void SequenceWindow::import()
 	}
 	
 	file.setFileName(fileName);
-	if(!file.open(QIODevice::ReadOnly)) {
+	if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		QMessageBox::critical(this, tr("Open Error"), tr("Could not open selected file."));
 		return;
 	}
-	
-	QDataStream input(&file);
-	streamlen = input.readRawData(streamdata, 7095);
-	utfstream = streamdata; /* FIXME: Does not take account of encoding scheme of input data */
-	txtPreview->setPlainText(utfstream);
+
+	while(file.getChar(c)) {
+		outstream += QChar(*c);
+	}
+
+	txtPreview->setPlainText(outstream);
 	file.close();
 }
 
@@ -182,5 +186,7 @@ void SequenceWindow::generate_sequence()
 	int returnval;
 	
 	ExportWindow dlg;
+	dlg.barcode = barcode;
+	dlg.output_data = txtPreview->toPlainText();
 	returnval = dlg.exec();
 }
