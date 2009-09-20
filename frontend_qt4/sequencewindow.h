@@ -21,6 +21,7 @@
 #define SEQUENCEWINDOW_H
 
 #include "ui_extSequence.h"
+#include "barcodeitem.h"
 
 class SequenceWindow : public QDialog, private Ui::SequenceDialog
 {
@@ -29,7 +30,8 @@ class SequenceWindow : public QDialog, private Ui::SequenceDialog
 public:
 	SequenceWindow();
 	~SequenceWindow();
-
+	BarcodeItem *barcode;
+	
 private:
 	QString apply_format(QString raw_number);
 	

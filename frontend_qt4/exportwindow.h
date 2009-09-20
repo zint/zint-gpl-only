@@ -21,6 +21,7 @@
 #define EXPORTWINDOW_H
 
 #include "ui_extExport.h"
+#include "barcodeitem.h"
 
 class ExportWindow : public QDialog, private Ui::ExportDialog
 {
@@ -29,7 +30,13 @@ class ExportWindow : public QDialog, private Ui::ExportDialog
 public:
 	ExportWindow();
 	~ExportWindow();
+	BarcodeItem *barcode;
+	QString output_data;
 
+private slots:
+	void quit_now();
+	void process();
+	void get_directory();
 };
 
 #endif

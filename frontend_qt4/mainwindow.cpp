@@ -156,7 +156,6 @@ bool MainWindow::save()
 {
 	bool status;
 	
-	/* Does nothing yet! */
 	QString fileName = QFileDialog::getSaveFileName(this,
 			tr("Save Barcode Image"), ".",
 			   tr("Barcode Images (*.png *.eps *.svg)"));
@@ -198,6 +197,7 @@ int MainWindow::open_data_dialog()
 int MainWindow::open_sequence_dialog()
 {
 	SequenceWindow dlg;
+	dlg.barcode = &m_bc;
 	return dlg.exec();
 }
 
