@@ -21,6 +21,7 @@
 #include <QFileDialog>
 #include <QUiLoader>
 #include <QStringList>
+#include <QMessageBox>
 
 #include "datawindow.h"
 #include <stdio.h>
@@ -73,9 +74,8 @@ void DataWindow::from_file()
 	QString fileName;
 	QFileDialog fdialog;
 	QFile file;
-	char *streamdata;
-	int streamlen;
-	QString utfstream;
+	QString outstream;
+	char *c;
 	
 	fdialog.setFileMode(QFileDialog::ExistingFile);
 	
@@ -87,12 +87,14 @@ void DataWindow::from_file()
 	
 	file.setFileName(fileName);
 	if(!file.open(QIODevice::ReadOnly)) {
+		QMessageBox::critical(this, tr("Open Error"), tr("Could not open selected file."));
 		return;
 	}
 	
-	QDataStream input(&file);
-	streamlen = input.readRawData(streamdata, 7095);
-	utfstream = streamdata; /* FIXME: Does not take account of encoding scheme of input data */
-	txtDataInput->setPlainText(utfstream);
+	while(file.getChar(c)) {
+		outstream += QChar(*c);
+	}
+	
+	txtDataInput->setPlainText(outstream);
 	file.close();
 }
