@@ -72,7 +72,7 @@
    </item>
    <item>
     <property name="text">
-     <string>Embedded Post Script (*.eps)</string>
+     <string>Encapsulated Post Script (*.eps)</string>
     </property>
    </item>
    <item>
