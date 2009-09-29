@@ -173,14 +173,18 @@ bool MainWindow::save()
 void MainWindow::about()
 {
 	QMessageBox::about(this, tr("About Zint"),
-			   tr("<h2>Zint Barcode Studio 1.0</h2>"
+			   tr("<h2>Zint Barcode Studio 1.0.1</h2>"
 					   "<p>A simple barcode generator"
-					   "<p>Requires libzint 2.2 or greater."
+					   "<p>Requires libzint 2.2.2 or greater."
+					   "<p><font color=\"#ff0000\">WARNING!</font> This release is a work-in-progress and should be considered as \"unstable\". "
+					   "Although most things should work fine it has not yet been thoroughly tested. In particular using "
+					   "input characters outside the 7-bit ASCII set could lead to unpredictable results."
 					   "<p>Visit the <a href=\"http://www.zint.org.uk\">Zint Project Homepage</a> for more information."
 					   "<p>Copyright &copy; 2009 Robin Stuart &amp; Bogdan Vatra.<br>"
 					   "QR Code support by Kentaro Fukuchi.<br>"
-					   "Released under the GNU General Public License ver. 3"
-					   "<p>\"QR Code\" is a Registered Trademark of Denso Corp."
+					   "Released under the GNU General Public License ver. 3 or later"
+					   "<p>\"QR Code\" is a Registered Trademark of Denso Corp.<br>"
+					   "\"Telepen\" is a Registered Trademark of SB Electronics."
 			     ));
 }
 
