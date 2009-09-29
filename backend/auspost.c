@@ -94,7 +94,7 @@ void rs_error(char data_pattern[])
 	rs_free();
 }
 
-int australia_post(struct zint_symbol *symbol, unsigned char source[])
+int australia_post(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	/* Handles Australia Posts's 4 State Codes */
 	/* Customer Standard Barcode, Barcode 2 or Barcode 3 system determined automatically
@@ -121,13 +121,13 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[])
 	/* Do all of the length checking first to avoid stack smashing */
 	if(symbol->symbology == BARCODE_AUSPOST) {
 		/* Format control code (FCC) */
-		switch(ustrlen(source))
+		switch(length)
 		{
 			case 8: strcpy(fcc, "11"); break;
 			case 13: strcpy(fcc, "59"); break;
-			case 16: strcpy(fcc, "59"); error_number = is_sane(NESET, source); break;
+			case 16: strcpy(fcc, "59"); error_number = is_sane(NESET, source, length); break;
 			case 18: strcpy(fcc, "62"); break;
-			case 23: strcpy(fcc, "62"); error_number = is_sane(NESET, source); break;
+			case 23: strcpy(fcc, "62"); error_number = is_sane(NESET, source, length); break;
 			default: strcpy(symbol->errtxt, "Auspost input is wrong length");
 			return ERROR_TOO_LONG;
 				break;
@@ -148,14 +148,14 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[])
 		}
 		
 		/* Add leading zeros as required */
-		zeroes = 8 - ustrlen(source);
+		zeroes = 8 - length;
 		for(i = 0; i < zeroes; i++) {
 			concat(localstr, "0");
 		}
 	}
 
 	concat(localstr, (char*)source);
-	error_number = is_sane(GDSET, (unsigned char *)localstr);
+	error_number = is_sane(GDSET, (unsigned char *)localstr, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
@@ -166,7 +166,7 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[])
 		dpid[loopey] = localstr[loopey];
 	}
 	dpid[8] = '\0';
-	error_number = is_sane(NESET, (unsigned char *)dpid);
+	error_number = is_sane(NESET, (unsigned char *)dpid, 8);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in DPID");
 		return error_number;

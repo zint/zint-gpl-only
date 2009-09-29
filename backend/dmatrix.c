@@ -29,7 +29,7 @@
 #ifdef _MSC_VER
 #include "dm200.h"
 #else
-extern int data_matrix_200(struct zint_symbol *symbol, unsigned char source[]);
+extern int data_matrix_200(struct zint_symbol *symbol, unsigned char source[], int length);
 #endif
 
 #define B11SET " 0123456789"
@@ -37,7 +37,7 @@ extern int data_matrix_200(struct zint_symbol *symbol, unsigned char source[]);
 #define B37SET " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 #define B41SET " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,-/"
 
-void crc_machine(char data_prefix_bitstream[], int scheme, unsigned char source[])
+void crc_machine(char data_prefix_bitstream[], int scheme, unsigned char source[], int length)
 {
 	int input_length, i;
 	char xor_register[17];
@@ -48,7 +48,7 @@ void crc_machine(char data_prefix_bitstream[], int scheme, unsigned char source[
 	char* precrc_bitstream_reversed;
 #endif
 
-	input_length = ustrlen(source);
+	input_length = length;
 
 #ifndef _MSC_VER
 	char precrc_bitstream[(input_length * 8) + 18];
@@ -131,14 +131,14 @@ void crc_machine(char data_prefix_bitstream[], int scheme, unsigned char source[
 	return;
 }
 
-void i1_base11(char binary_string[], unsigned char source[])
+void i1_base11(char binary_string[], unsigned char source[], int length)
 {
 	int input_length, blocks, remainder, i, j;
 	char block_binary[22];
 	int block_value, c[6], weight[6];
 	int binary_posn;
 	
-	input_length = ustrlen(source);
+	input_length = length;
 	binary_posn = strlen(binary_string);
 	blocks = input_length / 6;
 	remainder = input_length % 6;
@@ -235,14 +235,14 @@ void i1_base11(char binary_string[], unsigned char source[])
 	return;
 }
 
-void i2_base27(char binary_string[], unsigned char source[])
+void i2_base27(char binary_string[], unsigned char source[], int length)
 {
 	int input_length, blocks, remainder, i, j;
 	char block_binary[25];
 	int block_value, c[5], weight[5];
 	int binary_posn;
 	
-	input_length = ustrlen(source);
+	input_length = length;
 	blocks = input_length / 5;
 	remainder = input_length % 5;
 	binary_posn = strlen(binary_string);
@@ -340,14 +340,14 @@ void i2_base27(char binary_string[], unsigned char source[])
 	return;
 }
 
-void i3_base37(char binary_string[], unsigned char source[])
+void i3_base37(char binary_string[], unsigned char source[], int length)
 {
 	int input_length, blocks, remainder, i, j;
 	char block_binary[22];
 	int block_value, c[6], weight[6];
 	int binary_posn;
 	
-	input_length = ustrlen(source);
+	input_length = length;
 	blocks = input_length / 4;
 	remainder = input_length % 4;
 	binary_posn = strlen(binary_string);
@@ -436,14 +436,14 @@ void i3_base37(char binary_string[], unsigned char source[])
 	return;
 }
 
-void i4_base41(char binary_string[], unsigned char source[])
+void i4_base41(char binary_string[], unsigned char source[], int length)
 {
 	int input_length, blocks, remainder, i, j;
 	char block_binary[23];
 	int block_value, c[6], weight[6];
 	int binary_posn;
 	
-	input_length = ustrlen(source);
+	input_length = length;
 	blocks = input_length / 4;
 	remainder = input_length % 4;
 	binary_posn = strlen(binary_string);
@@ -534,13 +534,13 @@ void i4_base41(char binary_string[], unsigned char source[])
 	return;
 }
 
-void base128(char binary_string[], unsigned char source[])
+void base128(char binary_string[], unsigned char source[], int length)
 {
 	int i, j, input_length;
 	char block_binary[9];
 	int binary_posn;
 	
-	input_length = ustrlen(source);
+	input_length = length;
 	binary_posn = strlen(binary_string);
 	
 	for(i = 0; i < input_length; i++) {
@@ -1078,7 +1078,7 @@ void protect_ecc140(char protected_stream[], char unprotected_stream[])
 
 }
 
-int matrix89(struct zint_symbol *symbol, unsigned char source[])
+int matrix89(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	int i, j, input_length, scheme;
 	char unprotected_stream[2210];
@@ -1091,7 +1091,7 @@ int matrix89(struct zint_symbol *symbol, unsigned char source[])
 	int symbol_size, hex_segment, width;
 	int error_number;
 	
-        input_length = ustrlen(source);
+        input_length = length;
         error_number = 0;
 	
 	symbol_size = 0;
@@ -1104,10 +1104,10 @@ int matrix89(struct zint_symbol *symbol, unsigned char source[])
 	
 	/* Decide which encoding scheme to use */
 	scheme = 128;
-	if(!(is_sane(B41SET, source))) { scheme = 41; }
-	if(!(is_sane(B37SET, source))) { scheme = 37; }
-	if(!(is_sane(B27SET, source))) { scheme = 27; }
-	if(!(is_sane(B11SET, source))) { scheme = 11; }
+	if(!(is_sane(B41SET, source, length))) { scheme = 41; }
+	if(!(is_sane(B37SET, source, length))) { scheme = 37; }
+	if(!(is_sane(B27SET, source, length))) { scheme = 27; }
+	if(!(is_sane(B11SET, source, length))) { scheme = 11; }
 	
 	/* Data Prefix Bit Stream = Format ID + CRC + Data Length */
 	
@@ -1121,7 +1121,7 @@ int matrix89(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	/* CRC Value (16 bit) */
-	crc_machine(data_prefix_bitstream, scheme, source);
+	crc_machine(data_prefix_bitstream, scheme, source, length);
 	
 	/* Data length (9 bit) */
 	if(input_length & 0x01) { concat(data_prefix_bitstream, "1"); } else { concat(data_prefix_bitstream, "0"); }
@@ -1167,11 +1167,11 @@ int matrix89(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	switch(scheme) {
-		case 11: i1_base11(unprotected_stream, source); break;
-		case 27: i2_base27(unprotected_stream, source); break;
-		case 37: i3_base37(unprotected_stream, source); break;
-		case 41: i4_base41(unprotected_stream, source); break;
-		default: base128(unprotected_stream, source); break;
+		case 11: i1_base11(unprotected_stream, source, length); break;
+		case 27: i2_base27(unprotected_stream, source, length); break;
+		case 37: i3_base37(unprotected_stream, source, length); break;
+		case 41: i4_base41(unprotected_stream, source, length); break;
+		default: base128(unprotected_stream, source, length); break;
 	}
 	
 	/* Header (ECC Bit field) LSB first */
@@ -1307,16 +1307,16 @@ int matrix89(struct zint_symbol *symbol, unsigned char source[])
 	return error_number;
 }
 
-int dmatrix(struct zint_symbol *symbol, unsigned char source[])
+int dmatrix(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	int error_number;
 	
 	if(symbol->option_1 <= 1) {
 		/* ECC 200 */
-		error_number = data_matrix_200(symbol, source);
+		error_number = data_matrix_200(symbol, source, length);
 	} else {
 		/* ECC 000 - 140 */
-		error_number = matrix89(symbol, source);
+		error_number = matrix89(symbol, source, length);
 	}
 
 	return error_number;

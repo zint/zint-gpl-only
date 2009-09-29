@@ -48,7 +48,7 @@ extern void uconcat(unsigned char dest[], unsigned char source[]);
 extern int ctoi(char source);
 extern char itoc(int source);
 extern void to_upper(unsigned char source[]);
-extern int is_sane(char test_string[], unsigned char source[]);
+extern int is_sane(char test_string[], unsigned char source[], int length);
 extern void lookup(char set_string[], char *table[], char data, char dest[]);
 extern int posn(char set_string[], char data);
 extern void expand(struct zint_symbol *symbol, char data[]);
@@ -60,6 +60,7 @@ extern void set_module(struct zint_symbol *symbol, int y_coord, int x_coord);
 extern void unset_module(struct zint_symbol *symbol, int y_coord, int x_coord);
 extern int istwodigits(unsigned char source[], int position);
 extern float froundup(float input);
+extern int latin1_process(struct zint_symbol *symbol, unsigned char source[], unsigned char preprocessed[], int *length);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

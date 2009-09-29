@@ -402,18 +402,9 @@ char isbn_check(unsigned char source[]) /* For ISBN(10) and SBN only */
 
 int isbn(struct zint_symbol *symbol, unsigned char source[], char dest[]) /* Make an EAN-13 barcode from an SBN or ISBN */
 {
-	int i, errno;
+	int i;
 	char check_digit;
-
-	errno = 0;
 	
-	to_upper(source);
-	errno = is_sane("0123456789X", source);
-	if(errno == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Invalid characters in input");
-		return errno;
-	}
-
 	/* Input must be 9, 10 or 13 characters */
 	if(((ustrlen(source) < 9) || (ustrlen(source) > 13)) || ((ustrlen(source) > 10) && (ustrlen(source) < 13)))
 	{
@@ -491,7 +482,7 @@ int isbn(struct zint_symbol *symbol, unsigned char source[], char dest[]) /* Mak
 		ean13(symbol, source, dest);
 	}
 	
-	return errno;
+	return 0;
 }
 
 void ean_leading_zeroes(struct zint_symbol *symbol, unsigned char source[], unsigned char local_source[]) {
@@ -575,15 +566,15 @@ void ean_leading_zeroes(struct zint_symbol *symbol, unsigned char source[], unsi
 	}
 }
 
-int eanx(struct zint_symbol *symbol, unsigned char source[])
+int eanx(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	/* splits string to parts before and after '+' parts */
 	unsigned char first_part[20], second_part[20], dest[1000];
 	unsigned char local_source[20];
 	unsigned int latch, reader, writer, with_addon;
-	int errno, i;
+	int error_number, i;
 	
-	errno = 0;
+	error_number = 0;
 	memset(dest,0,1000);
 	memset(first_part,0,20);
 	memset(second_part,0,20);
@@ -592,21 +583,32 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 	latch = FALSE;
 	writer = 0;
 
-	if(ustrlen(source) > 19) {
+	if(length > 19) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	if(symbol->symbology != BARCODE_ISBNX) {
 		/* ISBN has it's own checking routine */
-		errno = is_sane(NASET, source);
-		if(errno == ERROR_INVALID_DATA) {
+		error_number = is_sane(NASET, source, length);
+		if(error_number == ERROR_INVALID_DATA) {
 			strcpy(symbol->errtxt, "Invalid characters in data");
-			return errno;
+			return error_number;
+		}
+	} else {
+		error_number = is_sane("0123456789Xx", source, length);
+		if(error_number == ERROR_INVALID_DATA) {
+			strcpy(symbol->errtxt, "Invalid characters in input");
+			return error_number;
 		}
 	}
 
+
 	/* Add leading zeroes */
 	ustrcpy(local_source, (unsigned char *)"");
+	if(symbol->symbology == BARCODE_ISBNX) {
+		to_upper(local_source);
+	}
+	
 	ean_leading_zeroes(symbol, source, local_source);
 	
 	for(reader = 0; reader <= ustrlen(local_source); reader++)
@@ -732,9 +734,9 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 			}
 			break;
 		case BARCODE_ISBNX:
-			errno = isbn(symbol, first_part, (char*)dest);
-			if(errno > 4) {
-				return errno;
+			error_number = isbn(symbol, first_part, (char*)dest);
+			if(error_number > 4) {
+				return error_number;
 			}
 			break;
 	}
@@ -777,10 +779,10 @@ int eanx(struct zint_symbol *symbol, unsigned char source[])
 	}
 
 	
-	if((symbol->errtxt[0] == 'w') && (errno == 0)) {
-		errno = 1; /* flag UPC-E warnings */
+	if((symbol->errtxt[0] == 'w') && (error_number == 0)) {
+		error_number = 1; /* flag UPC-E warnings */
 	}
-	return errno;
+	return error_number;
 }
 
 

@@ -112,7 +112,7 @@ void maxi_bump(int set[], int character[], int bump_posn)
 	}
 }
 
-int maxi_text_process(int mode, unsigned char source[], char nullchar)
+int maxi_text_process(int mode, unsigned char source[], int length)
 {
 	/* Format text according to Appendix A */
 	
@@ -120,9 +120,7 @@ int maxi_text_process(int mode, unsigned char source[], char nullchar)
 	and [Lock in E] and so is not always the most efficient at
 	compressing data, but should suffice for most applications */
 	
-	int set[144], character[144], i, j, done, count, length, current_set;
-	
-	length = ustrlen(source);
+	int set[144], character[144], i, j, done, count, current_set;
 	
 	if(length > 138) {
 		return ERROR_TOO_LONG;
@@ -136,13 +134,8 @@ int maxi_text_process(int mode, unsigned char source[], char nullchar)
 	for (i = 0; i < length; i++) {
 		/* Look up characters in table from Appendix A - this gives
 		 value and code set for most characters */
-		if(source[i] == nullchar) {
-			set[i] = maxiCodeSet[0];
-			character[i] = maxiSymbolChar[0];
-		} else {
-			set[i] = maxiCodeSet[source[i]];
-			character[i] = maxiSymbolChar[source[i]];
-		}
+		set[i] = maxiCodeSet[source[i]];
+		character[i] = maxiSymbolChar[source[i]];
 	}
 	
 	/* If a character can be represented in more than one code set,
@@ -551,15 +544,36 @@ void maxi_do_primary_3(char postcode[], int country, int service)
 	maxi_codeword[9] = ((service & 0x3f0) >> 4);
 }
 
-int maxicode(struct zint_symbol *symbol, unsigned char source[])
+int maxicode(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	int i, j, block, bit, mode, countrycode = 0, service = 0;
-	int bit_pattern[7], internal_error = 0, eclen;
+	int bit_pattern[7], internal_error = 0, eclen, error_number;
 	char postcode[12], countrystr[4], servicestr[4];
+	
+#ifndef _MSC_VER
+        unsigned char local_source[length];
+#else
+        unsigned char local_source = (unsigned char*)_alloca(length);
+#endif
+
 	mode = symbol->option_1;
 	strcpy(postcode, "");
 	strcpy(countrystr, "");
 	strcpy(servicestr, "");
+	
+	/* The following to be replaced by ECI handling */
+	switch(symbol->input_mode) {
+		case DATA_MODE:
+			for(i = 0; i < length; i++) {
+				local_source[i] = source[i];
+			}
+			local_source[length] = '\0';
+			break;
+		case UNICODE_MODE:
+			error_number = latin1_process(symbol, source, local_source, &length);
+			if(error_number != 0) { return error_number; }
+			break;
+	}
 	
 	for(i = 0; i < 145; i++) {
 		maxi_codeword[i] = 0;
@@ -628,7 +642,7 @@ int maxicode(struct zint_symbol *symbol, unsigned char source[])
 		maxi_codeword[0] = mode;
 	}
 	
-	i = maxi_text_process(mode, source, symbol->nullchar);
+	i = maxi_text_process(mode, local_source, length);
 	if(i == ERROR_TOO_LONG ) {
 		strcpy(symbol->errtxt, "Input data too long");
 		return i;

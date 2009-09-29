@@ -142,7 +142,7 @@ void getRSSwidths(int val, int n, int elements, int maxWidth, int noNarrow)
 	return;
 }
 
-int rss14(struct zint_symbol *symbol, unsigned char source[])
+int rss14(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* GS1 DataBar-14 */
 	int error_number = 0, i, j, mask;
 	short int accum[112], left_reg[112], right_reg[112], x_reg[112], y_reg[112];
@@ -153,11 +153,11 @@ int rss14(struct zint_symbol *symbol, unsigned char source[])
 	
 	separator_row = 0;
 
-	if(ustrlen(source) > 13) {
+	if(length > 13) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	error_number = is_sane(NESET, source);
+	error_number = is_sane(NESET, source, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
@@ -651,7 +651,7 @@ int rss14(struct zint_symbol *symbol, unsigned char source[])
 	return error_number;
 }
 
-int rsslimited(struct zint_symbol *symbol, unsigned char source[])
+int rsslimited(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* GS1 DataBar Limited */
 	int error_number = 0, i, mask;
 	short int accum[112], left_reg[112], right_reg[112], x_reg[112], y_reg[112];
@@ -663,16 +663,16 @@ int rsslimited(struct zint_symbol *symbol, unsigned char source[])
 
 	separator_row = 0;
 	
-	if(ustrlen(source) > 13) {
+	if(length > 13) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	error_number = is_sane(NESET, source);
+	error_number = is_sane(NESET, source, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
-	if(ustrlen(source) == 13) {
+	if(length == 13) {
 		if((source[0] != '0') && (source[0] != '1')) {
 			strcpy(symbol->errtxt, "Input out of range");
 			return ERROR_INVALID_DATA;
@@ -1858,7 +1858,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 	return 0;
 }
 
-int rssexpanded(struct zint_symbol *symbol, unsigned char source[])
+int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* GS1 DataBar Expanded */
 	int i, j, k, l, data_chars, vs[21], group[21], v_odd[21], v_even[21];
 	char substring[21][14], latch;
@@ -1868,10 +1868,10 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[])
 	int codeblocks, sub_elements[235], stack_rows, current_row, current_block;
 	int separator_row;
 #ifndef _MSC_VER
-	char reduced[ustrlen(source)], binary_string[7 * ustrlen(source)];
+	char reduced[length], binary_string[7 * length];
 #else
-        char* reduced = (char*)_alloca(ustrlen(source));
-        char* binary_string = (char*)_alloca(7 * ustrlen(source));
+        char* reduced = (char*)_alloca(length);
+        char* binary_string = (char*)_alloca(7 * length);
 #endif
 	
 	separator_row = 0;

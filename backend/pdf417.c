@@ -30,7 +30,7 @@
    symbol->option_2 is used to adjust the width of the resulting symbol (i.e. the
    number of codeword columns not including row start and end data) */
 
-/* @(#) $Id: pdf417.c,v 1.12 2009/09/19 08:16:21 hooper114 Exp $ */
+/* @(#) $Id: pdf417.c,v 1.13 2009/09/29 09:45:47 hooper114 Exp $ */
 
 #include <stdio.h>
 #include <string.h>
@@ -70,14 +70,10 @@ static int MicroAutosize[56] =
 int liste[2][1000]; /* global - okay, so I got _almost_ everything local! */
 
 /* 866 */
-int quelmode(char codeascii, char nullchar)
+int quelmode(char codeascii)
 {
 	int mode;
 	mode = BYT;
-	
-	if(codeascii == nullchar) {
-		return BYT;
-	}
 	
 	if((codeascii >= ' ') && (codeascii <= '~')) { mode = TEX; }
 	if(codeascii == '\t') { mode = TEX; }
@@ -315,7 +311,7 @@ void textprocess(int *chainemc, int *mclength, char chaine[], int start, int len
 }
 
 /* 671 */
-void byteprocess(int *chainemc, int *mclength, unsigned char chaine[], int start, int length, int block, char nullchar)
+void byteprocess(int *chainemc, int *mclength, unsigned char chaine[], int start, int length, int block)
 {
 	int		debug	  = 0;
 	int		len       = 0;
@@ -441,7 +437,7 @@ void numbprocess(int *chainemc, int *mclength, char chaine[], int start, int len
 }
 
 /* 366 */
-int pdf417(struct zint_symbol *symbol, unsigned char chaine[])
+int pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
 {
 	int i, k, j, indexchaine, indexliste, mode, longueur, loop, mccorrection[520], offset;
 	int total, chainemc[2700], mclength, c1, c2, c3, dummy[35], codeerr;
@@ -454,7 +450,7 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 	indexliste = 0;
 	indexchaine = 0;
 	
-	mode = quelmode(chaine[indexchaine], symbol->nullchar);
+	mode = quelmode(chaine[indexchaine]);
 	
 	for(i = 0; i < 1000; i++) {
 		liste[0][i] = 0;
@@ -463,13 +459,13 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 	/* 463 */
 	do {
 		liste[1][indexliste] = mode;
-		while ((liste[1][indexliste] == mode) && (indexchaine < ustrlen(chaine))) {
+		while ((liste[1][indexliste] == mode) && (indexchaine < length)) {
 			liste[0][indexliste]++;
 			indexchaine++;
-			mode = quelmode(chaine[indexchaine], symbol->nullchar);
+			mode = quelmode(chaine[indexchaine]);
 		}
 		indexliste++;
-	} while (indexchaine < ustrlen(chaine));
+	} while (indexchaine < length);
 	
 	/* 474 */
 	pdfsmooth(&indexliste);
@@ -496,7 +492,7 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 				textprocess(chainemc, &mclength, (char*)chaine, indexchaine, liste[0][i], i);
 				break;
 			case BYT: /* 670 - octet stream mode */
-				byteprocess(chainemc, &mclength, chaine, indexchaine, liste[0][i], i, symbol->nullchar);
+				byteprocess(chainemc, &mclength, chaine, indexchaine, liste[0][i], i);
 				break;
 			case NUM: /* 712 - numeric mode */
 				numbprocess(chainemc, &mclength, (char*)chaine, indexchaine, liste[0][i], i);
@@ -686,58 +682,78 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 }
 
 /* 345 */
-int pdf417enc(struct zint_symbol *symbol, unsigned char source[])
+int pdf417enc(struct zint_symbol *symbol, unsigned char source[], int length)
 {
-	int codeerr, errno;
+	int codeerr, error_number, i;
+	
+#ifndef _MSC_VER
+        unsigned char local_source[length];
+#else
+        unsigned char local_source = (unsigned char*)_alloca(length);
+#endif
 
-	errno = 0;
+	error_number = 0;
 	
 	if((symbol->option_1 < -1) || (symbol->option_1 > 8)) {
 		strcpy(symbol->errtxt, "Security value out of range");
 		symbol->option_1 = -1;
-		errno = WARN_INVALID_OPTION;
+		error_number = WARN_INVALID_OPTION;
 	}
 	if((symbol->option_2 < 0) || (symbol->option_2 > 30)) {
 		strcpy(symbol->errtxt, "Number of columns out of range");
 		symbol->option_2 = 0;
-		errno = WARN_INVALID_OPTION;
+		error_number = WARN_INVALID_OPTION;
+	}
+
+	/* The following to be replaced by ECI handling */
+	switch(symbol->input_mode) {
+		case DATA_MODE:
+			for(i = 0; i < length; i++) {
+				local_source[i] = source[i];
+			}
+			local_source[length] = '\0';
+			break;
+		case UNICODE_MODE:
+			error_number = latin1_process(symbol, source, local_source, &length);
+			if(error_number != 0) { return error_number; }
+			break;
 	}
 
 	/* 349 */
-	codeerr = pdf417(symbol, source);
+	codeerr = pdf417(symbol, local_source, length);
 	
 	/* 352 */
 	if(codeerr != 0) {
 		switch(codeerr) {
 			case 1:
 				strcpy(symbol->errtxt, "No such file or file unreadable");
-				errno = ERROR_INVALID_OPTION;
+				error_number = ERROR_INVALID_OPTION;
 				break;
 			case 2:
 				strcpy(symbol->errtxt, "Input string too long");
-				errno = ERROR_TOO_LONG;
+				error_number = ERROR_TOO_LONG;
 				break;
 			case 3:
 				strcpy(symbol->errtxt, "Number of codewords per row too small");
-				errno = WARN_INVALID_OPTION;
+				error_number = WARN_INVALID_OPTION;
 				break;
 			case 4:
 				strcpy(symbol->errtxt, "Data too long for specified number of columns");
-				errno = ERROR_TOO_LONG;
+				error_number = ERROR_TOO_LONG;
 				break;
 			default:
 				strcpy(symbol->errtxt, "Something strange happened");
-				errno = ERROR_ENCODING_PROBLEM;
+				error_number = ERROR_ENCODING_PROBLEM;
 				break;
 		}
 	}
 	
 	/* 364 */
-	return errno;
+	return error_number;
 }
 
 
-int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[])
+int micro_pdf417(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* like PDF417 only much smaller! */
 	
 	int i, k, j, indexchaine, indexliste, mode, longueur, mccorrection[50], offset;
@@ -747,6 +763,12 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 	int LeftRAP, CentreRAP, RightRAP, Cluster, writer, flip, loop;
 	int debug = 0;
 
+#ifndef _MSC_VER
+        unsigned char chaine[length];
+#else
+        unsigned char chaine = (unsigned char*)_alloca(length);
+#endif
+	
 	/* Encoding starts out the same as PDF417, so use the same code */
 	codeerr = 0;
 	
@@ -754,7 +776,21 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 	indexliste = 0;
 	indexchaine = 0;
 	
-	mode = quelmode(chaine[indexchaine], symbol->nullchar);
+	/* The following to be replaced by ECI handling */
+	switch(symbol->input_mode) {
+		case DATA_MODE:
+			for(i = 0; i < length; i++) {
+				chaine[i] = source[i];
+			}
+			chaine[length] = '\0';
+			break;
+		case UNICODE_MODE:
+			codeerr = latin1_process(symbol, source, chaine, &length);
+			if(codeerr != 0) { return codeerr; }
+			break;
+	}
+	
+	mode = quelmode(chaine[indexchaine]);
 	
 	for(i = 0; i < 1000; i++) {
 		liste[0][i] = 0;
@@ -763,13 +799,13 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 	/* 463 */
 	do {
 		liste[1][indexliste] = mode;
-		while ((liste[1][indexliste] == mode) && (indexchaine < ustrlen(chaine))) {
+		while ((liste[1][indexliste] == mode) && (indexchaine < length)) {
 			liste[0][indexliste]++;
 			indexchaine++;
-			mode = quelmode(chaine[indexchaine], symbol->nullchar);
+			mode = quelmode(chaine[indexchaine]);
 		}
 		indexliste++;
-	} while (indexchaine < ustrlen(chaine));
+	} while (indexchaine < length);
 
 	/* 474 */
 	pdfsmooth(&indexliste);
@@ -796,7 +832,7 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[])
 				textprocess(chainemc, &mclength, (char*)chaine, indexchaine, liste[0][i], i);
 				break;
 			case BYT: /* 670 - octet stream mode */
-				byteprocess(chainemc, &mclength, chaine, indexchaine, liste[0][i], i, symbol->nullchar);
+				byteprocess(chainemc, &mclength, chaine, indexchaine, liste[0][i], i);
 				break;
 			case NUM: /* 712 - numeric mode */
 				numbprocess(chainemc, &mclength, (char*)chaine, indexchaine, liste[0][i], i);

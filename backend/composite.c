@@ -53,11 +53,11 @@
 #define UINT unsigned short
 
 int general_rules(char field[], char type[]);
-int eanx(struct zint_symbol *symbol, unsigned char source[]);
-int ean_128(struct zint_symbol *symbol, unsigned char source[]);
-int rss14(struct zint_symbol *symbol, unsigned char source[]);
-int rsslimited(struct zint_symbol *symbol, unsigned char source[]);
-int rssexpanded(struct zint_symbol *symbol, unsigned char source[]);
+int eanx(struct zint_symbol *symbol, unsigned char source[], int length);
+int ean_128(struct zint_symbol *symbol, unsigned char source[], int length);
+int rss14(struct zint_symbol *symbol, unsigned char source[], int length);
+int rsslimited(struct zint_symbol *symbol, unsigned char source[], int length);
+int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int length);
 
 static UINT pwr928[69][7];
 
@@ -368,7 +368,7 @@ int cc_b(struct zint_symbol *symbol, char source[], int cc_width)
 	chainemc[mclength] = 920;
 	mclength++;
 	
-	byteprocess(chainemc, &mclength, data_string, 0, length, 0, 0x00);
+	byteprocess(chainemc, &mclength, data_string, 0, length, 0);
 	
 	/* Now figure out which variant of the symbol to use and load values accordingly */
 	
@@ -597,7 +597,7 @@ int cc_c(struct zint_symbol *symbol, char source[], int cc_width, int ecc_level)
 	chainemc[mclength] = 920; /* CC-C identifier */
 	mclength++;
 	
-	byteprocess(chainemc, &mclength, data_string, 0, length, 0, 0x00);
+	byteprocess(chainemc, &mclength, data_string, 0, length, 0);
 	
 	chainemc[0] = mclength;
 	
@@ -1752,16 +1752,16 @@ void add_leading_zeroes(struct zint_symbol *symbol)
 	}
 }
 
-int composite(struct zint_symbol *symbol, unsigned char source[])
+int composite(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	int error_number, cc_mode, cc_width, ecc_level;
 	int j, i, k, separator_row;
 #ifndef _MSC_VER
 	char reduced[ustrlen(source)];
-	char binary_string[10 * ustrlen(source)];
+	char binary_string[10 * length];
 #else
-        char* reduced = (char*)_alloca(ustrlen(source) + 1);
-        char* binary_string = (char*)_alloca(20 * (ustrlen(source) + 1));
+        char* reduced = (char*)_alloca(length + 1);
+        char* binary_string = (char*)_alloca(20 * (length + 1));
 #endif
 	struct zint_symbol *linear;
 	int top_shift, bottom_shift;
@@ -1778,7 +1778,7 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 		add_leading_zeroes(symbol);
 	}
 	
-	if(ustrlen(source) > 2990) {
+	if(length > 2990) {
 		strcpy(symbol->errtxt, "2D component input data too long");
 		return ERROR_TOO_LONG;
 	}
@@ -1807,16 +1807,16 @@ int composite(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	switch(symbol->symbology) {
-		case BARCODE_EANX_CC: error_number = eanx(linear, (unsigned char *)symbol->primary); break;
-		case BARCODE_EAN128_CC: error_number = ean_128(linear, (unsigned char *)symbol->primary); break;
-		case BARCODE_RSS14_CC: error_number = rss14(linear, (unsigned char *)symbol->primary); break;
-		case BARCODE_RSS_LTD_CC: error_number = rsslimited(linear, (unsigned char *)symbol->primary); break;
-		case BARCODE_RSS_EXP_CC: error_number = rssexpanded(linear, (unsigned char *)symbol->primary); break;
-		case BARCODE_UPCA_CC: error_number = eanx(linear, (unsigned char *)symbol->primary); break;
-		case BARCODE_UPCE_CC: error_number = eanx(linear, (unsigned char *)symbol->primary); break;
-		case BARCODE_RSS14STACK_CC: error_number = rss14(linear, (unsigned char *)symbol->primary); break;
-		case BARCODE_RSS14_OMNI_CC: error_number = rss14(linear, (unsigned char *)symbol->primary); break;
-		case BARCODE_RSS_EXPSTACK_CC: error_number = rssexpanded(linear, (unsigned char *)symbol->primary); break;
+		case BARCODE_EANX_CC: error_number = eanx(linear, (unsigned char *)symbol->primary, strlen(symbol->primary)); break;
+		case BARCODE_EAN128_CC: error_number = ean_128(linear, (unsigned char *)symbol->primary, strlen(symbol->primary)); break;
+		case BARCODE_RSS14_CC: error_number = rss14(linear, (unsigned char *)symbol->primary, strlen(symbol->primary)); break;
+		case BARCODE_RSS_LTD_CC: error_number = rsslimited(linear, (unsigned char *)symbol->primary, strlen(symbol->primary)); break;
+		case BARCODE_RSS_EXP_CC: error_number = rssexpanded(linear, (unsigned char *)symbol->primary, strlen(symbol->primary)); break;
+		case BARCODE_UPCA_CC: error_number = eanx(linear, (unsigned char *)symbol->primary, strlen(symbol->primary)); break;
+		case BARCODE_UPCE_CC: error_number = eanx(linear, (unsigned char *)symbol->primary, strlen(symbol->primary)); break;
+		case BARCODE_RSS14STACK_CC: error_number = rss14(linear, (unsigned char *)symbol->primary, strlen(symbol->primary)); break;
+		case BARCODE_RSS14_OMNI_CC: error_number = rss14(linear, (unsigned char *)symbol->primary, strlen(symbol->primary)); break;
+		case BARCODE_RSS_EXPSTACK_CC: error_number = rssexpanded(linear, (unsigned char *)symbol->primary, strlen(symbol->primary)); break;
 	}
 
 	if(error_number != 0) {

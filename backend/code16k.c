@@ -65,7 +65,7 @@ static char *C16KStartStop[8] = {"3211", "2221", "2122", "1411", "1132", "1231",
 static int C16KStartValues[16] = {0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7};
 static int C16KStopValues[16] = {0, 1, 2, 3, 4, 5, 6, 7, 4, 5, 6, 7, 0, 1, 2, 3};
 
-int parunmodd(unsigned char llyth, char nullchar);
+int parunmodd(unsigned char llyth);
 
 void grwp16(int *indexliste)
 {
@@ -130,14 +130,8 @@ void dxsmooth16(int *indexliste)
 
 }
 
-void c16k_set_a(unsigned char source, unsigned int values[], unsigned int *bar_chars, char nullchar)
+void c16k_set_a(unsigned char source, unsigned int values[], unsigned int *bar_chars)
 {
-	if(source == nullchar) {
-		values[(*bar_chars)] = 64;
-		(*bar_chars)++;
-		return;
-	}
-	
 	if(source > 127) {
 		if(source < 160) {
 			values[(*bar_chars)] = source + 64 - 128;
@@ -173,7 +167,7 @@ void c16k_set_c(unsigned char source_a, unsigned char source_b, unsigned int val
 	(*bar_chars)++;
 }
 
-int code16k(struct zint_symbol *symbol, unsigned char source[])
+int code16k(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	char width_pattern[100];
 	int current_row, rows_needed, flip_flop, looper, first_check, second_check;
@@ -189,7 +183,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 
 	errornum = 0;
         strcpy(width_pattern, "");
-        input_length = ustrlen(source);
+        input_length = length;
 	
 	if(symbol->input_mode == GS1_MODE) { gs1 = 1; } else { gs1 = 0; }
 	
@@ -249,7 +243,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 	indexliste = 0;
 	indexchaine = 0;
 	
-	mode = parunmodd(source[indexchaine], symbol->nullchar);
+	mode = parunmodd(source[indexchaine]);
 	if((gs1) && (source[indexchaine] == '[')) { mode = ABORC; } /* FNC1 */
 	
 	for(i = 0; i < 160; i++) {
@@ -261,7 +255,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 		while ((list[1][indexliste] == mode) && (indexchaine < input_length)) {
 			list[0][indexliste]++;
 			indexchaine++;
-			mode = parunmodd(source[indexchaine], symbol->nullchar);
+			mode = parunmodd(source[indexchaine]);
 			if((gs1) && (source[indexchaine] == '[')) { mode = ABORC; } /* FNC1 */
 		}
 		indexliste++;
@@ -537,7 +531,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[])
 			{ /* Encode data characters */
 				case 'A':
 				case 'a':
-					c16k_set_a(source[read], values, &bar_characters, symbol->nullchar);
+					c16k_set_a(source[read], values, &bar_characters);
 					read++;
 					break;
 				case 'B':

@@ -28,7 +28,7 @@
 #define INSET	"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%!&*"
 /* "!" represents Shift 1 and "&" represents Shift 2, "*" represents FNC1 */
 
-int code_49(struct zint_symbol *symbol, unsigned char source[])
+int code_49(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	int i, j, rows, M, x_count, y_count, z_count, posn_val, local_value;
 	char intermediate[170];
@@ -39,14 +39,14 @@ int code_49(struct zint_symbol *symbol, unsigned char source[])
 	char pattern[40];
 	int gs1;
 
-	if(ustrlen(source) > 81) {
+	if(length > 81) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	if(symbol->input_mode == GS1_MODE) { gs1 = 1; } else { gs1 = 0; }
 
 	strcpy(intermediate, "");
-	for(i = 0; i < ustrlen(source); i++) {
+	for(i = 0; i < length; i++) {
 		if(source[i] > 127) {
 			strcpy(symbol->errtxt, "Invalid characters in input data");
 			return ERROR_INVALID_DATA;
@@ -54,14 +54,11 @@ int code_49(struct zint_symbol *symbol, unsigned char source[])
 		if(gs1 && (i == 0)) {
 			concat(intermediate, "*"); /* FNC1 */
 		}
-		if(source[i] == symbol->nullchar) {
-			concat(intermediate, c49_table7[0]);
+
+		if(gs1 && (source[i] == '[')) {
+			concat(intermediate, "*"); /* FNC1 */
 		} else {
-			if(gs1 && (source[i] == '[')) {
-				concat(intermediate, "*"); /* FNC1 */
-			} else {
-				concat(intermediate, c49_table7[source[i]]);
-			}
+			concat(intermediate, c49_table7[source[i]]);
 		}
 	}
 

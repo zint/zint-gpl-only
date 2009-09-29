@@ -326,14 +326,14 @@ int look_ahead_test(unsigned char source[], int sourcelen, int position, int cur
 	return best_scheme;
 }
 
-int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned char target[], int *last_mode)
+int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned char target[], int *last_mode, int length)
 {
 	/* Encodes data using ASCII, C40, Text, X12, EDIFACT or Base 256 modes as appropriate */
 	/* Supports encoding FNC1 in supporting systems */
 	
 	int sp, tp, i, gs1;
 	int current_mode, next_mode;
-	int inputlen = ustrlen(source);
+	int inputlen = length;
 	int c40_buffer[6], c40_p;
 	int text_buffer[6], text_p;
 	int x12_buffer[6], x12_p;
@@ -355,14 +355,6 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 	memset(edifact_buffer, 0, 8);
 	edifact_p = 0;
 	strcpy(binary, "");
-	
-	if(symbol->nullchar != 0x00) {
-		for(i = 0; i < inputlen; i++) {
-			if(source[i] == symbol->nullchar) {
-				source[i] = 0x00;
-			}
-		}
-	}
 	
 	/* step (a) */
 	current_mode = DM_ASCII;
@@ -768,7 +760,7 @@ void add_tail(unsigned char target[], int tp, int tail_length, int last_mode)
 	}
 }
 
-int data_matrix_200(struct zint_symbol *symbol, unsigned char source[])
+int data_matrix_200(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	int inputlen, i;
 	unsigned char binary[2000];
@@ -778,9 +770,30 @@ int data_matrix_200(struct zint_symbol *symbol, unsigned char source[])
 	int H, W, FH, FW, datablock, bytes, rsblock;
 	int last_mode;
 	unsigned char *grid = 0;
-	inputlen = ustrlen(source);
+	inputlen = length;
 	
-	binlen = dm200encode(symbol, source, binary, &last_mode);
+#ifndef _MSC_VER
+        unsigned char local_source[length];
+#else
+        unsigned char local_source = (unsigned char*)_alloca(length);
+#endif
+
+	/* The following to be replaced by ECI handling */
+	switch(symbol->input_mode) {
+		case DATA_MODE:
+			for(i = 0; i < length; i++) {
+				local_source[i] = source[i];
+			}
+			local_source[length] = '\0';
+			break;
+		case UNICODE_MODE:
+			error_number = latin1_process(symbol, source, local_source, &length);
+			if(error_number != 0) { return error_number; }
+			break;
+	}
+	
+	binlen = dm200encode(symbol, source, binary, &last_mode, length);
+	
 	if(binlen == 0) {
 		strcpy(symbol->errtxt, "Data too long to fit in symbol");
 		return ERROR_TOO_LONG;

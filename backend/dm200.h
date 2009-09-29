@@ -28,7 +28,7 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-extern int data_matrix_200(struct zint_symbol *symbol, unsigned char source[]);
+extern int data_matrix_200(struct zint_symbol *symbol, unsigned char source[], int length);
 
 #ifdef __cplusplus
 }

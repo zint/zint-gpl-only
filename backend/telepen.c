@@ -49,10 +49,9 @@ static char *TeleTable[] = {	"1111111111111111", "1131313111", "33313111", "1111
 	"11311111111111", "331111111111", "111113111113", "31111111111111", "111311111113",
 	"131111111113"};
 	
-int telepen(struct zint_symbol *symbol, unsigned char source[])
+int telepen(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	unsigned int i, count, check_digit;
-	int ascii_value;
 	int error_number;
 	char dest[1000];
 	
@@ -61,12 +60,12 @@ int telepen(struct zint_symbol *symbol, unsigned char source[])
 
 	count = 0;
 
-	if(ustrlen(source) > 30) {
+	if(length > 30) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 
-	for(i = 0; i < ustrlen(source); i++) {
+	for(i = 0; i < length; i++) {
 		if(source[i] > 127) {
 			/* Cannot encode extended ASCII */
 			strcpy(symbol->errtxt, "Invalid characters in input data");
@@ -77,14 +76,9 @@ int telepen(struct zint_symbol *symbol, unsigned char source[])
 	/* Start character */
 	concat(dest, TeleTable['_']);
 
-	for (i=0; i < ustrlen(source); i++)
+	for (i=0; i < length; i++)
 	{
-		ascii_value = source[i];
-		if(ascii_value == symbol->nullchar) {
-			concat(dest, TeleTable[0]);
-		} else {
-			concat(dest, TeleTable[ascii_value]);
-		}
+		concat(dest, TeleTable[source[i]]);
 		count += source[i];
 	}
 
@@ -96,55 +90,63 @@ int telepen(struct zint_symbol *symbol, unsigned char source[])
 	concat(dest, TeleTable['z']);
 	
 	expand(symbol, dest);
-	ustrcpy(symbol->text, source);
+	for(i = 0; i < length; i++) {
+		if(source[i] == '\0') {
+			symbol->text[i] = ' ';
+		} else {
+			symbol->text[i] = source[i];
+		}
+	}
+	symbol->text[length] = '\0';
 	return error_number;
 }
 
-int telepen_num(struct zint_symbol *symbol, unsigned char source[])
+int telepen_num(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	unsigned int i, count, check_digit, glyph;
-	int error_number, input_length;
+	int error_number;
 	unsigned char dest[1000];
 	unsigned char local_source[100];
 	
 	error_number = 0;
 	memset(dest, 0, 1000);
 	memset(local_source, 0, 100);
-	strcpy((char*)local_source, (char*)source);
-	input_length = ustrlen(source);
 
 	count = 0;
 
-	if(input_length > 60) {
+	if(length > 60) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
+	for(i = 0; i < length; i++) {
+		local_source[i] = source[i];
+	}
 	to_upper(local_source);
-	error_number = is_sane(NASET, local_source);
+	error_number = is_sane(NASET, local_source, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
 	
 	/* Add a leading zero if required */
-	if ((input_length % 2) != 0)
+	if ((length % 2) != 0)
 	{
 		char temp[200];
 
 		strcpy(temp, (char*)local_source);
 		local_source[0] = '0';
 
-		for(i = 0; i <= input_length; i++)
+		for(i = 0; i <= length; i++)
 		{
 			local_source[i + 1] = temp[i];
 		}
-		input_length++;
+		length++;
 	}
 
 	/* Start character */
 	concat((char*)dest, TeleTable['_']);
 
-	for (i=0; i < input_length; i+=2)
+	for (i=0; i < length; i+=2)
 	{
 		if(local_source[i] == 'X') {
 			strcpy(symbol->errtxt, "Invalid position of X in Telepen data");

@@ -32,9 +32,9 @@ static char *CodaTable[20] = {"11111221", "11112211", "11121121", "22111111", "1
 	"12111121", "12112111", "12211111", "21121111", "11122111", "11221111", "21112121", "21211121",
 	"21212111", "11212121", "11221211", "12121121", "11121221", "11122211"};
 
-int c39(struct zint_symbol *symbol, unsigned char source[]);
+int c39(struct zint_symbol *symbol, unsigned char source[], int length);
 
-int pharma_one(struct zint_symbol *symbol, unsigned char source[])
+int pharma_one(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	/* "Pharmacode can represent only a single integer from 3 to 131070. Unlike other
 	   commonly used one-dimensional barcode schemes, pharmacode does not store the data in a
@@ -57,11 +57,11 @@ int pharma_one(struct zint_symbol *symbol, unsigned char source[])
 	error_number = 0;
 	strcpy(dest, "");
 
-	if(ustrlen(source) > 6) {
+	if(length > 6) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	error_number = is_sane(NESET, source);
+	error_number = is_sane(NESET, source, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
@@ -151,7 +151,7 @@ int pharma_two_calc(struct zint_symbol *symbol, unsigned char source[], char des
 	return error_number;
 }
 
-int pharma_two(struct zint_symbol *symbol, unsigned char source[])
+int pharma_two(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	/* Draws the patterns for two track pharmacode */
 	char height_pattern[200];
@@ -160,11 +160,11 @@ int pharma_two(struct zint_symbol *symbol, unsigned char source[])
 	int error_number = 0;
 	strcpy(height_pattern, "");
 
-	if(ustrlen(source) > 8) {
+	if(length > 8) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	error_number = is_sane(NESET, source);
+	error_number = is_sane(NESET, source, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
@@ -194,52 +194,60 @@ int pharma_two(struct zint_symbol *symbol, unsigned char source[])
 	return error_number;
 }
 
-int codabar(struct zint_symbol *symbol, unsigned char source[])
+int codabar(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* The Codabar system consisting of simple substitution */
 
 	int i, error_number;
 	char dest[1000];
+#ifndef _MSC_VER
+	unsigned char local_source[length];
+#else
+	unsigned char local_source = (unsigned char*)_alloca(length);
+#endif
 	
 	error_number = 0;
 	strcpy(dest, "");
 
-	if(ustrlen(source) > 60) { /* No stack smashing please */
+	if(length > 60) { /* No stack smashing please */
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	to_upper(source);
-	error_number = is_sane(CASET, source);
+	for(i = 0; i < length; i++) {
+		local_source[i] = source[i];
+	}
+	to_upper(local_source);
+	error_number = is_sane(CASET, local_source, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
 
 	/* Codabar must begin and end with the characters A, B, C or D */
-	if(((source[0] != 'A') && (source[0] != 'B')) &&
-		    ((source[0] != 'C') && (source[0] != 'D')))
+	if(((local_source[0] != 'A') && (local_source[0] != 'B')) &&
+		    ((local_source[0] != 'C') && (local_source[0] != 'D')))
 	{
 		strcpy(symbol->errtxt, "Invalid characters in data");
-		return 6;
+		return ERROR_INVALID_DATA;
 	}
 
-	if(((source[ustrlen(source) - 1] != 'A') && (source[ustrlen(source) - 1] != 'B')) &&
-		    ((source[ustrlen(source) - 1] != 'C') && (source[ustrlen(source) - 1] != 'D')))
+	if(((local_source[ustrlen(local_source) - 1] != 'A') && (local_source[ustrlen(local_source) - 1] != 'B')) &&
+		    ((local_source[ustrlen(local_source) - 1] != 'C') && (local_source[ustrlen(local_source) - 1] != 'D')))
 	{
 		strcpy(symbol->errtxt, "Invalid characters in data");
-		return 6;
+		return ERROR_INVALID_DATA;
 	}
 
-	for(i = 0; i <= ustrlen(source); i++)
+	for(i = 0; i < length; i++)
 	{
-		lookup(CASET, CodaTable, source[i], dest);
+		lookup(CASET, CodaTable, local_source[i], dest);
 	}
 	
 	expand(symbol, dest);
-	ustrcpy(symbol->text, source);
+	ustrcpy(symbol->text, local_source);
 	return error_number;
 }
 
-int code32(struct zint_symbol *symbol, unsigned char source[])
+int code32(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* Italian Pharmacode */
 	int i, zeroes, error_number, checksum, checkpart, checkdigit;
 	char localstr[10], tempstr[2], risultante[7];
@@ -248,11 +256,11 @@ int code32(struct zint_symbol *symbol, unsigned char source[])
 	char tabella[34];
 	
 	/* Validate the input */
-	if(ustrlen(source) > 8) {
+	if(length > 8) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	error_number = is_sane(NESET, source);
+	error_number = is_sane(NESET, source, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
@@ -260,7 +268,7 @@ int code32(struct zint_symbol *symbol, unsigned char source[])
 	
 	/* Add leading zeros as required */
 	strcpy(localstr, "");
-	zeroes = 8 - ustrlen(source);
+	zeroes = 8 - length;
 	for(i = 0; i < zeroes; i++) {
 		concat(localstr, "0");
 	}
@@ -311,7 +319,7 @@ int code32(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	/* Plot the barcode using Code 39 */
-	error_number = c39(symbol, (unsigned char*)risultante);
+	error_number = c39(symbol, (unsigned char*)risultante, strlen(risultante));
 	if(error_number != 0) { return error_number; }
 	
 	/* Override the normal text output with the Pharmacode number */
