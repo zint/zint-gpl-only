@@ -655,7 +655,7 @@ int aztec_text_process(unsigned char source[], char binary_string[], int gs1)
 	return 0;
 }
 
-int aztec(struct zint_symbol *symbol, unsigned char source[])
+int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	int x, y, i, j, data_blocks, ecc_blocks, layers, total_bits;
 	char binary_string[20000], bit_pattern[20045], descriptor[42];
@@ -669,11 +669,39 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 	unsigned int* ecc_part;
 #endif
 
+#ifndef _MSC_VER
+        unsigned char local_source[length];
+#else
+        unsigned char local_source = (unsigned char*)_alloca(length);
+#endif
+
 	memset(binary_string,0,20000);
 	memset(adjusted_string,0,20000);
 
 	if(symbol->input_mode == GS1_MODE) { gs1 = 1; } else { gs1 = 0; }
-	err_code = aztec_text_process(source, binary_string, gs1);
+	/* The following to be replaced by ECI handling */
+	switch(symbol->input_mode) {
+		case DATA_MODE:
+			for(i = 0; i < length; i++) {
+				local_source[i] = source[i];
+			}
+			local_source[length] = '\0';
+			break;
+		case UNICODE_MODE:
+			err_code = latin1_process(symbol, source, local_source, &length);
+			if(err_code != 0) { return err_code; }
+			break;
+	}
+	
+	/* Aztec code can't handle NULL characters */
+	for(i = 0; i < length; i++) {
+		if(local_source[i] == '\0') {
+			strcpy(symbol->errtxt, "Invalid character (NULL) in input data");
+			return ERROR_INVALID_DATA;
+		}
+	}
+	
+	err_code = aztec_text_process(local_source, binary_string, gs1);
 
 	if(err_code != 0) {
 		strcpy(symbol->errtxt, "Input too long or too many extended ASCII characters");
@@ -1209,26 +1237,24 @@ int aztec(struct zint_symbol *symbol, unsigned char source[])
 	return err_code;
 }
 
-int aztec_runes(struct zint_symbol *symbol, unsigned char source[])
+int aztec_runes(struct zint_symbol *symbol, unsigned char source[], int length)
 {
-	int input_length, error_number, i, y, x;
-	int input_value;
+	int input_value, error_number, i, y, x;
 	char binary_string[28];
 	unsigned char data_codewords[3], ecc_codewords[6];
 	
 	error_number = 0;
 	input_value = 0;
-	input_length = ustrlen(source);
-	if(input_length > 3) {
+	if(length > 3) {
 		strcpy(symbol->errtxt, "Input too large");
 		return ERROR_INVALID_DATA;
 	}
-	error_number = is_sane(NESET, source);
+	error_number = is_sane(NESET, source, length);
 	if(error_number != 0) {
 		strcpy(symbol->errtxt, "Invalid characters in input");
 		return ERROR_INVALID_DATA;
 	}
-	switch(input_length) {
+	switch(length) {
 		case 3: input_value = 100 * ctoi(source[0]);
 			input_value += 10 * ctoi(source[1]);
 			input_value += ctoi(source[2]);

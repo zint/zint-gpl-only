@@ -70,12 +70,12 @@ int svg_plot(struct zint_symbol *symbol)
 		strcpy(symbol->errtxt, "Malformed background colour target");
 		return ERROR_INVALID_OPTION;
 	}
-	error_number = is_sane(SSET, (unsigned char*)symbol->fgcolour);
+	error_number = is_sane(SSET, (unsigned char*)symbol->fgcolour, 6);
 	if (error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Malformed foreground colour target");
 		return ERROR_INVALID_OPTION;
 	}
-	error_number = is_sane(SSET, (unsigned char*)symbol->bgcolour);
+	error_number = is_sane(SSET, (unsigned char*)symbol->bgcolour, 6);
 	if (error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Malformed background colour target");
 		return ERROR_INVALID_OPTION;

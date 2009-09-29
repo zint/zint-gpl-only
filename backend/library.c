@@ -26,7 +26,6 @@
 #endif
 #include "common.h"
 #include "gs1.h"
-#include "sjis.h"
 
 #define HIBCSET	"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%"
 
@@ -72,60 +71,61 @@ int ZBarcode_Delete(struct zint_symbol *symbol)
 	return 0;
 }
 
-extern int eanx(struct zint_symbol *symbol, unsigned char source[]); /* EAN system barcodes */
-extern int c39(struct zint_symbol *symbol, unsigned char source[]); /* Code 3 from 9 (or Code 39) */
-extern int pharmazentral(struct zint_symbol *symbol, unsigned char source[]); /* Pharmazentral Nummer (PZN) */
-extern int ec39(struct zint_symbol *symbol, unsigned char source[]); /* Extended Code 3 from 9 (or Code 39+) */
-extern int codabar(struct zint_symbol *symbol, unsigned char source[]); /* Codabar - a simple substitution cipher */
-extern int matrix_two_of_five(struct zint_symbol *symbol, unsigned char source[]); /* Code 2 of 5 Standard (& Matrix) */
-extern int industrial_two_of_five(struct zint_symbol *symbol, unsigned char source[]); /* Code 2 of 5 Industrial */
-extern int iata_two_of_five(struct zint_symbol *symbol, unsigned char source[]); /* Code 2 of 5 IATA */
-extern int interleaved_two_of_five(struct zint_symbol *symbol, unsigned char source[]); /* Code 2 of 5 Interleaved */
-extern int logic_two_of_five(struct zint_symbol *symbol, unsigned char source[]); /* Code 2 of 5 Data Logic */
-extern int itf14(struct zint_symbol *symbol, unsigned char source[]); /* ITF-14 */
-extern int dpleit(struct zint_symbol *symbol, unsigned char source[]); /* Deutsche Post Leitcode */
-extern int dpident(struct zint_symbol *symbol, unsigned char source[]); /* Deutsche Post Identcode */
-extern int c93(struct zint_symbol *symbol, unsigned char source[]); /* Code 93 - a re-working of Code 39+, generates 2 check digits */
-extern int code_128(struct zint_symbol *symbol, unsigned char source[]); /* Code 128 and NVE-18 */
-extern int ean_128(struct zint_symbol *symbol, unsigned char source[]); /* EAN-128 (GS1-128) */
-extern int code_11(struct zint_symbol *symbol, unsigned char source[]); /* Code 11 */
-extern int msi_handle(struct zint_symbol *symbol, unsigned char source[]); /* MSI Plessey */
-extern int telepen(struct zint_symbol *symbol, unsigned char source[]); /* Telepen ASCII */
-extern int telepen_num(struct zint_symbol *symbol, unsigned char source[]); /* Telepen Numeric */
-extern int plessey(struct zint_symbol *symbol, unsigned char source[]); /* Plessey Code */
-extern int pharma_one(struct zint_symbol *symbol, unsigned char source[]); /* Pharmacode One Track */
-extern int flattermarken(struct zint_symbol *symbol, unsigned char source[]); /* Flattermarken */
-extern int fim(struct zint_symbol *symbol, unsigned char source[]); /* Facing Identification Mark */
-extern int pharma_two(struct zint_symbol *symbol, unsigned char source[]); /* Pharmacode Two Track */
-extern int post_plot(struct zint_symbol *symbol, unsigned char source[]); /* Postnet */
-extern int planet_plot(struct zint_symbol *symbol, unsigned char source[]); /* PLANET */
-extern int imail(struct zint_symbol *symbol, unsigned char source[]); /* Intelligent Mail (aka USPS OneCode) */
-extern int royal_plot(struct zint_symbol *symbol, unsigned char source[]); /* RM4SCC */
-extern int australia_post(struct zint_symbol *symbol, unsigned char source[]); /* Australia Post 4-state */
-extern int code16k(struct zint_symbol *symbol, unsigned char source[]); /* Code 16k */
-extern int pdf417enc(struct zint_symbol *symbol, unsigned char source[]); /* PDF417 */
-extern int dmatrix(struct zint_symbol *symbol, unsigned char source[]); /* Data Matrix (IEC16022) */
-extern int qr_code(struct zint_symbol *symbol, unsigned char source[]); /* QR Code */
-extern int micro_pdf417(struct zint_symbol *symbol, unsigned char source[]); /* Micro PDF417 */
-extern int maxicode(struct zint_symbol *symbol, unsigned char source[]); /* Maxicode */
-extern int rss14(struct zint_symbol *symbol, unsigned char source[]); /* RSS-14 */
-extern int rsslimited(struct zint_symbol *symbol, unsigned char source[]); /* RSS Limited */
-extern int rssexpanded(struct zint_symbol *symbol, unsigned char source[]); /* RSS Expanded */
-extern int composite(struct zint_symbol *symbol, unsigned char source[]); /* Composite Symbology */
-extern int kix_code(struct zint_symbol *symbol, unsigned char source[]); /* TNT KIX Code */
-extern int aztec(struct zint_symbol *symbol, unsigned char source[]); /* Aztec Code */
-extern int code32(struct zint_symbol *symbol, unsigned char source[]); /* Italian Pharmacode */
-extern int codablock(struct zint_symbol *symbol, unsigned char source[]); /* Codablock F */
-extern int daft_code(struct zint_symbol *symbol, unsigned char source[]); /* DAFT Code */
-extern int ean_14(struct zint_symbol *symbol, unsigned char source[]); /* EAN-14 */
-extern int nve_18(struct zint_symbol *symbol, unsigned char source[]); /* NVE-18 */
-extern int microqr(struct zint_symbol *symbol, unsigned char source[]); /* Micro QR Code */
-extern int aztec_runes(struct zint_symbol *symbol, unsigned char source[]); /* Aztec Runes */
-extern int korea_post(struct zint_symbol *symbol, unsigned char source[]); /* Korea Post */
-extern int japan_post(struct zint_symbol *symbol, unsigned char source[]); /* Japanese Post */
-extern int code_49(struct zint_symbol *symbol, unsigned char source[]); /* Code 49 */
-extern int channel_code(struct zint_symbol *symbol, unsigned char source[]); /* Channel Code */
-extern int code_one(struct zint_symbol *symbol, unsigned char source[]); /* Code One */
+extern int eanx(struct zint_symbol *symbol, unsigned char source[], int length); /* EAN system barcodes */
+extern int c39(struct zint_symbol *symbol, unsigned char source[], int length); /* Code 3 from 9 (or Code 39) */
+extern int pharmazentral(struct zint_symbol *symbol, unsigned char source[], int length); /* Pharmazentral Nummer (PZN) */
+extern int ec39(struct zint_symbol *symbol, unsigned char source[], int length); /* Extended Code 3 from 9 (or Code 39+) */
+extern int codabar(struct zint_symbol *symbol, unsigned char source[], int length); /* Codabar - a simple substitution cipher */
+extern int matrix_two_of_five(struct zint_symbol *symbol, unsigned char source[], int length); /* Code 2 of 5 Standard (& Matrix) */
+extern int industrial_two_of_five(struct zint_symbol *symbol, unsigned char source[], int length); /* Code 2 of 5 Industrial */
+extern int iata_two_of_five(struct zint_symbol *symbol, unsigned char source[], int length); /* Code 2 of 5 IATA */
+extern int interleaved_two_of_five(struct zint_symbol *symbol, unsigned char source[], int length); /* Code 2 of 5 Interleaved */
+extern int logic_two_of_five(struct zint_symbol *symbol, unsigned char source[], int length); /* Code 2 of 5 Data Logic */
+extern int itf14(struct zint_symbol *symbol, unsigned char source[], int length); /* ITF-14 */
+extern int dpleit(struct zint_symbol *symbol, unsigned char source[], int length); /* Deutsche Post Leitcode */
+extern int dpident(struct zint_symbol *symbol, unsigned char source[], int length); /* Deutsche Post Identcode */
+extern int c93(struct zint_symbol *symbol, unsigned char source[], int length); /* Code 93 - a re-working of Code 39+, generates 2 check digits */
+extern int code_128(struct zint_symbol *symbol, unsigned char source[], int length); /* Code 128 and NVE-18 */
+extern int ean_128(struct zint_symbol *symbol, unsigned char source[], int length); /* EAN-128 (GS1-128) */
+extern int code_11(struct zint_symbol *symbol, unsigned char source[], int length); /* Code 11 */
+extern int msi_handle(struct zint_symbol *symbol, unsigned char source[], int length); /* MSI Plessey */
+extern int telepen(struct zint_symbol *symbol, unsigned char source[], int length); /* Telepen ASCII */
+extern int telepen_num(struct zint_symbol *symbol, unsigned char source[], int length); /* Telepen Numeric */
+extern int plessey(struct zint_symbol *symbol, unsigned char source[], int length); /* Plessey Code */
+extern int pharma_one(struct zint_symbol *symbol, unsigned char source[], int length); /* Pharmacode One Track */
+extern int flattermarken(struct zint_symbol *symbol, unsigned char source[], int length); /* Flattermarken */
+extern int fim(struct zint_symbol *symbol, unsigned char source[], int length); /* Facing Identification Mark */
+extern int pharma_two(struct zint_symbol *symbol, unsigned char source[], int length); /* Pharmacode Two Track */
+extern int post_plot(struct zint_symbol *symbol, unsigned char source[], int length); /* Postnet */
+extern int planet_plot(struct zint_symbol *symbol, unsigned char source[], int length); /* PLANET */
+extern int imail(struct zint_symbol *symbol, unsigned char source[], int length); /* Intelligent Mail (aka USPS OneCode) */
+extern int royal_plot(struct zint_symbol *symbol, unsigned char source[], int length); /* RM4SCC */
+extern int australia_post(struct zint_symbol *symbol, unsigned char source[], int length); /* Australia Post 4-state */
+extern int code16k(struct zint_symbol *symbol, unsigned char source[], int length); /* Code 16k */
+extern int pdf417enc(struct zint_symbol *symbol, unsigned char source[], int length); /* PDF417 */
+extern int dmatrix(struct zint_symbol *symbol, unsigned char source[], int length); /* Data Matrix (IEC16022) */
+extern int qr_code(struct zint_symbol *symbol, unsigned char source[], int length); /* QR Code */
+extern int micro_pdf417(struct zint_symbol *symbol, unsigned char source[], int length); /* Micro PDF417 */
+extern int maxicode(struct zint_symbol *symbol, unsigned char source[], int length); /* Maxicode */
+extern int rss14(struct zint_symbol *symbol, unsigned char source[], int length); /* RSS-14 */
+extern int rsslimited(struct zint_symbol *symbol, unsigned char source[], int length); /* RSS Limited */
+extern int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int length); /* RSS Expanded */
+extern int composite(struct zint_symbol *symbol, unsigned char source[], int length); /* Composite Symbology */
+extern int kix_code(struct zint_symbol *symbol, unsigned char source[], int length); /* TNT KIX Code */
+extern int aztec(struct zint_symbol *symbol, unsigned char source[], int length); /* Aztec Code */
+extern int code32(struct zint_symbol *symbol, unsigned char source[], int length); /* Italian Pharmacode */
+extern int codablock(struct zint_symbol *symbol, unsigned char source[], int length); /* Codablock F */
+extern int daft_code(struct zint_symbol *symbol, unsigned char source[], int length); /* DAFT Code */
+extern int ean_14(struct zint_symbol *symbol, unsigned char source[], int length); /* EAN-14 */
+extern int nve_18(struct zint_symbol *symbol, unsigned char source[], int length); /* NVE-18 */
+extern int microqr(struct zint_symbol *symbol, unsigned char source[], int length); /* Micro QR Code */
+extern int aztec_runes(struct zint_symbol *symbol, unsigned char source[], int length); /* Aztec Runes */
+extern int korea_post(struct zint_symbol *symbol, unsigned char source[], int length); /* Korea Post */
+extern int japan_post(struct zint_symbol *symbol, unsigned char source[], int length); /* Japanese Post */
+extern int code_49(struct zint_symbol *symbol, unsigned char source[], int length); /* Code 49 */
+extern int channel_code(struct zint_symbol *symbol, unsigned char source[], int length); /* Channel Code */
+extern int code_one(struct zint_symbol *symbol, unsigned char source[], int length); /* Code One */
+extern int grid_matrix(struct zint_symbol *symbol, unsigned char source[], int length); /* Grid Matrix */
 
 #ifndef NO_PNG
 int png_handle(struct zint_symbol *symbol, int rotate_angle);
@@ -151,20 +151,29 @@ void error_tag(char error_string[], int error_number)
 	}
 }
 
-int hibc(struct zint_symbol *symbol, unsigned char source[])
+int hibc(struct zint_symbol *symbol, unsigned char source[], int length)
 {
-	int counter, srclen, error_number, i;
+	int counter, error_number, i;
 	char to_process[40], temp[3], check_digit;
 	
-	srclen = ustrlen(source);
 	strcpy(temp, "");
 	
-	to_upper(source);
-	if(srclen > 36) {
+#ifndef _MSC_VER
+        unsigned char local_source[length];
+#else
+        unsigned char local_source = (unsigned char*)_alloca(length);
+#endif
+	
+	if(length > 36) {
 		strcpy(symbol->errtxt, "Data too long for HIBC LIC");
 		return ERROR_TOO_LONG;
 	}
-	error_number = is_sane(HIBCSET , source);
+	for(i = 0; i < length; i++) {
+		local_source[i] = source[i];
+	}
+	local_source[length] = '\0';
+	to_upper(local_source);
+	error_number = is_sane(HIBCSET , local_source, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
@@ -172,8 +181,8 @@ int hibc(struct zint_symbol *symbol, unsigned char source[])
 	
 	strcpy(to_process, "+");
 	counter = 41;
-	for(i = 0; i < ustrlen(source); i++) {
-		counter += posn(HIBCSET, source[i]);
+	for(i = 0; i < length; i++) {
+		counter += posn(HIBCSET, local_source[i]);
 	}
 	counter = counter % 43;
 	
@@ -199,155 +208,40 @@ int hibc(struct zint_symbol *symbol, unsigned char source[])
 	temp[0] = check_digit;
 	temp[1] = '\0';
 	
-	concat(to_process, (char *)source);
+	concat(to_process, (char *)local_source);
 	concat(to_process, temp);
+	length = strlen(to_process);
 	
 	switch(symbol->symbology) {
 		case BARCODE_HIBC_128:
-			error_number = code_128(symbol, (unsigned char *)to_process);
+			error_number = code_128(symbol, (unsigned char *)to_process, length);
 			ustrcpy(symbol->text, (unsigned char*)"*");
 			uconcat(symbol->text, (unsigned char*)to_process);
 			uconcat(symbol->text, (unsigned char*)"*");
 			break;
 		case BARCODE_HIBC_39:
 			symbol->option_2 = 0;
-			error_number = c39(symbol, (unsigned char *)to_process);
+			error_number = c39(symbol, (unsigned char *)to_process, length);
 			ustrcpy(symbol->text, (unsigned char*)"*");
 			uconcat(symbol->text, (unsigned char*)to_process);
 			uconcat(symbol->text, (unsigned char*)"*");
 			break;
 		case BARCODE_HIBC_DM:
-			error_number = dmatrix(symbol, (unsigned char *)to_process);
+			error_number = dmatrix(symbol, (unsigned char *)to_process, length);
 			break;
 		case BARCODE_HIBC_QR:
-			error_number = qr_code(symbol, (unsigned char *)to_process);
+			error_number = qr_code(symbol, (unsigned char *)to_process, length);
 			break;
 		case BARCODE_HIBC_PDF:
-			error_number = pdf417enc(symbol, (unsigned char *)to_process);
+			error_number = pdf417enc(symbol, (unsigned char *)to_process, length);
 			break;
 		case BARCODE_HIBC_MICPDF:
-			error_number = micro_pdf417(symbol, (unsigned char *)to_process);
+			error_number = micro_pdf417(symbol, (unsigned char *)to_process, length);
 			break;
 		case BARCODE_HIBC_BLOCKF:
-			error_number = codablock(symbol, (unsigned char *)to_process);
+			error_number = codablock(symbol, (unsigned char *)to_process, length);
 			break;
 	}
-	
-	return error_number;
-}
-
-
-int eci_process(struct zint_symbol *symbol, unsigned char source[], unsigned char preprocessed[])
-{
-	int j, i, next, input_length;
-	
-	input_length = ustrlen(source);
-	
-	/* Supports UTF-8 input by converting it to Latin-1 Extended ASCII */
-	/* Currently only supports Latin-1 characters but expect this to be expanded
-	   to the full ECI spectrum */
-	j = 0;
-	i = 0;
-	do {
-		next = -1;
-		if(source[i] < 128) {
-			preprocessed[j] = source[i];
-			j++;
-			next = i + 1;
-		} else {
-			if(source[i] == 0xC2) {
-				preprocessed[j] = source[i + 1];
-				j++;
-				next = i + 2;
-			}
-			if(source[i] == 0xC3) {
-				preprocessed[j] = source[i + 1] + 64;
-				j++;
-				next = i + 2;
-			}
-		}
-		if(next == -1) {
-			strcpy(symbol->errtxt, "error: Invalid character in input string (only Latin-1 characters supported)");
-			return ERROR_INVALID_DATA;
-		}
-		i = next;
-	} while(i < input_length);
-	preprocessed[j] = '\0';
-	
-	return 0;
-}
-
-int unicode2shift_jis(struct zint_symbol *symbol, unsigned char source[], unsigned char preprocessed[])
-{ /* QR Code supports compression of Shift-JIS data using "Kanji" mode - this function
-	attempts to convert Unicode characters to Shift-JIS to allow this */
-	int bpos, jpos, len, error_number, i;
-	int next;
-	unsigned long int uval, jval;
-	
-	len = ustrlen(source);
-	
-	bpos = 0;
-	jpos = 0;
-	error_number = 0;
-	next = 0;
-	
-	do {
-		uval = 0;
-		jval = 0;
-		
-		if(source[bpos] <= 0x7f) {
-			/* 1 byte mode */
-			uval = source[bpos];
-			next = bpos + 1;
-		}
-		
-		if((source[bpos] >= 0x80) && (source[bpos] <= 0xbf)) {
-			strcpy(symbol->errtxt, "Corrupt Unicode data");
-			return ERROR_INVALID_DATA;
-		}
-		
-		if((source[bpos] >= 0xc0) && (source[bpos] <= 0xc1)) {
-			strcpy(symbol->errtxt, "Overlong encoding not supported");
-			return ERROR_INVALID_DATA;
-		}
-		
-		if((source[bpos] >= 0xc2) && (source[bpos] <= 0xdf)) {
-			/* 2 byte mode */
-			uval = ((source[bpos] & 0x1f) << 6) + (source[bpos + 1] & 0x3f);
-			next = bpos + 2;
-		}
-		
-		if((source[bpos] >= 0xe0) && (source[bpos] <= 0xef)) {
-			/* 3 byte mode */
-			uval = ((source[bpos] & 0x0f) << 12) + ((source[bpos + 1] & 0x3f) << 6) + (source[bpos + 2] & 0x3f);
-			next = bpos + 3;
-		}
-		
-		if(source[bpos] >= 0xf0) {
-			strcpy(symbol->errtxt, "Unicode sequences of more than 3 bytes not supported");
-			return ERROR_INVALID_DATA;
-		}
-		
-		for(i = 0; i < 6843; i++) {
-			if(sjis_lookup[i * 2] == uval) {
-				jval = sjis_lookup[(i * 2) + 1];
-			}
-		}
-		
-		if(jval == 0) {
-			strcpy(symbol->errtxt, "Invalid Shift JIS character");
-			return ERROR_INVALID_DATA;
-		}
-		
-		preprocessed[jpos] = (jval & 0xff00) >> 8;
-		preprocessed[jpos + 1] = (jval & 0xff);
-		
-		/* printf("Unicode value U+%04X = Shift JIS value 0x%04X\n", uval, jval); */
-		
-		jpos += 2;
-		bpos = next;
-		
-	} while(bpos < len);
 	
 	return error_number;
 }
@@ -386,84 +280,268 @@ int gs1_compliant(int symbology)
 	return result;
 }
 
-int ZBarcode_Check_Supported(int symbol_id)
+int ZBarcode_ValidID(int symbol_id)
 {
 	/* Checks whether a symbology is supported */
 	
-	int value;
-	
+	int result = 0;
+
 	switch(symbol_id) {
-		case 5:
-		case 10:
-		case 11:
-		case 12:
-		case 14:
-		case 15:
-		case 17:
-		case 19:
-		case 26:
-		case 27:
-		case 33:
-		case 35:
-		case 36:
-		case 38:
-		case 39:
-		case 48:
-		case 54:
-#ifdef NO_QR
-		case 58:
+		case BARCODE_CODE11:
+		case BARCODE_C25MATRIX:
+		case BARCODE_C25INTER:
+		case BARCODE_C25IATA:
+		case BARCODE_C25LOGIC:
+		case BARCODE_C25IND:
+		case BARCODE_CODE39:
+		case BARCODE_EXCODE39:
+		case BARCODE_EANX:
+		case BARCODE_EAN128:
+		case BARCODE_CODABAR:
+		case BARCODE_CODE128:
+		case BARCODE_DPLEIT:
+		case BARCODE_DPIDENT:
+		case BARCODE_CODE16K:
+		case BARCODE_CODE49:
+		case BARCODE_CODE93:
+		case BARCODE_FLAT:
+		case BARCODE_RSS14:
+		case BARCODE_RSS_LTD:
+		case BARCODE_RSS_EXP:
+		case BARCODE_TELEPEN:
+		case BARCODE_UPCA:
+		case BARCODE_UPCE:
+		case BARCODE_POSTNET:
+		case BARCODE_MSI_PLESSEY:
+		case BARCODE_FIM:
+		case BARCODE_LOGMARS:
+		case BARCODE_PHARMA:
+		case BARCODE_PZN:
+		case BARCODE_PHARMA_TWO:
+		case BARCODE_PDF417:
+		case BARCODE_PDF417TRUNC:
+		case BARCODE_MAXICODE:
+#ifndef NO_QR
+		case BARCODE_QRCODE:
 #endif
-		case 59:
-		case 61:
-		case 62:
-		case 64:
-		case 65:
-		case 73:
-		case 78:
-		case 83:
-		case 88:
-		case 91:
-		case 100:
-		case 101:
-		case 103:
-		case 105:
-		case 107:
-		case 109:
-			value = 0; break;
-		default:
-			value = 1; break;
+		case BARCODE_CODE128B:
+		case BARCODE_AUSPOST:
+		case BARCODE_AUSREPLY:
+		case BARCODE_AUSROUTE:
+		case BARCODE_AUSREDIRECT:
+		case BARCODE_ISBNX:
+		case BARCODE_RM4SCC:
+		case BARCODE_DATAMATRIX:
+		case BARCODE_EAN14:
+		case BARCODE_CODABLOCKF:
+		case BARCODE_NVE18:
+		case BARCODE_JAPANPOST:
+		case BARCODE_KOREAPOST:
+		case BARCODE_RSS14STACK:
+		case BARCODE_RSS14STACK_OMNI:
+		case BARCODE_RSS_EXPSTACK:
+		case BARCODE_PLANET:
+		case BARCODE_MICROPDF417:
+		case BARCODE_ONECODE:
+		case BARCODE_PLESSEY:
+		case BARCODE_TELEPEN_NUM:
+		case BARCODE_ITF14:
+		case BARCODE_KIX:
+		case BARCODE_AZTEC:
+		case BARCODE_DAFT:
+		case BARCODE_MICROQR:
+		case BARCODE_HIBC_128:
+		case BARCODE_HIBC_39:
+		case BARCODE_HIBC_DM:
+		case BARCODE_HIBC_QR:
+		case BARCODE_HIBC_PDF:
+		case BARCODE_HIBC_MICPDF:
+		case BARCODE_HIBC_BLOCKF:
+		case BARCODE_AZRUNE:
+		case BARCODE_CODE32:
+		case BARCODE_EANX_CC:
+		case BARCODE_EAN128_CC:
+		case BARCODE_RSS14_CC:
+		case BARCODE_RSS_LTD_CC:
+		case BARCODE_RSS_EXP_CC:
+		case BARCODE_UPCA_CC:
+		case BARCODE_UPCE_CC:
+		case BARCODE_RSS14STACK_CC:
+		case BARCODE_RSS14_OMNI_CC:
+		case BARCODE_RSS_EXPSTACK_CC:
+		case BARCODE_CHANNEL:
+		case BARCODE_CODEONE:
+		/* case BARCODE_GRIDMATRIX: */
+			result = 1;
+			break;
 	}
 	
-	if(symbol_id < 1) { value = 0; }
-	if(symbol_id > 141) { value = 0; }
-	if((symbol_id >= 41) && (symbol_id <= 46)) { value = 0; }
-	if((symbol_id >= 94) && (symbol_id <= 96)) { value = 0; }
-	if((symbol_id >= 111) && (symbol_id <= 127)) { value = 0; }
-	
-	return value;
+	return result;
 }
 
-int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source)
+int extended_charset(struct zint_symbol *symbol, unsigned char *source, int length)
 {
-	int error_number, error_buffer;
-	int input_length;
+	int error_number = 0;
+	
+	/* These are the "elite" standards which can support multiple languages */
+	switch(symbol->symbology) {
+		case BARCODE_DATAMATRIX: error_number = dmatrix(symbol, source, length); break;
+		case BARCODE_PDF417: error_number = pdf417enc(symbol, source, length); break;
+		case BARCODE_PDF417TRUNC: error_number = pdf417enc(symbol, source, length); break;
+		case BARCODE_QRCODE: error_number = qr_code(symbol, source, length); break;
+		case BARCODE_MICROPDF417: error_number = micro_pdf417(symbol, source, length); break;
+		case BARCODE_MAXICODE: error_number = maxicode(symbol, source, length); break;
+		case BARCODE_AZTEC: error_number = aztec(symbol, source, length); break;
+		case BARCODE_MICROQR: error_number = microqr(symbol, source, length); break;
+		case BARCODE_GRIDMATRIX: error_number = grid_matrix(symbol, source, length); break;
+	}
+
+	return error_number;
+}
+
+int reduced_charset(struct zint_symbol *symbol, unsigned char *source, int length)
+{
+	/* These are the "norm" standards which only support Latin-1 at most */
+	int error_number = 0, i;
+	
 #ifdef _MSC_VER
         unsigned char* preprocessed;
 #endif
-	input_length = ustrlen(source);
-        error_number = 0;
-
 #ifndef _MSC_VER
-	unsigned char preprocessed[input_length];
+	unsigned char preprocessed[length];
 #else
-        preprocessed = (unsigned char*)_alloca(input_length + 1);
+        preprocessed = (unsigned char*)_alloca(length + 1);
 #endif
+	
+	if(symbol->symbology == BARCODE_CODE16K) {
+		symbol->whitespace_width = 16;
+		symbol->border_width = 2;
+		symbol->output_options = BARCODE_BIND;
+	}
+	
+	if(symbol->symbology == BARCODE_ITF14) {
+		symbol->whitespace_width = 20;
+		symbol->border_width = 8;
+		symbol->output_options = BARCODE_BOX;
+	}
+	
+	switch(symbol->input_mode) {
+		case DATA_MODE:
+			for(i = 0; i < length; i++) {
+				preprocessed[i] = source[i];
+			}
+			preprocessed[length] = '\0';
+			break;
+		case UNICODE_MODE:
+			error_number = latin1_process(symbol, source, preprocessed, &length);
+			if(error_number != 0) { return error_number; }
+			break;
+	}
+
+	switch(symbol->symbology) {
+		case BARCODE_C25MATRIX: error_number = matrix_two_of_five(symbol, preprocessed, length); break;
+		case BARCODE_C25IND: error_number = industrial_two_of_five(symbol, preprocessed, length); break;
+		case BARCODE_C25INTER: error_number = interleaved_two_of_five(symbol, preprocessed, length); break;
+		case BARCODE_C25IATA: error_number = iata_two_of_five(symbol, preprocessed, length); break;
+		case BARCODE_C25LOGIC: error_number = logic_two_of_five(symbol, preprocessed, length); break;
+		case BARCODE_DPLEIT: error_number = dpleit(symbol, preprocessed, length); break;
+		case BARCODE_DPIDENT: error_number = dpident(symbol, preprocessed, length); break;
+		case BARCODE_UPCA: error_number = eanx(symbol, preprocessed, length); break;
+		case BARCODE_UPCE: error_number = eanx(symbol, preprocessed, length); break;
+		case BARCODE_EANX: error_number = eanx(symbol, preprocessed, length); break;
+		case BARCODE_EAN128: error_number = ean_128(symbol, preprocessed, length); break;
+		case BARCODE_CODE39: error_number = c39(symbol, preprocessed, length); break;
+		case BARCODE_PZN: error_number = pharmazentral(symbol, preprocessed, length); break;
+		case BARCODE_EXCODE39: error_number = ec39(symbol, preprocessed, length); break;
+		case BARCODE_CODABAR: error_number = codabar(symbol, preprocessed, length); break;
+		case BARCODE_CODE93: error_number = c93(symbol, preprocessed, length); break;
+		case BARCODE_LOGMARS: error_number = c39(symbol, preprocessed, length); break;
+		case BARCODE_CODE128: error_number = code_128(symbol, preprocessed, length); break;
+		case BARCODE_CODE128B: error_number = code_128(symbol, preprocessed, length); break;
+		case BARCODE_NVE18: error_number = nve_18(symbol, preprocessed, length); break;
+		case BARCODE_CODE11: error_number = code_11(symbol, preprocessed, length); break;
+		case BARCODE_MSI_PLESSEY: error_number = msi_handle(symbol, preprocessed, length); break;
+		case BARCODE_TELEPEN: error_number = telepen(symbol, preprocessed, length); break;
+		case BARCODE_TELEPEN_NUM: error_number = telepen_num(symbol, preprocessed, length); break;
+		case BARCODE_PHARMA: error_number = pharma_one(symbol, preprocessed, length); break;
+		case BARCODE_PLESSEY: error_number = plessey(symbol, preprocessed, length); break;
+		case BARCODE_ITF14: error_number = itf14(symbol, preprocessed, length); break;
+		case BARCODE_FLAT: error_number = flattermarken(symbol, preprocessed, length); break;
+		case BARCODE_FIM: error_number = fim(symbol, preprocessed, length); break;
+		case BARCODE_POSTNET: error_number = post_plot(symbol, preprocessed, length); break;
+		case BARCODE_PLANET: error_number = planet_plot(symbol, preprocessed, length); break;
+		case BARCODE_RM4SCC: error_number = royal_plot(symbol, preprocessed, length); break;
+		case BARCODE_AUSPOST: error_number = australia_post(symbol, preprocessed, length); break;
+		case BARCODE_AUSREPLY: error_number = australia_post(symbol, preprocessed, length); break;
+		case BARCODE_AUSROUTE: error_number = australia_post(symbol, preprocessed, length); break;
+		case BARCODE_AUSREDIRECT: error_number = australia_post(symbol, preprocessed, length); break;
+		case BARCODE_CODE16K: error_number = code16k(symbol, preprocessed, length); break;
+		case BARCODE_PHARMA_TWO: error_number = pharma_two(symbol, preprocessed, length); break;
+		case BARCODE_ONECODE: error_number = imail(symbol, preprocessed, length); break;
+		case BARCODE_ISBNX: error_number = eanx(symbol, preprocessed, length); break;
+		case BARCODE_RSS14: error_number = rss14(symbol, preprocessed, length); break;
+		case BARCODE_RSS14STACK: error_number = rss14(symbol, preprocessed, length); break;
+		case BARCODE_RSS14STACK_OMNI: error_number = rss14(symbol, preprocessed, length); break;
+		case BARCODE_RSS_LTD: error_number = rsslimited(symbol, preprocessed, length); break;
+		case BARCODE_RSS_EXP: error_number = rssexpanded(symbol, preprocessed, length); break;
+		case BARCODE_RSS_EXPSTACK: error_number = rssexpanded(symbol, preprocessed, length); break;
+		case BARCODE_EANX_CC: error_number = composite(symbol, preprocessed, length); break;
+		case BARCODE_EAN128_CC: error_number = composite(symbol, preprocessed, length); break;
+		case BARCODE_RSS14_CC: error_number = composite(symbol, preprocessed, length); break;
+		case BARCODE_RSS_LTD_CC: error_number = composite(symbol, preprocessed, length); break;
+		case BARCODE_RSS_EXP_CC: error_number = composite(symbol, preprocessed, length); break;
+		case BARCODE_UPCA_CC: error_number = composite(symbol, preprocessed, length); break;
+		case BARCODE_UPCE_CC: error_number = composite(symbol, preprocessed, length); break;
+		case BARCODE_RSS14STACK_CC: error_number = composite(symbol, preprocessed, length); break;
+		case BARCODE_RSS14_OMNI_CC: error_number = composite(symbol, preprocessed, length); break;
+		case BARCODE_RSS_EXPSTACK_CC: error_number = composite(symbol, preprocessed, length); break;
+		case BARCODE_KIX: error_number = kix_code(symbol, preprocessed, length); break;
+		case BARCODE_CODE32: error_number = code32(symbol, preprocessed, length); break;
+		case BARCODE_CODABLOCKF: error_number = codablock(symbol, preprocessed, length); break;
+		case BARCODE_DAFT: error_number = daft_code(symbol, preprocessed, length); break;
+		case BARCODE_EAN14: error_number = ean_14(symbol, preprocessed, length); break;
+		case BARCODE_AZRUNE: error_number = aztec_runes(symbol, preprocessed, length); break;
+		case BARCODE_KOREAPOST: error_number = korea_post(symbol, preprocessed, length); break;
+		case BARCODE_HIBC_128: error_number = hibc(symbol, preprocessed, length); break;
+		case BARCODE_HIBC_39: error_number = hibc(symbol, preprocessed, length); break;
+		case BARCODE_HIBC_DM: error_number = hibc(symbol, preprocessed, length); break;
+		case BARCODE_HIBC_QR: error_number = hibc(symbol, preprocessed, length); break;
+		case BARCODE_HIBC_PDF: error_number = hibc(symbol, preprocessed, length); break;
+		case BARCODE_HIBC_MICPDF: error_number = hibc(symbol, preprocessed, length); break;
+		case BARCODE_HIBC_BLOCKF: error_number = hibc(symbol, preprocessed, length); break;
+		case BARCODE_JAPANPOST: error_number = japan_post(symbol, preprocessed, length); break;
+		case BARCODE_CODE49: error_number = code_49(symbol, preprocessed, length); break;
+		case BARCODE_CHANNEL: error_number = channel_code(symbol, preprocessed, length); break;
+		case BARCODE_CODEONE: error_number = code_one(symbol, preprocessed, length); break;
+	}
+	
+	if((symbol->symbology == BARCODE_CODE128) || (symbol->symbology == BARCODE_CODE128B)) {
+		ustrcpy(symbol->text, source);
+	}
+	
+	return error_number;
+}
+
+int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source, int length)
+{
+	int error_number, error_buffer, i;
+        error_number = 0;
 
 	if(ustrlen(source) == 0) {
 		strcpy(symbol->errtxt, "No input data");
 		error_tag(symbol->errtxt, ERROR_INVALID_DATA);
 		return ERROR_INVALID_DATA;
 	}
+	
+	if(length == 0) {
+		length = ustrlen(source);
+	}
+	
+#ifndef _MSC_VER
+        unsigned char local_source[length];
+#else
+        unsigned char local_source = (unsigned char*)_alloca(length);
+#endif
 	
 	/* First check the symbology field */
 	if(symbol->symbology < 1) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
@@ -501,7 +579,7 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source)
 	if(symbol->symbology == 111) { symbol->symbology = BARCODE_HIBC_BLOCKF; }
 	if((symbol->symbology >= 112) && (symbol->symbology <= 127)) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
 	/* Everything from 128 up is Zint-specific */
-	if(symbol->symbology >= 142) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
+	if(symbol->symbology >= 143) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
 	
 	if(error_number > 4) {
 		error_tag(symbol->errtxt, error_number);
@@ -510,140 +588,47 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source)
 		error_buffer = error_number;
 	}
 	
-	if((symbol->input_mode < 0) || (symbol->input_mode > 3)) { symbol->input_mode = DATA_MODE; }
-	switch(symbol->input_mode) {
-		case DATA_MODE:
-			ustrcpy(preprocessed, source); break;
-		case UNICODE_MODE:
-			error_number = eci_process(symbol, source, preprocessed);
+	if((symbol->input_mode < 0) || (symbol->input_mode > 2)) { symbol->input_mode = DATA_MODE; }
+	
+	if(symbol->input_mode == GS1_MODE) {
+		for(i = 0; i < length; i++) {
+			if(source[i] == '\0') {
+				strcpy(symbol->errtxt, "NULL characters not permitted in GS1 mode");
+				return ERROR_INVALID_DATA;
+			}
+		}
+		if(gs1_compliant(symbol->symbology) == 1) {
+			error_number = ugs1_verify(symbol, source, local_source);
 			if(error_number != 0) { return error_number; }
-			break;
-		case GS1_MODE:
-			if(gs1_compliant(symbol->symbology) == 1) {
-				error_number = ugs1_verify(symbol, source, preprocessed);
-				if(error_number != 0) { return error_number; }
-			} else {
-				strcpy(symbol->errtxt, "Selected symbology does not support GS1 mode");
-				return ERROR_INVALID_OPTION;
-			}
-			break;
-		case KANJI_MODE:
-			if((symbol->symbology != BARCODE_QRCODE) && (symbol->symbology != BARCODE_MICROQR)) {
-				strcpy(symbol->errtxt, "Selected symbology does not support Kanji mode");
-				return ERROR_INVALID_OPTION;
-			}
-			error_number = unicode2shift_jis(symbol, source, preprocessed);
-			if(error_number != 0) { return error_number; }
-			break;
-		case SJIS_MODE:
-			if((symbol->symbology != BARCODE_QRCODE) && (symbol->symbology != BARCODE_MICROQR)) {
-				strcpy(symbol->errtxt, "Selected symbology does not support Kanji mode");
-				return ERROR_INVALID_OPTION;
-			}
-			ustrcpy(preprocessed, source);
-			break;
+		} else {
+			strcpy(symbol->errtxt, "Selected symbology does not support GS1 mode");
+			return ERROR_INVALID_OPTION;
+		}
+	} else {
+		for(i = 0; i < length; i++) {
+			local_source[i] = source[i];
+		}
+		local_source[length] = '\0';
 	}
 	
-	if(symbol->symbology == BARCODE_CODE16K) {
-		symbol->whitespace_width = 16;
-		symbol->border_width = 2;
-		symbol->output_options = BARCODE_BIND;
-	}
-	
-	if(symbol->symbology == BARCODE_ITF14) {
-		symbol->whitespace_width = 20;
-		symbol->border_width = 8;
-		symbol->output_options = BARCODE_BOX;
+	switch(symbol->symbology) {
+		case BARCODE_DATAMATRIX:
+		case BARCODE_PDF417:
+		case BARCODE_PDF417TRUNC:
+		case BARCODE_QRCODE:
+		case BARCODE_MICROPDF417:
+		case BARCODE_MAXICODE:
+		case BARCODE_AZTEC:
+		case BARCODE_MICROQR:
+		case BARCODE_GRIDMATRIX:
+			error_number = extended_charset(symbol, local_source, length);
+			break;
+		default:
+			error_number = reduced_charset(symbol, local_source, length);
+			break;
 	}
 
-	switch(symbol->symbology) {
-		case BARCODE_C25MATRIX: error_number = matrix_two_of_five(symbol, preprocessed); break;
-		case BARCODE_C25IND: error_number = industrial_two_of_five(symbol, preprocessed); break;
-		case BARCODE_C25INTER: error_number = interleaved_two_of_five(symbol, preprocessed); break;
-		case BARCODE_C25IATA: error_number = iata_two_of_five(symbol, preprocessed); break;
-		case BARCODE_C25LOGIC: error_number = logic_two_of_five(symbol, preprocessed); break;
-		case BARCODE_DPLEIT: error_number = dpleit(symbol, preprocessed); break;
-		case BARCODE_DPIDENT: error_number = dpident(symbol, preprocessed); break;
-		case BARCODE_UPCA: error_number = eanx(symbol, preprocessed); break;
-		case BARCODE_UPCE: error_number = eanx(symbol, preprocessed); break;
-		case BARCODE_EANX: error_number = eanx(symbol, preprocessed); break;
-		case BARCODE_EAN128: error_number = ean_128(symbol, preprocessed); break;
-		case BARCODE_CODE39: error_number = c39(symbol, preprocessed); break;
-		case BARCODE_PZN: error_number = pharmazentral(symbol, preprocessed); break;
-		case BARCODE_EXCODE39: error_number = ec39(symbol, preprocessed); break;
-		case BARCODE_CODABAR: error_number = codabar(symbol, preprocessed); break;
-		case BARCODE_CODE93: error_number = c93(symbol, preprocessed); break;
-		case BARCODE_LOGMARS: error_number = c39(symbol, preprocessed); break;
-		case BARCODE_CODE128: error_number = code_128(symbol, preprocessed); break;
-		case BARCODE_CODE128B: error_number = code_128(symbol, preprocessed); break;
-		case BARCODE_NVE18: error_number = nve_18(symbol, preprocessed); break;
-		case BARCODE_CODE11: error_number = code_11(symbol, preprocessed); break;
-		case BARCODE_MSI_PLESSEY: error_number = msi_handle(symbol, preprocessed); break;
-		case BARCODE_TELEPEN: error_number = telepen(symbol, preprocessed); break;
-		case BARCODE_TELEPEN_NUM: error_number = telepen_num(symbol, preprocessed); break;
-		case BARCODE_PHARMA: error_number = pharma_one(symbol, preprocessed); break;
-		case BARCODE_PLESSEY: error_number = plessey(symbol, preprocessed); break;
-		case BARCODE_ITF14: error_number = itf14(symbol, preprocessed); break;
-		case BARCODE_FLAT: error_number = flattermarken(symbol, preprocessed); break;
-		case BARCODE_FIM: error_number = fim(symbol, preprocessed); break;
-		case BARCODE_POSTNET: error_number = post_plot(symbol, preprocessed); break;
-		case BARCODE_PLANET: error_number = planet_plot(symbol, preprocessed); break;
-		case BARCODE_RM4SCC: error_number = royal_plot(symbol, preprocessed); break;
-		case BARCODE_AUSPOST: error_number = australia_post(symbol, preprocessed); break;
-		case BARCODE_AUSREPLY: error_number = australia_post(symbol, preprocessed); break;
-		case BARCODE_AUSROUTE: error_number = australia_post(symbol, preprocessed); break;
-		case BARCODE_AUSREDIRECT: error_number = australia_post(symbol, preprocessed); break;
-		case BARCODE_CODE16K: error_number = code16k(symbol, preprocessed); break;
-		case BARCODE_PHARMA_TWO: error_number = pharma_two(symbol, preprocessed); break;
-		case BARCODE_ONECODE: error_number = imail(symbol, preprocessed); break;
-		case BARCODE_DATAMATRIX: error_number = dmatrix(symbol, preprocessed); break;
-		case BARCODE_PDF417: error_number = pdf417enc(symbol, preprocessed); break;
-		case BARCODE_PDF417TRUNC: error_number = pdf417enc(symbol, preprocessed); break;
-		case BARCODE_QRCODE: error_number = qr_code(symbol, preprocessed); break;
-		case BARCODE_MICROPDF417: error_number = micro_pdf417(symbol, preprocessed); break;
-		case BARCODE_ISBNX: error_number = eanx(symbol, preprocessed); break;
-		case BARCODE_MAXICODE: error_number = maxicode(symbol, preprocessed); break;
-		case BARCODE_RSS14: error_number = rss14(symbol, preprocessed); break;
-		case BARCODE_RSS14STACK: error_number = rss14(symbol, preprocessed); break;
-		case BARCODE_RSS14STACK_OMNI: error_number = rss14(symbol, preprocessed); break;
-		case BARCODE_RSS_LTD: error_number = rsslimited(symbol, preprocessed); break;
-		case BARCODE_RSS_EXP: error_number = rssexpanded(symbol, preprocessed); break;
-		case BARCODE_RSS_EXPSTACK: error_number = rssexpanded(symbol, preprocessed); break;
-		case BARCODE_EANX_CC: error_number = composite(symbol, preprocessed); break;
-		case BARCODE_EAN128_CC: error_number = composite(symbol, preprocessed); break;
-		case BARCODE_RSS14_CC: error_number = composite(symbol, preprocessed); break;
-		case BARCODE_RSS_LTD_CC: error_number = composite(symbol, preprocessed); break;
-		case BARCODE_RSS_EXP_CC: error_number = composite(symbol, preprocessed); break;
-		case BARCODE_UPCA_CC: error_number = composite(symbol, preprocessed); break;
-		case BARCODE_UPCE_CC: error_number = composite(symbol, preprocessed); break;
-		case BARCODE_RSS14STACK_CC: error_number = composite(symbol, preprocessed); break;
-		case BARCODE_RSS14_OMNI_CC: error_number = composite(symbol, preprocessed); break;
-		case BARCODE_RSS_EXPSTACK_CC: error_number = composite(symbol, preprocessed); break;
-		case BARCODE_AZTEC: error_number = aztec(symbol, preprocessed); break;
-		case BARCODE_KIX: error_number = kix_code(symbol, preprocessed); break;
-		case BARCODE_CODE32: error_number = code32(symbol, preprocessed); break;
-		case BARCODE_CODABLOCKF: error_number = codablock(symbol, preprocessed); break;
-		case BARCODE_DAFT: error_number = daft_code(symbol, preprocessed); break;
-		case BARCODE_EAN14: error_number = ean_14(symbol, preprocessed); break;
-		case BARCODE_MICROQR: error_number = microqr(symbol, preprocessed); break;
-		case BARCODE_AZRUNE: error_number = aztec_runes(symbol, preprocessed); break;
-		case BARCODE_KOREAPOST: error_number = korea_post(symbol, preprocessed); break;
-		case BARCODE_HIBC_128: error_number = hibc(symbol, preprocessed); break;
-		case BARCODE_HIBC_39: error_number = hibc(symbol, preprocessed); break;
-		case BARCODE_HIBC_DM: error_number = hibc(symbol, preprocessed); break;
-		case BARCODE_HIBC_QR: error_number = hibc(symbol, preprocessed); break;
-		case BARCODE_HIBC_PDF: error_number = hibc(symbol, preprocessed); break;
-		case BARCODE_HIBC_MICPDF: error_number = hibc(symbol, preprocessed); break;
-		case BARCODE_HIBC_BLOCKF: error_number = hibc(symbol, preprocessed); break;
-		case BARCODE_JAPANPOST: error_number = japan_post(symbol, preprocessed); break;
-		case BARCODE_CODE49: error_number = code_49(symbol, preprocessed); break;
-		case BARCODE_CHANNEL: error_number = channel_code(symbol, preprocessed); break;
-		case BARCODE_CODEONE: error_number = code_one(symbol, preprocessed); break;
-	}
 	
-	if((symbol->symbology == BARCODE_CODE128) || (symbol->symbology == BARCODE_CODE128B)) {
-		ustrcpy(symbol->text, source);
-	}
 	if(error_number == 0) {
 		error_number = error_buffer;
 	}
@@ -652,59 +637,22 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source)
 	return error_number;
 }
 
-int ZBarcode_Print(struct zint_symbol *symbol)
+int ZBarcode_Print(struct zint_symbol *symbol, int rotate_angle)
 {
 	int error_number;
 	char output[4];
-
-	/*int i, j;
 	
-	for(i = 0; i < symbol->rows; i++) {
-		for(j = 0; j <= symbol->width / 7; j++) {
-			printf("%2.2X ", symbol->encoded_data[i][j]);
-		}
-		printf("\n");
-	}*/
-	
-	if(strlen(symbol->outfile) > 3) {
-		output[0] = symbol->outfile[strlen(symbol->outfile) - 3];
-		output[1] = symbol->outfile[strlen(symbol->outfile) - 2];
-		output[2] = symbol->outfile[strlen(symbol->outfile) - 1];
-		output[3] = '\0';
-		to_upper((unsigned char*)output);
-#ifndef NO_PNG
-		if(!(strcmp(output, "PNG"))) {
-			error_number = png_handle(symbol, 0);
-		} else {
-#endif
-			if(!(strcmp(output, "EPS"))) {
-				error_number = ps_plot(symbol);
-			} else {
-				if(!(strcmp(output, "SVG"))) {
-					error_number = svg_plot(symbol);
-				} else {
-					strcpy(symbol->errtxt, "Unknown output format");
-					error_tag(symbol->errtxt, ERROR_INVALID_OPTION);
-					return ERROR_INVALID_OPTION;
-				}
-			}
-#ifndef NO_PNG
-		}
-#endif
-	} else {
-		strcpy(symbol->errtxt, "Unknown output format");
-		error_tag(symbol->errtxt, ERROR_INVALID_OPTION);
-		return ERROR_INVALID_OPTION;
+	switch(rotate_angle) {
+		case 0:
+		case 90:
+		case 180:
+		case 270:
+			break;
+		default:
+			strcpy(symbol->errtxt, "Invalid rotation angle");
+			return ERROR_INVALID_OPTION;
+			break;
 	}
-
-	error_tag(symbol->errtxt, error_number);
-	return error_number;
-}
-
-int ZBarcode_Print_Rotated(struct zint_symbol *symbol, int rotate_angle)
-{
-	int error_number;
-	char output[4];
 	
 	if(strlen(symbol->outfile) > 3) {
 		output[0] = symbol->outfile[strlen(symbol->outfile) - 3];
@@ -742,43 +690,36 @@ int ZBarcode_Print_Rotated(struct zint_symbol *symbol, int rotate_angle)
 	return error_number;
 }
 
-int ZBarcode_Encode_and_Print(struct zint_symbol *symbol, unsigned char *input)
+int ZBarcode_Print_Rotated(struct zint_symbol *symbol, int rotate_angle) {
+	/* Depreciated - will be removed in later version */
+	return ZBarcode_Print(symbol, rotate_angle);
+}
+
+int ZBarcode_Encode_and_Print(struct zint_symbol *symbol, unsigned char *input, int length, int rotate_angle)
 {
 	int error_number;
 	
 	error_number = 0;
 	
-	error_number = ZBarcode_Encode(symbol, input);
+	error_number = ZBarcode_Encode(symbol, input, length);
 	if(error_number != 0) {
 		return error_number;
 	}
 
-	error_number = ZBarcode_Print(symbol);
+	error_number = ZBarcode_Print(symbol, rotate_angle);
 	return error_number;
 }
 
-int ZBarcode_Encode_and_Print_Rotated(struct zint_symbol *symbol, unsigned char *input, int rotate_angle)
-{
-	int error_number;
-	
-	error_number = 0;
-	
-	error_number = ZBarcode_Encode(symbol, input);
-	if(error_number != 0) {
-		return error_number;
-	}
-
-	error_number = ZBarcode_Print_Rotated(symbol, rotate_angle);
-	return error_number;
+int ZBarcode_Encode_and_Print_Rotated(struct zint_symbol *symbol, unsigned char *input, int rotate_angle) {
+	/* Depreciated - will be removed in later version */
+	return ZBarcode_Encode_and_Print(symbol, input, rotate_angle, strlen((char *)input));
 }
 
-int ZBarcode_Encode_from_File(struct zint_symbol *symbol, char *filename)
+int ZBarcode_Encode_File(struct zint_symbol *symbol, char *filename)
 {
-	int i;
 	FILE *file;
 	unsigned char *buffer;
 	unsigned long fileLen, result;
-	unsigned char used_characters[256];
 
 	file = fopen(filename, "rb");
 	if (!file) {
@@ -816,50 +757,20 @@ int ZBarcode_Encode_from_File(struct zint_symbol *symbol, char *filename)
 		
 	fclose(file);
 
-	if(symbol->input_mode == DATA_MODE) {
-		/* Look for and correctly handle NULL characters */
-		
-		for (i = 0; i <= 255; i++) { used_characters[i] = 0;} 
-		for (i = 0; i < (int)fileLen; i++) { used_characters[(int)buffer[i]] = 1;}
-	
-		if (used_characters[0] == 1) { /* only if data contains a NULL */
-			
-			/* determine first unused character > 0 */
-			i = 1;
-			while (i < 255) {
-				if (used_characters[i] == 0) {
-					symbol->nullchar = (char)i;
-					break;
-				}
-				i++;
-			}
-			if(symbol->nullchar == 0x00) {
-				/* No candidate character could be found. Quit */
-				strcpy(symbol->errtxt, "Could not encode NULL character");
-				return ERROR_INVALID_OPTION;
-			}
-	
-			for(i = 0; i < fileLen; i++) {
-				if(buffer[i] == 0x00) {
-					buffer[i] = symbol->nullchar;
-				}
-			}
-		}
-	}
-
-	return ZBarcode_Encode(symbol, buffer);
+	return ZBarcode_Encode(symbol, buffer, fileLen);
 }
 
-int ZBarcode_Encode_from_File_and_Print(struct zint_symbol *symbol, char *filename, int rotate_angle)
+int ZBarcode_Encode_File_and_Print(struct zint_symbol *symbol, char *filename, int rotate_angle)
 {
 	int error_number;
 	
 	error_number = 0;
 	
-	error_number = ZBarcode_Encode_from_File(symbol, filename);
+	error_number = ZBarcode_Encode_File(symbol, filename);
 	if(error_number != 0) {
 		return error_number;
 	}
 	
-	return ZBarcode_Print_Rotated(symbol, rotate_angle);
+	return ZBarcode_Print(symbol, rotate_angle);
 }
+

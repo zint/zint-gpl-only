@@ -34,7 +34,7 @@ static char *MSITable[10] = {"12121212", "12121221", "12122112", "12122121", "12
 	"12212112", "12212121", "21121212", "21121221"};
 
 
-int plessey(struct zint_symbol *symbol, unsigned char source[])
+int plessey(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* Not MSI/Plessey but the older Plessey standard */
 
 	unsigned int i, check;
@@ -46,22 +46,22 @@ int plessey(struct zint_symbol *symbol, unsigned char source[])
 	error_number = 0;
 	strcpy(dest, "");
 	
-	if(ustrlen(source) > 65) {
+	if(length > 65) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	error_number = is_sane(SSET, source);
+	error_number = is_sane(SSET, source, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
-	checkptr = (unsigned char *)calloc (1, ustrlen(source) * 4 + 8);
+	checkptr = (unsigned char *)calloc (1, length * 4 + 8);
 
 	/* Start character */
 	concat(dest, "31311331");
 
 	/* Data area */
-	for(i = 0; i <= ustrlen(source); i++)
+	for(i = 0; i <= length; i++)
 	{
 		check = posn(SSET, source[i]);
 		lookup(SSET, PlessTable, source[i], dest);
@@ -74,7 +74,7 @@ int plessey(struct zint_symbol *symbol, unsigned char source[])
 	/* CRC check digit code adapted from code by Leonid A. Broukhis
 	   used in GNU Barcode */
 
-	for (i=0; i < 4*ustrlen(source); i++) {
+	for (i = 0; i < (4 * length); i++) {
 		int j;
 		if (checkptr[i])
 			for (j = 0; j < 9; j++)
@@ -82,7 +82,7 @@ int plessey(struct zint_symbol *symbol, unsigned char source[])
 	}
 
 	for (i = 0; i < 8; i++) {
-		switch(checkptr[ustrlen(source) * 4 + i])
+		switch(checkptr[length * 4 + i])
 		{
 			case 0: concat(dest, "13"); break;
 			case 1: concat(dest, "31"); break;
@@ -111,11 +111,6 @@ int msi_plessey(struct zint_symbol *symbol, unsigned char source[])
 	if(ustrlen(source) > 55) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
-	}
-	error_number = is_sane(NESET, source);
-	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Invalid characters in data");
-		return error_number;
 	}
 
 	/* start character */
@@ -149,11 +144,6 @@ int msi_plessey_mod10(struct zint_symbol *symbol, unsigned char source[])
 	if(ustrlen(source) > 55) { 
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
-	}
-	error_number = is_sane(NESET, source);
-	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Invalid characters in data");
-		return error_number;
 	}
 
 	/* start character */
@@ -247,11 +237,6 @@ int msi_plessey_mod1010(struct zint_symbol *symbol, unsigned char source[])
 	if(ustrlen(source) > 55) { /* No Entry Stack Smashers! */
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
-	}
-	error_number = is_sane(NESET, source);
-	if (error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Invalid characters in data");
-		return error_number;
 	}
 
 	/* start character */
@@ -405,11 +390,6 @@ int msi_plessey_mod11(struct zint_symbol *symbol, unsigned char source[])
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	error_number = is_sane(NESET, source);
-	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Invalid characters in data");
-		return error_number;
-	}
 	
 	/* start character */
 	concat (dest, "21");
@@ -474,11 +454,6 @@ int msi_plessey_mod1110(struct zint_symbol *symbol, unsigned char source[])
 	if(ustrlen(source) > 55) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
-	}
-	error_number = is_sane(NESET, source);
-	if (error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Invalid characters in data");
-		return error_number;
 	}
 	
 	/* start character */
@@ -583,11 +558,15 @@ int msi_plessey_mod1110(struct zint_symbol *symbol, unsigned char source[])
 	return error_number;
 }
 
-int msi_handle(struct zint_symbol *symbol, unsigned char source[]) {
+int msi_handle(struct zint_symbol *symbol, unsigned char source[], int length) {
 	int error_number;
 
-	error_number=0;
-
+	error_number = is_sane(NESET, source, length);
+	if(error_number != 0) {
+		strcpy(symbol->errtxt, "Invalid characters in input data");
+		return ERROR_INVALID_DATA;
+	}
+	
 	if((symbol->option_2 < 0) || (symbol->option_2 > 4)) {
 		symbol->option_2 = 0;
 	}

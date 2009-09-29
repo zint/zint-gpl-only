@@ -65,6 +65,7 @@ int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, c
 {
 	struct mainprog_info_type wpng_info;
 	struct mainprog_info_type *graphic;
+	
 #ifndef _MSC_VER
 	unsigned char outdata[image_width * 3];
 #else
@@ -103,12 +104,12 @@ int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, c
 		strcpy(symbol->errtxt, "Malformed background colour target");
 		return ERROR_INVALID_OPTION;
 	}
-	errno = is_sane(SSET, (unsigned char*)symbol->fgcolour);
+	errno = is_sane(SSET, (unsigned char*)symbol->fgcolour, 6);
 	if (errno == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Malformed foreground colour target");
 		return ERROR_INVALID_OPTION;
 	}
-	errno = is_sane(SSET, (unsigned char*)symbol->bgcolour);
+	errno = is_sane(SSET, (unsigned char*)symbol->bgcolour, 6);
 	if (errno == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Malformed background colour target");
 		return ERROR_INVALID_OPTION;
@@ -533,10 +534,12 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 			large_bar_count++;
 		}
 	}
-	large_bar_height = (symbol->height - preset_height) / large_bar_count;
 
 	if (large_bar_count == 0) {
 		symbol->height = preset_height;
+		large_bar_height = 10;
+	} else {
+		large_bar_height = (symbol->height - preset_height) / large_bar_count;
 	}
 	
 	while(!(module_is_set(symbol, symbol->rows - 1, comp_offset))) {

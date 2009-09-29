@@ -338,11 +338,7 @@ int main(int argc, char **argv)
 				break;
 				
 			case 'd': /* we have some data! */
-				if(rotate_angle == 0) {
-					error_number = ZBarcode_Encode_and_Print(my_symbol, (unsigned char*)optarg);
-				} else {
-					error_number = ZBarcode_Encode_and_Print_Rotated(my_symbol, (unsigned char*)optarg, rotate_angle);
-				}
+				error_number = ZBarcode_Encode_and_Print(my_symbol, (unsigned char*)optarg, strlen(optarg), rotate_angle);
 				generated = 1;
 				if(error_number != 0) {
 					fprintf(stderr, "%s\n", my_symbol->errtxt);
@@ -352,7 +348,7 @@ int main(int argc, char **argv)
 				break;
 				
 			case 'i': /* Take data from file */
-				error_number = ZBarcode_Encode_from_File_and_Print(my_symbol, optarg, rotate_angle);
+				error_number = ZBarcode_Encode_File_and_Print(my_symbol, optarg, rotate_angle);
 				generated = 1;
 				if(error_number != 0) {
 					fprintf(stderr, "%s\n", my_symbol->errtxt);

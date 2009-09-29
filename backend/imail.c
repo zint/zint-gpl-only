@@ -24,15 +24,16 @@
 
 static short int BCD[40] = {
 	0, 0, 0, 0,
- 1, 0, 0, 0,
- 0, 1, 0, 0,
- 1, 1, 0, 0,
- 0, 0, 1, 0,
- 1, 0, 1, 0,
- 0, 1, 1, 0,
- 1, 1, 1, 0,
- 0, 0, 0, 1,
- 1, 0, 0, 1 };
+	1, 0, 0, 0,
+	0, 1, 0, 0,
+	1, 1, 0, 0,
+	0, 0, 1, 0,
+	1, 0, 1, 0,
+	0, 1, 1, 0,
+	1, 1, 1, 0,
+	0, 0, 0, 1,
+	1, 0, 0, 1
+};
 
 #include <string.h>
 #include <stdlib.h>
@@ -305,7 +306,7 @@ void breakup(short int fcs_bit[], unsigned short usps_crc)
 	}
 }
 
-int imail(struct zint_symbol *symbol, unsigned char source[])
+int imail(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	char data_pattern[200];
 	int error_number;
@@ -320,11 +321,11 @@ int imail(struct zint_symbol *symbol, unsigned char source[])
 
 	error_number = 0;
 
-	if(ustrlen(source) > 32) {
+	if(length > 32) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	error_number = is_sane(NASET, source);
+	error_number = is_sane(NASET, source, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
@@ -337,7 +338,7 @@ int imail(struct zint_symbol *symbol, unsigned char source[])
 	
 	read = 0;
 	j = 0;
-	for(i = 0; i < ustrlen(source); i++) {
+	for(i = 0; i < length; i++) {
 		if(source[i] == '-') {
 			tracker[read] = '\0';
 			j = 1;

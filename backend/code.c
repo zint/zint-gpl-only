@@ -85,7 +85,7 @@ void NextB(int Chan, int i, int MaxB, int MaxS);
 	
 /* *********************** CODE 11 ******************** */
 
-int code_11(struct zint_symbol *symbol, unsigned char source[])
+int code_11(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* Code 11 */
 
 	unsigned int i;
@@ -97,11 +97,11 @@ int code_11(struct zint_symbol *symbol, unsigned char source[])
 	error_number = 0;
 	strcpy(dest, "");
 
-	if(ustrlen(source) > 121) {
+	if(length > 121) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	error_number = is_sane(NASET, source);
+	error_number = is_sane(NASET, source, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
@@ -115,7 +115,7 @@ int code_11(struct zint_symbol *symbol, unsigned char source[])
 	concat (dest, "112211");
 
 	/* Draw main body of barcode */
-	for(i = 0; i < ustrlen(source); i++) {
+	for(i = 0; i < length; i++) {
 		lookup(NASET, C11Table, source[i], dest);
 		if(source[i] == '-')
 			weight[i] = 10;
@@ -124,7 +124,7 @@ int code_11(struct zint_symbol *symbol, unsigned char source[])
 	}
 
 	/* Calculate C checksum */
-	for(h = (ustrlen(source) - 1); h >= 0; h--) {
+	for(h = (length - 1); h >= 0; h--) {
 		c_count += (c_weight * weight[h]);
 		c_weight++;
 
@@ -134,10 +134,10 @@ int code_11(struct zint_symbol *symbol, unsigned char source[])
 	}
 	c_digit = c_count%11;
 
-	weight[ustrlen(source)] = c_digit;
+	weight[length] = c_digit;
 
 	/* Calculate K checksum */
-	for(h = ustrlen(source); h >= 0; h--) {
+	for(h = length; h >= 0; h--) {
 		k_count += (k_weight * weight[h]);
 		k_weight++;
 
@@ -165,14 +165,15 @@ int code_11(struct zint_symbol *symbol, unsigned char source[])
 	return error_number;
 }
 
-int c39(struct zint_symbol *symbol, unsigned char source[])
+int c39(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* Code 39 */
 	unsigned int i;
 	unsigned int counter;
 	char check_digit;
-	int h, error_number;
+	int error_number;
 	char dest[775];
 	char localstr[3];
+	unsigned char local_source[75];
 	
 	error_number = 0;
 	counter = 0;
@@ -183,19 +184,22 @@ int c39(struct zint_symbol *symbol, unsigned char source[])
 		symbol->option_2 = 0;
 	}
 	
-	to_upper(source);
 	if(symbol->symbology == BARCODE_LOGMARS) {
-		if(ustrlen(source) > 59) {
+		if(length > 59) {
 			strcpy(symbol->errtxt, "Input too long");
 			return ERROR_TOO_LONG;
 		}
 	} else {
-		if(ustrlen(source) > 74) {
+		if(length > 74) {
 			strcpy(symbol->errtxt, "Input too long");
 			return ERROR_TOO_LONG;
 		}
 	}
-	error_number = is_sane(TCSET , source);
+	for(i = 0; i < length; i++) {
+		local_source[i] = source[i];
+	}
+	to_upper(local_source);
+	error_number = is_sane(TCSET , local_source, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
@@ -204,9 +208,9 @@ int c39(struct zint_symbol *symbol, unsigned char source[])
 	/* Start character */
 	concat(dest, "1211212111");
 
-	for(i = 0; i < ustrlen(source); i++) {
-		lookup(TCSET, C39Table, source[i], dest);
-		counter += posn(TCSET, source[i]);
+	for(i = 0; i < length; i++) {
+		lookup(TCSET, C39Table, local_source[i], dest);
+		counter += posn(TCSET, local_source[i]);
 	}
 	
 	if((symbol->symbology == BARCODE_LOGMARS) || (symbol->option_2 == 1)) {
@@ -237,7 +241,6 @@ int c39(struct zint_symbol *symbol, unsigned char source[])
 			check_digit = '_';
 		}
 		
-		h = ustrlen(source);
 		localstr[0] = check_digit;
 		localstr[1] = '\0';
 	}
@@ -258,40 +261,39 @@ int c39(struct zint_symbol *symbol, unsigned char source[])
 	
 	if(symbol->symbology == BARCODE_CODE39) {
 		ustrcpy(symbol->text, (unsigned char*)"*");
-		uconcat(symbol->text, source);
+		uconcat(symbol->text, local_source);
 		uconcat(symbol->text, (unsigned char*)localstr);
 		uconcat(symbol->text, (unsigned char*)"*");
 	} else {
-		ustrcpy(symbol->text, source);
+		ustrcpy(symbol->text, local_source);
 		uconcat(symbol->text, (unsigned char*)localstr);
 	}
 	return error_number;
 }
 
-int pharmazentral(struct zint_symbol *symbol, unsigned char source[])
+int pharmazentral(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* Pharmazentral Nummer (PZN) */
 	
 	int i, error_number;
-	unsigned int h, count, check_digit;
+	unsigned int count, check_digit;
 	char localstr[10], checkstr[3];
 	int zeroes;
 	
 	error_number = 0;
 
 	count = 0;
-	h = ustrlen(source);
-	if(h > 6) {
+	if(length > 6) {
 		strcpy(symbol->errtxt, "Input wrong length");
 		return ERROR_TOO_LONG;
 	}
-	error_number = is_sane(NESET, source);
+	error_number = is_sane(NESET, source, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
 	
 	strcpy(localstr, "-");
-	zeroes = 6 - h;
+	zeroes = 6 - length;
 	for(i = 0; i < zeroes; i++)
 		concat(localstr, "0");
 	concat(localstr, (char *)source);
@@ -310,7 +312,8 @@ int pharmazentral(struct zint_symbol *symbol, unsigned char source[])
 		return ERROR_INVALID_DATA;
 	}
 	concat(localstr, checkstr);
-	error_number = c39(symbol, (unsigned char *)localstr);
+	length = strlen(localstr);
+	error_number = c39(symbol, (unsigned char *)localstr, length);
 	ustrcpy(symbol->text, (unsigned char *)"PZN");
 	uconcat(symbol->text, (unsigned char *)localstr);
 	return error_number;
@@ -319,24 +322,23 @@ int pharmazentral(struct zint_symbol *symbol, unsigned char source[])
 
 /* ************** EXTENDED CODE 39 *************** */
 
-int ec39(struct zint_symbol *symbol, unsigned char source[])
+int ec39(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* Extended Code 39 - ISO/IEC 16388:2007 Annex A */
 
 	unsigned char buffer[150];
 	unsigned int i;
-	int ascii_value;
 	int error_number;
 
 	memset(buffer,0,150);
 	error_number = 0;
 
-	if(ustrlen(source) > 74) {
+	if(length > 74) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	
 	
-	for(i = 0; i < ustrlen(source); i++) {
+	for(i = 0; i < length; i++) {
 		if(source[i] > 127) {
 			/* Cannot encode extended ASCII */
 			strcpy(symbol->errtxt, "Invalid characters in input data");
@@ -345,30 +347,27 @@ int ec39(struct zint_symbol *symbol, unsigned char source[])
 	}
 	
 	/* Creates a buffer string and places control characters into it */
-	for(i = 0; i < ustrlen(source); i++) {
-		ascii_value = source[i];
-		if(ascii_value == symbol->nullchar) {
-			concat((char*)buffer, EC39Ctrl[0]);
-		} else {
-			concat((char*)buffer, EC39Ctrl[ascii_value]);
-		}
+	for(i = 0; i < length; i++) {
+		concat((char*)buffer, EC39Ctrl[source[i]]);
 	}
 
 	/* Then sends the buffer to the C39 function */
-	error_number = c39(symbol, buffer);
+	error_number = c39(symbol, buffer, ustrlen(buffer));
 	
-	ustrcpy(symbol->text, source);
-	for(i = 0; i < ustrlen(symbol->text); i++) {
-		if(symbol->text[i] == symbol->nullchar) {
+	for(i = 0; i < length; i++) {
+		if(source[i] == '\0') {
 			symbol->text[i] = ' ';
+		} else {
+			symbol->text[i] = source[i];
 		}
 	}
+	symbol->text[length] = '\0';
 	return error_number;
 }
 
 /* ******************** CODE 93 ******************* */
 
-int c93(struct zint_symbol *symbol, unsigned char source[])
+int c93(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* Code 93 is an advancement on Code 39 and the definition is a lot tighter */
 
   /* TCSET includes the extra characters a, b, c and d to represent Code 93 specific
@@ -379,7 +378,6 @@ int c93(struct zint_symbol *symbol, unsigned char source[])
 	int h, weight, c, k, values[100], error_number;
 	char buffer[220], temp[2];
 	char set_copy[] = TCSET;
-	int ascii_value;
 	char dest[670];
 	unsigned char local_source[110];
 	
@@ -387,14 +385,16 @@ int c93(struct zint_symbol *symbol, unsigned char source[])
         strcpy(buffer, "");
         strcpy(dest, "");
 	
-	if(ustrlen(source) > 107) {
+	if(length > 107) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	
-	ustrcpy(local_source, source);
+	for(i = 0; i < length; i++) {
+		local_source[i] = source[i];
+	}
 	
-	for(i = 0; i < ustrlen(local_source); i++) {
+	for(i = 0; i < length; i++) {
 		if(local_source[i] > 127) {
 			/* Cannot encode extended ASCII */
 			strcpy(symbol->errtxt, "Invalid characters in input data");
@@ -406,13 +406,8 @@ int c93(struct zint_symbol *symbol, unsigned char source[])
 	concat(dest, "111141");
 
 	/* Message Content */
-	for(i = 0; i < ustrlen(local_source); i++) {
-		ascii_value = local_source[i];
-		if(ascii_value == symbol->nullchar) {
-			concat(buffer, C93Ctrl[0]);
-		} else {
-			concat(buffer, C93Ctrl[ascii_value]);
-		}
+	for(i = 0; i < length; i++) {
+		concat(buffer, C93Ctrl[local_source[i]]);
 	}
 
 	/* Now we can check the true length of the barcode */
@@ -475,17 +470,19 @@ int c93(struct zint_symbol *symbol, unsigned char source[])
 	/* Stop character */
 	concat(dest, "1111411");
 	
-	h = ustrlen(local_source);
-	local_source[h] = set_copy[c];
-	local_source[h + 1] = set_copy[k];
-	local_source[h + 2] = '\0';
+	local_source[length] = set_copy[c];
+	local_source[length + 1] = set_copy[k];
+	local_source[length + 2] = '\0';
+	length += 2;
 	expand(symbol, dest);
-	ustrcpy(symbol->text, local_source);
-	for(i = 0; i < ustrlen(symbol->text); i++) {
-		if(symbol->text[i] == symbol->nullchar) {
+	for(i = 0; i < length; i++) {
+		if(local_source[i] == '\0') {
 			symbol->text[i] = ' ';
+		} else {
+			symbol->text[i] = local_source[i];
 		}
 	}
+	symbol->text[length] = '\0';
 	return error_number;
 }
 
@@ -540,31 +537,30 @@ void NextS(int Chan, int i, int MaxS, int MaxB) {
 	}
 }
 
-int channel_code(struct zint_symbol *symbol, unsigned char source[]) {
+int channel_code(struct zint_symbol *symbol, unsigned char source[], int length) {
 	/* Channel Code - According to ANSI/AIM BC12-1998 */
 	
-	int input_length, channels, i;
+	int channels, i;
 	int error_number = 0, range = 0, zeroes;
 	char hrt[9];
 
-	input_length = ustrlen(source);
 	target_value = 0;
 	
-	if(input_length > 7) {
+	if(length > 7) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	error_number = is_sane(NESET, source);
+	error_number = is_sane(NESET, source, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
 	
 	if((symbol->option_2 < 3) || (symbol->option_2 > 8)) { channels = 0; } else { channels = symbol->option_2; }
-	if(channels == 0) { channels = input_length + 1; }
+	if(channels == 0) { channels = length + 1; }
 	if(channels == 2) { channels = 3; }
 	
-	for(i = 0; i < input_length; i++) {
+	for(i = 0; i < length; i++) {
 		target_value *= 10;
 		target_value += ctoi((char) source[i]);
 	}
@@ -589,7 +585,7 @@ int channel_code(struct zint_symbol *symbol, unsigned char source[]) {
 	NextS(channels,3,channels,channels);
 	
 	strcpy(hrt, "");
-	zeroes = channels - 1 - input_length;
+	zeroes = channels - 1 - length;
 	for(i = 0; i < zeroes; i++) {
 		concat(hrt, "0");
 	}

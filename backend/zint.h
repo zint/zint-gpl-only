@@ -139,6 +139,7 @@ struct zint_symbol {
 #define BARCODE_RSS_EXPSTACK_CC	139
 #define BARCODE_CHANNEL		140
 #define BARCODE_CODEONE		141
+#define BARCODE_GRIDMATRIX	142
 
 #define BARCODE_NO_ASCII	1
 #define BARCODE_BIND		2
@@ -176,13 +177,18 @@ struct zint_symbol {
 
 ZINT_EXTERN struct zint_symbol *ZBarcode_Create(void);
 ZINT_EXTERN int ZBarcode_Delete(struct zint_symbol *symbol);
-ZINT_EXTERN int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input);
-ZINT_EXTERN int ZBarcode_Encode_from_File(struct zint_symbol *symbol, char *filename);
-ZINT_EXTERN int ZBarcode_Print(struct zint_symbol *symbol);
-ZINT_EXTERN int ZBarcode_Encode_and_Print(struct zint_symbol *symbol, unsigned char *input);
+
+ZINT_EXTERN int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input, int length);
+ZINT_EXTERN int ZBarcode_Encode_File(struct zint_symbol *symbol, char *filename);
+ZINT_EXTERN int ZBarcode_Print(struct zint_symbol *symbol, int rotate_angle);
+ZINT_EXTERN int ZBarcode_Encode_and_Print(struct zint_symbol *symbol, unsigned char *input, int length, int rotate_angle);
+ZINT_EXTERN int ZBarcode_Encode_File_and_Print(struct zint_symbol *symbol, char *filename, int rotate_angle);
+
+ZINT_EXTERN int ZBarcode_ValidID(int symbol_id);
+
+/* Depreciated */
+ZINT_EXTERN int ZBarcode_Print_Rotated(struct zint_symbol *symbol, int rotate_angle);
 ZINT_EXTERN int ZBarcode_Encode_and_Print_Rotated(struct zint_symbol *symbol, unsigned char *input, int rotate_angle);
-ZINT_EXTERN int ZBarcode_Encode_from_File_and_Print(struct zint_symbol *symbol, char *filename, int rotate_angle);
-ZINT_EXTERN int ZBarcode_Check_Supported(int symbol_id);
 
 #ifdef __cplusplus
 }

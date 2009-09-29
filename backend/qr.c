@@ -26,8 +26,9 @@
 #ifndef NO_QR
 #include <qrencode.h>
 #include <stdio.h>
+#include "shiftjis.h"
 
-QRcode *encode(int security, int size, const unsigned char *intext, int kanji, int gs1, char nullchar, int input_length)
+QRcode *encode(int security, int size, const unsigned char *intext, int kanji, int gs1, int input_length)
 {
 	int version;
 	QRecLevel level;
@@ -62,49 +63,54 @@ QRcode *encode(int security, int size, const unsigned char *intext, int kanji, i
 		version = 0;
 	}
 
-	if(nullchar == '\0') {
-		/* No NULL characters in data */
-		code = QRcode_encodeString((char*)intext, version, level, hint, 1);
-	} else {
-		/* NULL characters in data */
-		code = QRcode_encodeString8bit((char*)intext, version, level);
-		/* code = QRcode_encodeString8bit((char*)intext, version, level, input_length); */
-	}
+	code = QRcode_encodeString((char*)intext, version, level, hint, 1);
 
 	return code;
 }
 
-int qr_code(struct zint_symbol *symbol, unsigned char source[])
+int qr_code(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	QRcode *code;
-	/*int errno = 0;*/
 	int i, j;
 	int kanji, gs1;
-	int input_length;
-	char nullify;
+	int error_number;
 	
-	input_length = ustrlen(source);
-	nullify = symbol->nullchar;
-	if((symbol->input_mode == KANJI_MODE) || (symbol->input_mode == SJIS_MODE)) { kanji = 1; } else { kanji = 0; }
+#ifndef _MSC_VER
+        unsigned char local_source[length];
+#else
+        unsigned char local_source = (unsigned char*)_alloca(length);
+#endif
+	
 	if(symbol->input_mode == GS1_MODE) { gs1 = 1; } else { gs1 = 0; }
 
-	/* Null character handling */
-	j = 0;
-	if(nullify != '\0') {
-		for(i = 0; i < input_length; i++) {
-			if(source[i] == nullify) {
-				source[i] = '\0';
-				j++;
-			}
+	if(gs1) {
+		strcpy(symbol->errtxt, "GS1 mode not yet supported in QR Code");
+		return ERROR_INVALID_OPTION;
+	}
+	
+	for(i = 0; i < length; i++) {
+		if(source[i] == '\0') {
+			strcpy(symbol->errtxt, "QR Code not yet able to handle NULL characters");
+			return ERROR_INVALID_DATA;
 		}
 	}
-
-	if(j == 0) {
-		/* nullchar was set but there are no NULL characters in the input data */
-		nullify = '\0';
+	
+	/* The following to be replaced by ECI handling */
+	switch(symbol->input_mode) {
+		case DATA_MODE:
+			for(i = 0; i < length; i++) {
+				local_source[i] = source[i];
+			}
+			local_source[length] = '\0';
+			kanji = 0;
+			break;
+		case UNICODE_MODE:
+			error_number = shiftJIS(symbol, source, local_source, &length, &kanji);
+			if(error_number != 0) { return error_number; }
+			break;
 	}
 
-	code = encode(symbol->option_1, symbol->option_2, source, kanji, gs1, nullify, input_length);
+	code = encode(symbol->option_1, symbol->option_2, local_source, kanji, gs1, length);
 	if(code == NULL) {
 		strcpy(symbol->errtxt, "libqrencode failed to encode the input data");
 		return ERROR_ENCODING_PROBLEM;

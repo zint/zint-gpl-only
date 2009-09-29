@@ -27,7 +27,6 @@
 #endif
 #include "common.h"
 
-#define BESET	"ABCD"
 #define DAFTSET	"DAFT"
 #define KRSET "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 #define KASUTSET "1234567890-abcdefgh"
@@ -39,8 +38,6 @@ static char *PNTable[10] = {"LLSSS", "SSSLL", "SSLSL", "SSLLS", "SLSSL", "SLSLS"
 	"LSSLS", "LSLSS"};
 static char *PLTable[10] = {"SSLLL", "LLLSS", "LLSLS", "LLSSL", "LSLLS", "LSLSL", "LSSLL", "SLLLS",
 	"SLLSL", "SLSLL"};
-
-static char *FIMTable[4] = {"111515111", "13111311131", "11131313111", "1111131311111"};
 
 static char *RoyalValues[36] = {"11", "12", "13", "14", "15", "10", "21", "22", "23", "24", "25",
 	"20", "31", "32", "33", "34", "35", "30", "41", "42", "43", "44", "45", "40", "51", "52",
@@ -61,7 +58,7 @@ static char *KoreaTable[10] = {"1313150613", "0713131313", "0417131313", "150613
 static char *JapanTable[19] = {"114", "132", "312", "123", "141", "321", "213", "231", "411", "144",
 	"414", "324", "342", "234", "432", "243", "423", "441", "111"};
 	
-int postnet(struct zint_symbol *symbol, unsigned char source[], char dest[])
+int postnet(struct zint_symbol *symbol, unsigned char source[], char dest[], int length)
 {
 	/* Handles the PostNet system used for Zip codes in the US */
 	unsigned int i, sum, check_digit;
@@ -69,11 +66,11 @@ int postnet(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	
 	error_number = 0;
 
-	if(ustrlen(source) > 38) {
+	if(length > 38) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	error_number = is_sane(NESET, source);
+	error_number = is_sane(NESET, source, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
@@ -83,7 +80,7 @@ int postnet(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	/* start character */
 	concat (dest, "L");
 
-	for (i=0; i < ustrlen(source); i++)
+	for (i=0; i < length; i++)
 	{
 		lookup(NESET, PNTable, source[i], dest);
 		sum += ctoi(source[i]);
@@ -98,7 +95,7 @@ int postnet(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	return error_number;
 }
  
-int post_plot(struct zint_symbol *symbol, unsigned char source[])
+int post_plot(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	/* Puts PostNet barcodes into the pattern matrix */
 	char height_pattern[200];
@@ -109,7 +106,7 @@ int post_plot(struct zint_symbol *symbol, unsigned char source[])
 	
 	error_number = 0;
 
-	error_number = postnet(symbol, source, height_pattern);
+	error_number = postnet(symbol, source, height_pattern, length);
 	if(error_number != 0) {
 		return error_number;
 	}
@@ -132,7 +129,7 @@ int post_plot(struct zint_symbol *symbol, unsigned char source[])
 	return error_number;
 }
 
-int planet(struct zint_symbol *symbol, unsigned char source[], char dest[])
+int planet(struct zint_symbol *symbol, unsigned char source[], char dest[], int length)
 {
 	/* Handles the PLANET  system used for item tracking in the US */
 	unsigned int i, sum, check_digit;
@@ -140,11 +137,11 @@ int planet(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	
 	error_number = 0;
 	
-	if(ustrlen(source) > 38) {
+	if(length > 38) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	error_number = is_sane(NESET, source);
+	error_number = is_sane(NESET, source, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
@@ -154,7 +151,7 @@ int planet(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	/* start character */
 	concat (dest, "L");
 
-	for (i=0; i < ustrlen(source); i++)
+	for (i=0; i < length; i++)
 	{
 		lookup(NESET, PLTable, source[i], dest);
 		sum += ctoi(source[i]);
@@ -169,7 +166,7 @@ int planet(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	return error_number;
 }
 
-int planet_plot(struct zint_symbol *symbol, unsigned char source[])
+int planet_plot(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	/* Puts PLANET barcodes into the pattern matrix */
 	char height_pattern[200];
@@ -180,7 +177,7 @@ int planet_plot(struct zint_symbol *symbol, unsigned char source[])
 	
 	error_number = 0;
 
-	error_number = planet(symbol, source, height_pattern);
+	error_number = planet(symbol, source, height_pattern, length);
 	if(error_number != 0) {
 		return error_number;
 	}
@@ -202,25 +199,24 @@ int planet_plot(struct zint_symbol *symbol, unsigned char source[])
 	return error_number;
 }
 
-int korea_post(struct zint_symbol *symbol, unsigned char source[])
+int korea_post(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* Korean Postal Authority */
 
-	int total, h, loop, check, zeroes, error_number;
+	int total, loop, check, zeroes, error_number;
 	char localstr[8], checkstr[3], dest[80];
 
 	error_number = 0;
-	h = ustrlen(source);
-	if(h > 6) { 
+	if(length > 6) { 
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	error_number = is_sane(NESET, source);
+	error_number = is_sane(NESET, source, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
 	strcpy(localstr, "");
-	zeroes = 6 - h;
+	zeroes = 6 - length;
 	for(loop = 0; loop < zeroes; loop++)
 		concat(localstr, "0");
 	concat(localstr, (char *)source);
@@ -245,31 +241,42 @@ int korea_post(struct zint_symbol *symbol, unsigned char source[])
 	return error_number;
 }
 
-int fim(struct zint_symbol *symbol, unsigned char source[])
+int fim(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	/* The simplest barcode symbology ever! Supported by MS Word, so here it is! */
 	/* glyphs from http://en.wikipedia.org/wiki/Facing_Identification_Mark */
-	
-	int error_number;
 	char dest[17];
 	
-	error_number = 0;
-	strcpy(dest, "");
-	
-	to_upper(source);
-	if(ustrlen(source) > 1) {
+	if(length > 1) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	error_number = is_sane(BESET, source);
-	if(error_number == ERROR_INVALID_DATA) {
-		strcpy(symbol->errtxt, "Invalid characters in data");
-		return error_number;
+	
+	switch((char)source[0]) {
+		case 'a':
+		case 'A':
+			strcpy(dest, "111515111");
+			break;
+		case 'b':
+		case 'B':
+			strcpy(dest, "13111311131");
+			break;
+		case 'c':
+		case 'C':
+			strcpy(dest, "11131313111");
+			break;
+		case 'd':
+		case 'D':
+			strcpy(dest, "1111131311111");
+			break;
+		default:
+			strcpy(symbol->errtxt, "Invalid characters in data");
+			return ERROR_INVALID_DATA;
+			break;
 	}
-	lookup(BESET, FIMTable, source[0], dest);
 	
 	expand(symbol, dest);
-	return error_number;
+	return 0;
 }
 
 char rm4scc(char source[], unsigned char dest[])
@@ -307,28 +314,32 @@ char rm4scc(char source[], unsigned char dest[])
 	return set_copy[check_digit];
 }
 
-int royal_plot(struct zint_symbol *symbol, unsigned char source[])
+int royal_plot(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	/* Puts RM4SCC into the data matrix */
 	char height_pattern[200], check;
 	unsigned int loopey;
-	int writer;
+	int writer, i;
 	int error_number;
 	strcpy(height_pattern, "");
+	unsigned char local_source[120];
 
 	error_number = 0;
 	
-	to_upper(source);
-	if(ustrlen(source) > 120) {
+	if(length > 120) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	error_number = is_sane(KRSET, source);
+	for(i = 0; i < length; i++) {
+		local_source[i] = source[i];
+	}
+	to_upper(local_source);
+	error_number = is_sane(KRSET, local_source, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
-	check = rm4scc((char*)source, (unsigned char*)height_pattern);
+	check = rm4scc((char*)local_source, (unsigned char*)height_pattern);
 	
 	writer = 0;
 	for(loopey = 0; loopey < strlen(height_pattern); loopey++)
@@ -354,7 +365,7 @@ int royal_plot(struct zint_symbol *symbol, unsigned char source[])
 	return error_number;
 }
 
-int kix_code(struct zint_symbol *symbol, unsigned char source[])
+int kix_code(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	/* Handles Dutch Post TNT KIX symbols */
 	/* The same as RM4SCC but without check digit */
@@ -364,15 +375,19 @@ int kix_code(struct zint_symbol *symbol, unsigned char source[])
 	int writer, i;
 	int error_number, zeroes;
 	strcpy(height_pattern, "");
+	unsigned char local_source[13];
 
 	error_number = 0;
 	
-	to_upper(source);
-	if(ustrlen(source) > 11) {
+	if(length > 11) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	error_number = is_sane(KRSET, source);
+	for(i = 0; i < length; i++) {
+		local_source[i] = source[i];
+	}
+	to_upper(local_source);
+	error_number = is_sane(KRSET, local_source, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
@@ -380,10 +395,10 @@ int kix_code(struct zint_symbol *symbol, unsigned char source[])
 	
 	/* Add leading zeroes */
 	strcpy(localstr, "");
-	zeroes = 11 - ustrlen(source);
+	zeroes = 11 - length;
 	for(i = 0; i < zeroes; i++)
 		concat(localstr, "0");
-	concat(localstr, (char *)source);
+	concat(localstr, (char *)local_source);
 	
 	/* Encode data */
 	for (i = 0; i < 11; i++) {
@@ -414,31 +429,31 @@ int kix_code(struct zint_symbol *symbol, unsigned char source[])
 	return error_number;
 }
 
-int daft_code(struct zint_symbol *symbol, unsigned char source[])
+int daft_code(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	/* Handles DAFT Code symbols */
 	/* Presumably 'daft' doesn't mean the same thing in Germany as it does in the UK! */
-	int input_length;
 	char height_pattern[100], local_source[55];
 	unsigned int loopey;
 	int writer, i, error_number;
 	strcpy(height_pattern, "");
 	
 	error_number = 0;
-	input_length = ustrlen(source);
-	strcpy(local_source, (char*)source);
-	if(input_length > 50) {
+	if(length > 50) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
+	for(i = 0; i < length; i++) {
+		local_source[i] = source[i];
+	}
 	to_upper((unsigned char*)local_source);
-	error_number = is_sane(DAFTSET, (unsigned char*)local_source);
+	error_number = is_sane(DAFTSET, (unsigned char*)local_source, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
 	
-	for (i = 0; i < input_length; i++) {
+	for (i = 0; i < length; i++) {
 		if(local_source[i] == 'D') { concat(height_pattern, "2"); }
 		if(local_source[i] == 'A') { concat(height_pattern, "1"); }
 		if(local_source[i] == 'F') { concat(height_pattern, "0"); }
@@ -469,7 +484,7 @@ int daft_code(struct zint_symbol *symbol, unsigned char source[])
 	return error_number;
 }
 
-int flattermarken(struct zint_symbol *symbol, unsigned char source[])
+int flattermarken(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* Flattermarken - Not really a barcode symbology and (in my opinion) probably not much use
 	but it's supported by TBarCode so it's supported by Zint! */
 	int loop, error_number;
@@ -478,17 +493,17 @@ int flattermarken(struct zint_symbol *symbol, unsigned char source[])
 	error_number = 0;
 	strcpy(dest, "");
 	
-	if(ustrlen(source) > 90) {
+	if(length > 90) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	error_number = is_sane(NESET, source);
+	error_number = is_sane(NESET, source, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
 	
-	for(loop = 0; loop < ustrlen(source); loop++) {
+	for(loop = 0; loop < length; loop++) {
 		lookup(NESET, FlatTable, source[loop], dest);
 	}
 	
@@ -496,9 +511,9 @@ int flattermarken(struct zint_symbol *symbol, unsigned char source[])
 	return error_number;
 }
 
-int japan_post(struct zint_symbol *symbol, unsigned char source[])
+int japan_post(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* Japanese Postal Code (Kasutama Barcode) */
-	int input_length, error_number;
+	int error_number;
 	char pattern[69];
 	int writer, loopey, inter_posn, i, sum, check;
 	char check_char;
@@ -506,19 +521,22 @@ int japan_post(struct zint_symbol *symbol, unsigned char source[])
 #ifdef _MSC_VER
         char* local_source;
 #endif
-	input_length = ustrlen(source);
+
 #ifndef _MSC_VER
-        char local_source[input_length + 1];
+        char local_source[length + 1];
 #else
-        local_source = (char*)_alloca(input_length + 1);
+        local_source = (char*)_alloca(length + 1);
 #endif
 	
 	inter_posn = 0;
 	error_number = 0;
 
 	strcpy(local_source, (char*)source);
+	for(i = 0; i < length; i++) {
+		local_source[i] = source[i];
+	}
 	to_upper((unsigned char*)local_source);
-	error_number = is_sane(SHKASUTSET, (unsigned char*)local_source);
+	error_number = is_sane(SHKASUTSET, (unsigned char*)local_source, length);
 
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
@@ -554,7 +572,7 @@ int japan_post(struct zint_symbol *symbol, unsigned char source[])
 			}
 		}
 		i++;
-	}while((i < input_length) && (inter_posn < 20));
+	}while((i < length) && (inter_posn < 20));
 	inter[20] = '\0';
 
 	strcpy(pattern, "13"); /* Start */
