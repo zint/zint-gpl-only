@@ -104,12 +104,12 @@ int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, c
 		strcpy(symbol->errtxt, "Malformed background colour target");
 		return ERROR_INVALID_OPTION;
 	}
-	errno = is_sane(SSET, (unsigned char*)symbol->fgcolour, 6);
+	errno = is_sane(SSET, (unsigned char*)symbol->fgcolour, strlen(symbol->fgcolour));
 	if (errno == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Malformed foreground colour target");
 		return ERROR_INVALID_OPTION;
 	}
-	errno = is_sane(SSET, (unsigned char*)symbol->bgcolour, 6);
+	errno = is_sane(SSET, (unsigned char*)symbol->bgcolour, strlen(symbol->bgcolour));
 	if (errno == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Malformed background colour target");
 		return ERROR_INVALID_OPTION;

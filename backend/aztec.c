@@ -31,12 +31,9 @@
 
 void mapshorten(int *charmap, int *typemap, int start, int length)
 { /* Shorten the string by one character */
-	int i;
 	
-	for(i = start + 1; i < (length - 1); i++) {
-		charmap[i] = charmap[i + 1];
-		typemap[i] = typemap[i + 1];
-	}
+	memmove(charmap + start + 1 , charmap + start + 2, (length - 1) * sizeof(int));
+	memmove(typemap + start + 1 , typemap + start + 2, (length - 1) * sizeof(int));
 }
 
 void insert(char binary_string[], int posn, char newbit)
@@ -50,51 +47,47 @@ void insert(char binary_string[], int posn, char newbit)
 	binary_string[posn] = newbit;
 }
 
-int aztec_text_process(unsigned char source[], char binary_string[], int gs1)
+int aztec_text_process(unsigned char source[], const unsigned int src_len, char binary_string[], int gs1)
 { /* Encode input data into a binary string */
 	int i, j, k, bytes;
 	int curtable, newtable, lasttable, chartype, maplength, blocks, debug;
 #ifndef _MSC_VER
-	int charmap[ustrlen(source) * 2], typemap[ustrlen(source) * 2];
-	int blockmap[2][ustrlen(source)];
+	int charmap[src_len * 2], typemap[src_len * 2];
+	int blockmap[2][src_len];
 #else
-        int* charmap = (int*)_alloca((ustrlen(source) * 2) * sizeof(int));
-        int* typemap = (int*)_alloca((ustrlen(source) * 2) * sizeof(int));
+        int* charmap = (int*)_alloca(src_len * 2 * sizeof(int));
+        int* typemap = (int*)_alloca(src_len * 2 * sizeof(int));
         int* blockmap[2];
-        blockmap[0] = (int*)_alloca(ustrlen(source) * sizeof(int));
-        blockmap[1] = (int*)_alloca(ustrlen(source) * sizeof(int));
+        blockmap[0] = (int*)_alloca(src_len * sizeof(int));
+        blockmap[1] = (int*)_alloca(src_len * sizeof(int));
 #endif
 	/* Lookup input string in encoding table */
 	maplength = 0;
 	debug = 0;
 	
-	for(i = 0; i < ustrlen(source); i++) {
+	for(i = 0; i < src_len; i++) {
 		if(gs1 && (i == 0)) {
 			/* Add FNC1 to beginning of GS1 messages */
 			charmap[maplength] = 0;
-			typemap[maplength] = PUNC;
-			maplength++;
+			typemap[maplength++] = PUNC;
 			charmap[maplength] = 400;
-			typemap[maplength] = PUNC;
-			maplength++;
+			typemap[maplength++] = PUNC;
 		}
 		if((gs1) && (source[i] == '[')) {
 			/* FNC1 represented by FLG(0) */
 			charmap[maplength] = 0;
-			typemap[maplength] = PUNC;
-			maplength++;
+			typemap[maplength++] = PUNC;
 			charmap[maplength] = 400;
-			typemap[maplength] = PUNC;
+			typemap[maplength++] = PUNC;
 		} else {
 			if(source[i] > 127) {
 				charmap[maplength] = source[i];
-				typemap[maplength] = BINARY;
+				typemap[maplength++] = BINARY;
 			} else {
 				charmap[maplength] = AztecSymbolChar[source[i]];
-				typemap[maplength] = AztecCodeSet[source[i]];
+				typemap[maplength++] = AztecCodeSet[source[i]];
 			}
 		}
-		maplength++;
 	}
 	
 	/* Look for double character encoding possibilities */
@@ -245,10 +238,7 @@ int aztec_text_process(unsigned char source[], char binary_string[], int gs1)
 			}
 		}
 	}
-	
-	for(i = 0; i < 20000; i++) {
-		binary_string[i] = '\0';
-	}
+	*binary_string  = '\0';
 	
 	curtable = UPPER; /* start with UPPER table */
 	lasttable = UPPER;
@@ -664,15 +654,11 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
 	int err_code, ecc_level, compact, data_length, data_maxsize, codeword_size, adjusted_length;
 	int remainder, padbits, count, gs1, adjustment_size;
 	int debug = 0;
-#ifdef _MSC_VER
-	unsigned int* data_part;
-	unsigned int* ecc_part;
-#endif
 
 #ifndef _MSC_VER
-        unsigned char local_source[length];
+        unsigned char local_source[length + 1];
 #else
-        unsigned char local_source = (unsigned char*)_alloca(length);
+        unsigned char* local_source = (unsigned char*)_alloca(length + 1);
 #endif
 
 	memset(binary_string,0,20000);
@@ -682,9 +668,8 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
 	/* The following to be replaced by ECI handling */
 	switch(symbol->input_mode) {
 		case DATA_MODE:
-			for(i = 0; i < length; i++) {
-				local_source[i] = source[i];
-			}
+		case GS1_MODE:
+			memcpy(local_source, source, length);
 			local_source[length] = '\0';
 			break;
 		case UNICODE_MODE:
@@ -701,7 +686,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
 		}
 	}
 	
-	err_code = aztec_text_process(local_source, binary_string, gs1);
+	err_code = aztec_text_process(local_source, length, binary_string, gs1);
 
 	if(err_code != 0) {
 		strcpy(symbol->errtxt, "Input too long or too many extended ASCII characters");
@@ -985,8 +970,8 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
 #ifndef _MSC_VER
 	unsigned int data_part[data_blocks + 3], ecc_part[ecc_blocks + 3];
 #else
-	data_part = (unsigned int*)_alloca((data_blocks + 3) * sizeof(unsigned int));
-	ecc_part = (unsigned int*)_alloca((ecc_blocks + 3) * sizeof(unsigned int));
+	unsigned int* data_part = (unsigned int*)_alloca((data_blocks + 3) * sizeof(unsigned int));
+	unsigned int* ecc_part = (unsigned int*)_alloca((ecc_blocks + 3) * sizeof(unsigned int));
 #endif
 	/* Copy across data into separate integers */
 	memset(data_part,0,(data_blocks + 2)*sizeof(int));
@@ -1249,7 +1234,7 @@ int aztec_runes(struct zint_symbol *symbol, unsigned char source[], int length)
 		strcpy(symbol->errtxt, "Input too large");
 		return ERROR_INVALID_DATA;
 	}
-	error_number = is_sane(NESET, source, length);
+	error_number = is_sane(NEON, source, length);
 	if(error_number != 0) {
 		strcpy(symbol->errtxt, "Invalid characters in input");
 		return ERROR_INVALID_DATA;

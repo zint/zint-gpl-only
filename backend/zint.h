@@ -24,7 +24,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-//#define ZINT_VERSION "2.0.A"
 
 struct zint_symbol {
 	int symbology;
@@ -40,14 +39,13 @@ struct zint_symbol {
 	int option_2;
 	int option_3;
 	int input_mode;
-	unsigned char text[100];
+	unsigned char text[128];
 	int rows;
 	int width;
-	char primary[100];
+	char primary[128];
 	unsigned char encoded_data[178][143];
 	int row_height[178]; /* Largest symbol is 177x177 QR Code */
 	char errtxt[100];
-	char nullchar;
 };
 
 /* Tbarcode 7 codes */

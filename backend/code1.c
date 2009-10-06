@@ -1027,20 +1027,20 @@ int code_one(struct zint_symbol *symbol, unsigned char source[], int length)
 		int stream[30];
 		int block_width;
 		
-		if(is_sane(NESET, source, length) == ERROR_INVALID_DATA) {
-			strcpy(symbol->errtxt, "Invalid input data (Version S encodes numeric input only)");
-			return ERROR_INVALID_DATA;
-		}
 		if(length > 18) {
 			strcpy(symbol->errtxt, "Input data too long");
 			return ERROR_TOO_LONG;
+		}
+		if(is_sane(NEON, source, length) == ERROR_INVALID_DATA) {
+			strcpy(symbol->errtxt, "Invalid input data (Version S encodes numeric input only)");
+			return ERROR_INVALID_DATA;
 		}
 		
 		sub_version = 3; codewords = 12; block_width = 6; /* Version S-30 */
 		if(length <= 12) { sub_version = 2; codewords = 8; block_width = 4; } /* Version S-20 */
 		if(length <= 6) { sub_version = 1; codewords = 4; block_width = 2; } /* Version S-10 */
 		
-		binary_load(elreg, (char *)source);
+		binary_load(elreg, (char *)source, length);
 		hex_dump(elreg);
 		
 		for(i = 0; i < 15; i++) {

@@ -30,7 +30,7 @@
 
 int code_49(struct zint_symbol *symbol, unsigned char source[], int length)
 {
-	int i, j, rows, M, x_count, y_count, z_count, posn_val, local_value;
+	int i, j, rows, M, x_count, y_count, z_count, posn_val, local_value, h;
 	char intermediate[170];
 	int codewords[170], codeword_count;
 	int c_grid[8][8]; /* Refers to table 3 */
@@ -45,25 +45,21 @@ int code_49(struct zint_symbol *symbol, unsigned char source[], int length)
 	}
 	if(symbol->input_mode == GS1_MODE) { gs1 = 1; } else { gs1 = 0; }
 
-	strcpy(intermediate, "");
+	strcpy(intermediate, gs1 ? "*" : ""); /* FNC1 */
 	for(i = 0; i < length; i++) {
 		if(source[i] > 127) {
 			strcpy(symbol->errtxt, "Invalid characters in input data");
 			return ERROR_INVALID_DATA;
 		}
-		if(gs1 && (i == 0)) {
+		if(gs1 && (source[i] == '['))
 			concat(intermediate, "*"); /* FNC1 */
-		}
-
-		if(gs1 && (source[i] == '[')) {
-			concat(intermediate, "*"); /* FNC1 */
-		} else {
+		else
 			concat(intermediate, c49_table7[source[i]]);
-		}
 	}
 
 	codeword_count = 0;
 	i = 0;
+	h = strlen(intermediate);
 	do {
 		if((intermediate[i] >= '0') && (intermediate[i] <= '9')) {
 			/* Numeric data */
@@ -166,7 +162,7 @@ int code_49(struct zint_symbol *symbol, unsigned char source[], int length)
 						i += 4;
 						break;
 				}
-				if(i < strlen(intermediate)) {
+				if(i < h) {
 					/* There is more to add */
 					codewords[codeword_count] = 48; /* Numeric Shift */
 					codeword_count++;
@@ -181,7 +177,7 @@ int code_49(struct zint_symbol *symbol, unsigned char source[], int length)
 			codeword_count++;
 			i++;
 		}
-	} while(i < strlen(intermediate));
+	} while(i < h);
 	
 	switch(codewords[0]) { /* Set starting mode value */
 		case 48: M = 2;

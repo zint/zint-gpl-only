@@ -65,8 +65,6 @@ static char *C16KStartStop[8] = {"3211", "2221", "2122", "1411", "1132", "1231",
 static int C16KStartValues[16] = {0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7};
 static int C16KStopValues[16] = {0, 1, 2, 3, 4, 5, 6, 7, 4, 5, 6, 7, 0, 1, 2, 3};
 
-int parunmodd(unsigned char llyth);
-
 void grwp16(int *indexliste)
 {
 	int i, j;
@@ -172,9 +170,9 @@ int code16k(struct zint_symbol *symbol, unsigned char source[], int length)
 	char width_pattern[100];
 	int current_row, rows_needed, flip_flop, looper, first_check, second_check;
 	int indexliste, indexchaine, pads_needed, f_state;
-	char set[160], fset[160], mode, last_set, last_fset, current_set;
+	char set[160] = { ' ' }, fset[160] = { ' ' }, mode, last_set, last_fset, current_set;
 	unsigned int i, j, k, m, e_count, read, mx_reader, writer;
-	unsigned int values[160];
+	unsigned int values[160] = { 0 };
 	unsigned int bar_characters;
 	float glyph_count;
 	int errornum, first_sum, second_sum;
@@ -194,12 +192,6 @@ int code16k(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	e_count = 0;
 	bar_characters = 0;
-
-	for(i = 0; i < 160; i++) {
-		values[i] = 0;
-		set[i] = ' ';
-		fset[i] = ' ';
-	}
 	
 	/* Detect extended ASCII characters */
 	for(i = 0; i <  input_length; i++) {

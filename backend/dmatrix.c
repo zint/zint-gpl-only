@@ -26,16 +26,16 @@
 #endif
 #include "dmatrix.h"
 #include "common.h"
-#ifdef _MSC_VER
+#ifdef __cplusplus
 #include "dm200.h"
 #else
 extern int data_matrix_200(struct zint_symbol *symbol, unsigned char source[], int length);
 #endif
 
-#define B11SET " 0123456789"
-#define B27SET " ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-#define B37SET " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-#define B41SET " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,-/"
+#define SODIUM " 0123456789"
+#define COBALT " ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+#define RUBIDIUM " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+#define NIOBIUM " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,-/"
 
 void crc_machine(char data_prefix_bitstream[], int scheme, unsigned char source[], int length)
 {
@@ -43,10 +43,6 @@ void crc_machine(char data_prefix_bitstream[], int scheme, unsigned char source[
 	char xor_register[17];
 	int machine_cycles;
 	char input_bit, out1, out2, out3;
-#ifdef _MSC_VER
-	char* precrc_bitstream;
-	char* precrc_bitstream_reversed;
-#endif
 
 	input_length = length;
 
@@ -54,8 +50,8 @@ void crc_machine(char data_prefix_bitstream[], int scheme, unsigned char source[
 	char precrc_bitstream[(input_length * 8) + 18];
 	char precrc_bitstream_reversed[(input_length * 8) + 18];
 #else
-	precrc_bitstream = (char*)_alloca((input_length * 8) + 18);
-	precrc_bitstream_reversed = (char*)_alloca((input_length * 8) + 18);
+	char* precrc_bitstream = (char*)_alloca((input_length * 8) + 18);
+	char* precrc_bitstream_reversed = (char*)_alloca((input_length * 8) + 18);
 #endif
 
 	switch(scheme) {
@@ -155,7 +151,7 @@ void i1_base11(char binary_string[], unsigned char source[], int length)
 		block_value = 0;
 		binary_posn = strlen(binary_string);
 		for(j = 0; j < 6; j++) {
-			c[j] = posn(B11SET, source[(i * 6) + j]);
+			c[j] = posn(SODIUM, source[(i * 6) + j]);
 			c[j] *= weight[j];
 			block_value += c[j];
 		}
@@ -193,7 +189,7 @@ void i1_base11(char binary_string[], unsigned char source[], int length)
 	block_value = 0;
 	binary_posn = strlen(binary_string);
 	for(j = 0; j < remainder; j++) {
-		c[j] = posn(B11SET, source[(i * 6) + j]);
+		c[j] = posn(SODIUM, source[(i * 6) + j]);
 		c[j] *= weight[j];
 		block_value += c[j];
 	}
@@ -257,7 +253,7 @@ void i2_base27(char binary_string[], unsigned char source[], int length)
 		strcpy(block_binary, "");
 		block_value = 0;
 		for(j = 0; j < 5; j++) {
-			c[j] = posn(B27SET, source[(i * 5) + j]);
+			c[j] = posn(COBALT, source[(i * 5) + j]);
 			c[j] *= weight[j];
 			block_value += c[j];
 		}
@@ -297,7 +293,7 @@ void i2_base27(char binary_string[], unsigned char source[], int length)
 	strcpy(block_binary, "");
 	block_value = 0;
 	for(j = 0; j < remainder; j++) {
-		c[j] = posn(B27SET, source[(i * 5) + j]);
+		c[j] = posn(COBALT, source[(i * 5) + j]);
 		c[j] *= weight[j];
 		block_value += c[j];
 	}
@@ -361,7 +357,7 @@ void i3_base37(char binary_string[], unsigned char source[], int length)
 		strcpy(block_binary, "");
 		block_value = 0;
 		for(j = 0; j < 4; j++) {
-			c[j] = posn(B37SET, source[(i * 4) + j]);
+			c[j] = posn(RUBIDIUM, source[(i * 4) + j]);
 			c[j] *= weight[j];
 			block_value += c[j];
 		}
@@ -398,7 +394,7 @@ void i3_base37(char binary_string[], unsigned char source[], int length)
 	strcpy(block_binary, "");
 	block_value = 0;
 	for(j = 0; j < remainder; j++) {
-		c[j] = posn(B37SET, source[(i * 4) + j]);
+		c[j] = posn(RUBIDIUM, source[(i * 4) + j]);
 		c[j] *= weight[j];
 		block_value += c[j];
 	}
@@ -457,7 +453,7 @@ void i4_base41(char binary_string[], unsigned char source[], int length)
 		strcpy(block_binary, "");
 		block_value = 0;
 		for(j = 0; j < 4; j++) {
-			c[j] = posn(B41SET, source[(i * 4) + j]);
+			c[j] = posn(NIOBIUM, source[(i * 4) + j]);
 			c[j] *= weight[j];
 			block_value += c[j];
 		}
@@ -495,7 +491,7 @@ void i4_base41(char binary_string[], unsigned char source[], int length)
 	strcpy(block_binary, "");
 	block_value = 0;
 	for(j = 0; j < remainder; j++) {
-		c[j] = posn(B41SET, source[(i * 4) + j]);
+		c[j] = posn(NIOBIUM, source[(i * 4) + j]);
 		c[j] *= weight[j];
 		block_value += c[j];
 	}
@@ -1104,10 +1100,10 @@ int matrix89(struct zint_symbol *symbol, unsigned char source[], int length)
 	
 	/* Decide which encoding scheme to use */
 	scheme = 128;
-	if(!(is_sane(B41SET, source, length))) { scheme = 41; }
-	if(!(is_sane(B37SET, source, length))) { scheme = 37; }
-	if(!(is_sane(B27SET, source, length))) { scheme = 27; }
-	if(!(is_sane(B11SET, source, length))) { scheme = 11; }
+	if(!(is_sane(NIOBIUM, source, length))) { scheme = 41; }
+	if(!(is_sane(RUBIDIUM, source, length))) { scheme = 37; }
+	if(!(is_sane(COBALT, source, length))) { scheme = 27; }
+	if(!(is_sane(SODIUM, source, length))) { scheme = 11; }
 	
 	/* Data Prefix Bit Stream = Format ID + CRC + Data Length */
 	

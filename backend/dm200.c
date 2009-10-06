@@ -344,6 +344,7 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 #else
         char* binary = (char*)_alloca(2 * inputlen);
 #endif
+
 	sp = 0;
 	tp = 0;
 	memset(c40_buffer, 0, 6);
@@ -771,26 +772,6 @@ int data_matrix_200(struct zint_symbol *symbol, unsigned char source[], int leng
 	int last_mode;
 	unsigned char *grid = 0;
 	inputlen = length;
-	
-#ifndef _MSC_VER
-        unsigned char local_source[length];
-#else
-        unsigned char local_source = (unsigned char*)_alloca(length);
-#endif
-
-	/* The following to be replaced by ECI handling */
-	switch(symbol->input_mode) {
-		case DATA_MODE:
-			for(i = 0; i < length; i++) {
-				local_source[i] = source[i];
-			}
-			local_source[length] = '\0';
-			break;
-		case UNICODE_MODE:
-			error_number = latin1_process(symbol, source, local_source, &length);
-			if(error_number != 0) { return error_number; }
-			break;
-	}
 	
 	binlen = dm200encode(symbol, source, binary, &last_mode, length);
 	

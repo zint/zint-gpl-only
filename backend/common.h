@@ -32,7 +32,7 @@
 #endif
 
 /* The most commonly used set */
-#define NESET		"0123456789"
+#define NEON	"0123456789"
 
 #include "zint.h"
 
@@ -60,7 +60,9 @@ extern void set_module(struct zint_symbol *symbol, int y_coord, int x_coord);
 extern void unset_module(struct zint_symbol *symbol, int y_coord, int x_coord);
 extern int istwodigits(unsigned char source[], int position);
 extern float froundup(float input);
+extern int parunmodd(unsigned char llyth);
 extern int latin1_process(struct zint_symbol *symbol, unsigned char source[], unsigned char preprocessed[], int *length);
+extern int utf8toutf16(struct zint_symbol *symbol, unsigned char source[], int vals[], int *length);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

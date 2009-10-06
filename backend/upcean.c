@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#define NASET	"0123456789+"
+#define SODIUM	"0123456789+"
 #define EAN2	102
 #define EAN5	105
 
@@ -82,7 +82,7 @@ void upca_draw(char source[], char dest[])
 			concat(dest, "11111");
 		}
 
-		lookup(NESET, EANsetA, source[i], dest);
+		lookup(NEON, EANsetA, source[i], dest);
 	}
 
 	/* stop character */
@@ -200,8 +200,8 @@ void upce(struct zint_symbol *symbol, unsigned char source[], char dest[])
 
 	for(i = 0; i <= ustrlen(source); i++) {
 		switch(parity[i]) {
-			case 'A': lookup(NESET, EANsetA, source[i], dest); break;
-			case 'B': lookup(NESET, EANsetB, source[i], dest); break;
+			case 'A': lookup(NEON, EANsetA, source[i], dest); break;
+			case 'B': lookup(NEON, EANsetB, source[i], dest); break;
 		}
 	}
 
@@ -267,8 +267,8 @@ void add_on(unsigned char source[], char dest[], int mode)
 	for(i = 0; i < ustrlen(source); i++)
 	{
 		switch(parity[i]) {
-			case 'A': lookup(NESET, EANsetA, source[i], dest); break;
-			case 'B': lookup(NESET, EANsetB, source[i], dest); break;
+			case 'A': lookup(NEON, EANsetA, source[i], dest); break;
+			case 'B': lookup(NEON, EANsetB, source[i], dest); break;
 		}
 
 		/* Glyph separator */
@@ -319,15 +319,15 @@ void ean13(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	gtin[length + 1] = '\0';
 
 	/* Get parity for first half of the symbol */
-	lookup(NASET, EAN13Parity, gtin[0], parity);
+	lookup(SODIUM, EAN13Parity, gtin[0], parity);
 
 	/* Now get on with the cipher */
 	half_way = 7;
 
 	/* start character */
 	concat (dest, "111");
-
-	for(i = 1; i <= strlen(gtin); i++)
+	length = strlen(gtin);
+	for(i = 1; i <= length; i++)
 	{
 		if (i == half_way)
 		{
@@ -338,11 +338,11 @@ void ean13(struct zint_symbol *symbol, unsigned char source[], char dest[])
 
 		if(((i > 1) && (i < 7)) && (parity[i - 2] == 'B'))
 		{
-			lookup(NESET, EANsetB, gtin[i], dest);
+			lookup(NEON, EANsetB, gtin[i], dest);
 		}
 		else
 		{
-			lookup(NESET, EANsetA, gtin[i], dest);
+			lookup(NEON, EANsetA, gtin[i], dest);
 		}
 	}
 
@@ -368,12 +368,13 @@ void ean8(struct zint_symbol *symbol, unsigned char source[], char dest[])
 
 char isbn13_check(unsigned char source[]) /* For ISBN(13) only */
 {
-	unsigned int i, weight, sum, check;
+	unsigned int i, weight, sum, check, h;
 
 	sum = 0;
 	weight = 1;
+	h = ustrlen(source) - 1;
 
-	for(i = 0; i < (ustrlen(source) - 1); i++)
+	for(i = 0; i < h; i++)
 	{
 		sum += ctoi(source[i]) * weight;
 		if(weight == 1) weight = 3; else weight = 1;
@@ -386,11 +387,13 @@ char isbn13_check(unsigned char source[]) /* For ISBN(13) only */
 
 char isbn_check(unsigned char source[]) /* For ISBN(10) and SBN only */
 {
-	unsigned int i, weight, sum, check;
+	unsigned int i, weight, sum, check, h;
 
 	sum = 0;
 	weight = 1;
-	for(i = 0; i < (ustrlen(source) - 1); i++)
+	h = ustrlen(source) - 1;
+
+	for(i = 0; i < h; i++)
 	{
 		sum += ctoi(source[i]) * weight;
 		weight++;
@@ -400,19 +403,26 @@ char isbn_check(unsigned char source[]) /* For ISBN(10) and SBN only */
 	return itoc(check);
 }
 
-int isbn(struct zint_symbol *symbol, unsigned char source[], char dest[]) /* Make an EAN-13 barcode from an SBN or ISBN */
+int isbn(struct zint_symbol *symbol, unsigned char source[], const unsigned int src_len, char dest[]) /* Make an EAN-13 barcode from an SBN or ISBN */
 {
-	int i;
+	int i, error_number;
 	char check_digit;
 	
+	to_upper(source);
+	error_number = is_sane("0123456789X", source, src_len);
+	if(error_number == ERROR_INVALID_DATA) {
+		strcpy(symbol->errtxt, "Invalid characters in input");
+		return error_number;
+	}
+
 	/* Input must be 9, 10 or 13 characters */
-	if(((ustrlen(source) < 9) || (ustrlen(source) > 13)) || ((ustrlen(source) > 10) && (ustrlen(source) < 13)))
+	if(((src_len < 9) || (src_len > 13)) || ((src_len > 10) && (src_len < 13)))
 	{
 		strcpy(symbol->errtxt, "Input wrong length");
 		return ERROR_TOO_LONG;
 	}
 
-	if(ustrlen(source) == 13) /* Using 13 character ISBN */
+	if(src_len == 13) /* Using 13 character ISBN */
 	{
 		if(!(((source[0] == '9') && (source[1] == '7')) &&
 				     ((source[2] == '8') || (source[2] == '9'))))
@@ -422,7 +432,7 @@ int isbn(struct zint_symbol *symbol, unsigned char source[], char dest[]) /* Mak
 		}
 
 		check_digit = isbn13_check(source);
-		if (source[ustrlen(source) - 1] != check_digit)
+		if (source[src_len - 1] != check_digit)
 		{
 			strcpy(symbol->errtxt, "Incorrect ISBN check");
 			return ERROR_INVALID_CHECK;
@@ -432,10 +442,10 @@ int isbn(struct zint_symbol *symbol, unsigned char source[], char dest[]) /* Mak
 		ean13(symbol, source, dest);
 	}
 
-	if(ustrlen(source) == 10) /* Using 10 digit ISBN */
+	if(src_len == 10) /* Using 10 digit ISBN */
 	{
 		check_digit = isbn_check(source);
-		if(check_digit != source[ustrlen(source) - 1])
+		if(check_digit != source[src_len - 1])
 		{
 			strcpy(symbol->errtxt, "Incorrect ISBN check");
 			return ERROR_INVALID_CHECK;
@@ -452,7 +462,7 @@ int isbn(struct zint_symbol *symbol, unsigned char source[], char dest[]) /* Mak
 		ean13(symbol, source, dest);
 	}
 
-	if(ustrlen(source) == 9) /* Using 9 digit SBN */
+	if(src_len == 9) /* Using 9 digit SBN */
 	{
 		/* Add leading zero */
 		for(i = 10; i > 0; i--)
@@ -489,9 +499,10 @@ void ean_leading_zeroes(struct zint_symbol *symbol, unsigned char source[], unsi
 	/* Add leading zeroes to EAN and UPC strings */
 	unsigned char first_part[20], second_part[20], zfirst_part[20], zsecond_part[20];
 	int with_addon = 0;
-	int first_len = 0, second_len = 0, zfirst_len = 0, zsecond_len = 0, i;
+	int first_len = 0, second_len = 0, zfirst_len = 0, zsecond_len = 0, i, h;
 	
-	for(i = 0; i < ustrlen(source); i++) {
+	h = ustrlen(source);
+	for(i = 0; i < h; i++) {
 		if(source[i] == '+') {
 			with_addon = 1;
 		} else {
@@ -566,36 +577,32 @@ void ean_leading_zeroes(struct zint_symbol *symbol, unsigned char source[], unsi
 	}
 }
 
-int eanx(struct zint_symbol *symbol, unsigned char source[], int length)
+int eanx(struct zint_symbol *symbol, unsigned char source[], int src_len)
 {
 	/* splits string to parts before and after '+' parts */
-	unsigned char first_part[20], second_part[20], dest[1000];
-	unsigned char local_source[20];
+	unsigned char first_part[20] = { 0 }, second_part[20] = { 0 }, dest[1000] = { 0 };
+	unsigned char local_source[20] = { 0 };
 	unsigned int latch, reader, writer, with_addon;
 	int error_number, i;
 	
-	error_number = 0;
-	memset(dest,0,1000);
-	memset(first_part,0,20);
-	memset(second_part,0,20);
 
 	with_addon = FALSE;
 	latch = FALSE;
 	writer = 0;
 
-	if(length > 19) {
+	if(src_len > 19) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
 	if(symbol->symbology != BARCODE_ISBNX) {
 		/* ISBN has it's own checking routine */
-		error_number = is_sane(NASET, source, length);
+		error_number = is_sane(NEON, source, src_len);
 		if(error_number == ERROR_INVALID_DATA) {
 			strcpy(symbol->errtxt, "Invalid characters in data");
 			return error_number;
 		}
 	} else {
-		error_number = is_sane("0123456789Xx", source, length);
+		error_number = is_sane("0123456789Xx", source, src_len);
 		if(error_number == ERROR_INVALID_DATA) {
 			strcpy(symbol->errtxt, "Invalid characters in input");
 			return error_number;
@@ -734,7 +741,7 @@ int eanx(struct zint_symbol *symbol, unsigned char source[], int length)
 			}
 			break;
 		case BARCODE_ISBNX:
-			error_number = isbn(symbol, first_part, (char*)dest);
+			error_number = isbn(symbol, first_part, ustrlen(first_part), (char*)dest);
 			if(error_number > 4) {
 				return error_number;
 			}
