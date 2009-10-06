@@ -92,7 +92,6 @@ void usage(void)
 		"  --secure=NUMBER       (PDF417 and QR Code) Error correction level.\n"
 		"  --primary=STRING      (Maxicode and Composite) Structured primary message.\n"
 		"  --mode=NUMBER         (Maxicode and Composite) Set encoding mode.\n"
-		"  --null=NUMBER         Character to represent NULL.\n"
 		"  --gs1                 Treat input as GS1 data\n"
 		"  --kanji               Treat input as Kanji characters in Unicode\n"
 		"  --sjis                Treat input as Shift-JIS\n"
@@ -161,7 +160,6 @@ int main(int argc, char **argv)
 			{"mode", 1, 0, 0},
 			{"primary", 1, 0, 0},
 			{"scale", 1, 0, 0},
-			{"null", 1, 0, 0},
 			{"gs1", 0, 0, 0},
 			{"kanji", 0, 0, 0},
 			{"sjis", 0, 0, 0},
@@ -227,18 +225,6 @@ int main(int argc, char **argv)
 						my_symbol->border_width = atoi(optarg);
 					} else {
 						fprintf(stderr, "Border width out of range\n");
-					}
-				}
-				if(!strcmp(long_options[option_index].name, "null")) {
-					error_number = validator(NESET, optarg);
-					if(error_number == ERROR_INVALID_DATA) {
-						fprintf(stderr, "Invalid NULL replacement\n");
-						exit(1);
-					}
-					if((atoi(optarg) >= 1) && (atoi(optarg) <= 128)) {
-						my_symbol->nullchar = atoi(optarg);
-					} else {
-						fprintf(stderr, "Invalid NULL replacement\n");
 					}
 				}
 				if(!strcmp(long_options[option_index].name, "height")) {

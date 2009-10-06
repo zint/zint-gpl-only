@@ -1,9 +1,8 @@
-/* qr.c Handles QR Code by utilising libqrencode */
+/* qr.c Handles QR Code */
 
 /*
     libzint - the open source barcode library
-    Copyright (C) 2008 Robin Stuart <robin@zint.org.uk>
-    Copyright (C) 2006 Kentaro Fukuchi <fukuchi@megaui.net>
+    Copyright (C) 2009 Robin Stuart <robin@zint.org.uk>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,123 +21,760 @@
 
 #include <string.h>
 #include "common.h"
-
-#ifndef NO_QR
-#include <qrencode.h>
 #include <stdio.h>
-#include "shiftjis.h"
+#include "sjis.h"
+#include "qr.h"
+#include "qrrs.h"
 
-QRcode *encode(int security, int size, const unsigned char *intext, int kanji, int gs1, int input_length)
+int in_alpha(int glyph) {
+	/* Returns true if input glyph is in the Alphanumeric set */
+	int retval = 0;
+	char cglyph = (char) glyph;
+	
+	if((cglyph >= '0') && (cglyph <= '9')) {
+		retval = 1;
+	}
+	if((cglyph >= 'A') && (cglyph <= 'Z')) {
+		retval = 1;
+	}
+	switch (cglyph) {
+		case ' ':
+		case '$':
+		case '%':
+		case '*':
+		case '+':
+		case '-':
+		case '.':
+		case '/':
+		case ':':
+			retval = 1;
+			break;
+	}
+	
+	return retval;
+}
+
+void define_mode(char mode[], int jisdata[], int length)
 {
-	int version;
-	QRecLevel level;
-	QRencodeMode hint;
-	QRcode *code;
-
-	hint = 0;
-
-	if(kanji) {
-		hint = QR_MODE_KANJI;
-	}
-	/* if(gs1) {
-		hint = QR_MODE_GS1;
-	} - for future expansion */
-	if(hint == 0) {
-		hint = QR_MODE_8;
-	}
-
-	level = QR_ECLEVEL_L;
-	if((security >= 1) && (security <= 4)) {
-		switch (security) {
-			case 1: level = QR_ECLEVEL_L; break;
-			case 2: level = QR_ECLEVEL_M; break;
-			case 3: level = QR_ECLEVEL_Q; break;
-			case 4: level = QR_ECLEVEL_H; break;
+	/* Values placed into mode[] are: K = Kanji, B = Binary, A = Alphanumeric, N = Numeric */
+	int i, mlen, j;
+	
+	for(i = 0; i < length; i++) {
+		if(jisdata[i] > 0xff) { 
+			mode[i] = 'K';
+		} else {
+			mode[i] = 'B';
+			if(in_alpha(jisdata[i])) { mode[i] = 'A'; }
+			if((jisdata[i] >= '0') && (jisdata[i] <= '9')) { mode[i] = 'N'; }
 		}
 	}
 	
-	if((size >= 1) && (size <= 40)) {
-		version = size;
-	} else {
-		version = 0;
+	/* If less than 6 numeric digits together then don't use numeric mode */
+	for(i = 0; i < length; i++) {
+		if(mode[i] == 'N') {
+			if(((i != 0) && (mode[i - 1] != 'N')) || (i == 0)) {
+				mlen = 0;
+				while (((mlen + i) < length) && (mode[mlen + i] == 'N')) {
+					mlen++;
+				};
+				if(mlen < 6) {
+					for(j = 0; j < mlen; j++) {
+						mode[i + j] = 'A';
+					}
+				}
+			}
+		}
+	}
+	
+	/* If less than 4 alphanumeric characters together then don't use alphanumeric mode */
+	for(i = 0; i < length; i++) {
+		if(mode[i] == 'A') {
+			if(((i != 0) && (mode[i - 1] != 'A')) || (i == 0)) {
+				mlen = 0;
+				while (((mlen + i) < length) && (mode[mlen + i] == 'A')) {
+					mlen++;
+				};
+				if(mlen < 6) {
+					for(j = 0; j < mlen; j++) {
+						mode[i + j] = 'B';
+					}
+				}
+			}
+		}
+	}
+}
+
+int estimate_binary_length(char mode[], int length)
+{
+	/* Make an estimate (worst case scenario) of how long the binary string will be */
+	int i, count = 0;
+	char current = 0;
+	int a_count = 0;
+	int n_count = 0;
+	
+	switch(mode[0]) {
+		case 'K': count = 12 + 4; current = 'K'; break;
+		case 'B': count = 16 + 4; current = 'B'; break;
+		case 'A': count = 13 + 4; current = 'A'; break;
+		case 'N': count = 14 + 4; current = 'N'; break;
+	}
+	
+	for(i = 0; i < length; i++) {
+		if(mode[i] != current) {
+			if(current == 'N') {
+				switch(n_count) {
+					case 1: count += 4; break;
+					case 2: count += 7; break;
+				}
+			}
+			
+			switch(mode[i]) {
+				case 'K': count += 12 + 4; current = 'K'; break;
+				case 'B': count += 16 + 4; current = 'B'; break;
+				case 'A': count += 13 + 4; current = 'A'; break;
+				case 'N': count += 14 + 4; current = 'N'; break;
+			}
+		}
+		
+		switch(mode[i]) {
+			case 'K': count += 13; break;
+			case 'B': count += 8; break;
+			case 'A': a_count++; if((a_count % 2) == 0) { count += 11; a_count = 0; } break;
+			case 'N': n_count++; if((n_count % 3) == 0) { count += 10; n_count = 0; } break;
+		}
+		
+	}
+	
+	return count;
+}
+
+void qr_binary(int datastream[], int version, int target_binlen, char mode[], int jisdata[], int length)
+{
+	/* Convert input data to a binary stream and add padding */
+	int position = 0, debug = 1;
+	int short_data_block_length, i, scheme;
+	char data_block, padbits;
+	int current_binlen, current_bytes;
+	int toggle;
+	
+#ifndef _MSC_VER
+	char binary[target_binlen * 8];
+#else
+	char binary = (char *)_alloca(target_binlen * 8);
+#endif
+	strcpy(binary, "");
+	
+	if(version <= 9) {
+		scheme = 1;
+	}
+	if((version >= 10) && (version <= 26)) {
+		scheme = 2;
+	}
+	if(version >= 27) {
+		scheme = 3;
+	}
+	
+	if(debug) { 
+		for(i = 0; i < length; i++) {
+			printf("%c", mode[i]);
+		}
+		printf("\n");
+	}
+	
+	do {
+		data_block = mode[position];
+		short_data_block_length = 0;
+		do {
+			short_data_block_length++;
+		} while (((short_data_block_length + position) < length) && (mode[position + short_data_block_length] == data_block));
+		
+		switch(data_block) {
+			case 'K':
+				/* Kanji mode */
+				/* Mode indicator */
+				concat(binary, "1000");
+				
+				/* Character count indicator */
+				switch(scheme) {
+					case 3:
+						if(short_data_block_length & 0x800) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x400) { concat(binary, "1"); } else { concat(binary, "0"); }
+					case 2:
+						if(short_data_block_length & 0x200) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x100) { concat(binary, "1"); } else { concat(binary, "0"); }
+					case 1:
+						if(short_data_block_length & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
+						break;
+				}
+				
+				if(debug) { printf("Kanji block (length %d)\n\t", short_data_block_length); }
+				
+				/* Character representation */
+				for(i = 0; i < short_data_block_length; i++) {
+					int jis = jisdata[position + i];
+					int msb, lsb, prod;
+					
+					if(jis > 0x9fff) { jis -= 0xc140; }
+					msb = (jis & 0xff00) >> 4;
+					lsb = (jis & 0xff);
+					prod = (msb * 0xc0) + lsb;
+					
+					if(prod & 0x1000) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(prod & 0x800) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(prod & 0x400) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(prod & 0x200) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(prod & 0x100) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(prod & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(prod & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(prod & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(prod & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(prod & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(prod & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(prod & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(prod & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
+					
+					if(debug) { printf("0x%4X ", prod); }
+				}
+				
+				if(debug) { printf("\n"); }
+				
+				break;
+			case 'B':
+				/* Byte mode */
+				/* Mode indicator */
+				concat(binary, "0100");
+				
+				/* Character count indicator */
+				switch (scheme) {
+					case 3:
+					case 2:
+						if(short_data_block_length & 0x8000) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x4000) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x2000) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x1000) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x800) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x400) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x200) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x100) { concat(binary, "1"); } else { concat(binary, "0"); }
+					case 1:
+						if(short_data_block_length & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
+						break;
+				}
+				
+				if(debug) { printf("Byte block (length %d)\n\t", short_data_block_length); }
+				
+				/* Character representation */
+				for(i = 0; i < short_data_block_length; i++) {
+					int byte = jisdata[position + i];
+					
+					if(byte & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(byte & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(byte & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(byte & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(byte & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(byte & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(byte & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(byte & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
+					
+					if(debug) { printf("0x%4X ", byte); }
+				}
+				
+				if(debug) { printf("\n"); }
+				
+				break;
+			case 'A':
+				/* Alphanumeric mode */
+				/* Mode indicator */
+				concat(binary, "0010");
+				
+				/* Character count indicator */
+				switch (scheme) {
+					case 3:
+						if(short_data_block_length & 0x1000) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x800) { concat(binary, "1"); } else { concat(binary, "0"); }
+					case 2:
+						if(short_data_block_length & 0x400) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x200) { concat(binary, "1"); } else { concat(binary, "0"); }
+					case 1:
+						if(short_data_block_length & 0x100) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
+						break;
+				}
+				
+				if(debug) { printf("Alpha block (length %d)\n\t", short_data_block_length); }
+				
+				/* Character representation */
+				i = 0; 
+				while ( i < short_data_block_length ) {
+					int count;
+					int first = 0, second = 0, prod;
+					
+					first = posn(RHODIUM, (char) jisdata[position + i]);
+					count = 1;
+					prod = first;
+					
+					if(mode[position + i + 1] == 'A') {
+						second = posn(RHODIUM, (char) jisdata[position + i + 1]);
+						count = 2;
+						prod = (first * 45) + second;
+					}
+					
+					switch(count) {
+						case 2:
+							if(prod & 0x400) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x200) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x100) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
+						case 1:
+							if(prod & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
+							break;
+					}
+					
+					if(debug) { printf("0x%4X ", prod); }
+					
+					i += 2;
+				};
+				
+				if(debug) { printf("\n"); }
+				
+				break;
+			case 'N':
+				/* Numeric mode */
+				/* Mode indicator */
+				concat(binary, "0001");
+				
+				/* Character count indicator */
+				switch (scheme) {
+					case 3:
+						if(short_data_block_length & 0x2000) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x1000) { concat(binary, "1"); } else { concat(binary, "0"); }
+					case 2:
+						if(short_data_block_length & 0x800) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x400) { concat(binary, "1"); } else { concat(binary, "0"); }
+					case 1:
+						if(short_data_block_length & 0x200) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x100) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
+						if(short_data_block_length & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
+						break;
+				}
+				
+				if(debug) { printf("Number block (length %d)\n\t", short_data_block_length); }
+				
+								/* Character representation */
+				i = 0; 
+				while ( i < short_data_block_length ) {
+					int count;
+					int first = 0, second = 0, third = 0, prod;
+					
+					first = posn(NEON, (char) jisdata[position + i]);
+					count = 1;
+					prod = first;
+					
+					if(mode[position + i + 1] == 'N') {
+						second = posn(NEON, (char) jisdata[position + i + 1]);
+						count = 2;
+						prod = (prod * 10) + second;
+					}
+					
+					if(mode[position + i + 2] == 'N') {
+						third = posn(NEON, (char) jisdata[position + i + 2]);
+						count = 3;
+						prod = (prod * 10) + third;
+					}
+					
+					switch(count) {
+						case 3:
+							if(prod & 0x200) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x100) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
+						case 2:
+							if(prod & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
+						case 1:
+							if(prod & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
+							break;
+					}
+					
+					if(debug) { printf("0x%4X (%d)", prod, prod); }
+					
+					i += 3;
+				};
+				
+				if(debug) { printf("\n"); }
+				
+				break;
+		}
+		
+		position += short_data_block_length;
+	} while (position < length - 1) ;
+	
+	/* Terminator */
+	concat(binary, "0000");
+
+	current_binlen = strlen(binary);
+	padbits = 8 - (current_binlen % 8);
+	if(padbits == 8) { padbits = 0; }
+	current_bytes = (current_binlen + padbits) / 8;
+	
+	/* Padding bits */
+	for(i = 0; i < padbits; i++) {
+		concat(binary, "0");
 	}
 
-	code = QRcode_encodeString((char*)intext, version, level, hint, 1);
+	/* Put data into 8-bit codewords */
+	for(i = 0; i < current_bytes; i++) {
+		datastream[i] = 0x00;
+		if(binary[i * 8] == '1') { datastream[i] += 0x80; }
+		if(binary[i * 8 + 1] == '1') { datastream[i] += 0x40; }
+		if(binary[i * 8 + 2] == '1') { datastream[i] += 0x20; }
+		if(binary[i * 8 + 3] == '1') { datastream[i] += 0x10; }
+		if(binary[i * 8 + 4] == '1') { datastream[i] += 0x08; }
+		if(binary[i * 8 + 5] == '1') { datastream[i] += 0x04; }
+		if(binary[i * 8 + 6] == '1') { datastream[i] += 0x02; }
+		if(binary[i * 8 + 7] == '1') { datastream[i] += 0x01; }
+	}
+	
+	/* Add pad codewords */
+	toggle = 0;
+	for(i = current_bytes; i < target_binlen; i++) {
+		if(toggle == 0) {
+			datastream[i] = 0xec;
+			toggle = 1;
+		} else {
+			datastream[i] = 0x11;
+			toggle = 0;
+		}
+	}
 
-	return code;
+	if(debug) {
+		for(i = 0; i < target_binlen; i++) {
+			printf("0x%2X ", datastream[i]);
+		}
+		printf("\n");
+	}
+}
+
+void add_ecc(int fullstream[], int datastream[], int version, int data_cw, int blocks)
+{
+	/* Split data into blocks, add error correction and then interleave the blocks and error correction data */
+	int ecc_cw = qr_total_codewords[version - 1] - data_cw;
+	int short_data_block_length = data_cw / blocks;
+	int qty_long_blocks = data_cw % blocks;
+	int qty_short_blocks = blocks - qty_long_blocks;
+	int ecc_block_length = ecc_cw / blocks;
+	int i, j, length_this_block, posn, debug = 1;
+	RS *rs;
+	
+	
+#ifndef _MSC_VER
+	unsigned char data_block[short_data_block_length + 2];
+	unsigned char ecc_block[ecc_block_length + 2];
+	int interleaved_data[data_cw + 2];
+	int interleaved_ecc[ecc_cw + 2];
+#else
+	unsigned char data_block = (unsigned char *)_alloca(short_data_block_length + 2);
+	unsigned char ecc_block = (unsigned char *)_alloca(ecc_block_length + 2);
+	int interleaved_data = (int *)_alloca(data_cw + 2);
+	int interleaved_ecc = (int *)_alloca(ecc_cw + 2);
+#endif
+
+	posn = 0;
+	
+	for(i = 0; i < blocks; i++) {
+		if(i < qty_short_blocks) { length_this_block = short_data_block_length; } else { length_this_block = short_data_block_length + 1; }
+		
+		for(j = 0; j < ecc_block_length; j++) {
+			ecc_block[j] = 0;
+		}
+		
+		for(j = 0; j < length_this_block; j++) {
+			data_block[j] = (unsigned char) datastream[posn + j];
+		}
+		
+		rs = init_rs(8, 0x11d, 0, 1, ecc_block_length, 255 - length_this_block - ecc_block_length);
+		encode_rs_char(rs, data_block, ecc_block);
+		
+		if(debug) {
+			printf("Block %d: ", i + 1);
+			for(j = 0; j < length_this_block; j++) {
+				printf("%2X ", data_block[j]);
+			}
+			if(i < qty_short_blocks) {
+				printf("   ");
+			}
+			printf(" // ");
+			for(j = 0; j < ecc_block_length; j++) {
+				printf("%2X ", ecc_block[j]);
+			}
+			printf("\n");
+		}
+		
+		for(j = 0; j < short_data_block_length; j++) {
+			interleaved_data[(j * blocks) + i] = (int) data_block[j];
+		}
+		
+		if(i >= qty_short_blocks){
+			interleaved_data[(short_data_block_length * blocks) + (i - qty_short_blocks)] = (int) data_block[short_data_block_length];
+		}
+		
+		for(j = 0; j < ecc_block_length; j++) {
+			interleaved_ecc[(j * blocks) + i] = (int) ecc_block[j];
+		}
+		
+		posn += length_this_block;
+	}
+	free_rs_cache();
+	
+	for(j = 0; j < data_cw; j++) {
+		fullstream[j] = interleaved_data[j];
+	}
+	for(j = 0; j < ecc_cw; j++) {
+		fullstream[j + data_cw] = interleaved_ecc[j];
+	}
+	
+	if(debug) {
+		printf("\nData Stream: \n");
+		for(j = 0; j < (data_cw + ecc_cw); j++) {
+			printf("%2X ", fullstream[j]);
+		}
+		printf("\n");
+	}
+}
+
+void place_finder(unsigned char grid[], int size, int x, int y)
+{
+	int xp, yp;
+	
+	int finder[] = {
+		1, 1, 1, 1, 1, 1, 1,
+		1, 0, 0, 0, 0, 0, 1,
+		1, 0, 1, 1, 1, 0, 1,
+		1, 0, 1, 1, 1, 0, 1,
+		1, 0, 1, 1, 1, 0, 1,
+		1, 0, 0, 0, 0, 0, 1,
+		1, 1, 1, 1, 1, 1, 1
+	};
+	
+	for(xp = 0; xp < 7; xp++) {
+		for(yp = 0; yp < 7; yp++) {
+			if (finder[xp + (7 * yp)] == 1) {
+				grid[((yp + y) * size) + (xp + x)] = 0x11;
+			} else {
+				grid[((yp + y) * size) + (xp + x)] = 0x10;
+			}
+		}
+	}
+}
+
+void setup_grid(unsigned char* grid, int size)
+{
+	int i, toggle = 1;
+
+	for(i = 0; i < size; i++) {
+		if(toggle == 1) {
+			grid[(6 * size) + i] = 0x11;
+			grid[(i * size) + 6] = 0x11;
+			toggle = 0;
+		} else {
+			grid[(6 * size) + i] = 0x10;
+			grid[(i * size) + 6] = 0x10;
+			toggle = 1;
+		}
+	}
+	
+	place_finder(grid, size, 0, 0);
+	place_finder(grid, size, 0, size - 7);
+	place_finder(grid, size, size - 7, 0);
 }
 
 int qr_code(struct zint_symbol *symbol, unsigned char source[], int length)
 {
-	QRcode *code;
-	int i, j;
-	int kanji, gs1;
-	int error_number;
+	int error_number, i, j, glyph, est_binlen;
+	int ecc_level, autosize, version, max_cw, target_binlen, blocks, size;
 	
 #ifndef _MSC_VER
-        unsigned char local_source[length];
+	int utfdata[length + 1];
+	int jisdata[length + 1];
+	char mode[length + 1];
 #else
-        unsigned char local_source = (unsigned char*)_alloca(length);
+	int utfdata = (int *)_alloca((length + 1) * sizeof(int));
+	int jisdata = (int *)_alloca((length + 1) * sizeof(int));
+	char mode = (char *)_alloca((length + 1) * sizeof(int));
 #endif
 	
-	if(symbol->input_mode == GS1_MODE) { gs1 = 1; } else { gs1 = 0; }
-
-	if(gs1) {
-		strcpy(symbol->errtxt, "GS1 mode not yet supported in QR Code");
-		return ERROR_INVALID_OPTION;
-	}
-	
-	for(i = 0; i < length; i++) {
-		if(source[i] == '\0') {
-			strcpy(symbol->errtxt, "QR Code not yet able to handle NULL characters");
-			return ERROR_INVALID_DATA;
-		}
-	}
-	
-	/* The following to be replaced by ECI handling */
 	switch(symbol->input_mode) {
 		case DATA_MODE:
 			for(i = 0; i < length; i++) {
-				local_source[i] = source[i];
+				jisdata[i] = (int)source[i];
 			}
-			local_source[length] = '\0';
-			kanji = 0;
 			break;
-		case UNICODE_MODE:
-			error_number = shiftJIS(symbol, source, local_source, &length, &kanji);
+		default:
+			/* Convert Unicode input to Shift-JIS */
+			error_number = utf8toutf16(symbol, source, utfdata, &length);
 			if(error_number != 0) { return error_number; }
+			
+			for(i = 0; i < length; i++) {
+				if(utfdata[i] <= 0xff) {
+					jisdata[i] = utfdata[i];
+				} else {
+					j = 0;
+					glyph = 0;
+					do {
+						if(sjis_lookup[j * 2] == utfdata[i]) {
+							glyph = sjis_lookup[(j * 2) + 1];
+						}
+						j++;
+					} while ((j < 6843) && (glyph == 0));
+					if(glyph == 0) {
+						strcpy(symbol->errtxt, "Invalid character in input data");
+						return ERROR_INVALID_DATA;
+					}
+					jisdata[i] = glyph;
+				}
+			}
 			break;
+	}
+	
+	define_mode(mode, jisdata, length);
+	est_binlen = estimate_binary_length(mode, length);
+	
+	ecc_level = LEVEL_L;
+	max_cw = 2956;
+	if((symbol->option_1 >= 1) && (symbol->option_1 <= 4)) {
+		switch (symbol->option_1) {
+			case 1: ecc_level = LEVEL_L; max_cw = 2956; break;
+			case 2: ecc_level = LEVEL_M; max_cw = 2334; break;
+			case 3: ecc_level = LEVEL_Q; max_cw = 1666; break;
+			case 4: ecc_level = LEVEL_H; max_cw = 1276; break;
+		}
+	}
+	
+	if(est_binlen > (8 * max_cw)) {
+		strcpy(symbol->errtxt, "Input too long for selected error correction level");
+		return ERROR_TOO_LONG;
+	}
+	
+	autosize = 40;
+	for(i = 39; i >= 0; i--) {
+		switch(ecc_level) {
+			case LEVEL_L:
+				if ((8 * qr_data_codewords_L[i]) >= est_binlen) {
+					autosize = i + 1;
+				}
+				break;
+			case LEVEL_M:
+				if ((8 * qr_data_codewords_M[i]) >= est_binlen) {
+					autosize = i + 1;
+				}
+				break;
+			case LEVEL_Q:
+				if ((8 * qr_data_codewords_Q[i]) >= est_binlen) {
+					autosize = i + 1;
+				}
+				break;
+			case LEVEL_H:
+				if ((8 * qr_data_codewords_H[i]) >= est_binlen) {
+					autosize = i + 1;
+				}
+				break;
+		}
+	}
+	
+	if((symbol->option_2 >= 1) && (symbol->option_2 <= 40)) {
+		if (symbol->option_2 > autosize) {
+			version = symbol->option_2;
+		} else {
+			version = autosize;
+		}
+	} else {
+		version = autosize;
 	}
 
-	code = encode(symbol->option_1, symbol->option_2, local_source, kanji, gs1, length);
-	if(code == NULL) {
-		strcpy(symbol->errtxt, "libqrencode failed to encode the input data");
-		return ERROR_ENCODING_PROBLEM;
+	target_binlen = qr_data_codewords_L[version - 1]; blocks = qr_blocks_L[version - 1];
+	switch(ecc_level) {
+		case LEVEL_M: target_binlen = qr_data_codewords_M[version - 1]; blocks = qr_blocks_M[version - 1]; break;
+		case LEVEL_Q: target_binlen = qr_data_codewords_Q[version - 1]; blocks = qr_blocks_Q[version - 1]; break;
+		case LEVEL_H: target_binlen = qr_data_codewords_H[version - 1]; blocks = qr_blocks_H[version - 1]; break;
 	}
 	
-	symbol->width = code->width;
-	symbol->rows = code->width;
+#ifndef _MSC_VER
+	int datastream[target_binlen + 1];
+	int fullstream[qr_total_codewords[version - 1] + 1];
+#else
+	int datastream = (int *)_alloca((target_binlen + 1) * sizeof(int));
+	int fullstream = (int *)_alloca((qr_total_codewords[version - 1] + 1) * sizeof(int));
+#endif
+
+	qr_binary(datastream, version, target_binlen, mode, jisdata, length);
+	add_ecc(fullstream, datastream, version, target_binlen, blocks);
 	
-	for(i = 0; i < code->width; i++) {
-		for(j = 0; j < code->width; j++) {
-			if((*(code->data + (i * code->width) + j) & 0x01) != 0) {
+	size = qr_sizes[version - 1];
+#ifndef _MSC_VER
+	unsigned char grid[size * size];
+#else
+	unsigned char grid = (unsigned char *)_alloca((size * size) * sizeof(unsigned char));
+#endif
+	
+	for(i = 0; i < size; i++) {
+		for(j = 0; j < size; j++) {
+			grid[(i * size) + j] = 0;
+		}
+	}
+	
+	setup_grid(grid, size);
+	
+	symbol->width = size;
+	symbol->rows = size;
+	
+	for(i = 0; i < size; i++) {
+		for(j = 0; j < size; j++) {
+			if(grid[(i * size) + j] & 0x01) {
 				set_module(symbol, i, j);
 			}
 		}
 		symbol->row_height[i] = 1;
 	}
 	
-	QRcode_free(code);
+	printf("Version %d: target %d bytes\n", version, target_binlen);
 	
 	return 0;
 }
-
-#else
-/* Handler if no QR Encode library is available */
-int qr_code(struct zint_symbol *symbol, unsigned char source[])
-{
-	strcpy(symbol->errtxt, "QR Code library <qrencode> not available");
-	return ERROR_INVALID_OPTION;
-}
-#endif
 

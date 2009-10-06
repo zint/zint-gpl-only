@@ -155,16 +155,16 @@ short int islarger(short int accum[], short int reg[])
 	return larger;
 }
 
-void binary_load(short int reg[], char data[])
+void binary_load(short int reg[], char data[], const unsigned int src_len)
 {
 	int read, i;
-	short int temp[112];
+	short int temp[112] = { 0 };
 	
 	for(i = 0; i < 112; i++) {
 		reg[i] = 0;
 	}
 	
-	for(read = 0; read < strlen(data); read++) {
+	for(read = 0; read < src_len; read++) {
 
 		for(i = 0; i < 112; i++) {
 			temp[i] = reg[i];

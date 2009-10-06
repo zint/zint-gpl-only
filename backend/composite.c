@@ -52,12 +52,12 @@
 
 #define UINT unsigned short
 
-int general_rules(char field[], char type[]);
-int eanx(struct zint_symbol *symbol, unsigned char source[], int length);
-int ean_128(struct zint_symbol *symbol, unsigned char source[], int length);
-int rss14(struct zint_symbol *symbol, unsigned char source[], int length);
-int rsslimited(struct zint_symbol *symbol, unsigned char source[], int length);
-int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int length);
+extern int general_rules(char field[], char type[]);
+extern int eanx(struct zint_symbol *symbol, unsigned char source[], int length);
+extern int ean_128(struct zint_symbol *symbol, unsigned char source[], int length);
+extern int rss14(struct zint_symbol *symbol, unsigned char source[], int length);
+extern int rsslimited(struct zint_symbol *symbol, unsigned char source[], int length);
+extern int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int length);
 
 static UINT pwr928[69][7];
 
@@ -1694,14 +1694,12 @@ int cc_binary_string(struct zint_symbol *symbol, const char source[], char binar
 
 void add_leading_zeroes(struct zint_symbol *symbol)
 {
-	char source[100];
-	char first_part[20], second_part[20], zfirst_part[20], zsecond_part[20];
 	int with_addon = 0;
-	int first_len = 0, second_len = 0, zfirst_len = 0, zsecond_len = 0, i;
+	int first_len = 0, second_len = 0, zfirst_len = 0, zsecond_len = 0, i, h, n = 0;
 	
-	strcpy(source, symbol->primary);
-	for(i = 0; i < strlen(source); i++) {
-		if(source[i] == '+') {
+	h  = strlen(symbol->primary);
+	for(i = 0; i < h; i++) {
+		if(symbol->primary[i] == '+') {
 			with_addon = 1;
 		} else {
 			if(with_addon == 0) {
@@ -1712,22 +1710,6 @@ void add_leading_zeroes(struct zint_symbol *symbol)
 		}
 	}
 	
-	strcpy(first_part, "");
-	strcpy(second_part, "");
-	strcpy(zfirst_part, "");
-	strcpy(zsecond_part, "");
-	
-	/* Split input into two strings */
-	for(i = 0; i < first_len; i++) {
-		first_part[i] = source[i];
-		first_part[i + 1] = '\0';
-	}
-	
-	for(i = 0; i < second_len; i++) {
-		second_part[i] = source[i + first_len + 1];
-		second_part[i + 1] = '\0';
-	}
-	
 	/* Calculate target lengths */
 	if(first_len <= 12) { zfirst_len = 12; }
 	if(first_len <= 7) { zfirst_len = 7; }
@@ -1736,48 +1718,47 @@ void add_leading_zeroes(struct zint_symbol *symbol)
 	if(second_len == 0) { zsecond_len = 0; }
 	
 	/* Add leading zeroes */
-	for(i = 0; i < (zfirst_len - first_len); i++) {
-		concat(zfirst_part, "0");
+	n = zfirst_len - first_len;
+	if (n > 0)
+	{
+		memmove(symbol->primary + n, symbol->primary, h);
+		memset(symbol->primary, '0', n);		
 	}
-	concat(zfirst_part, first_part);
-	for(i = 0; i < (zsecond_len - second_len); i++) {
-		concat(zsecond_part, "0");
+	n += first_len + 1;
+	if (zsecond_len)
+	{
+		memmove(symbol->primary + n + zsecond_len, symbol->primary + n, second_len);
+		memset(symbol->primary + n , '0', zsecond_len);
+		n += zsecond_len + second_len;
 	}
-	concat(zsecond_part, second_part);
-	
-	strcpy(symbol->primary, zfirst_part);
-	if(zsecond_len != 0) {
-		concat(symbol->primary, "+");
-		concat(symbol->primary, zsecond_part);
-	}
+	symbol->primary[n] = '\0';
 }
 
 int composite(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	int error_number, cc_mode, cc_width, ecc_level;
 	int j, i, k, separator_row;
+	unsigned int rs = length + 1;
+	unsigned int bs = 20 * rs;
+	unsigned int pri_len;
 #ifndef _MSC_VER
-	char reduced[ustrlen(source)];
-	char binary_string[10 * length];
+	char reduced[rs];
+	char binary_string[bs];
 #else
-        char* reduced = (char*)_alloca(length + 1);
-        char* binary_string = (char*)_alloca(20 * (length + 1));
+	char* reduced = (char*)_alloca(rs);
+	char* binary_string = (char*)_alloca(bs);
 #endif
 	struct zint_symbol *linear;
 	int top_shift, bottom_shift;
 
 	error_number = 0;
 	separator_row = 0;
-
-	if(strlen(symbol->primary) == 0) {
+	pri_len = strlen(symbol->primary);
+	if(pri_len == 0) {
 		strcpy(symbol->errtxt, "No primary (linear) message in 2D composite");
 		return ERROR_INVALID_OPTION;
 	}
 
-	if(symbol->symbology == BARCODE_EANX_CC) {
-		add_leading_zeroes(symbol);
-	}
-	
 	if(length > 2990) {
 		strcpy(symbol->errtxt, "2D component input data too long");
 		return ERROR_TOO_LONG;
@@ -1785,7 +1766,7 @@ int composite(struct zint_symbol *symbol, unsigned char source[], int length)
 	
 	linear = ZBarcode_Create(); /* Symbol contains the 2D component and Linear contains the rest */
 	
-	error_number = gs1_verify(symbol, source, reduced);
+	error_number = gs1_verify(symbol, source, length, reduced);
 	if(error_number != 0) { return error_number; }
 	
 	cc_mode = symbol->option_1;
@@ -1807,16 +1788,16 @@ int composite(struct zint_symbol *symbol, unsigned char source[], int length)
 	}
 	
 	switch(symbol->symbology) {
-		case BARCODE_EANX_CC: error_number = eanx(linear, (unsigned char *)symbol->primary, strlen(symbol->primary)); break;
-		case BARCODE_EAN128_CC: error_number = ean_128(linear, (unsigned char *)symbol->primary, strlen(symbol->primary)); break;
-		case BARCODE_RSS14_CC: error_number = rss14(linear, (unsigned char *)symbol->primary, strlen(symbol->primary)); break;
-		case BARCODE_RSS_LTD_CC: error_number = rsslimited(linear, (unsigned char *)symbol->primary, strlen(symbol->primary)); break;
-		case BARCODE_RSS_EXP_CC: error_number = rssexpanded(linear, (unsigned char *)symbol->primary, strlen(symbol->primary)); break;
-		case BARCODE_UPCA_CC: error_number = eanx(linear, (unsigned char *)symbol->primary, strlen(symbol->primary)); break;
-		case BARCODE_UPCE_CC: error_number = eanx(linear, (unsigned char *)symbol->primary, strlen(symbol->primary)); break;
-		case BARCODE_RSS14STACK_CC: error_number = rss14(linear, (unsigned char *)symbol->primary, strlen(symbol->primary)); break;
-		case BARCODE_RSS14_OMNI_CC: error_number = rss14(linear, (unsigned char *)symbol->primary, strlen(symbol->primary)); break;
-		case BARCODE_RSS_EXPSTACK_CC: error_number = rssexpanded(linear, (unsigned char *)symbol->primary, strlen(symbol->primary)); break;
+		case BARCODE_EANX_CC:		error_number = eanx(linear, (unsigned char *)symbol->primary, pri_len); break;
+		case BARCODE_EAN128_CC:		error_number = ean_128(linear, (unsigned char *)symbol->primary, pri_len); break;
+		case BARCODE_RSS14_CC:		error_number = rss14(linear, (unsigned char *)symbol->primary, pri_len); break;
+		case BARCODE_RSS_LTD_CC:	error_number = rsslimited(linear, (unsigned char *)symbol->primary, pri_len); break;
+		case BARCODE_RSS_EXP_CC:	error_number = rssexpanded(linear, (unsigned char *)symbol->primary, pri_len); break;
+		case BARCODE_UPCA_CC:		error_number = eanx(linear, (unsigned char *)symbol->primary, pri_len); break;
+		case BARCODE_UPCE_CC:		error_number = eanx(linear, (unsigned char *)symbol->primary, pri_len); break;
+		case BARCODE_RSS14STACK_CC:	error_number = rss14(linear, (unsigned char *)symbol->primary, pri_len); break;
+		case BARCODE_RSS14_OMNI_CC:	error_number = rss14(linear, (unsigned char *)symbol->primary, pri_len); break;
+		case BARCODE_RSS_EXPSTACK_CC:	error_number = rssexpanded(linear, (unsigned char *)symbol->primary, pri_len); break;
 	}
 
 	if(error_number != 0) {
@@ -1828,7 +1809,7 @@ int composite(struct zint_symbol *symbol, unsigned char source[], int length)
 	switch(symbol->symbology) {
 		/* Determine width of 2D component according to ISO/IEC 24723 Table 1 */
 		case BARCODE_EANX_CC:
-			switch(strlen(symbol->primary)) {
+			switch(pri_len) {
 				case 7: /* EAN-8 */
 				case 10: /* EAN-8 + 2 */
 				case 13: /* EAN-8 + 5 */
@@ -1841,18 +1822,18 @@ int composite(struct zint_symbol *symbol, unsigned char source[], int length)
 					break;
 			}
 			break;
-		case BARCODE_EAN128_CC: cc_width = 4; break;
-		case BARCODE_RSS14_CC: cc_width = 4; break;
-		case BARCODE_RSS_LTD_CC: cc_width = 3; break;
-		case BARCODE_RSS_EXP_CC: cc_width = 4; break;
-		case BARCODE_UPCA_CC: cc_width = 4; break;
-		case BARCODE_UPCE_CC: cc_width = 2; break;
-		case BARCODE_RSS14STACK_CC: cc_width = 2; break;
-		case BARCODE_RSS14_OMNI_CC: cc_width = 2; break;
-		case BARCODE_RSS_EXPSTACK_CC: cc_width = 4; break;
+		case BARCODE_EAN128_CC:		cc_width = 4; break;
+		case BARCODE_RSS14_CC:		cc_width = 4; break;
+		case BARCODE_RSS_LTD_CC:	cc_width = 3; break;
+		case BARCODE_RSS_EXP_CC:	cc_width = 4; break;
+		case BARCODE_UPCA_CC:		cc_width = 4; break;
+		case BARCODE_UPCE_CC:		cc_width = 2; break;
+		case BARCODE_RSS14STACK_CC:	cc_width = 2; break;
+		case BARCODE_RSS14_OMNI_CC:	cc_width = 2; break;
+		case BARCODE_RSS_EXPSTACK_CC:	cc_width = 4; break;
 	}
 	
-	memset(binary_string, 0, sizeof(binary_string));
+	memset(binary_string, 0, bs);
 	
 	if(cc_mode < 1 || cc_mode > 3) { cc_mode = 1; }
 
@@ -1900,7 +1881,7 @@ int composite(struct zint_symbol *symbol, unsigned char source[], int length)
 	switch(symbol->symbology) {
 		/* Determine horizontal alignment (according to section 12.3) */
 		case BARCODE_EANX_CC:
-			switch(strlen(symbol->primary)) {
+			switch(pri_len) {
 				case 7: /* EAN-8 */
 				case 10: /* EAN-8 + 2 */
 				case 13: /* EAN-8 + 5 */
@@ -1967,10 +1948,6 @@ int composite(struct zint_symbol *symbol, unsigned char source[], int length)
 	symbol->rows += linear->rows;
 	ustrcpy(symbol->text, (unsigned char *)linear->text);
 	
-//#ifdef _MSC_VER
-//        free(reduced);
-//        free(binary_string);
-//#endif
 	ZBarcode_Delete(linear);
 
 	return error_number;

@@ -22,10 +22,19 @@
 #ifndef __REEDSOL_H
 #define __REEDSOL_H
 
-void rs_init_gf(int poly);
-void rs_init_code(int nsym, int index);
-void rs_encode(int len, unsigned char *data, unsigned char *res);
-void rs_encode_long(int len, unsigned int *data, unsigned int *res);
-void rs_free();
+#ifdef __cplusplus
+extern "C"
+{
+#endif /* __cplusplus */
+
+extern void rs_init_gf(int poly);
+extern void rs_init_code(int nsym, int index);
+extern void rs_encode(int len, unsigned char *data, unsigned char *res);
+extern void rs_encode_long(int len, unsigned int *data, unsigned int *res);
+extern void rs_free(void);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif				/* __REEDSOL_H */

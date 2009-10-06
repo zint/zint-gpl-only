@@ -22,27 +22,26 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <malloc.h> 
 #include "common.h"
 #include "reedsol.h"
 #include "micqr.h"
-#include "shiftjis.h"
 
 #define NUMERIC		1
 #define ALPHANUM	2
 #define BYTE		3
 #define KANJI		4
 
-#define QRSET	"0123456789ABCDEFGHIJKLNMOPQRSTUVWXYZ $%*+-./:"
+#define RHODIUM	"0123456789ABCDEFGHIJKLNMOPQRSTUVWXYZ $%*+-./:"
 
-void qrnumeric_encode(char binary[], unsigned char source[])
+void qrnumeric_encode(char binary[], unsigned char source[], int length)
 { /* Encodes numeric data according to section 6.4.3 */
 	
-	int length, blocks, remainder, i;
+	int blocks, remainder, i;
 	char block_binary[11];
 	int block_value;
 	
 	block_value = 0;
-	length = ustrlen(source);
 	blocks = length / 3;
 	remainder = length % 3;
 	
@@ -91,20 +90,19 @@ void qrnumeric_encode(char binary[], unsigned char source[])
 	return;
 }
 
-void qralpha_encode(char binary[], unsigned char source[])
+void qralpha_encode(char binary[], unsigned char source[], int length)
 { /* Encodes alphanumeric data according to 6.4.4 */
 	
-	int length, blocks, remainder, i;
+	int blocks, remainder, i;
 	char block_binary[12];
 	int block_value;
 	
-	length = ustrlen(source);
 	blocks = length / 2;
 	remainder = length % 2;
 	
 	for(i = 0; i < blocks; i++) {
-		block_value = posn(QRSET, source[i * 2]) * 45;
-		block_value += posn(QRSET, source[(i * 2) + 1]);
+		block_value = posn(RHODIUM, source[i * 2]) * 45;
+		block_value += posn(RHODIUM, source[(i * 2) + 1]);
 		
 		strcpy(block_binary, "");
 		if(block_value & 0x400) { concat(block_binary, "1"); } else { concat(block_binary, "0"); }
@@ -122,7 +120,7 @@ void qralpha_encode(char binary[], unsigned char source[])
 	}
 	
 	if(remainder == 1) {
-		block_value = posn(QRSET, source[i * 2]);
+		block_value = posn(RHODIUM, source[i * 2]);
 		
 		strcpy(block_binary, "");
 		if(block_value & 0x20) { concat(block_binary, "1"); } else { concat(block_binary, "0"); }
@@ -137,13 +135,11 @@ void qralpha_encode(char binary[], unsigned char source[])
 	return;
 }
 
-void qrbyte_encode(char binary[], unsigned char source[])
+void qrbyte_encode(char binary[], unsigned char source[], int length)
 { /* Encodes byte mode data according to 6.4.5 */
 	
-	int length, i;
-	
-	length = ustrlen(source);
-	
+	int i;
+
 	for(i = 0; i < length; i++) {
 		if(source[i] & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
 		if(source[i] & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
@@ -158,14 +154,13 @@ void qrbyte_encode(char binary[], unsigned char source[])
 	return;
 }
 
-int qrkanji_encode(char binary[], unsigned char source[])
+int qrkanji_encode(char binary[], unsigned char source[], int length)
 { /* Assumes input is in Shift-JIS format */
-	int i, len, h, val, count;
+	int i, h, val, count;
 	
-	len = ustrlen(source);
 	count = 0;
 	
-	for(i=0; i<len; i+=2) {
+	for(i = 0; i < length; i += 2) {
 		val = (source[i] << 8) | source[i+1];
 		if(val <= 0x9ffc) {
 			val -= 0x8140;
@@ -194,14 +189,13 @@ int qrkanji_encode(char binary[], unsigned char source[])
 	return count;
 }
 
-void versionm1(char binary_data[], unsigned char source[])
+void versionm1(char binary_data[], unsigned char source[], int length)
 {
-	int length, i, latch;
+	int i, latch;
 	int bits_total, bits_left, remainder;
 	int data_codewords, ecc_codewords;
 	unsigned char data_blocks[4], ecc_blocks[3];
 	
-	length = ustrlen(source);
 	bits_total = 20;
 	latch = 0;
 	
@@ -210,7 +204,7 @@ void versionm1(char binary_data[], unsigned char source[])
 	if(length & 0x02) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
 	if(length & 0x01) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
 	
-	qrnumeric_encode(binary_data, source);
+	qrnumeric_encode(binary_data, source, length);
 	
 	/* Add terminator */
 	bits_left = bits_total - strlen(binary_data);
@@ -296,14 +290,13 @@ void versionm1(char binary_data[], unsigned char source[])
 	return;
 }
 
-void versionm2(char binary_data[], unsigned char source[], int char_system, int ecc_mode)
+void versionm2(char binary_data[], unsigned char source[], int length, int char_system, int ecc_mode)
 {
-	int length, i, latch;
+	int i, latch;
 	int bits_total, bits_left, remainder;
 	int data_codewords, ecc_codewords;
 	unsigned char data_blocks[6], ecc_blocks[7];
 	
-	length = ustrlen(source);
 	latch = 0;
 	
 	if(ecc_mode == 1) { bits_total = 40; }
@@ -321,8 +314,8 @@ void versionm2(char binary_data[], unsigned char source[], int char_system, int 
 	if(length & 0x02) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
 	if(length & 0x01) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
 	
-	if(char_system == NUMERIC) { qrnumeric_encode(binary_data, source); }
-	if(char_system == ALPHANUM) { qralpha_encode(binary_data, source); }
+	if(char_system == NUMERIC) { qrnumeric_encode(binary_data, source, length); }
+	if(char_system == ALPHANUM) { qralpha_encode(binary_data, source, length); }
 	
 	/* Add terminator */
 	bits_left = bits_total - strlen(binary_data);
@@ -389,15 +382,14 @@ void versionm2(char binary_data[], unsigned char source[], int char_system, int 
 	return;
 }
 
-void versionm3(char binary_data[], unsigned char source[], int char_system, int ecc_mode)
+void versionm3(char binary_data[], unsigned char source[], int length, int char_system, int ecc_mode)
 {
-	int length, i, latch;
+	int i, latch;
 	int bits_total, bits_left, remainder;
 	int data_codewords, ecc_codewords;
 	unsigned char data_blocks[12], ecc_blocks[9];
 	int sjis_count;
 	
-	length = ustrlen(source);
 	latch = 0;
 	
 	if(ecc_mode == 1) { bits_total = 84; }
@@ -422,10 +414,10 @@ void versionm3(char binary_data[], unsigned char source[], int char_system, int 
 		if(length & 0x01) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
 	}
 	
-	if(char_system == NUMERIC) { qrnumeric_encode(binary_data, source); }
-	if(char_system == ALPHANUM) { qralpha_encode(binary_data, source); }
-	if(char_system == BYTE) { qrbyte_encode(binary_data, source); }
-	if(char_system == KANJI) { sjis_count = qrkanji_encode(binary_data, source); }
+	if(char_system == NUMERIC) { qrnumeric_encode(binary_data, source, length); }
+	if(char_system == ALPHANUM) { qralpha_encode(binary_data, source, length); }
+	if(char_system == BYTE) { qrbyte_encode(binary_data, source, length); }
+	if(char_system == KANJI) { sjis_count = qrkanji_encode(binary_data, source, length); }
 	
 	if(char_system == KANJI) {
 		if(sjis_count & 0x04) { binary_data[2] = '1'; } else { binary_data[2] = '0'; }
@@ -528,15 +520,14 @@ void versionm3(char binary_data[], unsigned char source[], int char_system, int 
 	return;
 }
 
-void versionm4(char binary_data[], unsigned char source[], int char_system, int ecc_mode)
+void versionm4(char binary_data[], unsigned char source[], int length, int char_system, int ecc_mode)
 {
-	int length, i, latch;
+	int i, latch;
 	int bits_total, bits_left, remainder;
 	int data_codewords, ecc_codewords;
 	unsigned char data_blocks[17], ecc_blocks[15];
 	int sjis_count;
 	
-	length = ustrlen(source);
 	latch = 0;
 	
 	if(ecc_mode == 1) { bits_total = 128; }
@@ -563,10 +554,10 @@ void versionm4(char binary_data[], unsigned char source[], int char_system, int 
 		if(length & 0x01) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
 	}
 	
-	if(char_system == NUMERIC) { qrnumeric_encode(binary_data, source); }
-	if(char_system == ALPHANUM) { qralpha_encode(binary_data, source); }
-	if(char_system == BYTE) { qrbyte_encode(binary_data, source); }
-	if(char_system == KANJI) { sjis_count = qrkanji_encode(binary_data, source); }
+	if(char_system == NUMERIC) { qrnumeric_encode(binary_data, source, length); }
+	if(char_system == ALPHANUM) { qralpha_encode(binary_data, source, length); }
+	if(char_system == BYTE) { qrbyte_encode(binary_data, source, length); }
+	if(char_system == KANJI) { sjis_count = qrkanji_encode(binary_data, source, length); }
 	
 	if(char_system == KANJI) {
 		if(sjis_count & 0x08) { binary_data[3] = '1'; } else { binary_data[3] = '0'; }
@@ -653,13 +644,12 @@ int microqr(struct zint_symbol *symbol, unsigned char source[], int length)
 	char pattern_bit;
 	int width, i, j, pattern_no;
 	int sum1, sum2, evaluation[4], format, format_full, kanji;
-	int error_number;
 	char formatstr[16];
 	
 #ifndef _MSC_VER
-        unsigned char local_source[length];
+        unsigned char local_source[length + 1];
 #else
-        unsigned char local_source = (unsigned char*)_alloca(length);
+        unsigned char* local_source = (unsigned char*)_alloca(length + 1);
 #endif	
 	
 	/* Analise input data and select encoding method - zint does not attempt to
@@ -676,25 +666,12 @@ int microqr(struct zint_symbol *symbol, unsigned char source[], int length)
 	}
 	
 	kanji = 0;
-	/* The following to be replaced by ECI handling */
-	switch(symbol->input_mode) {
-		case DATA_MODE:
-			for(i = 0; i < length; i++) {
-				local_source[i] = source[i];
-			}
-			local_source[length] = '\0';
-			break;
-		case UNICODE_MODE:
-			error_number = shiftJIS(symbol, source, local_source, &length, &kanji);
-			if(error_number != 0) { return error_number; }
-			break;
-	}
 	
 	if(kanji) {
 		char_system = KANJI;
 	} else {
-		if(is_sane(QRSET, local_source, length) == 0) { char_system = ALPHANUM; }
-		if(is_sane(NESET, local_source, length) == 0) { char_system = NUMERIC; }
+		if(is_sane(RHODIUM, local_source, length) == 0) { char_system = ALPHANUM; }
+		if(is_sane(NEON, local_source, length) == 0) { char_system = NUMERIC; }
 	}
 	width = 0;
 	format = 0;
@@ -799,10 +776,10 @@ int microqr(struct zint_symbol *symbol, unsigned char source[], int length)
 	
 	strcpy(binary_data, "");
 	switch(symbol_size) {
-		case 1: versionm1(binary_data, local_source); break;
-		case 2: versionm2(binary_data, local_source, char_system, symbol->option_1); break;
-		case 3: versionm3(binary_data, local_source, char_system, symbol->option_1); break;
-		case 4: versionm4(binary_data, local_source, char_system, symbol->option_1); break;
+		case 1: versionm1(binary_data, local_source, length); break;
+		case 2: versionm2(binary_data, local_source, length, char_system, symbol->option_1); break;
+		case 3: versionm3(binary_data, local_source, length, char_system, symbol->option_1); break;
+		case 4: versionm4(binary_data, local_source, length, char_system, symbol->option_1); break;
 	}
 	
 	switch(symbol_size) {

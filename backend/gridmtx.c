@@ -31,7 +31,7 @@
 #include "reedsol.h"
 #include "gridmtx.h"
 
-int grid_matrix(struct zint_symbol *symbol, unsigned char source[])
+int grid_matrix(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	
 	strcpy(symbol->errtxt, "Grid Matrix not yet implemented");

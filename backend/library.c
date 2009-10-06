@@ -27,7 +27,7 @@
 #include "common.h"
 #include "gs1.h"
 
-#define HIBCSET	"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%"
+#define TECHNETIUM	"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%"
 
 struct zint_symbol *ZBarcode_Create()
 {
@@ -61,7 +61,6 @@ struct zint_symbol *ZBarcode_Create()
 		symbol->row_height[i] = 0;
 	}
 	return symbol;
-	symbol->nullchar = 0x00;
 }
 
 
@@ -154,26 +153,14 @@ void error_tag(char error_string[], int error_number)
 int hibc(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	int counter, error_number, i;
-	char to_process[40], temp[3], check_digit;
-	
-	strcpy(temp, "");
-	
-#ifndef _MSC_VER
-        unsigned char local_source[length];
-#else
-        unsigned char local_source = (unsigned char*)_alloca(length);
-#endif
+	char to_process[40], temp[2], check_digit;
 	
 	if(length > 36) {
 		strcpy(symbol->errtxt, "Data too long for HIBC LIC");
 		return ERROR_TOO_LONG;
 	}
-	for(i = 0; i < length; i++) {
-		local_source[i] = source[i];
-	}
-	local_source[length] = '\0';
-	to_upper(local_source);
-	error_number = is_sane(HIBCSET , local_source, length);
+	to_upper(source);
+	error_number = is_sane(TECHNETIUM , source, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
@@ -182,7 +169,7 @@ int hibc(struct zint_symbol *symbol, unsigned char source[], int length)
 	strcpy(to_process, "+");
 	counter = 41;
 	for(i = 0; i < length; i++) {
-		counter += posn(HIBCSET, local_source[i]);
+		counter += posn(TECHNETIUM, source[i]);
 	}
 	counter = counter % 43;
 	
@@ -199,7 +186,7 @@ int hibc(struct zint_symbol *symbol, unsigned char source[], int length)
 				case 39: check_digit = '$'; break;
 				case 40: check_digit = '/'; break;
 				case 41: check_digit = '+'; break;
-				case 42: check_digit = 37; break;
+				case 42: check_digit = '%'; break;
 				default: check_digit = ' '; break; /* Keep compiler happy */
 			}
 		}
@@ -208,7 +195,7 @@ int hibc(struct zint_symbol *symbol, unsigned char source[], int length)
 	temp[0] = check_digit;
 	temp[1] = '\0';
 	
-	concat(to_process, (char *)local_source);
+	concat(to_process, (char *)source);
 	concat(to_process, temp);
 	length = strlen(to_process);
 	
@@ -272,7 +259,7 @@ int gs1_compliant(int symbology)
 		case BARCODE_CODABLOCKF:
 		case BARCODE_CODEONE:
 		case BARCODE_CODE49:
-		/* case BARCODE_QRCODE: for future expansion */
+		case BARCODE_QRCODE:
 			result = 1;
 			break;
 	}
@@ -321,9 +308,7 @@ int ZBarcode_ValidID(int symbol_id)
 		case BARCODE_PDF417:
 		case BARCODE_PDF417TRUNC:
 		case BARCODE_MAXICODE:
-#ifndef NO_QR
 		case BARCODE_QRCODE:
-#endif
 		case BARCODE_CODE128B:
 		case BARCODE_AUSPOST:
 		case BARCODE_AUSREPLY:
@@ -383,15 +368,9 @@ int extended_charset(struct zint_symbol *symbol, unsigned char *source, int leng
 {
 	int error_number = 0;
 	
-	/* These are the "elite" standards which can support multiple languages */
+	/* These are the "elite" standards which can support multiple character sets */
 	switch(symbol->symbology) {
-		case BARCODE_DATAMATRIX: error_number = dmatrix(symbol, source, length); break;
-		case BARCODE_PDF417: error_number = pdf417enc(symbol, source, length); break;
-		case BARCODE_PDF417TRUNC: error_number = pdf417enc(symbol, source, length); break;
 		case BARCODE_QRCODE: error_number = qr_code(symbol, source, length); break;
-		case BARCODE_MICROPDF417: error_number = micro_pdf417(symbol, source, length); break;
-		case BARCODE_MAXICODE: error_number = maxicode(symbol, source, length); break;
-		case BARCODE_AZTEC: error_number = aztec(symbol, source, length); break;
 		case BARCODE_MICROQR: error_number = microqr(symbol, source, length); break;
 		case BARCODE_GRIDMATRIX: error_number = grid_matrix(symbol, source, length); break;
 	}
@@ -402,15 +381,12 @@ int extended_charset(struct zint_symbol *symbol, unsigned char *source, int leng
 int reduced_charset(struct zint_symbol *symbol, unsigned char *source, int length)
 {
 	/* These are the "norm" standards which only support Latin-1 at most */
-	int error_number = 0, i;
+	int error_number = 0;
 	
-#ifdef _MSC_VER
-        unsigned char* preprocessed;
-#endif
 #ifndef _MSC_VER
-	unsigned char preprocessed[length];
+	unsigned char preprocessed[length + 1];
 #else
-        preprocessed = (unsigned char*)_alloca(length + 1);
+        unsigned char* preprocessed = (unsigned char*)_alloca(length + 1);
 #endif
 	
 	if(symbol->symbology == BARCODE_CODE16K) {
@@ -427,9 +403,8 @@ int reduced_charset(struct zint_symbol *symbol, unsigned char *source, int lengt
 	
 	switch(symbol->input_mode) {
 		case DATA_MODE:
-			for(i = 0; i < length; i++) {
-				preprocessed[i] = source[i];
-			}
+		case GS1_MODE:
+			memcpy(preprocessed, source, length);
 			preprocessed[length] = '\0';
 			break;
 		case UNICODE_MODE:
@@ -513,10 +488,12 @@ int reduced_charset(struct zint_symbol *symbol, unsigned char *source, int lengt
 		case BARCODE_CODE49: error_number = code_49(symbol, preprocessed, length); break;
 		case BARCODE_CHANNEL: error_number = channel_code(symbol, preprocessed, length); break;
 		case BARCODE_CODEONE: error_number = code_one(symbol, preprocessed, length); break;
-	}
-	
-	if((symbol->symbology == BARCODE_CODE128) || (symbol->symbology == BARCODE_CODE128B)) {
-		ustrcpy(symbol->text, source);
+		case BARCODE_DATAMATRIX: error_number = dmatrix(symbol, source, length); break;
+		case BARCODE_PDF417: error_number = pdf417enc(symbol, source, length); break;
+		case BARCODE_PDF417TRUNC: error_number = pdf417enc(symbol, source, length); break;
+		case BARCODE_MICROPDF417: error_number = micro_pdf417(symbol, source, length); break;
+		case BARCODE_MAXICODE: error_number = maxicode(symbol, source, length); break;
+		case BARCODE_AZTEC: error_number = aztec(symbol, source, length); break;
 	}
 	
 	return error_number;
@@ -527,20 +504,20 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source, int lengt
 	int error_number, error_buffer, i;
         error_number = 0;
 
-	if(ustrlen(source) == 0) {
+	if(length == 0) {
+		length = ustrlen(source);
+	}
+	if(length == 0) {
 		strcpy(symbol->errtxt, "No input data");
 		error_tag(symbol->errtxt, ERROR_INVALID_DATA);
 		return ERROR_INVALID_DATA;
 	}
-	
-	if(length == 0) {
-		length = ustrlen(source);
-	}
+
 	
 #ifndef _MSC_VER
-        unsigned char local_source[length];
+        unsigned char local_source[length + 1];
 #else
-        unsigned char local_source = (unsigned char*)_alloca(length);
+        unsigned char* local_source = (unsigned char*)_alloca(length + 1);
 #endif
 	
 	/* First check the symbology field */
@@ -598,27 +575,20 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source, int lengt
 			}
 		}
 		if(gs1_compliant(symbol->symbology) == 1) {
-			error_number = ugs1_verify(symbol, source, local_source);
+			error_number = ugs1_verify(symbol, source, length, local_source);
 			if(error_number != 0) { return error_number; }
+			length = ustrlen(local_source);
 		} else {
 			strcpy(symbol->errtxt, "Selected symbology does not support GS1 mode");
 			return ERROR_INVALID_OPTION;
 		}
 	} else {
-		for(i = 0; i < length; i++) {
-			local_source[i] = source[i];
-		}
+		memcpy(local_source, source, length);
 		local_source[length] = '\0';
 	}
 	
 	switch(symbol->symbology) {
-		case BARCODE_DATAMATRIX:
-		case BARCODE_PDF417:
-		case BARCODE_PDF417TRUNC:
 		case BARCODE_QRCODE:
-		case BARCODE_MICROPDF417:
-		case BARCODE_MAXICODE:
-		case BARCODE_AZTEC:
 		case BARCODE_MICROQR:
 		case BARCODE_GRIDMATRIX:
 			error_number = extended_charset(symbol, local_source, length);
@@ -718,7 +688,6 @@ int ZBarcode_Encode_and_Print_Rotated(struct zint_symbol *symbol, unsigned char 
 int ZBarcode_Encode_File(struct zint_symbol *symbol, char *filename)
 {
 	FILE *file;
-	unsigned char *buffer;
 	unsigned long fileLen, result;
 
 	file = fopen(filename, "rb");
@@ -740,15 +709,14 @@ int ZBarcode_Encode_File(struct zint_symbol *symbol, char *filename)
 	}
 	
 	/* Allocate memory */
-	buffer = (unsigned char *)malloc((fileLen + 1)*sizeof(unsigned char));
-	if(!buffer) {
-		strcpy(symbol->errtxt, "Internal memory error");
-		fclose(file);
-		return ERROR_MEMORY;
-	}
+#ifndef _MSC_VER
+	unsigned char buffer[fileLen + 1];
+#else
+	unsigned char buffer = (unsigned char *)_alloca(fileLen + 1);
+#endif
 	
 	/* Read file contents into buffer */
-	result = fread(buffer, fileLen, 1, file);
+	result = fread(&buffer, fileLen, 1, file);
 	if(result != fileLen) {
 		strcpy(symbol->errtxt, "File read error");
 		fclose(file);

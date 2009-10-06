@@ -41,7 +41,7 @@ static short int BCD[40] = {
 #include "common.h"
 #include "large.h"
 
-#define NASET	"0123456789-"
+#define SODIUM	"0123456789-"
 
 /* The following lookup tables were generated using the code in Appendix C */
 	
@@ -325,7 +325,7 @@ int imail(struct zint_symbol *symbol, unsigned char source[], int length)
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	error_number = is_sane(NASET, source, length);
+	error_number = is_sane(SODIUM, source, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;

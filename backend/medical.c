@@ -24,15 +24,14 @@
 #include <stdlib.h>
 #include "common.h"
 
+extern int c39(struct zint_symbol *symbol, unsigned char source[], int length);
 /* Codabar table checked against EN 798:1995 */
 
-#define CASET	"0123456789-$:/.+ABCD"
+#define CALCIUM	"0123456789-$:/.+ABCD"
 
 static char *CodaTable[20] = {"11111221", "11112211", "11121121", "22111111", "11211211", "21111211",
 	"12111121", "12112111", "12211111", "21121111", "11122111", "11221111", "21112121", "21211121",
 	"21212111", "11212121", "11221211", "12121121", "11121221", "11122211"};
-
-int c39(struct zint_symbol *symbol, unsigned char source[], int length);
 
 int pharma_one(struct zint_symbol *symbol, unsigned char source[], int length)
 {
@@ -49,25 +48,22 @@ int pharma_one(struct zint_symbol *symbol, unsigned char source[], int length)
 	   the specification at http://www.laetus.com/laetus.php?request=file&id=69 */
 
 	unsigned long int tester;
-	int counter;
-	char inter[17];
-	int error_number;
-	char dest[1000];
+	int counter, error_number, h;
+	char inter[18] = { 0 }; /* 131070 -> 17 bits */
+	char dest[64]; /* 17 * 2 + 1 */
 	
 	error_number = 0;
-	strcpy(dest, "");
 
 	if(length > 6) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	error_number = is_sane(NESET, source, length);
+	error_number = is_sane(NEON, source, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
 
-	strcpy(inter, "");
 	tester = atoi((char*)source);
 
 	if((tester < 3) || (tester > 131070)) {
@@ -77,7 +73,7 @@ int pharma_one(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	do
 	{
-		if(tester%2 == 0) {
+		if(tester % 2 == 0) {
 			concat(inter, "W");
 			tester = (tester - 2) / 2;
 		} else {
@@ -87,7 +83,9 @@ int pharma_one(struct zint_symbol *symbol, unsigned char source[], int length)
 	}
 	while(tester != 0);
 
-	for(counter = (strlen(inter) - 1); counter >= 0; counter--) {
+	h = strlen(inter) - 1;
+	*dest = '\0';
+	for(counter = h; counter >= 0; counter--) {
 		if(inter[counter] == 'W') {
 			concat(dest, "32");
 		} else {
@@ -108,14 +106,10 @@ int pharma_two_calc(struct zint_symbol *symbol, unsigned char source[], char des
 	   from 4 to 64570080. */
 
 	unsigned long int tester;
-	int counter;
+	int counter, h;
 	char inter[17];
 	int error_number;
 	
-	error_number = 0;
-	strcpy(dest, "");
-	
-	strcpy(inter, "");
 	tester = atoi((char*)source);
 
 	if((tester < 4) || (tester > 64570080))
@@ -123,6 +117,8 @@ int pharma_two_calc(struct zint_symbol *symbol, unsigned char source[], char des
 		strcpy(symbol->errtxt, "Data out of range");
 		return ERROR_INVALID_DATA;
 	}
+	error_number = 0;
+	strcpy(inter, "");
 	do
 	{
 		switch(tester%3) {
@@ -142,11 +138,12 @@ int pharma_two_calc(struct zint_symbol *symbol, unsigned char source[], char des
 	}
 	while(tester != 0);
 
-	for(counter = (strlen(inter) - 1); counter >= 0; counter--)
+	h = strlen(inter) - 1;
+	for(counter = h; counter >= 0; counter--)
 	{
-		dest[(strlen(inter) - 1) - counter] = inter[counter];
+		dest[h - counter] = inter[counter];
 	}
-	dest[strlen(inter)] = '\0';
+	dest[h + 1] = '\0';
 	
 	return error_number;
 }
@@ -155,7 +152,7 @@ int pharma_two(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	/* Draws the patterns for two track pharmacode */
 	char height_pattern[200];
-	unsigned int loopey;
+	unsigned int loopey, h;
 	int writer;
 	int error_number = 0;
 	strcpy(height_pattern, "");
@@ -164,7 +161,7 @@ int pharma_two(struct zint_symbol *symbol, unsigned char source[], int length)
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	error_number = is_sane(NESET, source, length);
+	error_number = is_sane(NEON, source, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
@@ -175,7 +172,8 @@ int pharma_two(struct zint_symbol *symbol, unsigned char source[], int length)
 	}
 
 	writer = 0;
-	for(loopey = 0; loopey < strlen(height_pattern); loopey++)
+	h = strlen(height_pattern);
+	for(loopey = 0; loopey < h; loopey++)
 	{
 		if((height_pattern[loopey] == '2') || (height_pattern[loopey] == '3'))
 		{
@@ -198,12 +196,7 @@ int codabar(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* The Codabar system consisting of simple substitution */
 
 	int i, error_number;
-	char dest[1000];
-#ifndef _MSC_VER
-	unsigned char local_source[length];
-#else
-	unsigned char local_source = (unsigned char*)_alloca(length);
-#endif
+	char dest[512];
 	
 	error_number = 0;
 	strcpy(dest, "");
@@ -212,26 +205,21 @@ int codabar(struct zint_symbol *symbol, unsigned char source[], int length)
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	for(i = 0; i < length; i++) {
-		local_source[i] = source[i];
-	}
-	to_upper(local_source);
-	error_number = is_sane(CASET, local_source, length);
+	to_upper(source);
+	error_number = is_sane(CALCIUM, source, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
-
 	/* Codabar must begin and end with the characters A, B, C or D */
-	if(((local_source[0] != 'A') && (local_source[0] != 'B')) &&
-		    ((local_source[0] != 'C') && (local_source[0] != 'D')))
+	if((source[0] != 'A') && (source[0] != 'B') && (source[0] != 'C') && (source[0] != 'D'))
 	{
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return ERROR_INVALID_DATA;
 	}
 
-	if(((local_source[ustrlen(local_source) - 1] != 'A') && (local_source[ustrlen(local_source) - 1] != 'B')) &&
-		    ((local_source[ustrlen(local_source) - 1] != 'C') && (local_source[ustrlen(local_source) - 1] != 'D')))
+	if((source[length - 1] != 'A') && (source[length - 1] != 'B') &&
+		    (source[length - 1] != 'C') && (source[length - 1] != 'D'))
 	{
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return ERROR_INVALID_DATA;
@@ -239,18 +227,18 @@ int codabar(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	for(i = 0; i < length; i++)
 	{
-		lookup(CASET, CodaTable, local_source[i], dest);
+		lookup(CALCIUM, CodaTable, source[i], dest);
 	}
 	
 	expand(symbol, dest);
-	ustrcpy(symbol->text, local_source);
+	ustrcpy(symbol->text, source);
 	return error_number;
 }
 
 int code32(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* Italian Pharmacode */
 	int i, zeroes, error_number, checksum, checkpart, checkdigit;
-	char localstr[10], tempstr[2], risultante[7];
+	char localstr[10], risultante[7];
 	long int pharmacode, remainder, devisor;
 	int codeword[6];
 	char tabella[34];
@@ -260,19 +248,16 @@ int code32(struct zint_symbol *symbol, unsigned char source[], int length)
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	error_number = is_sane(NESET, source, length);
+	error_number = is_sane(NEON, source, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
 	
 	/* Add leading zeros as required */
-	strcpy(localstr, "");
 	zeroes = 8 - length;
-	for(i = 0; i < zeroes; i++) {
-		concat(localstr, "0");
-	}
-	concat(localstr, (char*)source);
+	memset(localstr, '0', zeroes);
+	strcpy(localstr + zeroes, (char*)source);
 	
 	/* Calculate the check digit */
 	checksum = 0;
@@ -290,16 +275,11 @@ int code32(struct zint_symbol *symbol, unsigned char source[], int length)
 	
 	/* Add check digit to data string */
 	checkdigit = checksum % 10;
-	tempstr[0] = itoc(checkdigit);
-	tempstr[1] = '\0';
-	concat(localstr, tempstr);
+	localstr[8] = itoc(checkdigit);
+	localstr[9] = '\0';
 	
 	/* Convert string into an integer value */
-	pharmacode = 0;
-	for(i = 0; i < 9; i++) {
-		pharmacode *= 10;
-		pharmacode += ctoi(localstr[i]);
-	}
+	pharmacode = atoi(localstr);
 
 	/* Convert from decimal to base-32 */
 	devisor = 33554432;
@@ -312,12 +292,10 @@ int code32(struct zint_symbol *symbol, unsigned char source[], int length)
 	
 	/* Look up values in 'Tabella di conversione' */
 	strcpy(tabella, "0123456789BCDFGHJKLMNPQRSTUVWXYZ");
-	strcpy(risultante, "");
 	for(i = 5; i >= 0; i--) {
-		tempstr[0] = tabella[codeword[i]];
-		concat(risultante, tempstr);
+		risultante[5 - i] = tabella[codeword[i]];
 	}
-	
+	risultante[6] = '\0';
 	/* Plot the barcode using Code 39 */
 	error_number = c39(symbol, (unsigned char*)risultante, strlen(risultante));
 	if(error_number != 0) { return error_number; }

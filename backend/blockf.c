@@ -59,7 +59,6 @@ static char *C128Table[107] = {"212222", "222122", "222221", "121223", "121322",
 	"411113", "411311", "113141", "114131", "311141", "411131", "211412", "211214", "211232",
 	"2331112"};
 
-int parunmodd(unsigned char llyth);
 void grwp(int *indexliste);
 void dxsmooth(int *indexliste);
 
@@ -94,16 +93,15 @@ int character_subset_select(unsigned char source[], int input_position) {
 	return MODEB;
 }
 
-int data_encode_blockf(unsigned char source[], int subset_selector[], int blockmatrix[][62], int *columns_needed, int *rows_needed, int *final_mode, int gs1)
+int data_encode_blockf(unsigned char source[],  int input_length, int subset_selector[], int blockmatrix[][62], int *columns_needed, int *rows_needed, int *final_mode, int gs1)
 {
-	int i, j, input_position, input_length, current_mode, current_row, error_number;
+	int i, j, input_position, current_mode, current_row, error_number;
 	int column_position, c, done, exit_status;
 	
 	error_number = 0;
 	exit_status = 0;
 	current_row = 0;
 	current_mode = MODEA;
-	input_length = ustrlen(source);
 	column_position = 0;
 	input_position = 0;
 	done = 0;
@@ -303,7 +301,7 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 		}
 		
 		if(done == 0) {
-			if(((current_mode == MODEA) || (current_mode == MODEB)) && ((parunmodd(source[input_position])== ABORC) || (gs1 && (source[input_position] == '[')))) {
+			if(((current_mode == MODEA) || (current_mode == MODEB)) && ((parunmodd(source[input_position]) == ABORC) || (gs1 && (source[input_position] == '[')))) {
 				/* Count the number of numeric digits */
 				/*  If 4 or more numeric data characters occur together when in subsets A or B:
 				a.      If there is an even number of numeric data characters, insert a Code C character before the
@@ -570,7 +568,7 @@ int data_encode_blockf(unsigned char source[], int subset_selector[], int blockm
 
 int codablock(struct zint_symbol *symbol, unsigned char source[], int length)
 {
-	int error_number, input_length, i, j, k;
+	int error_number, input_length, i, j, k, h;
 	int rows_needed, columns_needed;
 	int min_module_height;
 	int last_mode, this_mode, final_mode;
@@ -624,7 +622,7 @@ int codablock(struct zint_symbol *symbol, unsigned char source[], int length)
 	}
 	
 	/* Encode the data */
-	error_number = data_encode_blockf(source, subset_selector, blockmatrix, &columns_needed, &rows_needed, &final_mode, gs1);
+	error_number = data_encode_blockf(source, input_length, subset_selector, blockmatrix, &columns_needed, &rows_needed, &final_mode, gs1);
 	if(error_number > 0) {
 		if(error_number == ERROR_TOO_LONG) {
 			strcpy(symbol->errtxt, "Input data too long");
@@ -728,7 +726,8 @@ int codablock(struct zint_symbol *symbol, unsigned char source[], int length)
 		/* Write the information into the symbol */
 		writer = 0;
 		flip_flop = 1;
-		for (j = 0; j < strlen(row_pattern); j++) {
+		h = strlen(row_pattern);
+		for (j = 0; j < h; j++) {
 			for(k = 0; k < ctoi(row_pattern[j]); k++) {
 				if(flip_flop == 1) {
 					set_module(symbol, i, writer);

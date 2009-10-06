@@ -26,6 +26,7 @@
 #include "reedsol.h"
 #include <string.h>
 #include <stdlib.h>
+#include <malloc.h> 
 
 int maxi_codeword[144];
 
@@ -299,7 +300,7 @@ int maxi_text_process(int mode, unsigned char source[], int length)
 		}
 	}
 	
-	for(i = ustrlen(source); i < 144; i++) {
+	for(i = length; i < 144; i++) {
 		/* Add the padding */
 		if(set[length - 1] == 2) {
 			set[i] = 2;
@@ -493,7 +494,7 @@ void maxi_do_primary_2(char postcode[], int country, int service)
 	int postcode_length, postcode_num, i;
 	
 	for(i = 0; i < 10; i++) {
-		if((postcode[i] <= '0') || (postcode[i] >= '9')) {
+		if((postcode[i] < '0') || (postcode[i] > '9')) {
 			postcode[i] = '\0';
 		}
 	}
@@ -516,13 +517,14 @@ void maxi_do_primary_2(char postcode[], int country, int service)
 void maxi_do_primary_3(char postcode[], int country, int service)
 {
 	/* Format structured primary for Mode 3 */
-	int i;
+	int i, h;
 
+	h = strlen(postcode);
 	to_upper((unsigned char*)postcode);
-	for(i = 0; i < strlen(postcode); i++) {
-		if((postcode[i] >= 65) && (postcode[i] <= 90)) {
+	for(i = 0; i < h; i++) {
+		if((postcode[i] >= 'A') && (postcode[i] <= 'Z')) {
 			/* (Capital) letters shifted to Code Set A values */
-			postcode[i] = postcode[i] - 64;
+			postcode[i] -= 64;
 		}
 		if(((postcode[i] == 27) || (postcode[i] == 31)) || ((postcode[i] == 33) || (postcode[i] >= 59))) {
 			/* Not a valid postcode character */
@@ -546,14 +548,14 @@ void maxi_do_primary_3(char postcode[], int country, int service)
 
 int maxicode(struct zint_symbol *symbol, unsigned char source[], int length)
 {
-	int i, j, block, bit, mode, countrycode = 0, service = 0;
+	int i, j, block, bit, mode, countrycode = 0, service = 0, lp = 0;
 	int bit_pattern[7], internal_error = 0, eclen, error_number;
 	char postcode[12], countrystr[4], servicestr[4];
 	
 #ifndef _MSC_VER
-        unsigned char local_source[length];
+        unsigned char local_source[length + 1];
 #else
-        unsigned char local_source = (unsigned char*)_alloca(length);
+        unsigned char* local_source = (unsigned char*)_alloca(length + 1);
 #endif
 
 	mode = symbol->option_1;
@@ -564,9 +566,8 @@ int maxicode(struct zint_symbol *symbol, unsigned char source[], int length)
 	/* The following to be replaced by ECI handling */
 	switch(symbol->input_mode) {
 		case DATA_MODE:
-			for(i = 0; i < length; i++) {
-				local_source[i] = source[i];
-			}
+		case GS1_MODE:
+			memcpy(local_source, source, length);
 			local_source[length] = '\0';
 			break;
 		case UNICODE_MODE:
@@ -574,19 +575,18 @@ int maxicode(struct zint_symbol *symbol, unsigned char source[], int length)
 			if(error_number != 0) { return error_number; }
 			break;
 	}
-	
-	for(i = 0; i < 145; i++) {
-		maxi_codeword[i] = 0;
-	}
+	memset(maxi_codeword, 0, sizeof(maxi_codeword));
 	
 	if(mode == -1) { /* If mode is unspecified */
-		if(strlen(symbol->primary) == 0) {
+		lp = strlen(symbol->primary);
+		if(lp == 0) {
 			mode = 4;
 		} else {
 			mode = 2;
-			for(i = 0; i < 10; i++) {
+			for(i = 0; i < 10 && i < lp; i++) {
 				if((symbol->primary[i] < 48) || (symbol->primary[i] > 57)) {
 					mode = 3;
+					break;
 				}
 			}
 		}
@@ -598,19 +598,19 @@ int maxicode(struct zint_symbol *symbol, unsigned char source[], int length)
 	}
 	
 	if((mode == 2) || (mode == 3)) { /* Modes 2 and 3 need data in symbol->primary */
-		if(strlen(symbol->primary) != 15) {
+		if(lp != 15) {
 			strcpy(symbol->errtxt, "Invalid Primary String");
 			return ERROR_INVALID_DATA;
 		}
 	
 		for(i = 9; i < 15; i++) { /* check that country code and service are numeric */
-			if((symbol->primary[i] < 48) || (symbol->primary[i] > 57)) {
+			if((symbol->primary[i] < '0') || (symbol->primary[i] > '9')) {
 				strcpy(symbol->errtxt, "Invalid Primary String");
 				return ERROR_INVALID_DATA;
 			}
 		}
 		
-		strncpy(postcode, symbol->primary, 9);
+		memcpy(postcode, symbol->primary, 9);
 		postcode[9] = '\0';
 		
 		if(mode == 2) {
@@ -620,8 +620,7 @@ int maxicode(struct zint_symbol *symbol, unsigned char source[], int length)
 				}
 			}
 		}
-
-		if(mode == 3) { postcode[6] = '\0'; }
+		else if(mode == 3) { postcode[6] = '\0'; }
 		
 		countrystr[0] = symbol->primary[9];
 		countrystr[1] = symbol->primary[10];

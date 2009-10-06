@@ -23,8 +23,6 @@
 #include <stdlib.h>
 #include "common.h"
 
-#define SSET	"0123456789ABCDEF"
-
 const int ustrlen(unsigned char data[]) {
 	/* Local replacement for strlen() with unsigned char strings */
 	int i;
@@ -46,10 +44,11 @@ void ustrcpy(unsigned char target[], unsigned char source[]) {
 
 void concat(char dest[], char source[])
 { /* Concatinates dest[] with the contents of source[], copying /0 as well */
-	unsigned int i, j;
+	unsigned int i, j, n;
 
 	j = strlen(dest);
-	for(i = 0; i <= strlen(source); i++) {
+	n = strlen(source);
+	for(i = 0; i <= n; i++) {
 		dest[i + j] = source[i]; }
 }
 
@@ -80,9 +79,9 @@ char itoc(int source)
 
 void to_upper(unsigned char source[])
 { /* Converts lower case characters to upper case in a string source[] */
-	unsigned int i;
+	unsigned int i, src_len = ustrlen(source);
 
-	for (i = 0; i < ustrlen(source); i++) {
+	for (i = 0; i < src_len; i++) {
 		if ((source[i] >= 'a') && (source[i] <= 'z')) {
 			source [i] = (source[i] - 'a') + 'A'; }
 	}
@@ -91,13 +90,19 @@ void to_upper(unsigned char source[])
 int is_sane(char test_string[], unsigned char source[], int length)
 { /* Verifies that a string only uses valid characters */
 	unsigned int i, j, latch;
+	unsigned int lt = strlen(test_string);
 
 	for(i = 0; i < length; i++) {
 		latch = FALSE;
-		for(j = 0; j < strlen(test_string); j++) {
-			if (source[i] == test_string[j]) { latch = TRUE; } }
+		for(j = 0; j < lt; j++) {
+			if (source[i] == test_string[j]) { 
+				latch = TRUE; 
+				break;
+			} 
+		}
 		if (!(latch)) { 
-			return ERROR_INVALID_DATA; }
+			return ERROR_INVALID_DATA; 
+		}
 	}
 	
 	return 0;
@@ -105,29 +110,25 @@ int is_sane(char test_string[], unsigned char source[], int length)
 
 int posn(char set_string[], char data)
 { /* Returns the position of data in set_string */
-	unsigned int i;
+	unsigned int i, n = strlen(set_string);
 
-	for(i = 0; i < strlen(set_string); i++) {
+	for(i = 0; i < n; i++) {
 		if (data == set_string[i]) { return i; } }
 	return 0;
 }
 
 void lookup(char set_string[], char *table[], char data, char dest[])
 { /* Replaces huge switch statements for looking up in tables */
-	unsigned int i;
+	unsigned int i, n = strlen(set_string);
 
-	for(i = 0; i < strlen(set_string); i++) {
+	for(i = 0; i < n; i++) {
 		if (data == set_string[i]) { concat(dest, table[i]); } }
 }
 
 int module_is_set(struct zint_symbol *symbol, int y_coord, int x_coord)
 {
-	int x_char, x_sub, result;
-	
-	x_char = x_coord / 7;
-	x_sub = x_coord % 7;
-	result = 0;
-	
+	return (symbol->encoded_data[y_coord][x_coord / 7] & (1 << (x_coord % 7))) ? 1 : 0;
+#if 0	
 	switch(x_sub) {
 		case 0: if((symbol->encoded_data[y_coord][x_char] & 0x01) != 0) { result = 1; } break;
 		case 1: if((symbol->encoded_data[y_coord][x_char] & 0x02) != 0) { result = 1; } break;
@@ -139,12 +140,15 @@ int module_is_set(struct zint_symbol *symbol, int y_coord, int x_coord)
 	}
 	
 	return result;
+#endif
 }
 
 void set_module(struct zint_symbol *symbol, int y_coord, int x_coord)
 {
-        int x_char, x_sub;
         if(module_is_set(symbol, y_coord, x_coord)) { return; }
+	symbol->encoded_data[y_coord][x_coord / 7] += 1 << (x_coord % 7);
+#if 0
+	int x_char, x_sub;
 	
 
 	x_char = x_coord / 7;
@@ -159,12 +163,15 @@ void set_module(struct zint_symbol *symbol, int y_coord, int x_coord)
 		case 5: symbol->encoded_data[y_coord][x_char] += 0x20; break;
 		case 6: symbol->encoded_data[y_coord][x_char] += 0x40; break;
 	} /* The last binary digit is reserved for colour barcodes */
+#endif
 }
 
 void unset_module(struct zint_symbol *symbol, int y_coord, int x_coord)
 {
-        int x_char, x_sub;
         if(!(module_is_set(symbol, y_coord, x_coord))) { return; }
+	symbol->encoded_data[y_coord][x_coord / 7] -= 1 << (x_coord % 7);
+#if 0
+	int x_char, x_sub;
 	
 	x_char = x_coord / 7;
 	x_sub = x_coord % 7;
@@ -178,18 +185,20 @@ void unset_module(struct zint_symbol *symbol, int y_coord, int x_coord)
 		case 5: symbol->encoded_data[y_coord][x_char] -= 0x20; break;
 		case 6: symbol->encoded_data[y_coord][x_char] -= 0x40; break;
 	} /* The last binary digit is reserved for colour barcodes */
+#endif
 }
 
 void expand(struct zint_symbol *symbol, char data[])
 { /* Expands from a width pattern to a bit pattern */
 	
-	int reader, writer, i;
+	unsigned int reader, n = strlen(data);
+	int writer, i;
 	char latch;
 	
 	writer = 0;
 	latch = '1';
 	
-	for(reader = 0; reader < strlen(data); reader++) {
+	for(reader = 0; reader < n; reader++) {
 		for(i = 0; i < ctoi(data[reader]); i++) {
 			if(latch == '1') { set_module(symbol, symbol->rows, writer); }
 			writer++;
@@ -316,4 +325,73 @@ int latin1_process(struct zint_symbol *symbol, unsigned char source[], unsigned 
 	return 0;
 }
 
+int utf8toutf16(struct zint_symbol *symbol, unsigned char source[], int vals[], int *length)
+{
+	int bpos, jpos, error_number, done;
+	int next;
+	
+	bpos = 0;
+	jpos = 0;
+	error_number = 0;
+	next = 0;
+	
+	do {
+		done = 0;
+		
+		if(source[bpos] <= 0x7f) {
+			/* 1 byte mode (7-bit ASCII) */
+			vals[jpos] = source[bpos];
+			next = bpos + 1;
+			jpos++;
+			done = 1;
+		}
+		
+		if(done == 0) {
+			if((source[bpos] >= 0x80) && (source[bpos] <= 0xbf)) {
+				strcpy(symbol->errtxt, "Corrupt Unicode data");
+				return ERROR_INVALID_DATA;
+			}
+		}
+		
+		if(done == 0) {
+			if((source[bpos] >= 0xc0) && (source[bpos] <= 0xc1)) {
+				strcpy(symbol->errtxt, "Overlong encoding not supported");
+				return ERROR_INVALID_DATA;
+			}
+		}
+		
+		if(done == 0) {
+			if((source[bpos] >= 0xc2) && (source[bpos] <= 0xdf)) {
+				/* 2 byte mode */
+				vals[jpos] = ((source[bpos] & 0x1f) << 6) + (source[bpos + 1] & 0x3f);
+				next = bpos + 2;
+				jpos++;
+				done = 1;
+			}
+		}
+		
+		if(done == 0) {
+			if((source[bpos] >= 0xe0) && (source[bpos] <= 0xef)) {
+				/* 3 byte mode */
+				vals[jpos] = ((source[bpos] & 0x0f) << 12) + ((source[bpos + 1] & 0x3f) << 6) + (source[bpos + 2] & 0x3f);
+				next = bpos + 3;
+				jpos ++;
+				done = 1;
+			}
+		}
+		
+		if(done == 0) {
+			if(source[bpos] >= 0xf0) {
+				strcpy(symbol->errtxt, "Unicode sequences of more than 3 bytes not supported");
+				return ERROR_INVALID_DATA;
+			}
+		}
+		
+		bpos = next;
+		
+	} while(bpos < *length);
+	*length = jpos;
+	
+	return error_number;
+}
 
