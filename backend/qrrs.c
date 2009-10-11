@@ -248,6 +248,7 @@ void free_rs_cache(void)
 		free_rs_char(rs);
 		rs = next;
 	}
+	rslist = NULL;
 }
 
 /* The guts of the Reed-Solomon encoder, meant to be #included
