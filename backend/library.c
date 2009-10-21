@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 #ifdef _MSC_VER
 #include <malloc.h> 
 #endif
@@ -688,7 +689,10 @@ int ZBarcode_Encode_and_Print_Rotated(struct zint_symbol *symbol, unsigned char 
 int ZBarcode_Encode_File(struct zint_symbol *symbol, char *filename)
 {
 	FILE *file;
-	unsigned long fileLen, result;
+	unsigned char *buffer;
+	unsigned long fileLen;
+	unsigned int nRead = 0, n = 0;
+	int ret;
 
 	file = fopen(filename, "rb");
 	if (!file) {
@@ -709,23 +713,31 @@ int ZBarcode_Encode_File(struct zint_symbol *symbol, char *filename)
 	}
 	
 	/* Allocate memory */
-#ifndef _MSC_VER
-	unsigned char buffer[fileLen + 1];
-#else
-	unsigned char buffer = (unsigned char *)_alloca(fileLen + 1);
-#endif
-	
-	/* Read file contents into buffer */
-	result = fread(&buffer, fileLen, 1, file);
-	if(result != fileLen) {
-		strcpy(symbol->errtxt, "File read error");
+	buffer = (unsigned char *)malloc(fileLen * sizeof(unsigned char));
+	if(!buffer) {
+		strcpy(symbol->errtxt, "Internal memory error");
 		fclose(file);
 		return ERROR_MEMORY;
 	}
-		
-	fclose(file);
+	
+	/* Read file contents into buffer */
 
-	return ZBarcode_Encode(symbol, buffer, fileLen);
+	do
+	{
+		n = fread(buffer + nRead, 1, fileLen - nRead, file);
+		if (ferror(file))
+		{
+			strcpy(symbol->errtxt, strerror(errno));
+			nRead = 0;
+			return ERROR_INVALID_DATA;
+		}
+		nRead += n;
+	} while (!feof(file) && (0 < n) && (nRead < fileLen));
+	
+	fclose(file);
+	ret = ZBarcode_Encode(symbol, buffer, nRead);
+	free(buffer);
+	return ret;
 }
 
 int ZBarcode_Encode_File_and_Print(struct zint_symbol *symbol, char *filename, int rotate_angle)

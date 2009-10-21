@@ -38,10 +38,10 @@ class MainWindow : public QWidget, private Ui::mainWindow
 public:
 	enum BarcodeTypes
 	{
-		AUSPOST		=63,
+		AUSREDIRECT	=68,
 		AUSREPLY	=66,
 		AUSROUTE	=67,
-		AUSREDIRECT	=68,
+		AUSPOST		=63,
 		AZTEC		=92,
 		AZRUNE		=128,
 		CHANNEL		=140,
@@ -75,6 +75,7 @@ public:
 		EANX		=13,
 		FIM		=49,
 		FLAT		=28,
+		GRIDMATRIX	=142,
 		ITF14		=89,
 		ISBNX		=69,
 		JAPANPOST	=76,
