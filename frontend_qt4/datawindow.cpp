@@ -71,30 +71,33 @@ void DataWindow::okay()
 
 void DataWindow::from_file()
 {
-	QString fileName;
-	QFileDialog fdialog;
+	//QString fileName;
+	//QFileDialog fdialog;
 	QFile file;
-	QString outstream;
-	char *c;
 	
-	fdialog.setFileMode(QFileDialog::ExistingFile);
-	
-	if(fdialog.exec()) {
-		fileName = fdialog.selectedFiles().at(0);
-	} else {
-		return;
-	}
-	
+	//fdialog.setFileMode(QFileDialog::ExistingFile);
+	//
+	//if(fdialog.exec()) {
+	//	fileName = fdialog.selectedFiles().at(0);
+	//} else {
+	//	return;
+	//}
+
+	QString fileName = QFileDialog::getOpenFileName(this,
+                                 tr("Open File"),
+                                 "./",
+                                 tr("All Files (*);;Text Files (*.txt)"));
+     if (fileName.isEmpty())
+         return;
+
 	file.setFileName(fileName);
 	if(!file.open(QIODevice::ReadOnly)) {
 		QMessageBox::critical(this, tr("Open Error"), tr("Could not open selected file."));
 		return;
 	}
 	
-	while(file.getChar(c)) {
-		outstream += QChar(*c);
-	}
+	QByteArray outstream = file.readAll();
 	
-	txtDataInput->setPlainText(outstream);
+	txtDataInput->setPlainText(QString(outstream));
 	file.close();
 }

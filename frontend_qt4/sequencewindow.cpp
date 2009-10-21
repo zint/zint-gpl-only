@@ -153,19 +153,25 @@ void SequenceWindow::check_generate()
 
 void SequenceWindow::import()
 {
-	QString fileName;
-	QFileDialog fdialog;
+	//QString fileName;
+	//QFileDialog fdialog;
 	QFile file;
-	QString outstream;
-	char *c;
+	QString selectedFilter;
 	
-	fdialog.setFileMode(QFileDialog::ExistingFile);
+	//fdialog.setFileMode(QFileDialog::ExistingFile);
 	
-	if(fdialog.exec()) {
-		fileName = fdialog.selectedFiles().at(0);
-	} else {
-		return;
-	}
+	//if(fdialog.exec()) {
+	//	fileName = fdialog.selectedFiles().at(0);
+	//} else {
+	//	return;
+	//}
+
+	QString fileName = QFileDialog::getOpenFileName(this,
+                                 tr("Import File"),
+                                 "./",
+                                 tr("All Files (*);;Text Files (*.txt)"));
+     if (fileName.isEmpty())
+         return;
 	
 	file.setFileName(fileName);
 	if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -173,11 +179,9 @@ void SequenceWindow::import()
 		return;
 	}
 
-	while(file.getChar(c)) {
-		outstream += QChar(*c);
-	}
+	QByteArray outstream = file.readAll();
 
-	txtPreview->setPlainText(outstream);
+	txtPreview->setPlainText(QString(outstream));
 	file.close();
 }
 

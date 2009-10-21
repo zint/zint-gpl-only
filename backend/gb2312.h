@@ -19,7 +19,6 @@
 */
 
 unsigned long int gb2312_lookup[] = {
-{
 	0x00A4, 0xA1E8,
 	0x00A7, 0xA1EC,
 	0x00A8, 0xA1A7,
@@ -7465,4 +7464,4 @@ unsigned long int gb2312_lookup[] = {
 	0xFFE1, 0xA1EA,
 	0xFFE3, 0xA3FE,
 	0xFFE5, 0xA3A4
-}
+};
