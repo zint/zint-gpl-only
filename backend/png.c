@@ -20,6 +20,10 @@
 */
 
 #include <stdio.h>
+#ifdef _MSC_VER
+#include <fcntl.h>
+#include <io.h>
+#endif
 #include <stdlib.h>
 #include <string.h>
 #include "common.h"
@@ -124,6 +128,12 @@ int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, c
 	
 	/* Open output file in binary mode */
 	if((symbol->output_options & BARCODE_STDOUT) != 0) {
+#ifdef _MSC_VER
+		if (-1 == _setmode(_fileno(stdout), _O_BINARY)) {
+			strcpy(symbol->errtxt, "Can't open output file");
+			return ERROR_FILE_ACCESS;
+		}
+#endif
 		graphic->outfile = stdout;
 	} else {
 		if (!(graphic->outfile = fopen(symbol->outfile, "wb"))) {
