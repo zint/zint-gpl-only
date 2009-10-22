@@ -114,40 +114,43 @@ int estimate_binary_length(char mode[], int length)
 	char current = 0;
 	int a_count = 0;
 	int n_count = 0;
-	
-	switch(mode[0]) {
-		case 'K': count = 12 + 4; current = 'K'; break;
-		case 'B': count = 16 + 4; current = 'B'; break;
-		case 'A': count = 13 + 4; current = 'A'; break;
-		case 'N': count = 14 + 4; current = 'N'; break;
-	}
-	
+
 	for(i = 0; i < length; i++) {
 		if(mode[i] != current) {
-			if(current == 'N') {
-				switch(n_count) {
-					case 1: count += 4; break;
-					case 2: count += 7; break;
-				}
-			}
-			
 			switch(mode[i]) {
 				case 'K': count += 12 + 4; current = 'K'; break;
 				case 'B': count += 16 + 4; current = 'B'; break;
-				case 'A': count += 13 + 4; current = 'A'; break;
-				case 'N': count += 14 + 4; current = 'N'; break;
+				case 'A': count += 13 + 4; current = 'A'; a_count = 0; break;
+				case 'N': count += 14 + 4; current = 'N'; n_count = 0; break;
 			}
 		}
-		
+
 		switch(mode[i]) {
-			case 'K': count += 13; break;
-			case 'B': count += 8; break;
-			case 'A': a_count++; if((a_count % 2) == 0) { count += 11; a_count = 0; } break;
-			case 'N': n_count++; if((n_count % 3) == 0) { count += 10; n_count = 0; } break;
+		case 'K': count += 13; break;
+		case 'B': count += 8; break;
+		case 'A':
+			a_count++;
+			if((a_count % 2) == 0) {
+				count += 5;        // 11 in total
+				a_count = 0;
+			}
+			else
+				count += 6;
+			break;
+		case 'N':
+			n_count++;
+			if((n_count % 3) == 0) {
+				count += 3;        // 10 in total
+				n_count = 0;
+			}
+			else if ((n_count % 2) == 0)
+					count += 3;        // 7 in total
+				else
+					count += 4;
+			break;
 		}
-		
 	}
-	
+
 	return count;
 }
 
