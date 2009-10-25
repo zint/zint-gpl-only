@@ -271,20 +271,20 @@ void versionm1(char binary_data[], unsigned char source[], int length)
 	
 	/* Calculate Reed-Solomon error codewords */
 	rs_init_gf(0x11d);
-	rs_init_code(ecc_codewords, 1);
+	rs_init_code(ecc_codewords, 0);
 	rs_encode(data_codewords,data_blocks,ecc_blocks);
 	rs_free();
 	
 	/* Add Reed-Solomon codewords to binary data */
 	for(i = 0; i < ecc_codewords; i++) {
-		if(ecc_blocks[i] & 0x80) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[i] & 0x40) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[i] & 0x20) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[i] & 0x10) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[i] & 0x08) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[i] & 0x04) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[i] & 0x02) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[i] & 0x01) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x80) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x40) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x20) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x10) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x08) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x04) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x02) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x01) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
 	}
 	
 	return;
@@ -363,20 +363,20 @@ void versionm2(char binary_data[], unsigned char source[], int length, int char_
 	
 	/* Calculate Reed-Solomon error codewords */
 	rs_init_gf(0x11d);
-	rs_init_code(ecc_codewords, 1);
+	rs_init_code(ecc_codewords, 0);
 	rs_encode(data_codewords,data_blocks,ecc_blocks);
 	rs_free();
 	
 	/* Add Reed-Solomon codewords to binary data */
 	for(i = 0; i < ecc_codewords; i++) {
-		if(ecc_blocks[i] & 0x80) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[i] & 0x40) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[i] & 0x20) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[i] & 0x10) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[i] & 0x08) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[i] & 0x04) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[i] & 0x02) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[i] & 0x01) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x80) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x40) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x20) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x10) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x08) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x04) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x02) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x01) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
 	}
 	
 	return;
@@ -501,20 +501,20 @@ void versionm3(char binary_data[], unsigned char source[], int length, int char_
 	
 	/* Calculate Reed-Solomon error codewords */
 	rs_init_gf(0x11d);
-	rs_init_code(ecc_codewords, 1);
+	rs_init_code(ecc_codewords, 0);
 	rs_encode(data_codewords,data_blocks,ecc_blocks);
 	rs_free();
 	
 	/* Add Reed-Solomon codewords to binary data */
 	for(i = 0; i < ecc_codewords; i++) {
-		if(ecc_blocks[i] & 0x80) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[i] & 0x40) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[i] & 0x20) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[i] & 0x10) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[i] & 0x08) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[i] & 0x04) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[i] & 0x02) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[i] & 0x01) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x80) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x40) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x20) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x10) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x08) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x04) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x02) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x01) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
 	}
 	
 	return;
@@ -613,20 +613,20 @@ void versionm4(char binary_data[], unsigned char source[], int length, int char_
 	
 	/* Calculate Reed-Solomon error codewords */
 	rs_init_gf(0x11d);
-	rs_init_code(ecc_codewords, 1);
+	rs_init_code(ecc_codewords, 0);
 	rs_encode(data_codewords,data_blocks,ecc_blocks);
 	rs_free();
 	
 	/* Add Reed-Solomon codewords to binary data */
 	for(i = 0; i < ecc_codewords; i++) {
-		if(ecc_blocks[i] & 0x80) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[i] & 0x40) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[i] & 0x20) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[i] & 0x10) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[i] & 0x08) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[i] & 0x04) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[i] & 0x02) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[i] & 0x01) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x80) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x40) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x20) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x10) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x08) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x04) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x02) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x01) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
 	}
 	
 	return;
@@ -644,13 +644,15 @@ int microqr(struct zint_symbol *symbol, unsigned char source[], int length)
 	char pattern_bit;
 	int width, i, j, pattern_no;
 	int sum1, sum2, evaluation[4], format, format_full, kanji;
-	char formatstr[16];
 	
 #ifndef _MSC_VER
         unsigned char local_source[length + 1];
 #else
         unsigned char* local_source = (unsigned char*)_alloca(length + 1);
 #endif	
+	for(i = 0; i < length; i++) {
+		local_source[i] = source[i];
+	}
 	
 	/* Analise input data and select encoding method - zint does not attempt to
 	optimise the symbol by switching encoding method part way through the symbol,
@@ -659,7 +661,7 @@ int microqr(struct zint_symbol *symbol, unsigned char source[], int length)
 	symbol_size = 0;
 	
 	for(i = 0; i < length; i++) {
-		if(source[i] == '\0') {
+		if(local_source[i] == '\0') {
 			strcpy(symbol->errtxt, "QR Code not yet able to handle NULL characters");
 			return ERROR_INVALID_DATA;
 		}
@@ -906,30 +908,21 @@ int microqr(struct zint_symbol *symbol, unsigned char source[], int length)
 	format += pattern_no;
 	format_full = tablec1[format];
 	
-	strcpy(formatstr, "");
-	if(format_full & 0x2000) { concat(formatstr, "1"); } else { concat(formatstr, "0"); }
-	if(format_full & 0x1000) { concat(formatstr, "1"); } else { concat(formatstr, "0"); }
-	if(format_full & 0x800) { concat(formatstr, "1"); } else { concat(formatstr, "0"); }
-	if(format_full & 0x400) { concat(formatstr, "1"); } else { concat(formatstr, "0"); }
-	if(format_full & 0x200) { concat(formatstr, "1"); } else { concat(formatstr, "0"); }
-	if(format_full & 0x100) { concat(formatstr, "1"); } else { concat(formatstr, "0"); }
-	if(format_full & 0x80) { concat(formatstr, "1"); } else { concat(formatstr, "0"); }
-	if(format_full & 0x80) { concat(formatstr, "1"); } else { concat(formatstr, "0"); }
-	if(format_full & 0x40) { concat(formatstr, "1"); } else { concat(formatstr, "0"); }
-	if(format_full & 0x20) { concat(formatstr, "1"); } else { concat(formatstr, "0"); }
-	if(format_full & 0x10) { concat(formatstr, "1"); } else { concat(formatstr, "0"); }
-	if(format_full & 0x08) { concat(formatstr, "1"); } else { concat(formatstr, "0"); }
-	if(format_full & 0x04) { concat(formatstr, "1"); } else { concat(formatstr, "0"); }
-	if(format_full & 0x02) { concat(formatstr, "1"); } else { concat(formatstr, "0"); }
-	if(format_full & 0x01) { concat(formatstr, "1"); } else { concat(formatstr, "0"); }
-	
-	/* Add format data to symbol */
-	for(i = 0; i < 8; i++) {
-		candidate[i + 1][8] = formatstr[i];
-	}
-	for(i = 0; i < 7; i++) {
-		candidate[8][7 - i] = formatstr[i + 8];
-	}
+	if(format_full & 0x4000) { candidate[8][1] = '1'; } 
+	if(format_full & 0x2000) { candidate[8][2] = '1'; } 
+	if(format_full & 0x1000) { candidate[8][3] = '1'; } 
+	if(format_full & 0x800) { candidate[8][4] = '1'; } 
+	if(format_full & 0x400) { candidate[8][5] = '1'; } 
+	if(format_full & 0x200) { candidate[8][6] = '1'; } 
+	if(format_full & 0x100) { candidate[8][7] = '1'; } 
+	if(format_full & 0x80) { candidate[8][8] = '1'; } 
+	if(format_full & 0x40) { candidate[7][8] = '1'; } 
+	if(format_full & 0x20) { candidate[6][8] = '1'; } 
+	if(format_full & 0x10) { candidate[5][8] = '1'; } 
+	if(format_full & 0x08) { candidate[4][8] = '1'; } 
+	if(format_full & 0x04) { candidate[3][8] = '1'; } 
+	if(format_full & 0x02) { candidate[2][8] = '1'; } 
+	if(format_full & 0x01) { candidate[1][8] = '1'; } 
 	
 	/* Add timer pattern */
 	for(i = 0; i < width; i += 2) {

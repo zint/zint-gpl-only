@@ -27,7 +27,7 @@
 #include <stdio.h>
 #include "sjis.h"
 #include "qr.h"
-#include "qrrs.h"
+#include "reedsol.h"
 
 int in_alpha(int glyph) {
 	/* Returns true if input glyph is in the Alphanumeric set */
@@ -506,8 +506,7 @@ void add_ecc(int fullstream[], int datastream[], int version, int data_cw, int b
 	int qty_long_blocks = data_cw % blocks;
 	int qty_short_blocks = blocks - qty_long_blocks;
 	int ecc_block_length = ecc_cw / blocks;
-	int i, j, length_this_block, posn, debug = 0;
-	RS *rs;
+	int i, j, length_this_block, posn, debug = 1;
 	
 	
 #ifndef _MSC_VER
@@ -535,8 +534,10 @@ void add_ecc(int fullstream[], int datastream[], int version, int data_cw, int b
 			data_block[j] = (unsigned char) datastream[posn + j];
 		}
 		
-		rs = init_rs(8, 0x11d, 0, 1, ecc_block_length, 255 - length_this_block - ecc_block_length);
-		encode_rs_char(rs, data_block, ecc_block);
+		rs_init_gf(0x11d);
+		rs_init_code(ecc_block_length, 0);
+		rs_encode(length_this_block, data_block, ecc_block);
+		rs_free();
 		
 		if(debug) {
 			printf("Block %d: ", i + 1);
@@ -548,7 +549,7 @@ void add_ecc(int fullstream[], int datastream[], int version, int data_cw, int b
 			}
 			printf(" // ");
 			for(j = 0; j < ecc_block_length; j++) {
-				printf("%2X ", ecc_block[j]);
+				printf("%2X ", ecc_block[ecc_block_length - j - 1]);
 			}
 			printf("\n");
 		}
@@ -562,12 +563,11 @@ void add_ecc(int fullstream[], int datastream[], int version, int data_cw, int b
 		}
 		
 		for(j = 0; j < ecc_block_length; j++) {
-			interleaved_ecc[(j * blocks) + i] = (int) ecc_block[j];
+			interleaved_ecc[(j * blocks) + i] = (int) ecc_block[ecc_block_length - j - 1];
 		}
 		
 		posn += length_this_block;
 	}
-	free_rs_cache();
 	
 	for(j = 0; j < data_cw; j++) {
 		fullstream[j] = interleaved_data[j];
