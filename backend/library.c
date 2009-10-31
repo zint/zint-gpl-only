@@ -357,7 +357,7 @@ int ZBarcode_ValidID(int symbol_id)
 		case BARCODE_RSS_EXPSTACK_CC:
 		case BARCODE_CHANNEL:
 		case BARCODE_CODEONE:
-		/* case BARCODE_GRIDMATRIX: */
+		case BARCODE_GRIDMATRIX:
 			result = 1;
 			break;
 	}

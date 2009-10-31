@@ -904,10 +904,11 @@ void place_layer_id(char* grid, int size, int layers, int modules, int ecc_level
 int grid_matrix(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	int size, modules, dark, error_number;
-	int layers, ecc_level, x, y, i, j, glyph;
+	int auto_layers, min_layers, layers, auto_ecc_level, min_ecc_level, ecc_level;
+	int x, y, i, j, glyph;
 	char binary[9300];
 	int data_cw;
-	int word[1460];
+	int word[1460], data_max;
 	
 #ifndef _MSC_VER
 	int utfdata[length + 1];
@@ -962,14 +963,53 @@ int grid_matrix(struct zint_symbol *symbol, unsigned char source[], int length)
 	
 	/* Determine the size of the symbol */
 	data_cw = strlen(binary) / 7;
-	layers = 13;
+	
+	auto_layers = 13;
 	for(i = 12; i > 0; i--) {
-		if(gm_recommend_cw[(i - 1)] >= data_cw) { layers = i; }
+		if(gm_recommend_cw[(i - 1)] >= data_cw) { auto_layers = i; }
+	}
+	min_layers = 13;
+	for(i = 12; i > 0; i--) {
+		if(gm_max_cw[(i - 1)] >= data_cw) { min_layers = i; }
 	}
 	
-	ecc_level = 3;
-	if(layers == 1) { ecc_level = 5; }
-	if((layers == 2) || (layers == 3)) { ecc_level = 4; }
+	layers = auto_layers;
+	if((symbol->option_2 >= 1) && (symbol->option_2 <= 13)) {
+		if(symbol->option_2 > min_layers) {
+			layers = symbol->option_2;
+		} else {
+			layers = min_layers;
+		}
+	}
+	
+	auto_ecc_level = 3;
+	if(layers == 1) { auto_ecc_level = 5; }
+	if((layers == 2) || (layers == 3)) { auto_ecc_level = 4; }
+	min_ecc_level = 1;
+	if(layers == 1) { min_ecc_level = 4; }
+	if((layers == 2) || (layers == 3)) { min_ecc_level = 2; }
+	
+	ecc_level = auto_ecc_level;
+	if((symbol->option_1 >= 1) && (symbol->option_1 <= 5)) {
+		if(symbol->option_1 > min_ecc_level) {
+			ecc_level = symbol->option_1;
+		} else {
+			ecc_level = min_ecc_level;
+		}
+	}
+	
+	data_max = 1313;
+	switch(ecc_level) {
+		case 2: data_max = 1167; break;
+		case 3: data_max = 1021; break;
+		case 4: data_max = 875; break;
+		case 5: data_max = 729; break;
+	}
+	
+	if(data_cw > data_max) {
+		strcpy(symbol->errtxt, "Input data too long");
+		return ERROR_TOO_LONG;
+	}	
 	
 	gm_add_ecc(binary, data_cw, layers, ecc_level, word);
 	size = 6 + (layers * 12);
