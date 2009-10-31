@@ -20,5 +20,6 @@
     <file>grpQR.ui</file>
     <file>grpCodeOne.ui</file>
     <file>grpC49.ui</file>
+    <file>grpGrid.ui</file>
 </qresource>
 </RCC>
