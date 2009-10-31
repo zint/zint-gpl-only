@@ -409,6 +409,21 @@ void MainWindow::change_options()
 		connect(m_optionWidget->findChild<QObject*>("cmbMQRSize"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
 		connect(m_optionWidget->findChild<QObject*>("cmbMQRECC"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
 	}
+	
+	if(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_GRIDMATRIX)
+	{
+		QFile file(":/grpGrid.ui");
+		if (!file.open(QIODevice::ReadOnly))
+			return;
+		m_optionWidget=uiload.load(&file);
+		file.close();
+		tabMain->insertTab(1,m_optionWidget,tr("Grid Matrix"));
+		connect(m_optionWidget->findChild<QObject*>("radGridAuto"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("radGridSize"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("radGridECC"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("cmbGridSize"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("cmbGridECC"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
+	}
 
 	if(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_MAXICODE)
 	{
@@ -750,10 +765,19 @@ void MainWindow::update_preview()
 		case BARCODE_MICROQR:
 			m_bc.bc.setSymbol(BARCODE_MICROQR);
 			if(m_optionWidget->findChild<QRadioButton*>("radMQRSize")->isChecked())
-				m_bc.bc.setWidth(m_optionWidget->findChild<QComboBox*>("cmbMQRSize")->currentIndex() + 1);
+				m_bc.bc.setWidth(m_optionWidget->findChild<QComboBox*>("cmbMQRSize")->currentIndex());
 
 			if(m_optionWidget->findChild<QRadioButton*>("radMQRECC")->isChecked())
 				m_bc.bc.setSecurityLevel(m_optionWidget->findChild<QComboBox*>("cmbMQRECC")->currentIndex() + 1);
+			break;
+			
+		case BARCODE_GRIDMATRIX:
+			m_bc.bc.setSymbol(BARCODE_GRIDMATRIX);
+			if(m_optionWidget->findChild<QRadioButton*>("radGridSize")->isChecked())
+				m_bc.bc.setWidth(m_optionWidget->findChild<QComboBox*>("cmbGridSize")->currentIndex() + 1);
+
+			if(m_optionWidget->findChild<QRadioButton*>("radGridECC")->isChecked())
+				m_bc.bc.setSecurityLevel(m_optionWidget->findChild<QComboBox*>("cmbGridECC")->currentIndex() + 1);
 			break;
 
 		case BARCODE_MAXICODE:
