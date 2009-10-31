@@ -506,7 +506,7 @@ void add_ecc(int fullstream[], int datastream[], int version, int data_cw, int b
 	int qty_long_blocks = data_cw % blocks;
 	int qty_short_blocks = blocks - qty_long_blocks;
 	int ecc_block_length = ecc_cw / blocks;
-	int i, j, length_this_block, posn, debug = 1;
+	int i, j, length_this_block, posn, debug = 0;
 	
 	
 #ifndef _MSC_VER
@@ -1207,3 +1207,1169 @@ int qr_code(struct zint_symbol *symbol, unsigned char source[], int length)
 	return 0;
 }
 
+/* NOTE: From this point forward concerns Micro QR Code only */
+
+int micro_qr_intermediate(char binary[], int jisdata[], char mode[], int length, int *kanji_used, int *alphanum_used, int *byte_used)
+{
+	/* Convert input data to an "intermediate stage" where data is binary encoded but
+	   control information is not */
+	int position = 0, debug = 0;
+	int short_data_block_length, i;
+	char data_block;
+	char buffer[2];
+	
+	strcpy(binary, "");
+	
+	if(debug) { 
+		for(i = 0; i < length; i++) {
+			printf("%c", mode[i]);
+		}
+		printf("\n");
+	}
+	
+	do {
+		if(strlen(binary) > 128) {
+			return ERROR_TOO_LONG;
+		}
+		
+		data_block = mode[position];
+		short_data_block_length = 0;
+		do {
+			short_data_block_length++;
+		} while (((short_data_block_length + position) < length) && (mode[position + short_data_block_length] == data_block));
+		
+		switch(data_block) {
+			case 'K':
+				/* Kanji mode */
+				/* Mode indicator */
+				concat(binary, "K");
+				*kanji_used = 1;
+				
+				/* Character count indicator */
+				buffer[0] = short_data_block_length;
+				buffer[1] = '\0';
+				concat(binary, buffer);
+				
+				if(debug) { printf("Kanji block (length %d)\n\t", short_data_block_length); }
+				
+				/* Character representation */
+				for(i = 0; i < short_data_block_length; i++) {
+					int jis = jisdata[position + i];
+					int msb, lsb, prod;
+					
+					if(jis > 0x9fff) { jis -= 0xc140; }
+					msb = (jis & 0xff00) >> 4;
+					lsb = (jis & 0xff);
+					prod = (msb * 0xc0) + lsb;
+					
+					if(prod & 0x1000) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(prod & 0x800) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(prod & 0x400) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(prod & 0x200) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(prod & 0x100) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(prod & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(prod & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(prod & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(prod & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(prod & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(prod & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(prod & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(prod & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
+					
+					if(debug) { printf("0x%4X ", prod); }
+				}
+				
+				if(debug) { printf("\n"); }
+				
+				break;
+			case 'B':
+				/* Byte mode */
+				/* Mode indicator */
+				concat(binary, "B");
+				*byte_used = 1;
+				
+				/* Character count indicator */
+				buffer[0] = short_data_block_length;
+				buffer[1] = '\0';
+				concat(binary, buffer);
+				
+				if(debug) { printf("Byte block (length %d)\n\t", short_data_block_length); }
+				
+				/* Character representation */
+				for(i = 0; i < short_data_block_length; i++) {
+					int byte = jisdata[position + i];
+					
+					if(byte & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(byte & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(byte & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(byte & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(byte & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(byte & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(byte & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
+					if(byte & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
+					
+					if(debug) { printf("0x%4X ", byte); }
+				}
+				
+				if(debug) { printf("\n"); }
+				
+				break;
+			case 'A':
+				/* Alphanumeric mode */
+				/* Mode indicator */
+				concat(binary, "A");
+				*alphanum_used = 1;
+				
+				/* Character count indicator */
+				buffer[0] = short_data_block_length;
+				buffer[1] = '\0';
+				concat(binary, buffer);
+				
+				if(debug) { printf("Alpha block (length %d)\n\t", short_data_block_length); }
+				
+				/* Character representation */
+				i = 0; 
+				while ( i < short_data_block_length ) {
+					int count;
+					int first = 0, second = 0, prod;
+					
+					first = posn(RHODIUM, (char) jisdata[position + i]);
+					count = 1;
+					prod = first;
+					
+					if(mode[position + i + 1] == 'A') {
+						second = posn(RHODIUM, (char) jisdata[position + i + 1]);
+						count = 2;
+						prod = (first * 45) + second;
+					}
+					
+					switch(count) {
+						case 2:
+							if(prod & 0x400) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x200) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x100) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
+						case 1:
+							if(prod & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
+							break;
+					}
+					
+					if(debug) { printf("0x%4X ", prod); }
+					
+					i += 2;
+				};
+				
+				if(debug) { printf("\n"); }
+				
+				break;
+			case 'N':
+				/* Numeric mode */
+				/* Mode indicator */
+				concat(binary, "N");
+				
+				/* Character count indicator */
+				buffer[0] = short_data_block_length;
+				buffer[1] = '\0';
+				concat(binary, buffer);
+				
+				if(debug) { printf("Number block (length %d)\n\t", short_data_block_length); }
+				
+				/* Character representation */
+				i = 0; 
+				while ( i < short_data_block_length ) {
+					int count;
+					int first = 0, second = 0, third = 0, prod;
+					
+					first = posn(NEON, (char) jisdata[position + i]);
+					count = 1;
+					prod = first;
+					
+					if(mode[position + i + 1] == 'N') {
+						second = posn(NEON, (char) jisdata[position + i + 1]);
+						count = 2;
+						prod = (prod * 10) + second;
+					}
+					
+					if(mode[position + i + 2] == 'N') {
+						third = posn(NEON, (char) jisdata[position + i + 2]);
+						count = 3;
+						prod = (prod * 10) + third;
+					}
+					
+					switch(count) {
+						case 3:
+							if(prod & 0x200) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x100) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
+						case 2:
+							if(prod & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
+						case 1:
+							if(prod & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
+							if(prod & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
+							break;
+					}
+					
+					if(debug) { printf("0x%4X (%d)", prod, prod); }
+					
+					i += 3;
+				};
+				
+				if(debug) { printf("\n"); }
+				
+				break;
+		}
+		
+		position += short_data_block_length;
+	} while (position < length - 1) ;
+	
+	return 0;
+}
+
+void get_bitlength(int count[], char stream[]) {
+	int length, i;
+	
+	length = strlen(stream);
+	
+	for(i = 0; i < 4; i++) {
+		count[i] = 0;
+	}
+	
+	i = 0;
+	do {
+		if((stream[i] == '0') || (stream[i] == '1')) {
+			count[0]++;
+			count[1]++;
+			count[2]++;
+			count[3]++;
+			i++;
+		} else {
+			switch(stream[i]) {
+				case 'K':
+					count[2] += 5;
+					count[3] += 7;
+					i += 2;
+					break;
+				case 'B':
+					count[2] += 6;
+					count[3] += 8;
+					i += 2;
+					break;
+				case 'A':
+					count[1] += 4;
+					count[2] += 6;
+					count[3] += 8;
+					i += 2;
+					break;
+				case 'N':
+					count[0] += 3;
+					count[1] += 5;
+					count[2] += 7;
+					count[3] += 9;
+					i += 2;
+					break;
+			}
+		}
+	} while (i < length);
+}
+
+void microqr_expand_binary(char binary_stream[], char full_stream[], int version)
+{
+	int i, length;
+	
+	length = strlen(binary_stream);
+	
+	i = 0;
+	do {
+		switch(binary_stream[i]) {
+			case '1': concat(full_stream, "1"); i++; break;
+			case '0': concat(full_stream, "0"); i++; break;
+			case 'N':
+				/* Numeric Mode */
+				/* Mode indicator */
+				switch(version) {
+					case 1: concat(full_stream, "0"); break;
+					case 2: concat(full_stream, "00"); break;
+					case 3: concat(full_stream, "000"); break;
+				}
+				
+				/* Character count indicator */
+				switch(version) {
+					case 3:
+						if(binary_stream[i + 1] & 0x20) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
+					case 2:
+						if(binary_stream[i + 1] & 0x10) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
+					case 1:
+						if(binary_stream[i + 1] & 0x08) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
+					case 0:
+						if(binary_stream[i + 1] & 0x04) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
+						if(binary_stream[i + 1] & 0x02) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
+						if(binary_stream[i + 1] & 0x01) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
+				}
+				
+				i += 2;
+				break;
+			case 'A':
+				/* Alphanumeric Mode */
+				/* Mode indicator */
+				switch(version) {
+					case 1: concat(full_stream, "1"); break;
+					case 2: concat(full_stream, "01"); break;
+					case 3: concat(full_stream, "001"); break;
+				}
+				
+				/* Character count indicator */
+				switch(version) {
+					case 3:
+						if(binary_stream[i + 1] & 0x10) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
+					case 2:
+						if(binary_stream[i + 1] & 0x08) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
+					case 1:
+						if(binary_stream[i + 1] & 0x04) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
+						if(binary_stream[i + 1] & 0x02) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
+						if(binary_stream[i + 1] & 0x01) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
+				}
+				
+				i += 2;
+				break;
+			case 'B':
+				/* Byte Mode */
+				/* Mode indicator */
+				switch(version) {
+					case 2: concat(full_stream, "10"); break;
+					case 3: concat(full_stream, "010"); break;
+				}
+				
+				/* Character count indicator */
+				switch(version) {
+					case 3:
+						if(binary_stream[i + 1] & 0x10) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
+					case 2:
+						if(binary_stream[i + 1] & 0x08) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
+						if(binary_stream[i + 1] & 0x04) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
+						if(binary_stream[i + 1] & 0x02) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
+						if(binary_stream[i + 1] & 0x01) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
+				}
+				
+				i += 2;
+				break;
+			case 'K':
+				/* Kanji Mode */
+				/* Mode indicator */
+				switch(version) {
+					case 2: concat(full_stream, "11"); break;
+					case 3: concat(full_stream, "011"); break;
+				}
+				
+				/* Character count indicator */
+				switch(version) {
+					case 3:
+						if(binary_stream[i + 1] & 0x08) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
+					case 2:
+						if(binary_stream[i + 1] & 0x04) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
+						if(binary_stream[i + 1] & 0x02) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
+						if(binary_stream[i + 1] & 0x01) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
+				}
+				
+				i += 2;
+				break;
+		}
+			
+	} while (i < length);
+}
+
+void micro_qr_m1(char binary_data[])
+{
+	int i, latch;
+	int bits_total, bits_left, remainder;
+	int data_codewords, ecc_codewords;
+	unsigned char data_blocks[4], ecc_blocks[3];
+	
+	bits_total = 20;
+	latch = 0;
+	
+	/* Add terminator */
+	bits_left = bits_total - strlen(binary_data);
+	if(bits_left <= 3) {
+		for(i = 0; i < bits_left; i++) {
+			concat(binary_data, "0");
+		}
+		latch = 1;
+	} else {
+		concat(binary_data, "000");
+	}
+	
+	if(latch == 0) {
+		/* Manage last (4-bit) block */
+		bits_left = bits_total - strlen(binary_data);
+		if(bits_left <= 4) {
+			for(i = 0; i < bits_left; i++) {
+				concat(binary_data, "0");
+			}
+			latch = 1;
+		}
+	}
+
+	if(latch == 0) {
+		/* Complete current byte */
+		remainder = 8 - (strlen(binary_data) % 8);
+		if(remainder == 8) { remainder = 0; }
+		for(i = 0; i < remainder; i++) {
+			concat(binary_data, "0");
+		}
+		
+		/* Add padding */
+		bits_left = bits_total - strlen(binary_data);
+		if(bits_left > 4) {
+			remainder = (bits_left - 4) / 8;
+			for(i = 0; i < remainder; i++) {
+				if((i % 2) == 0) { concat(binary_data, "11101100"); }
+				if((i % 2) == 1) { concat(binary_data, "00010001"); }
+			}
+		}
+		concat(binary_data, "0000");
+	}
+	
+	data_codewords = 3;
+	ecc_codewords = 2;
+	
+	/* Copy data into codewords */
+	for(i = 0; i < (data_codewords - 1); i++) {
+		data_blocks[i] = 0;
+		if(binary_data[i * 8] == '1') { data_blocks[i] += 0x80; }
+		if(binary_data[(i * 8) + 1] == '1') { data_blocks[i] += 0x40; }
+		if(binary_data[(i * 8) + 2] == '1') { data_blocks[i] += 0x20; }
+		if(binary_data[(i * 8) + 3] == '1') { data_blocks[i] += 0x10; }
+		if(binary_data[(i * 8) + 4] == '1') { data_blocks[i] += 0x08; }
+		if(binary_data[(i * 8) + 5] == '1') { data_blocks[i] += 0x04; }
+		if(binary_data[(i * 8) + 6] == '1') { data_blocks[i] += 0x02; }
+		if(binary_data[(i * 8) + 7] == '1') { data_blocks[i] += 0x01; }
+	}
+	data_blocks[2] = 0;
+	if(binary_data[16] == '1') { data_blocks[2] += 0x08; }
+	if(binary_data[17] == '1') { data_blocks[2] += 0x04; }
+	if(binary_data[18] == '1') { data_blocks[2] += 0x02; }
+	if(binary_data[19] == '1') { data_blocks[2] += 0x01; }
+	
+	/* Calculate Reed-Solomon error codewords */
+	rs_init_gf(0x11d);
+	rs_init_code(ecc_codewords, 0);
+	rs_encode(data_codewords,data_blocks,ecc_blocks);
+	rs_free();
+	
+	/* Add Reed-Solomon codewords to binary data */
+	for(i = 0; i < ecc_codewords; i++) {
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x80) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x40) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x20) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x10) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x08) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x04) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x02) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x01) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+	}
+}
+
+void micro_qr_m2(char binary_data[], int ecc_mode)
+{
+	int i, latch;
+	int bits_total, bits_left, remainder;
+	int data_codewords, ecc_codewords;
+	unsigned char data_blocks[6], ecc_blocks[7];
+	
+	latch = 0;
+	
+	if(ecc_mode == LEVEL_L) { bits_total = 40; }
+	if(ecc_mode == LEVEL_M) { bits_total = 32; }
+	
+	/* Add terminator */
+	bits_left = bits_total - strlen(binary_data);
+	if(bits_left <= 5) {
+		for(i = 0; i < bits_left; i++) {
+			concat(binary_data, "0");
+		}
+		latch = 1;
+	} else {
+		concat(binary_data, "00000");
+	}
+
+	if(latch == 0) {
+		/* Complete current byte */
+		remainder = 8 - (strlen(binary_data) % 8);
+		if(remainder == 8) { remainder = 0; }
+		for(i = 0; i < remainder; i++) {
+			concat(binary_data, "0");
+		}
+		
+		/* Add padding */
+		bits_left = bits_total - strlen(binary_data);
+		remainder = bits_left / 8;
+		for(i = 0; i < remainder; i++) {
+			if((i % 2) == 0) { concat(binary_data, "11101100"); }
+			if((i % 2) == 1) { concat(binary_data, "00010001"); }
+		}
+	}
+	
+	if(ecc_mode == LEVEL_L) { data_codewords = 5; ecc_codewords = 5; }
+	if(ecc_mode == LEVEL_M) { data_codewords = 4; ecc_codewords = 6; }
+	
+	/* Copy data into codewords */
+	for(i = 0; i < data_codewords; i++) {
+		data_blocks[i] = 0;
+		if(binary_data[i * 8] == '1') { data_blocks[i] += 0x80; }
+		if(binary_data[(i * 8) + 1] == '1') { data_blocks[i] += 0x40; }
+		if(binary_data[(i * 8) + 2] == '1') { data_blocks[i] += 0x20; }
+		if(binary_data[(i * 8) + 3] == '1') { data_blocks[i] += 0x10; }
+		if(binary_data[(i * 8) + 4] == '1') { data_blocks[i] += 0x08; }
+		if(binary_data[(i * 8) + 5] == '1') { data_blocks[i] += 0x04; }
+		if(binary_data[(i * 8) + 6] == '1') { data_blocks[i] += 0x02; }
+		if(binary_data[(i * 8) + 7] == '1') { data_blocks[i] += 0x01; }
+	}
+	
+	/* Calculate Reed-Solomon error codewords */
+	rs_init_gf(0x11d);
+	rs_init_code(ecc_codewords, 0);
+	rs_encode(data_codewords,data_blocks,ecc_blocks);
+	rs_free();
+	
+	/* Add Reed-Solomon codewords to binary data */
+	for(i = 0; i < ecc_codewords; i++) {
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x80) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x40) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x20) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x10) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x08) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x04) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x02) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x01) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+	}
+	
+	return;
+}
+
+void micro_qr_m3(char binary_data[], int ecc_mode)
+{
+	int i, latch;
+	int bits_total, bits_left, remainder;
+	int data_codewords, ecc_codewords;
+	unsigned char data_blocks[12], ecc_blocks[9];
+	
+	latch = 0;
+	
+	if(ecc_mode == LEVEL_L) { bits_total = 84; }
+	if(ecc_mode == LEVEL_M) { bits_total = 68; }
+	
+	/* Add terminator */
+	bits_left = bits_total - strlen(binary_data);
+	if(bits_left <= 7) {
+		for(i = 0; i < bits_left; i++) {
+			concat(binary_data, "0");
+		}
+		latch = 1;
+	} else {
+		concat(binary_data, "0000000");
+	}
+	
+	if(latch == 0) {
+		/* Manage last (4-bit) block */
+		bits_left = bits_total - strlen(binary_data);
+		if(bits_left <= 4) {
+			for(i = 0; i < bits_left; i++) {
+				concat(binary_data, "0");
+			}
+			latch = 1;
+		}
+	}
+	
+	if(latch == 0) {
+		/* Complete current byte */
+		remainder = 8 - (strlen(binary_data) % 8);
+		if(remainder == 8) { remainder = 0; }
+		for(i = 0; i < remainder; i++) {
+			concat(binary_data, "0");
+		}
+		
+		/* Add padding */
+		bits_left = bits_total - strlen(binary_data);
+		if(bits_left > 4) {
+			remainder = (bits_left - 4) / 8;
+			for(i = 0; i < remainder; i++) {
+				if((i % 2) == 0) { concat(binary_data, "11101100"); }
+				if((i % 2) == 1) { concat(binary_data, "00010001"); }
+			}
+		}
+		concat(binary_data, "0000");
+	}
+	
+	if(ecc_mode == LEVEL_L) { data_codewords = 11; ecc_codewords = 6; }
+	if(ecc_mode == LEVEL_M) { data_codewords = 9; ecc_codewords = 8; }
+	
+	/* Copy data into codewords */
+	for(i = 0; i < (data_codewords - 1); i++) {
+		data_blocks[i] = 0;
+		if(binary_data[i * 8] == '1') { data_blocks[i] += 0x80; }
+		if(binary_data[(i * 8) + 1] == '1') { data_blocks[i] += 0x40; }
+		if(binary_data[(i * 8) + 2] == '1') { data_blocks[i] += 0x20; }
+		if(binary_data[(i * 8) + 3] == '1') { data_blocks[i] += 0x10; }
+		if(binary_data[(i * 8) + 4] == '1') { data_blocks[i] += 0x08; }
+		if(binary_data[(i * 8) + 5] == '1') { data_blocks[i] += 0x04; }
+		if(binary_data[(i * 8) + 6] == '1') { data_blocks[i] += 0x02; }
+		if(binary_data[(i * 8) + 7] == '1') { data_blocks[i] += 0x01; }
+	}
+	
+	if(ecc_mode == LEVEL_L) {
+		data_blocks[11] = 0;
+		if(binary_data[80] == '1') { data_blocks[2] += 0x08; }
+		if(binary_data[81] == '1') { data_blocks[2] += 0x04; }
+		if(binary_data[82] == '1') { data_blocks[2] += 0x02; }
+		if(binary_data[83] == '1') { data_blocks[2] += 0x01; }
+	}
+	
+	if(ecc_mode == LEVEL_M) {
+		data_blocks[9] = 0;
+		if(binary_data[64] == '1') { data_blocks[2] += 0x08; }
+		if(binary_data[65] == '1') { data_blocks[2] += 0x04; }
+		if(binary_data[66] == '1') { data_blocks[2] += 0x02; }
+		if(binary_data[67] == '1') { data_blocks[2] += 0x01; }
+	}
+	
+	/* Calculate Reed-Solomon error codewords */
+	rs_init_gf(0x11d);
+	rs_init_code(ecc_codewords, 0);
+	rs_encode(data_codewords,data_blocks,ecc_blocks);
+	rs_free();
+	
+	/* Add Reed-Solomon codewords to binary data */
+	for(i = 0; i < ecc_codewords; i++) {
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x80) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x40) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x20) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x10) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x08) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x04) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x02) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x01) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+	}
+	
+	return;
+}
+
+void micro_qr_m4(char binary_data[], int ecc_mode)
+{
+	int i, latch;
+	int bits_total, bits_left, remainder;
+	int data_codewords, ecc_codewords;
+	unsigned char data_blocks[17], ecc_blocks[15];
+	
+	latch = 0;
+	
+	if(ecc_mode == LEVEL_L) { bits_total = 128; }
+	if(ecc_mode == LEVEL_M) { bits_total = 112; }
+	if(ecc_mode == LEVEL_Q) { bits_total = 80; }
+	
+	/* Add terminator */
+	bits_left = bits_total - strlen(binary_data);
+	if(bits_left <= 9) {
+		for(i = 0; i < bits_left; i++) {
+			concat(binary_data, "0");
+		}
+		latch = 1;
+	} else {
+		concat(binary_data, "000000000");
+	}
+	
+	if(latch == 0) {
+		/* Complete current byte */
+		remainder = 8 - (strlen(binary_data) % 8);
+		if(remainder == 8) { remainder = 0; }
+		for(i = 0; i < remainder; i++) {
+			concat(binary_data, "0");
+		}
+	
+		/* Add padding */
+		bits_left = bits_total - strlen(binary_data);
+		remainder = bits_left / 8;
+		for(i = 0; i < remainder; i++) {
+			if((i % 2) == 0) { concat(binary_data, "11101100"); }
+			if((i % 2) == 1) { concat(binary_data, "00010001"); }
+		}
+	}
+	
+	if(ecc_mode == LEVEL_L) { data_codewords = 16; ecc_codewords = 8; }
+	if(ecc_mode == LEVEL_M) { data_codewords = 14; ecc_codewords = 10; }
+	if(ecc_mode == LEVEL_Q) { data_codewords = 10; ecc_codewords = 14; }
+	
+	/* Copy data into codewords */
+	for(i = 0; i < data_codewords; i++) {
+		data_blocks[i] = 0;
+		if(binary_data[i * 8] == '1') { data_blocks[i] += 0x80; }
+		if(binary_data[(i * 8) + 1] == '1') { data_blocks[i] += 0x40; }
+		if(binary_data[(i * 8) + 2] == '1') { data_blocks[i] += 0x20; }
+		if(binary_data[(i * 8) + 3] == '1') { data_blocks[i] += 0x10; }
+		if(binary_data[(i * 8) + 4] == '1') { data_blocks[i] += 0x08; }
+		if(binary_data[(i * 8) + 5] == '1') { data_blocks[i] += 0x04; }
+		if(binary_data[(i * 8) + 6] == '1') { data_blocks[i] += 0x02; }
+		if(binary_data[(i * 8) + 7] == '1') { data_blocks[i] += 0x01; }
+	}
+	
+	/* Calculate Reed-Solomon error codewords */
+	rs_init_gf(0x11d);
+	rs_init_code(ecc_codewords, 0);
+	rs_encode(data_codewords,data_blocks,ecc_blocks);
+	rs_free();
+	
+	/* Add Reed-Solomon codewords to binary data */
+	for(i = 0; i < ecc_codewords; i++) {
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x80) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x40) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x20) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x10) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x08) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x04) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x02) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		if(ecc_blocks[ecc_codewords - i - 1] & 0x01) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+	}
+}
+
+void micro_setup_grid(unsigned char* grid, int size)
+{
+	int i, toggle = 1;
+
+	/* Add timing patterns */
+	for(i = 0; i < size; i++) {
+		if(toggle == 1) {
+			grid[i] = 0x21;
+			grid[(i * size)] = 0x21;
+			toggle = 0;
+		} else {
+			grid[i] = 0x20;
+			grid[(i * size)] = 0x20;
+			toggle = 1;
+		}
+	}
+	
+	/* Add finder patterns */
+	place_finder(grid, size, 0, 0);
+	
+	/* Add separators */
+	for(i = 0; i < 7; i++) {
+		grid[(7 * size) + i] = 0x10;
+		grid[(i * size) + 7] = 0x10;
+	}
+	grid[(7 * size) + 7] = 0x10;
+	
+	
+	/* Reserve space for format information */
+	for(i = 0; i < 8; i++) {
+		grid[(8 * size) + i] += 0x20;
+		grid[(i * size) + 8] += 0x20;
+	}
+	grid[(8 * size) + 8] += 20;
+}
+
+void micro_populate_grid(unsigned char* grid, int size, char full_stream[])
+{
+	int direction = 1; /* up */
+	int row = 0; /* right hand side */
+	
+	int i, n, x, y;
+	
+	n = strlen(full_stream);
+	y = size - 1;
+	i = 0;
+	do {
+		x = (size - 2) - (row * 2);
+
+		if(!(grid[(y * size) + (x + 1)] & 0xf0)) {
+			if (full_stream[i] == '1') {
+				grid[(y * size) + (x + 1)] = 0x01;
+			} else {
+				grid[(y * size) + (x + 1)] = 0x00;
+			}
+			i++;
+		}
+		
+		if(i < n) {
+			if(!(grid[(y * size) + x] & 0xf0)) {
+				if (full_stream[i] == '1') {
+					grid[(y * size) + x] = 0x01;
+				} else {
+					grid[(y * size) + x] = 0x00;
+				}
+				i++;
+			}
+		}
+		
+		if(direction) { y--; } else { y++; }
+		if(y == 0) {
+			/* reached the top */
+			row++;
+			y = 1;
+			direction = 0;
+		}
+		if(y == size) {
+			/* reached the bottom */
+			row++;
+			y = size - 1;
+			direction = 1;
+		}
+	} while (i < n);
+}
+
+int micro_evaluate(unsigned char *grid, int size, int pattern)
+{
+	int sum1, sum2, i, filter = 0, retval;
+	
+	switch(pattern) {
+		case 0: filter = 0x01; break;
+		case 1: filter = 0x02; break;
+		case 2: filter = 0x04; break;
+		case 3: filter = 0x08; break;
+	}
+	
+	sum1 = 0;
+	sum2 = 0;
+	for(i = 1; i < size; i++) {
+		if(grid[(i * size) + size - 1] & filter) { sum1++; }
+		if(grid[((size - 1) * size) + i] & filter) { sum2++; }
+	}
+	
+	if(sum1 <= sum2) { retval = (sum1 * 16) + sum2; } else { retval = (sum2 * 16) + sum1; }
+	
+	return retval;
+}
+
+int micro_apply_bitmask(unsigned char *grid, int size)
+{
+	int x, y;
+	unsigned char p;
+	int pattern, value[8];
+	int best_val, best_pattern;
+	int bit;
+	
+#ifndef _MSC_VER
+	unsigned char mask[size * size];
+	unsigned char eval[size * size];
+#else
+	unsigned char* mask = (unsigned char *)_alloca((size * size) * sizeof(unsigned char));
+	unsigned char* eval = (unsigned char *)_alloca((size * size) * sizeof(unsigned char));
+#endif
+
+	/* Perform data masking */
+	for(x = 0; x < size; x++) {
+		for(y = 0; y < size; y++) {
+			mask[(y * size) + x] = 0x00;
+			
+			if (!(grid[(y * size) + x] & 0xf0)) {
+				if((y % 2) == 0) { mask[(y * size) + x] += 0x01; }
+				if((((y / 2) + (x / 3)) % 2) == 0) { mask[(y * size) + x] += 0x02; }
+				if(((((y * x) % 2) + ((y * x) % 3)) % 2) == 0) { mask[(y * size) + x] += 0x04; }
+				if(((((y + x) % 2) + ((y * x) % 3)) % 2) == 0) { mask[(y * size) + x] += 0x08; }
+			}
+		}
+	}
+	
+	for(x = 0; x < size; x++) {
+		for(y = 0; y < size; y++) {
+			if(grid[(y * size) + x] & 0x01) { p = 0xff; } else { p = 0x00; }
+			
+			eval[(y * size) + x] = mask[(y * size) + x] ^ p;
+		}
+	}
+	
+	
+	/* Evaluate result */
+	for(pattern = 0; pattern < 8; pattern++) {
+		value[pattern] = micro_evaluate(eval, size, pattern);
+	}
+	
+	best_pattern = 0;
+	best_val = value[0];
+	for(pattern = 1; pattern < 4; pattern++) {
+		if(value[pattern] > best_val) {
+			best_pattern = pattern;
+			best_val = value[pattern];
+		}
+	}
+	
+	/* Apply mask */
+	for(x = 0; x < size; x++) {
+		for(y = 0; y < size; y++) {
+			bit = 0;
+			switch(best_pattern) {
+				case 0: if(mask[(y * size) + x] & 0x01) { bit = 1; } break;
+				case 1: if(mask[(y * size) + x] & 0x02) { bit = 1; } break;
+				case 2: if(mask[(y * size) + x] & 0x04) { bit = 1; } break;
+				case 3: if(mask[(y * size) + x] & 0x08) { bit = 1; } break;
+			}
+			if(bit == 1) {
+				if(grid[(y * size) + x] & 0x01) {
+					grid[(y * size) + x] = 0x00;
+				} else {
+					grid[(y * size) + x] = 0x01;
+				}
+			}
+		}
+	}
+	
+	return best_pattern;
+}
+
+int microqr(struct zint_symbol *symbol, unsigned char source[], int length)
+{
+	int i, j, glyph, size;
+	char binary_stream[130];
+	char full_stream[200];
+	int utfdata[40];
+	int jisdata[40];
+	char mode[40];
+	int error_number, kanji_used = 0, alphanum_used = 0, byte_used = 0;
+	int version_valid[4];
+	int binary_count[4];
+	int ecc_level, autoversion, version;
+	int n_count, a_count, bitmask, format, format_full;
+	
+	if(length > 35) {
+		strcpy(symbol->errtxt, "Input data too long");
+		return ERROR_TOO_LONG;
+	}
+	
+	for(i = 0; i < 4; i++) {
+		version_valid[i] = 1;
+	}
+
+	switch(symbol->input_mode) {
+		case DATA_MODE:
+			for(i = 0; i < length; i++) {
+				jisdata[i] = (int)source[i];
+			}
+			break;
+		default:
+			/* Convert Unicode input to Shift-JIS */
+			error_number = utf8toutf16(symbol, source, utfdata, &length);
+			if(error_number != 0) { return error_number; }
+			
+			for(i = 0; i < length; i++) {
+				if(utfdata[i] <= 0xff) {
+					jisdata[i] = utfdata[i];
+				} else {
+					j = 0;
+					glyph = 0;
+					do {
+						if(sjis_lookup[j * 2] == utfdata[i]) {
+							glyph = sjis_lookup[(j * 2) + 1];
+						}
+						j++;
+					} while ((j < 6843) && (glyph == 0));
+					if(glyph == 0) {
+						strcpy(symbol->errtxt, "Invalid character in input data");
+						return ERROR_INVALID_DATA;
+					}
+					jisdata[i] = glyph;
+				}
+			}
+			break;
+	}
+	
+	define_mode(mode, jisdata, length);
+	
+	n_count = 0;
+	a_count = 0;
+	for(i = 0; i < length; i++) {
+		if((jisdata[i] >= '0') && (jisdata[i] <= '9')) { n_count++; }
+		if(in_alpha(jisdata[i])) { a_count++; }
+	}
+	
+	if(a_count == length) {
+		/* All data can be encoded in Alphanumeric mode */
+		for(i = 0; i < length; i++) {
+			mode[i] = 'A';
+		}
+	}
+	
+	if(n_count == length) {
+		/* All data can be encoded in Numeric mode */
+		for(i = 0; i < length; i++) {
+			mode[i] = 'N';
+		}
+	}
+	
+	error_number = micro_qr_intermediate(binary_stream, jisdata, mode, length, &kanji_used, &alphanum_used, &byte_used);
+	if(error_number != 0) {
+		strcpy(symbol->errtxt, "Input data too long");
+		return error_number;
+	}
+	
+	get_bitlength(binary_count, binary_stream);
+	
+	/* Eliminate possivle versions depending on type of content */
+	if(byte_used) {
+		version_valid[0] = 0;
+		version_valid[1] = 0;
+	}
+	
+	if(alphanum_used) {
+		version_valid[0] = 0;
+	}
+	
+	if(kanji_used) {
+		version_valid[0] = 0;
+		version_valid[1] = 0;
+	}
+	
+	/* Eliminate possible versions depending on length of binary data */
+	if(binary_count[0] > 20) { version_valid[0] = 0; }
+	if(binary_count[1] > 40) { version_valid[1] = 0; }
+	if(binary_count[2] > 84) { version_valid[2] = 0; }
+	if(binary_count[3] > 128) { 
+		strcpy(symbol->errtxt, "Input data too long");
+		return ERROR_TOO_LONG;
+	}
+	
+	/* Eliminate possible versions depending on error correction level specified */
+	ecc_level = LEVEL_L;
+	if((symbol->option_1 >= 1) && (symbol->option_2 <= 4)) {
+		ecc_level = symbol->option_1;
+	}
+	
+	if(ecc_level == LEVEL_H) {
+		strcpy(symbol->errtxt, "Error correction level H not available");
+		return ERROR_INVALID_OPTION;
+	}
+	
+	if(ecc_level == LEVEL_Q) {
+		version_valid[0] = 0;
+		version_valid[1] = 0;
+		version_valid[2] = 0;
+		if(binary_count[3] > 80) {
+			strcpy(symbol->errtxt, "Input data too long");
+			return ERROR_TOO_LONG;
+		}
+	}
+	
+	if(ecc_level == LEVEL_M) {
+		version_valid[0] = 0;
+		if(binary_count[1] > 32) { version_valid[1] = 0; }
+		if(binary_count[2] > 68) { version_valid[2] = 0; }
+		if(binary_count[3] > 112) {
+			strcpy(symbol->errtxt, "Input data too long");
+			return ERROR_TOO_LONG;
+		}
+	}
+	
+	autoversion = 3;
+	if(version_valid[2]) { autoversion = 2; }
+	if(version_valid[1]) { autoversion = 1; }
+	if(version_valid[0]) { autoversion = 0; }
+	
+	version = autoversion;
+	/* Get version from user */
+	if((symbol->option_2 >= 1) && (symbol->option_2 <= 4)) {
+		if(symbol->option_2 >= autoversion) {
+			version = symbol->option_2;
+		}
+	}
+	
+	/* If there is enough unused space then increase the error correction level */
+	if(version == 3) {
+		if(binary_count[3] <= 112) { ecc_level = LEVEL_M; }
+		if(binary_count[3] <= 80) { ecc_level = LEVEL_Q; }
+	}
+	
+	if(version == 2) {
+		if(binary_count[2] <= 68) { ecc_level = LEVEL_M; }
+	}
+	
+	if(version == 1) {
+		if(binary_count[1] <= 32) { ecc_level = LEVEL_M; }
+	}
+	
+	strcpy(full_stream, "");
+	microqr_expand_binary(binary_stream, full_stream, version);
+	
+	switch(version) {
+		case 0: micro_qr_m1(full_stream); break;
+		case 1: micro_qr_m2(full_stream, ecc_level); break;
+		case 2: micro_qr_m3(full_stream, ecc_level); break;
+		case 3: micro_qr_m4(full_stream, ecc_level); break;
+	}
+	
+	size = micro_qr_sizes[version];
+#ifndef _MSC_VER
+	unsigned char grid[size * size];
+#else
+	unsigned char* grid = (unsigned char *)_alloca((size * size) * sizeof(unsigned char));
+#endif
+	
+	for(i = 0; i < size; i++) {
+		for(j = 0; j < size; j++) {
+			grid[(i * size) + j] = 0;
+		}
+	}
+	
+	micro_setup_grid(grid, size);
+	micro_populate_grid(grid, size, full_stream);
+	bitmask = micro_apply_bitmask(grid, size);
+	
+	/* Add format data */
+	format = 0;
+	switch(version) {
+		case 1: switch(ecc_level) {
+				case 1: format = 1; break;
+				case 2: format = 2; break;
+			}
+			break;
+		case 2: switch(ecc_level) {
+				case 1: format = 3; break;
+				case 2: format = 4; break;
+			}
+			break;
+		case 3: switch(ecc_level) {
+				case 1: format = 5; break;
+				case 2: format = 6; break;
+				case 3: format = 7; break;
+			}
+			break;
+	}
+	
+	format_full = qr_annex_c1[(format << 2) + bitmask];
+	
+	if(format_full & 0x4000) { grid[(8 * size) + 1] += 0x01; } 
+	if(format_full & 0x2000) { grid[(8 * size) + 2] += 0x01; } 
+	if(format_full & 0x1000) { grid[(8 * size) + 3] += 0x01; } 
+	if(format_full & 0x800) { grid[(8 * size) + 4] += 0x01; } 
+	if(format_full & 0x400) { grid[(8 * size) + 5] += 0x01; } 
+	if(format_full & 0x200) { grid[(8 * size) + 6] += 0x01; } 
+	if(format_full & 0x100) { grid[(8 * size) + 7] += 0x01; } 
+	if(format_full & 0x80) { grid[(8 * size) + 8] += 0x01; } 
+	if(format_full & 0x40) { grid[(7 * size) + 8] += 0x01; } 
+	if(format_full & 0x20) { grid[(6 * size) + 8] += 0x01; } 
+	if(format_full & 0x10) { grid[(5 * size) + 8] += 0x01; } 
+	if(format_full & 0x08) { grid[(4 * size) + 8] += 0x01; } 
+	if(format_full & 0x04) { grid[(3 * size) + 8] += 0x01; } 
+	if(format_full & 0x02) { grid[(2 * size) + 8] += 0x01; } 
+	if(format_full & 0x01) { grid[(1 * size) + 8] += 0x01; } 
+	
+	symbol->width = size;
+	symbol->rows = size;
+	
+	for(i = 0; i < size; i++) {
+		for(j = 0; j < size; j++) {
+			if(grid[(i * size) + j] & 0x01) {
+				set_module(symbol, i, j);
+			}
+		}
+		symbol->row_height[i] = 1;
+	}
+	
+	return 0;
+}
