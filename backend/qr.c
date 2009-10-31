@@ -107,7 +107,7 @@ void define_mode(char mode[], int jisdata[], int length)
 	}
 }
 
-int estimate_binary_length(char mode[], int length)
+int estimate_binary_length(char mode[], int length, int gs1)
 {
 	/* Make an estimate (worst case scenario) of how long the binary string will be */
 	int i, count = 0;
@@ -115,6 +115,8 @@ int estimate_binary_length(char mode[], int length)
 	int a_count = 0;
 	int n_count = 0;
 
+	if(gs1) { count += 4; }
+	
 	for(i = 0; i < length; i++) {
 		if(mode[i] != current) {
 			switch(mode[i]) {
@@ -154,14 +156,14 @@ int estimate_binary_length(char mode[], int length)
 	return count;
 }
 
-void qr_binary(int datastream[], int version, int target_binlen, char mode[], int jisdata[], int length)
+void qr_binary(int datastream[], int version, int target_binlen, char mode[], int jisdata[], int length, int gs1)
 {
 	/* Convert input data to a binary stream and add padding */
 	int position = 0, debug = 0;
 	int short_data_block_length, i, scheme;
 	char data_block, padbits;
 	int current_binlen, current_bytes;
-	int toggle;
+	int toggle, percent;
 	
 #ifndef _MSC_VER
 	char binary[target_binlen * 8];
@@ -169,6 +171,10 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 	char* binary = (char *)_alloca(target_binlen * 8);
 #endif
 	strcpy(binary, "");
+	
+	if(gs1) {
+		concat(binary, "0101"); /* FNC1 */
+	}
 	
 	if(version <= 9) {
 		scheme = 1;
@@ -186,6 +192,8 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 		}
 		printf("\n");
 	}
+	
+	percent = 0;
 	
 	do {
 		data_block = mode[position];
@@ -287,6 +295,10 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 				for(i = 0; i < short_data_block_length; i++) {
 					int byte = jisdata[position + i];
 					
+					if(gs1 && (byte == '[')) {
+						byte = 0x1d; /* FNC1 */
+					}
+					
 					if(byte & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
 					if(byte & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
 					if(byte & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
@@ -335,7 +347,7 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 				while ( i < short_data_block_length ) {
 					int count;
 					int first = 0, second = 0, prod;
-					
+			
 					first = posn(RHODIUM, (char) jisdata[position + i]);
 					count = 1;
 					prod = first;
@@ -345,7 +357,7 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 						count = 2;
 						prod = (first * 45) + second;
 					}
-					
+
 					switch(count) {
 						case 2:
 							if(prod & 0x400) { concat(binary, "1"); } else { concat(binary, "0"); }
@@ -365,7 +377,7 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 					
 					if(debug) { printf("0x%4X ", prod); }
 					
-					i += 2;
+					i += count;
 				};
 				
 				if(debug) { printf("\n"); }
@@ -441,7 +453,7 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 					
 					if(debug) { printf("0x%4X (%d)", prod, prod); }
 					
-					i += 3;
+					i += count;
 				};
 				
 				if(debug) { printf("\n"); }
@@ -1053,7 +1065,7 @@ int qr_code(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	int error_number, i, j, glyph, est_binlen;
 	int ecc_level, autosize, version, max_cw, target_binlen, blocks, size;
-	int bitmask;
+	int bitmask, gs1;
 	
 #ifndef _MSC_VER
 	int utfdata[length + 1];
@@ -1064,6 +1076,12 @@ int qr_code(struct zint_symbol *symbol, unsigned char source[], int length)
 	int* jisdata = (int *)_alloca((length + 1) * sizeof(int));
 	char* mode = (char *)_alloca(length + 1);
 #endif
+	
+	if(symbol->input_mode == GS1_MODE) {
+		gs1 = 1;
+	} else {
+		gs1 = 0;
+	}
 	
 	switch(symbol->input_mode) {
 		case DATA_MODE:
@@ -1099,7 +1117,7 @@ int qr_code(struct zint_symbol *symbol, unsigned char source[], int length)
 	}
 	
 	define_mode(mode, jisdata, length);
-	est_binlen = estimate_binary_length(mode, length);
+	est_binlen = estimate_binary_length(mode, length, gs1);
 	
 	ecc_level = LEVEL_L;
 	max_cw = 2956;
@@ -1152,6 +1170,11 @@ int qr_code(struct zint_symbol *symbol, unsigned char source[], int length)
 	} else {
 		version = autosize;
 	}
+	
+	/* Ensure maxium error correction capacity */
+	if(est_binlen <= qr_data_codewords_M[version - 1]) { ecc_level = LEVEL_M; }
+	if(est_binlen <= qr_data_codewords_Q[version - 1]) { ecc_level = LEVEL_Q; }
+	if(est_binlen <= qr_data_codewords_H[version - 1]) { ecc_level = LEVEL_H; }
 
 	target_binlen = qr_data_codewords_L[version - 1]; blocks = qr_blocks_L[version - 1];
 	switch(ecc_level) {
@@ -1168,7 +1191,7 @@ int qr_code(struct zint_symbol *symbol, unsigned char source[], int length)
 	int* fullstream = (int *)_alloca((qr_total_codewords[version - 1] + 1) * sizeof(int));
 #endif
 
-	qr_binary(datastream, version, target_binlen, mode, jisdata, length);
+	qr_binary(datastream, version, target_binlen, mode, jisdata, length, gs1);
 	add_ecc(fullstream, datastream, version, target_binlen, blocks);
 	
 	size = qr_sizes[version - 1];
