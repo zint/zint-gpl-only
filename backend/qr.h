@@ -83,6 +83,10 @@ static int qr_sizes[] = {
 	101, 105, 109, 113, 117, 121, 125, 129, 133, 137, 141, 145, 149, 153, 157, 161, 165, 169, 173, 177
 };
 
+static int micro_qr_sizes[] = {
+	11, 13, 15, 17
+};
+
 static int qr_align_loopsize[] = {
 	0, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7
 };
@@ -144,3 +148,9 @@ static long int qr_annex_d[] = {
 	0x2542e, 0x26a64, 0x27541, 0x28c69
 };
 
+static int qr_annex_c1[] = {
+	/* Micro QR Code format information */
+	0x4445, 0x4172, 0x4e2b, 0x4b1c, 0x55ae, 0x5099, 0x5fc0, 0x5af7, 0x6793, 0x62a4, 0x6dfd, 0x68ca, 0x7678, 0x734f,
+	0x7c16, 0x7921, 0x06de, 0x03e9, 0x0cb0, 0x0987, 0x1735, 0x1202, 0x1d5b, 0x186c, 0x2508, 0x203f, 0x2f66, 0x2a51, 0x34e3,
+	0x31d4, 0x3e8d, 0x3bba
+};
