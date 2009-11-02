@@ -786,35 +786,33 @@ int data_matrix_200(struct zint_symbol *symbol, unsigned char source[], int leng
 		optionsize = -1;
 	}
 	
-	calcsize = 0;
-	for(i = 0; i < 30; i++) {
-		if(matrixbytes[i] < binlen) {
+	calcsize = 29;
+	for(i = 29; i > -1; i--) {
+		if(matrixbytes[i] > binlen) {
 			calcsize = i;
-		}
-	}
-	calcsize++;
-
-	if(calcsize <= optionsize) {
-		symbolsize = optionsize;
-	} else {
-		symbolsize = calcsize;
-		if(optionsize != -1) {
-			/* flag an error */
-			error_number = WARN_INVALID_OPTION;
-			strcpy(symbol->errtxt, "Data does not fit in selected symbol size");
 		}
 	}
 
 	if(symbol->option_3 == DM_SQUARE) {
 		/* Force to use square symbol */
-		switch(symbolsize) {
+		switch(calcsize) {
 			case 2:
 			case 4:
 			case 6:
 			case 9:
 			case 11:
 			case 14:
-				symbolsize++;
+				calcsize++;
+		}
+	}
+	
+	symbolsize = optionsize;
+	if(calcsize > optionsize) {
+		symbolsize = calcsize;
+		if(optionsize != -1) {
+			/* flag an error */
+			error_number = WARN_INVALID_OPTION;
+			strcpy(symbol->errtxt, "Data does not fit in selected symbol size");
 		}
 	}
 	

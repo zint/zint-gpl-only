@@ -171,12 +171,15 @@ int interleaved_two_of_five(struct zint_symbol *symbol, unsigned char source[], 
 
 	int i, j, k, error_number;
 	char bars[7], spaces[7], mixed[14], dest[1000];
-	unsigned char *temp = source;
-	unsigned int temp_len = length;
+#ifndef _MSC_VER
+	unsigned char temp[length + 2];
+#else
+	unsigned char* temp = (unsigned char *)_alloca((length + 2) * sizeof(unsigned char));
+#endif
 
 	error_number = 0;
 	
-	if(length > 90) {
+	if(length > 89) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
@@ -186,24 +189,20 @@ int interleaved_two_of_five(struct zint_symbol *symbol, unsigned char source[], 
 		return error_number;
 	}
 	
+	ustrcpy(temp, (unsigned char *) "");
 	/* Input must be an even number of characters for Interlaced 2 of 5 to work:
 	   if an odd number of characters has been entered then add a leading zero */
 	if ((length % 2) != 0)
 	{
-		/* there are an odd number of input characters */
-		if (NULL == (temp = (unsigned char*)malloc(++temp_len)))
-		{
-			strcpy(symbol->errtxt, "Memory allocation failed");
-			return ERROR_MEMORY;
-		}
-		temp[0] = '0';
-		ustrcpy(temp + 1, source);
+		ustrcpy(temp, (unsigned char *) "0");
+		length++;
 	}
+	uconcat(temp, source);
 
 	/* start character */
 	strcpy(dest, "1111");
 
-	for(i = 0; i < temp_len; i+=2 )
+	for(i = 0; i < length; i+=2 )
 	{
 		/* look up the bars and the spaces and put them in two strings */
 		strcpy(bars, "");
@@ -227,8 +226,6 @@ int interleaved_two_of_five(struct zint_symbol *symbol, unsigned char source[], 
 	
 	expand(symbol, dest);
 	ustrcpy(symbol->text, temp);
-	if (temp != source)
-		free(source);
 	return error_number;
 
 }

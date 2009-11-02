@@ -907,7 +907,7 @@ int grid_matrix(struct zint_symbol *symbol, unsigned char source[], int length)
 	int auto_layers, min_layers, layers, auto_ecc_level, min_ecc_level, ecc_level;
 	int x, y, i, j, glyph;
 	char binary[9300];
-	int data_cw;
+	int data_cw, input_latch = 0;
 	int word[1460], data_max;
 	
 #ifndef _MSC_VER
@@ -972,9 +972,17 @@ int grid_matrix(struct zint_symbol *symbol, unsigned char source[], int length)
 	for(i = 12; i > 0; i--) {
 		if(gm_max_cw[(i - 1)] >= data_cw) { min_layers = i; }
 	}
-	
 	layers = auto_layers;
+	auto_ecc_level = 3;
+	if(layers == 1) { auto_ecc_level = 5; }
+	if((layers == 2) || (layers == 3)) { auto_ecc_level = 4; }
+	min_ecc_level = 1;
+	if(layers == 1) { min_ecc_level = 4; }
+	if((layers == 2) || (layers == 3)) { min_ecc_level = 2; }
+	ecc_level = auto_ecc_level;
+	
 	if((symbol->option_2 >= 1) && (symbol->option_2 <= 13)) {
+		input_latch = 1;
 		if(symbol->option_2 > min_layers) {
 			layers = symbol->option_2;
 		} else {
@@ -982,19 +990,28 @@ int grid_matrix(struct zint_symbol *symbol, unsigned char source[], int length)
 		}
 	}
 	
-	auto_ecc_level = 3;
-	if(layers == 1) { auto_ecc_level = 5; }
-	if((layers == 2) || (layers == 3)) { auto_ecc_level = 4; }
-	min_ecc_level = 1;
-	if(layers == 1) { min_ecc_level = 4; }
-	if((layers == 2) || (layers == 3)) { min_ecc_level = 2; }
+	if(input_latch == 1) {
+		auto_ecc_level = 3;
+		if(layers == 1) { auto_ecc_level = 5; }
+		if((layers == 2) || (layers == 3)) { auto_ecc_level = 4; }
+		ecc_level = auto_ecc_level;
+		if(data_cw > gm_data_codewords[(5 * (layers - 1)) + (ecc_level - 1)]) {
+			layers++;
+		}
+	}
 	
-	ecc_level = auto_ecc_level;
-	if((symbol->option_1 >= 1) && (symbol->option_1 <= 5)) {
-		if(symbol->option_1 > min_ecc_level) {
-			ecc_level = symbol->option_1;
-		} else {
-			ecc_level = min_ecc_level;
+	if(input_latch == 0) {
+		if((symbol->option_1 >= 1) && (symbol->option_1 <= 5)) {
+			if(symbol->option_1 > min_ecc_level) {
+				ecc_level = symbol->option_1;
+			} else {
+				ecc_level = min_ecc_level;
+			}
+		}
+		if(data_cw > gm_data_codewords[(5 * (layers - 1)) + (ecc_level - 1)]) {
+			do {
+				layers++;
+			} while ((data_cw > gm_data_codewords[(5 * (layers - 1)) + (ecc_level - 1)]) && (layers <= 13));
 		}
 	}
 	

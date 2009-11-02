@@ -374,6 +374,7 @@ void MainWindow::change_options()
 		connect(m_optionWidget->findChild<QObject*>("radDM200HIBC"), SIGNAL(clicked( bool )), SLOT(update_preview()));
 		connect(m_optionWidget->findChild<QObject*>("cmbDM200Size"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
 		connect(m_optionWidget->findChild<QObject*>("cmbDMNon200Size"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("chkDMRectangle"), SIGNAL(stateChanged( int )), SLOT(update_preview()));
 		datamatrix_options();
 	}
 
@@ -738,6 +739,10 @@ void MainWindow::update_preview()
 					m_bc.bc.setInputMode(GS1_MODE);
 
 				m_bc.bc.setWidth(m_optionWidget->findChild<QComboBox*>("cmbDM200Size")->currentIndex());
+				if(m_optionWidget->findChild<QCheckBox*>("chkDMRectangle")->isChecked())
+					m_bc.bc.setOption3(DM_SQUARE);
+				else
+					m_bc.bc.setOption3(0);
 			} 
 			else
 			{	/* Not ECC 200 */
