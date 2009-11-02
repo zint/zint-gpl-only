@@ -57,7 +57,7 @@ int in_alpha(int glyph) {
 	return retval;
 }
 
-void define_mode(char mode[], int jisdata[], int length)
+void define_mode(char mode[], int jisdata[], int length, int gs1)
 {
 	/* Values placed into mode[] are: K = Kanji, B = Binary, A = Alphanumeric, N = Numeric */
 	int i, mlen, j;
@@ -68,6 +68,7 @@ void define_mode(char mode[], int jisdata[], int length)
 		} else {
 			mode[i] = 'B';
 			if(in_alpha(jisdata[i])) { mode[i] = 'A'; }
+			if(gs1 && (jisdata[i] == '[')) { mode[i] = 'A'; }
 			if((jisdata[i] >= '0') && (jisdata[i] <= '9')) { mode[i] = 'N'; }
 		}
 	}
@@ -348,14 +349,65 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 					int count;
 					int first = 0, second = 0, prod;
 			
-					first = posn(RHODIUM, (char) jisdata[position + i]);
-					count = 1;
-					prod = first;
-					
-					if(mode[position + i + 1] == 'A') {
-						second = posn(RHODIUM, (char) jisdata[position + i + 1]);
-						count = 2;
-						prod = (first * 45) + second;
+					if(percent == 0) {
+						if(gs1 && (jisdata[position + i] == '%')) {
+							first = posn(RHODIUM, '%');
+							second = posn(RHODIUM, '%');
+							count = 2;
+							prod = (first * 45) + second;
+							i++;
+						} else {
+							if(gs1 && (jisdata[position + i] == '[')) {
+								first = posn(RHODIUM, '%'); /* FNC1 */
+							} else {
+								first = posn(RHODIUM, (char) jisdata[position + i]);
+							}
+							count = 1;
+							i++;
+							prod = first;
+						
+							if(mode[position + i] == 'A') {
+								if(gs1 && (jisdata[position + i] == '%')) {
+									second = posn(RHODIUM, '%');
+									count = 2;
+									prod = (first * 45) + second;
+									percent = 1;
+								} else {
+									if(gs1 && (jisdata[position + i] == '[')) {
+										second = posn(RHODIUM, '%'); /* FNC1 */
+									} else {
+										second = posn(RHODIUM, (char) jisdata[position + i]);
+									}
+									count = 2;
+									i++;
+									prod = (first * 45) + second;
+								}
+							}
+						}
+					} else {
+						first = posn(RHODIUM, '%');
+						count = 1;
+						i++;
+						prod = first;
+						percent = 0;
+						
+						if(mode[position + i] == 'A') {
+							if(gs1 && (jisdata[position + i] == '%')) {
+								second = posn(RHODIUM, '%');
+								count = 2;
+								prod = (first * 45) + second;
+								percent = 1;
+							} else {
+								if(gs1 && (jisdata[position + i] == '[')) {
+									second = posn(RHODIUM, '%'); /* FNC1 */
+								} else {
+									second = posn(RHODIUM, (char) jisdata[position + i]);
+								}
+								count = 2;
+								i++;
+								prod = (first * 45) + second;
+							}
+						}
 					}
 
 					switch(count) {
@@ -376,8 +428,6 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 					}
 					
 					if(debug) { printf("0x%4X ", prod); }
-					
-					i += count;
 				};
 				
 				if(debug) { printf("\n"); }
@@ -1116,7 +1166,7 @@ int qr_code(struct zint_symbol *symbol, unsigned char source[], int length)
 			break;
 	}
 	
-	define_mode(mode, jisdata, length);
+	define_mode(mode, jisdata, length, gs1);
 	est_binlen = estimate_binary_length(mode, length, gs1);
 	
 	ecc_level = LEVEL_L;
@@ -1300,6 +1350,10 @@ int micro_qr_intermediate(char binary[], int jisdata[], char mode[], int length,
 					if(prod & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
 					
 					if(debug) { printf("0x%4X ", prod); }
+					
+					if(strlen(binary) > 128) {
+						return ERROR_TOO_LONG;
+					}
 				}
 				
 				if(debug) { printf("\n"); }
@@ -1332,6 +1386,10 @@ int micro_qr_intermediate(char binary[], int jisdata[], char mode[], int length,
 					if(byte & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
 					
 					if(debug) { printf("0x%4X ", byte); }
+					
+					if(strlen(binary) > 128) {
+						return ERROR_TOO_LONG;
+					}
 				}
 				
 				if(debug) { printf("\n"); }
@@ -1384,6 +1442,10 @@ int micro_qr_intermediate(char binary[], int jisdata[], char mode[], int length,
 					}
 					
 					if(debug) { printf("0x%4X ", prod); }
+					
+					if(strlen(binary) > 128) {
+						return ERROR_TOO_LONG;
+					}
 					
 					i += 2;
 				};
@@ -1443,6 +1505,10 @@ int micro_qr_intermediate(char binary[], int jisdata[], char mode[], int length,
 					}
 					
 					if(debug) { printf("0x%4X (%d)", prod, prod); }
+					
+					if(strlen(binary) > 128) {
+						return ERROR_TOO_LONG;
+					}
 					
 					i += 3;
 				};
@@ -2150,7 +2216,7 @@ int micro_apply_bitmask(unsigned char *grid, int size)
 int microqr(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	int i, j, glyph, size;
-	char binary_stream[130];
+	char binary_stream[200];
 	char full_stream[200];
 	int utfdata[40];
 	int jisdata[40];
@@ -2203,7 +2269,7 @@ int microqr(struct zint_symbol *symbol, unsigned char source[], int length)
 			break;
 	}
 	
-	define_mode(mode, jisdata, length);
+	define_mode(mode, jisdata, length, 0);
 	
 	n_count = 0;
 	a_count = 0;
