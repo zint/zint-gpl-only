@@ -121,6 +121,7 @@ struct zint_symbol {
 #define BARCODE_HIBC_PDF	106
 #define BARCODE_HIBC_MICPDF	108
 #define BARCODE_HIBC_BLOCKF	110
+#define BARCODE_HIBC_AZTEC	112
 
 /* Zint specific */
 #define BARCODE_AZRUNE		128
