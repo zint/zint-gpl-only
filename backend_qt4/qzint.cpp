@@ -40,6 +40,8 @@ QZint::QZint()
 	m_error=0;
 	m_input_mode = UNICODE_MODE;
 	m_scale = 1.0;
+	m_option_3 = 0;
+	m_hidetext = FALSE;
 }
 
 QZint::~QZint()
@@ -63,13 +65,20 @@ void QZint::encode()
 	m_zintSymbol->option_1=m_securityLevel;
 	m_zintSymbol->input_mode = m_input_mode;
 	m_zintSymbol->option_2=m_width;
-	m_zintSymbol->option_3=m_pdf417CodeWords;
+	if(m_symbol == BARCODE_PDF417) {
+		m_zintSymbol->option_3=m_pdf417CodeWords;
+	} else {
+		m_zintSymbol->option_3 = m_option_3;
+	}
 	QByteArray bstr=m_text.toAscii();
 	QByteArray pstr=m_primaryMessage.left(99).toAscii();
 	strcpy(m_zintSymbol->primary,pstr.data());
 	int error = ZBarcode_Encode(m_zintSymbol, (unsigned char*)bstr.data(), bstr.length());
 	if (error > WARN_INVALID_OPTION)
 		m_lastError=m_zintSymbol->errtxt;
+	if(m_hidetext) {
+		m_zintSymbol->text[0] = (unsigned char) '\0';
+	}
 
 	if (m_zintSymbol->symbology == BARCODE_MAXICODE)
 		m_zintSymbol->height = 33;
@@ -129,6 +138,11 @@ void QZint::setHeight(int height)
 void QZint::setWidth(int width)
 {
 	m_width=width;
+}
+
+void QZint::setOption3(int option)
+{
+	m_option_3 = option;
 }
 
 int QZint::width()
@@ -222,6 +236,11 @@ void QZint::setMode(int securityLevel)
 	m_securityLevel=securityLevel;
 }
 
+void QZint::setHideText(bool hide)
+{
+	m_hidetext = hide;
+}
+
 bool QZint::save_to_file(QString filename)
 {
 	if (m_zintSymbol)
@@ -240,7 +259,11 @@ bool QZint::save_to_file(QString filename)
 	m_zintSymbol->option_1=m_securityLevel;
 	m_zintSymbol->input_mode = m_input_mode;
 	m_zintSymbol->option_2=m_width;
-	m_zintSymbol->option_3=m_pdf417CodeWords;
+	if(m_symbol == BARCODE_PDF417) {
+		m_zintSymbol->option_3=m_pdf417CodeWords;
+	} else {
+		m_zintSymbol->option_3 = m_option_3;
+	}
 	m_zintSymbol->scale=m_scale;
 	QByteArray bstr=m_text.toAscii();
 	QByteArray pstr=m_primaryMessage.left(99).toAscii();
@@ -251,7 +274,13 @@ bool QZint::save_to_file(QString filename)
 	QByteArray bgcol=bg_colour_hash.right(6).toAscii();
 	strcpy(m_zintSymbol->fgcolour,fgcol.data());
 	strcpy(m_zintSymbol->bgcolour,bgcol.data());
-	int error = ZBarcode_Encode_and_Print(m_zintSymbol, (unsigned char*)bstr.data(), bstr.length(), 0);
+	int error = ZBarcode_Encode(m_zintSymbol, (unsigned char*)bstr.data(), bstr.length());
+	if (error > WARN_INVALID_OPTION)
+		m_lastError=m_zintSymbol->errtxt;
+	if(m_hidetext) {
+		m_zintSymbol->text[0] = (unsigned char) '\0';
+	}
+	error = ZBarcode_Print(m_zintSymbol, 0);
 	if (error > WARN_INVALID_OPTION)
 		m_lastError=m_zintSymbol->errtxt;
 	if(error == 0) { return true; } else { return false; }

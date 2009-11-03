@@ -50,6 +50,8 @@ public:
 
 	void setWidth(int width);
 	int width();
+	
+	void setOption3(int option);
 
 	QColor fgColor();
 	void setFgColor(const QColor & fgColor);
@@ -87,6 +89,8 @@ public:
 	bool hasErrors();
 
 	bool save_to_file(QString filename);
+	
+	void setHideText(bool hide);
 
 private:
 	void encode();
@@ -110,6 +114,8 @@ private:
 	int m_whitespace;
 	zint_symbol * m_zintSymbol;
 	float m_scale;
+	int m_option_3;
+	bool m_hidetext;
 };
 }
 #endif
