@@ -131,6 +131,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 	connect(btnReset, SIGNAL(clicked( bool )), SLOT(reset_view()));
 	connect(btnMoreData, SIGNAL(clicked( bool )), SLOT(open_data_dialog()));
 	connect(btnSequence, SIGNAL(clicked( bool )), SLOT(open_sequence_dialog()));
+	connect(chkHRTHide, SIGNAL(stateChanged( int )), SLOT(update_preview()));
 }
 
 MainWindow::~MainWindow()
@@ -174,18 +175,22 @@ bool MainWindow::save()
 void MainWindow::about()
 {
 	QMessageBox::about(this, tr("About Zint"),
-			   tr("<h2>Zint Barcode Studio 1.0.1</h2>"
-					   "<p>A simple barcode generator"
-					   "<p>Requires libzint 2.2.2 or greater."
-					   "<p><font color=\"#ff0000\">WARNING!</font> This release is a work-in-progress and should be considered as \"unstable\". "
-					   "Although most things should work fine it has not yet been thoroughly tested. In particular using "
-					   "input characters outside the 7-bit ASCII set could lead to unpredictable results."
+			   tr("<h2>Zint Barcode Studio 2.3</h2>"
+					   "<p>A free barcode generator"
 					   "<p>Visit the <a href=\"http://www.zint.org.uk\">Zint Project Homepage</a> for more information."
-					   "<p>Copyright &copy; 2009 Robin Stuart &amp; Bogdan Vatra.<br>"
-					   "QR Code support by Kentaro Fukuchi.<br>"
-					   "Released under the GNU General Public License ver. 3 or later"
-					   "<p>\"QR Code\" is a Registered Trademark of Denso Corp.<br>"
+					   "<p>Copyright &copy; 2009 Robin Stuart.<br>"
+					   "Qt4 code by BogDan Vatra, MS Windows port by \"tgotic\".<br>"
+					   "With thanks to Norbert Szab&oacute;, and Robert Elliott."
+					   "<p>Released under the GNU General Public License ver. 3 or later.<br>"
+					   "\"QR Code\" is a Registered Trademark of Denso Corp.<br>"
 					   "\"Telepen\" is a Registered Trademark of SB Electronics."
+					   "<p><table border=1><tr><td><small>Currently supported standards include:<br>"
+					   "EN 797:1996, EN 798:1996, EN 12323:2005, ISO/IEC 15417:2007,<br>"
+					   "ISO/IEC 15438:2006, ISO/IEC 16022:2006, ISO/IEC 16023:2000,<br>"
+					   "ISO/IEC 16388:2007, ISO/IEC 18004:2006, ISO/IEC 24723:2006,<br>"
+					   "ISO/IEC 24724:2006, ISO/IEC 24728:2006, ISO/IEC 24778:2008,<br>"
+					   "ANSI-HIBC 2.3-2009, ANSI/AIM BC6-2000, ANSI/AIM BC12-1998,<br>"
+					   "AIMD014 (v 1.63), USPS-B-3200</small></td></tr></table>"
 			     ));
 }
 
@@ -296,7 +301,9 @@ void MainWindow::change_options()
 		connect(m_optionWidget->findChild<QObject*>("radAztecECC"), SIGNAL(clicked( bool )), SLOT(update_preview()));
 		connect(m_optionWidget->findChild<QObject*>("cmbAztecSize"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
 		connect(m_optionWidget->findChild<QObject*>("cmbAztecECC"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
-		connect(m_optionWidget->findChild<QObject*>("chkAztecMode"), SIGNAL(stateChanged( int )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("radAztecStand"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("radAztecGS1"), SIGNAL(clicked( bool )), SLOT(update_preview()));
+		connect(m_optionWidget->findChild<QObject*>("radAztecHIBC"), SIGNAL(clicked( bool )), SLOT(update_preview()));
 	}
 
 	if(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_MSI_PLESSEY)
@@ -567,6 +574,10 @@ void MainWindow::update_preview()
 	m_bc.bc.setSecurityLevel(0);
 	m_bc.bc.setWidth(0);
 	m_bc.bc.setInputMode(UNICODE_MODE);
+	m_bc.bc.setHideText(FALSE);
+	if(chkHRTHide->isChecked() == false) {
+		m_bc.bc.setHideText(TRUE);
+	}
 	switch(metaObject()->enumerator(0).value(bstyle->currentIndex()))
 	{
 		case BARCODE_CODE128:
@@ -682,8 +693,10 @@ void MainWindow::update_preview()
 			if(m_optionWidget->findChild<QRadioButton*>("radAztecECC")->isChecked())
 				m_bc.bc.setSecurityLevel(m_optionWidget->findChild<QComboBox*>("cmbAztecECC")->currentIndex() + 1);
 
-			if(m_optionWidget->findChild<QCheckBox*>("chkAztecMode")->isChecked())
+			if(m_optionWidget->findChild<QRadioButton*>("radAztecGS1")->isChecked())
 				m_bc.bc.setInputMode(GS1_MODE);
+			if(m_optionWidget->findChild<QRadioButton*>("radAztecHIBC")->isChecked())
+				m_bc.bc.setSymbol(BARCODE_HIBC_AZTEC);
 			break;
 
 		case MSI_PLESSEY:
