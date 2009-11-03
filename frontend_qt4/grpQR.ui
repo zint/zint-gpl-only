@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>441</width>
-    <height>208</height>
+    <height>238</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -287,68 +287,51 @@
      <property name="title">
       <string>Data Encoding</string>
      </property>
-     <widget class="QRadioButton" name="radQRStand">
+     <widget class="QWidget" name="gridLayoutWidget">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>17</y>
-        <width>102</width>
-        <height>24</height>
+        <y>30</y>
+        <width>411</width>
+        <height>80</height>
        </rect>
       </property>
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>S&amp;tandard</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QRadioButton" name="radQRStand">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>S&amp;tandard Mode</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QRadioButton" name="radQRHIBC">
+         <property name="text">
+          <string>&amp;HIBC QR Code</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QRadioButton" name="radQRGS1">
+         <property name="text">
+          <string>&amp;GS-1 Data Mode</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
-     <widget class="QRadioButton" name="radQRHIBC">
-      <property name="geometry">
-       <rect>
-        <x>200</x>
-        <y>14</y>
-        <width>142</width>
-        <height>24</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&amp;HIBC QR Code</string>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="radQRGS1">
-      <property name="geometry">
-       <rect>
-        <x>9</x>
-        <y>41</y>
-        <width>151</width>
-        <height>24</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&amp;GS-1 Data Mode</string>
-      </property>
-     </widget>
+     <zorder>gridLayoutWidget</zorder>
+     <zorder></zorder>
     </widget>
-   </item>
-   <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>35</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>
