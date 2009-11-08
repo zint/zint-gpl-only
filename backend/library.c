@@ -61,6 +61,9 @@ struct zint_symbol *ZBarcode_Create()
 		}
 		symbol->row_height[i] = 0;
 	}
+	symbol->bitmap = NULL;
+	symbol->bitmap_width = 0;
+	symbol->bitmap_height = 0;
 	return symbol;
 }
 
@@ -129,6 +132,7 @@ extern int grid_matrix(struct zint_symbol *symbol, unsigned char source[], int l
 
 #ifndef NO_PNG
 int png_handle(struct zint_symbol *symbol, int rotate_angle);
+int bmp_handle(struct zint_symbol *symbol, int rotate_angle);
 #endif
 
 extern int ps_plot(struct zint_symbol *symbol);
@@ -666,6 +670,29 @@ int ZBarcode_Print(struct zint_symbol *symbol, int rotate_angle)
 	return error_number;
 }
 
+#ifndef NO_PNG
+int ZBarcode_Buffer(struct zint_symbol *symbol, int rotate_angle)
+{
+	int error_number;
+	
+	switch(rotate_angle) {
+		case 0:
+		case 90:
+		case 180:
+		case 270:
+			break;
+		default:
+			strcpy(symbol->errtxt, "Invalid rotation angle");
+			return ERROR_INVALID_OPTION;
+			break;
+	}
+	
+	error_number = bmp_handle(symbol, rotate_angle);
+	error_tag(symbol->errtxt, error_number);
+	return error_number;
+}
+#endif
+
 int ZBarcode_Print_Rotated(struct zint_symbol *symbol, int rotate_angle) {
 	/* Depreciated - will be removed in later version */
 	return ZBarcode_Print(symbol, rotate_angle);
@@ -685,6 +712,23 @@ int ZBarcode_Encode_and_Print(struct zint_symbol *symbol, unsigned char *input, 
 	error_number = ZBarcode_Print(symbol, rotate_angle);
 	return error_number;
 }
+
+#ifndef NO_PNG
+int ZBarcode_Encode_and_Buffer(struct zint_symbol *symbol, unsigned char *input, int length, int rotate_angle)
+{
+	int error_number;
+	
+	error_number = 0;
+	
+	error_number = ZBarcode_Encode(symbol, input, length);
+	if(error_number != 0) {
+		return error_number;
+	}
+
+	error_number = ZBarcode_Buffer(symbol, rotate_angle);
+	return error_number;
+}
+#endif
 
 int ZBarcode_Encode_and_Print_Rotated(struct zint_symbol *symbol, unsigned char *input, int rotate_angle) {
 	/* Depreciated - will be removed in later version */
@@ -759,3 +803,18 @@ int ZBarcode_Encode_File_and_Print(struct zint_symbol *symbol, char *filename, i
 	return ZBarcode_Print(symbol, rotate_angle);
 }
 
+#ifndef NO_PNG
+int ZBarcode_Encode_File_and_Buffer(struct zint_symbol *symbol, char *filename, int rotate_angle)
+{
+	int error_number;
+	
+	error_number = 0;
+	
+	error_number = ZBarcode_Encode_File(symbol, filename);
+	if(error_number != 0) {
+		return error_number;
+	}
+	
+	return ZBarcode_Buffer(symbol, rotate_angle);
+}
+#endif
