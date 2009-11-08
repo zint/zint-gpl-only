@@ -69,6 +69,9 @@ dmatrix.c:
 	Data Matrix ECC 100
 	Data Matrix ECC 140
 
+gridmtx.c:
+	Grid Matrix
+
 imail.c:
 	USPS OneCode (Intelligent Mail)
 
@@ -80,9 +83,6 @@ medical.c:
 	Two Track Pharma Code
 	Codabar
 	Code 32
-
-micqr.c:
-	Micro QR Code
 
 pdf417.c:
 	PDF417
@@ -105,7 +105,8 @@ postal.c:
 	Japanese Postal Code
 
 qr.c:
-	QR Code (libqrencode)
+	QR Code
+	Micro QR Code
 
 rss.c:
 	GS1 DataBar (DataBar-14) (RSS-14)

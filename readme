@@ -1,4 +1,4 @@
-Zint and libzint 2.2.2
+Zint and libzint 2.3.0
 ----------------------
 Zint is a suite of programs to allow easy encoding of data in any of the wide range of public domain
 barcode standards and to allow integration of this capability into your own programs. This version
@@ -12,24 +12,22 @@ Code 16k, PDF417, MicroPDF417, Two-Track Pharmacode, PostNet, PLANET, Australia 
 RM4SCC, USPS OneCode, GS1 DataBar, DataBar-14, DataBar Limited, DataBar Extended, DataBar Stacked,
 Composite Symbology, Data Matrix, QR Code, Maxicode, Aztec Code, EAN-13, Codablock-F, Micro QR,
 Korea Post Barcode, HIBC Code 128, HIBC Code 39, HIBC Data Matrix, HIBC PDF417, HIBC MicroPDF417,
-HIBC QR Code, HIBC Codablock-F, Japanese Postal Code, Code 49, Channel Code, Code One, FIM and
-Flattermarken.
+HIBC QR Code, HIBC Codablock-F, HIBC Aztec Code, Japanese Postal Code, Code 49, Channel Code, Code One,
+Grid Matrix, FIM and Flattermarken.
 
 Full documentation is available at project website: http://www.zint.org.uk
 
 
 PROJECT STATUS
 --------------
-Contrary to previous thoughts this project is very much active again. This release signifies the
-first step in a complete re-think of the API. If you have written applications which take advantage
-of the Zint API then please make appropriate alterations. Details are given on the news page of the
-project website.
+This release features a complete rebuild of QR Code and Micro QR Code functionality which now:
 
-Work is now continuing on making the library more useful for those who want to encode characters
-beyond the ASCII set. Also in the plan is to bring QR Code encoding within the library and thereby
-remove the dependence on libqrencode for this. Once this is achieved then Grid Matrix will be the
-next symbology to be added. By this time I hope to have achived a much more smooth mechanism for
-encoding both Japanese and Chinese character sets.
+* Automatically detects and adjusts to Japanese characters
+* Supports GS1 encoding
+* Does not require the qrencode library.
+
+Also new in this release is Grid Matrix support which similarly supports Chinese character encoding.
+
 
 COMPILING THE CODE
 ------------------
@@ -38,15 +36,9 @@ want and what platform you are targeting. Zint has been tested on both 32 and 64
 It does not use any unusual memory manipulation and so should easily port to a wide range of hardware.
 
 GNU/Linux and OpenBSD:
-To compile the Zint library for you will need libpng and libz pre-installed. You can compile
-with or without QR Code support. If you want QR Code support you will need qrencode installed. Then:
+To compile the Zint library for you will need libpng and libz pre-installed. Then:
 
 	make
-	make install
-
-If you do not want QR Code support:
-
-	make zint_noqr
 	make install
 
 For some distributions it may be necessary to run
@@ -78,8 +70,10 @@ the MinGW makefiles for the default Linux ones. For compiling with MS Visual Stu
 libzint.vcproj project file in the win32 folder and compile in the usual way.
 
 Mac OSX:
-To compile on Macintosh you will need Qt4 and cmake. Follow the steps for the GUI interface
-as given in the Linux section above.
+HELP NEEDED! It _is_ possible to compile and run Zint on the OSX platform. Unfortunately the
+developers of the Zint package do not have access to OSX. If you have any success with comiling
+Zint on OSX then please send us a description of how you did it so that we can put that
+information here!
 
 
 THINGS TO DO
