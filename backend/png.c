@@ -2,7 +2,7 @@
 
 /*
     libzint - the open source barcode library
-    Copyright (C) 2008 Robin Stuart <robin@zint.org.uk>
+    Copyright (C) 2009 Robin Stuart <robin@zint.org.uk>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,6 +17,15 @@
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
+/*
+	This file initially included the code to output barcodes to PNG images. To this has been
+	added routines to ouput the symbol in a byte array for manipulation within an external
+	program - the difference can be seen as "PNG mode" and "BMP mode". The reason they have been
+	lumped together here is because they use much the same functions and so it saves memory to
+	put them together. The problem is that it means the "BMP mode" functions are not available
+	unless PNG encoding is enabled. This is a compromise and I hope it doesn't cause anybody problems.
 */
 
 #include <stdio.h>
@@ -40,6 +49,9 @@
 #include "font.h"	/* Font for human readable text */
 
 #define SSET	"0123456789ABCDEF"
+
+#define	PNG_DATA	100
+#define	BMP_DATA	200
 
 struct mainprog_info_type {
     long width;
@@ -65,7 +77,7 @@ static void writepng_error_handler(png_structp png_ptr, png_const_charp msg)
     longjmp(graphic->jmpbuf, 1);
 }
 
-int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, char *pixelbuf, int rotate_angle)
+int png_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width, char *pixelbuf, int rotate_angle)
 {
 	struct mainprog_info_type wpng_info;
 	struct mainprog_info_type *graphic;
@@ -297,6 +309,165 @@ int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, c
 	return 0;
 }
 
+int bmp_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width, char *pixelbuf, int rotate_angle)
+{
+	unsigned long rowbytes;
+	int i, row, column, errno;
+	int fgred, fggrn, fgblu, bgred, bggrn, bgblu;
+	
+	switch(rotate_angle) {
+		case 0:
+		case 180:
+			symbol->bitmap_width = image_width;
+			symbol->bitmap_height = image_height;
+			break;
+		case 90:
+		case 270:			
+			symbol->bitmap_width = image_height;
+			symbol->bitmap_height = image_width;
+			break;
+	}
+	
+	if (symbol->bitmap != NULL)
+		free(symbol->bitmap);
+
+    symbol->bitmap = (char *) malloc(image_width * image_height * 3);
+
+	
+	/* sort out colour options */
+	to_upper((unsigned char*)symbol->fgcolour);
+	to_upper((unsigned char*)symbol->bgcolour);
+	
+	if(strlen(symbol->fgcolour) != 6) {
+		strcpy(symbol->errtxt, "Malformed foreground colour target");
+		return ERROR_INVALID_OPTION;
+	}
+	if(strlen(symbol->bgcolour) != 6) {
+		strcpy(symbol->errtxt, "Malformed background colour target");
+		return ERROR_INVALID_OPTION;
+	}
+	errno = is_sane(SSET, (unsigned char*)symbol->fgcolour, strlen(symbol->fgcolour));
+	if (errno == ERROR_INVALID_DATA) {
+		strcpy(symbol->errtxt, "Malformed foreground colour target");
+		return ERROR_INVALID_OPTION;
+	}
+	errno = is_sane(SSET, (unsigned char*)symbol->bgcolour, strlen(symbol->fgcolour));
+	if (errno == ERROR_INVALID_DATA) {
+		strcpy(symbol->errtxt, "Malformed background colour target");
+		return ERROR_INVALID_OPTION;
+	}
+	
+	fgred = (16 * ctoi(symbol->fgcolour[0])) + ctoi(symbol->fgcolour[1]);
+	fggrn = (16 * ctoi(symbol->fgcolour[2])) + ctoi(symbol->fgcolour[3]);
+	fgblu = (16 * ctoi(symbol->fgcolour[4])) + ctoi(symbol->fgcolour[5]);
+	bgred = (16 * ctoi(symbol->bgcolour[0])) + ctoi(symbol->bgcolour[1]);
+	bggrn = (16 * ctoi(symbol->bgcolour[2])) + ctoi(symbol->bgcolour[3]);
+	bgblu = (16 * ctoi(symbol->bgcolour[4])) + ctoi(symbol->bgcolour[5]);
+
+	/* set rowbytes - depends on picture depth */
+	rowbytes = symbol->bitmap_width * 3;
+
+	/* Pixel Plotting */
+	i = 0;	
+	switch(rotate_angle) {
+		case 0: /* Plot the right way up */
+			for(row = 0; row < image_height; row++) {
+				for(column = 0; column < image_width; column++) {
+					switch(*(pixelbuf + (image_width * row) + column))
+					{
+						case '1':
+							symbol->bitmap[i++] = fgred;
+							symbol->bitmap[i++] = fggrn;
+							symbol->bitmap[i++] = fgblu;
+							break;
+						default:
+							symbol->bitmap[i++] = bgred;
+							symbol->bitmap[i++] = bggrn;
+							symbol->bitmap[i++] = bgblu;
+							break;
+				
+					}
+				}
+			}
+			break;
+		case 90: /* Plot 90 degrees clockwise */			
+			for(row = 0; row < image_width; row++) {
+				for(column = 0; column < image_height; column++) {
+					switch(*(pixelbuf + (image_width * (image_height - column - 1)) + row))
+					{
+						case '1':
+							symbol->bitmap[i++] = fgred;
+							symbol->bitmap[i++] = fggrn;
+							symbol->bitmap[i++] = fgblu;
+							break;
+						default:
+							symbol->bitmap[i++] = bgred;
+							symbol->bitmap[i++] = bggrn;
+							symbol->bitmap[i++] = bgblu;
+							break;
+			
+					}
+				}
+			}
+			break;
+		case 180: /* Plot upside down */
+			for(row = 0; row < image_height; row++) {
+				for(column = 0; column < image_width; column++) {
+					switch(*(pixelbuf + (image_width * (image_height - row - 1)) + (image_width - column - 1)))
+					{
+						case '1':
+							symbol->bitmap[i++] = fgred;
+							symbol->bitmap[i++] = fggrn;
+							symbol->bitmap[i++] = fgblu;
+							break;
+						default:
+							symbol->bitmap[i++] = bgred;
+							symbol->bitmap[i++] = bggrn;
+							symbol->bitmap[i++] = bgblu;
+							break;
+			
+					}
+				}
+			}
+			break;
+		case 270: /* Plot 90 degrees anti-clockwise */
+			for(row = 0; row < image_width; row++) {
+				for(column = 0; column < image_height; column++) {
+					switch(*(pixelbuf + (image_width * column) + (image_width - row - 1)))
+					{
+						case '1':
+							symbol->bitmap[i++] = fgred;
+							symbol->bitmap[i++] = fggrn;
+							symbol->bitmap[i++] = fgblu;
+							break;
+						default:
+							symbol->bitmap[i++] = bgred;
+							symbol->bitmap[i++] = bggrn;
+							symbol->bitmap[i++] = bgblu;
+							break;
+	
+					}
+				}
+			}
+			break;
+	}
+
+	return 0;
+}
+
+int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, char *pixelbuf, int rotate_angle, int image_type)
+{
+	int error_number;
+	
+	if(image_type == PNG_DATA) {
+		error_number = png_pixel_plot(symbol, image_height, image_width, pixelbuf, rotate_angle);
+	} else {
+		error_number = bmp_pixel_plot(symbol, image_height, image_width, pixelbuf, rotate_angle);
+	}
+	
+	return error_number;
+}
+
 void draw_bar(char *pixelbuf, int xpos, int xlen, int ypos, int ylen, int image_width, int image_height)
 {
 	/* Draw a rectangle */
@@ -412,7 +583,7 @@ void draw_string(char *pixbuf, char input_string[], int xposn, int yposn, int im
 	
 }
 
-int maxi_png_plot(struct zint_symbol *symbol, int rotate_angle)
+int maxi_png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 {
 	int i, row, column, xposn, yposn;
 	int image_height, image_width;
@@ -466,7 +637,7 @@ int maxi_png_plot(struct zint_symbol *symbol, int rotate_angle)
 		draw_bar(pixelbuf, 300 + ((symbol->border_width + symbol->whitespace_width + symbol->whitespace_width) * scaler), symbol->border_width * scaler, 0, image_height, image_width, image_height);
 	}
 	
-	error_number=png_to_file(symbol, image_height, image_width, pixelbuf, rotate_angle);
+	error_number=png_to_file(symbol, image_height, image_width, pixelbuf, rotate_angle, data_type);
 	free(pixelbuf);
 	return error_number;
 }
@@ -504,7 +675,7 @@ void to_latin1(unsigned char source[], unsigned char preprocessed[])
 	return;
 }
 
-int png_plot(struct zint_symbol *symbol, int rotate_angle)
+int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 {
 	int textdone, main_width, comp_offset, large_bar_count;
 	char textpart[10], addon[6];
@@ -912,7 +1083,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle)
 		draw_string(pixelbuf, (char*)local_text, textpos, default_text_posn, image_width, image_height);
 	}
 
-	error_number=png_to_file(symbol, image_height, image_width, pixelbuf, rotate_angle);
+	error_number=png_to_file(symbol, image_height, image_width, pixelbuf, rotate_angle, data_type);
 	free(pixelbuf);
 	return error_number;
 }
@@ -922,10 +1093,24 @@ int png_handle(struct zint_symbol *symbol, int rotate_angle)
 	int error;
 	
 	if(symbol->symbology == BARCODE_MAXICODE) {
-		error = maxi_png_plot(symbol, rotate_angle);
+		error = maxi_png_plot(symbol, rotate_angle, PNG_DATA);
 	} else {
-		error = png_plot(symbol, rotate_angle);
+		error = png_plot(symbol, rotate_angle, PNG_DATA);
 	}
 	
 	return error;
 }
+
+int bmp_handle(struct zint_symbol *symbol, int rotate_angle)
+{
+	int error;
+	
+	if(symbol->symbology == BARCODE_MAXICODE) {
+		error = maxi_png_plot(symbol, rotate_angle, BMP_DATA);
+	} else {
+		error = png_plot(symbol, rotate_angle, BMP_DATA);
+	}
+	
+	return error;
+}
+
