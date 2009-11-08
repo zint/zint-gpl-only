@@ -596,7 +596,7 @@ int eanx(struct zint_symbol *symbol, unsigned char source[], int src_len)
 	}
 	if(symbol->symbology != BARCODE_ISBNX) {
 		/* ISBN has it's own checking routine */
-		error_number = is_sane(NEON, source, src_len);
+		error_number = is_sane("0123456789+", source, src_len);
 		if(error_number == ERROR_INVALID_DATA) {
 			strcpy(symbol->errtxt, "Invalid characters in data");
 			return error_number;

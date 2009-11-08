@@ -6,7 +6,7 @@
 # make clean		cleans up a previous compilation and any object or editor files
 #
 
-ZINT_VERSION:=-DZINT_VERSION=\"2.2.2\"
+ZINT_VERSION:=-DZINT_VERSION=\"2.3.0\"
 
 CC := gcc
 INCLUDE := -I/usr/local/include

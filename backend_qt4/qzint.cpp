@@ -70,7 +70,7 @@ void QZint::encode()
 	} else {
 		m_zintSymbol->option_3 = m_option_3;
 	}
-	QByteArray bstr=m_text.toAscii();
+	QByteArray bstr=m_text.toUtf8();
 	QByteArray pstr=m_primaryMessage.left(99).toAscii();
 	strcpy(m_zintSymbol->primary,pstr.data());
 	int error = ZBarcode_Encode(m_zintSymbol, (unsigned char*)bstr.data(), bstr.length());
@@ -265,7 +265,7 @@ bool QZint::save_to_file(QString filename)
 		m_zintSymbol->option_3 = m_option_3;
 	}
 	m_zintSymbol->scale=m_scale;
-	QByteArray bstr=m_text.toAscii();
+	QByteArray bstr=m_text.toUtf8();
 	QByteArray pstr=m_primaryMessage.left(99).toAscii();
 	QByteArray fstr=filename.left(255).toAscii();
 	strcpy(m_zintSymbol->primary,pstr.data());
