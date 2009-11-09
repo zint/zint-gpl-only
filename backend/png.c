@@ -19,15 +19,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-/*
-	This file initially included the code to output barcodes to PNG images. To this has been
-	added routines to ouput the symbol in a byte array for manipulation within an external
-	program - the difference can be seen as "PNG mode" and "BMP mode". The reason they have been
-	lumped together here is because they use much the same functions and so it saves memory to
-	put them together. The problem is that it means the "BMP mode" functions are not available
-	unless PNG encoding is enabled. This is a compromise and I hope it doesn't cause anybody problems.
-*/
-
 #include <stdio.h>
 #ifdef _MSC_VER
 #include <fcntl.h>
@@ -53,6 +44,7 @@
 #define	PNG_DATA	100
 #define	BMP_DATA	200
 
+#ifndef NO_PNG
 struct mainprog_info_type {
     long width;
     long height;
@@ -308,6 +300,7 @@ int png_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 	fclose(wpng_info.outfile);
 	return 0;
 }
+#endif /* NO_PNG */
 
 int bmp_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width, char *pixelbuf, int rotate_angle)
 {
@@ -460,7 +453,11 @@ int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, c
 	int error_number;
 	
 	if(image_type == PNG_DATA) {
+#ifndef NO_PNG
 		error_number = png_pixel_plot(symbol, image_height, image_width, pixelbuf, rotate_angle);
+#else
+		return ERROR_INVALID_OPTION;
+#endif
 	} else {
 		error_number = bmp_pixel_plot(symbol, image_height, image_width, pixelbuf, rotate_angle);
 	}
@@ -644,32 +641,30 @@ int maxi_png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 
 void to_latin1(unsigned char source[], unsigned char preprocessed[])
 {
-	int j, i, next, input_length;
+	int j, i, input_length;
 	
 	input_length = ustrlen(source);
 	
 	j = 0;
 	i = 0;
-	next = 0;
-	while (i < input_length) {
+	do {
 		if(source[i] < 128) {
 			preprocessed[j] = source[i];
 			j++;
-			next = i + 1;
+			i++;
 		} else {
 			if(source[i] == 0xC2) {
 				preprocessed[j] = source[i + 1];
 				j++;
-				next = i + 2;
+				i += 2;
 			}
 			if(source[i] == 0xC3) {
 				preprocessed[j] = source[i + 1] + 64;
 				j++;
-				next = i + 2;
+				i += 2;
 			}
 		}
-		i = next;
-	}
+	} while (i < input_length);
 	preprocessed[j] = '\0';
 	
 	return;
@@ -693,7 +688,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 #else
 	unsigned char* local_text = (unsigned char*)_alloca(ustrlen(symbol->text) + 1);
 #endif
-	
+
 	to_latin1(symbol->text, local_text);
 
 	textdone = 0;
@@ -1088,6 +1083,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 	return error_number;
 }
 
+#ifndef NO_PNG
 int png_handle(struct zint_symbol *symbol, int rotate_angle)
 {
 	int error;
@@ -1100,6 +1096,7 @@ int png_handle(struct zint_symbol *symbol, int rotate_angle)
 	
 	return error;
 }
+#endif /* NO_PNG */
 
 int bmp_handle(struct zint_symbol *symbol, int rotate_angle)
 {

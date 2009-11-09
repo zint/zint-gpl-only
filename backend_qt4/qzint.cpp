@@ -22,7 +22,7 @@ namespace Zint
 
 static const qreal maxi_diagonal=11;
 static const qreal maxi_width=1.73205807568877*maxi_diagonal/2;
-static const char* fontstyle="Ariel";
+static const char* fontstyle="Arial";
 static const int fontPixelSizeSmall=6;
 static const int fontPixelSizeLarge=8;
 
@@ -313,7 +313,7 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 	bool textdone;
 	int comp_offset = 0, xoffset = m_whitespace, j, main_width = 0, addon_text_height = 0;
 	int yoffset = 0;
-	QString caption = (const char*)m_zintSymbol->text;
+	QString caption = QString::fromUtf8((const char *)m_zintSymbol->text, -1);
 	QFont fontSmall(fontstyle);
 	fontSmall.setPixelSize(fontPixelSizeSmall);
 	QFont fontLarge(fontstyle);
@@ -692,7 +692,7 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 	
 	if((caption.isEmpty() == false) && (textdone == false)) {
 		/* Add text to any other symbol */
-		painter.drawText(0, m_zintSymbol->height + yoffset, m_zintSymbol->width, 7,Qt::AlignCenter, caption);
+		painter.drawText(0, m_zintSymbol->height + yoffset, m_zintSymbol->width, 7, Qt::AlignCenter, caption);
 	}
 	painter.restore();
 }

@@ -553,11 +553,6 @@ int code_128(struct zint_symbol *symbol, unsigned char source[], int length)
 	/* Stop character */
 	concat(dest, C128Table[106]);
 	expand(symbol, dest);
-	
-	for(i = 0; i < length; i++) {
-		symbol->text[i] = source[i] ? source[i] : ' ';
-	}
-	symbol->text[length] = '\0';
 	return error_number;
 }
 

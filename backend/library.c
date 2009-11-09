@@ -131,10 +131,10 @@ extern int code_one(struct zint_symbol *symbol, unsigned char source[], int leng
 extern int grid_matrix(struct zint_symbol *symbol, unsigned char source[], int length); /* Grid Matrix */
 
 #ifndef NO_PNG
-int png_handle(struct zint_symbol *symbol, int rotate_angle);
-int bmp_handle(struct zint_symbol *symbol, int rotate_angle);
+extern int png_handle(struct zint_symbol *symbol, int rotate_angle);
 #endif
 
+extern int bmp_handle(struct zint_symbol *symbol, int rotate_angle);
 extern int ps_plot(struct zint_symbol *symbol);
 extern int svg_plot(struct zint_symbol *symbol);
 
@@ -498,12 +498,12 @@ int reduced_charset(struct zint_symbol *symbol, unsigned char *source, int lengt
 		case BARCODE_CODE49: error_number = code_49(symbol, preprocessed, length); break;
 		case BARCODE_CHANNEL: error_number = channel_code(symbol, preprocessed, length); break;
 		case BARCODE_CODEONE: error_number = code_one(symbol, preprocessed, length); break;
-		case BARCODE_DATAMATRIX: error_number = dmatrix(symbol, source, length); break;
-		case BARCODE_PDF417: error_number = pdf417enc(symbol, source, length); break;
-		case BARCODE_PDF417TRUNC: error_number = pdf417enc(symbol, source, length); break;
-		case BARCODE_MICROPDF417: error_number = micro_pdf417(symbol, source, length); break;
-		case BARCODE_MAXICODE: error_number = maxicode(symbol, source, length); break;
-		case BARCODE_AZTEC: error_number = aztec(symbol, source, length); break;
+		case BARCODE_DATAMATRIX: error_number = dmatrix(symbol, preprocessed, length); break;
+		case BARCODE_PDF417: error_number = pdf417enc(symbol, preprocessed, length); break;
+		case BARCODE_PDF417TRUNC: error_number = pdf417enc(symbol, preprocessed, length); break;
+		case BARCODE_MICROPDF417: error_number = micro_pdf417(symbol, preprocessed, length); break;
+		case BARCODE_MAXICODE: error_number = maxicode(symbol, preprocessed, length); break;
+		case BARCODE_AZTEC: error_number = aztec(symbol, preprocessed, length); break;
 	}
 	
 	return error_number;
@@ -607,7 +607,16 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source, int lengt
 			error_number = reduced_charset(symbol, local_source, length);
 			break;
 	}
-
+	
+	if((symbol->symbology == BARCODE_CODE128) || (symbol->symbology == BARCODE_CODE128B)) {
+		for(i = 0; i < length; i++) {
+			if(local_source[i] == '\0') {
+				symbol->text[i] = ' ';
+			} else {
+				symbol->text[i] = local_source[i];
+			}
+		}
+	}
 	
 	if(error_number == 0) {
 		error_number = error_buffer;
@@ -670,7 +679,6 @@ int ZBarcode_Print(struct zint_symbol *symbol, int rotate_angle)
 	return error_number;
 }
 
-#ifndef NO_PNG
 int ZBarcode_Buffer(struct zint_symbol *symbol, int rotate_angle)
 {
 	int error_number;
@@ -691,7 +699,6 @@ int ZBarcode_Buffer(struct zint_symbol *symbol, int rotate_angle)
 	error_tag(symbol->errtxt, error_number);
 	return error_number;
 }
-#endif
 
 int ZBarcode_Print_Rotated(struct zint_symbol *symbol, int rotate_angle) {
 	/* Depreciated - will be removed in later version */
@@ -713,7 +720,6 @@ int ZBarcode_Encode_and_Print(struct zint_symbol *symbol, unsigned char *input, 
 	return error_number;
 }
 
-#ifndef NO_PNG
 int ZBarcode_Encode_and_Buffer(struct zint_symbol *symbol, unsigned char *input, int length, int rotate_angle)
 {
 	int error_number;
@@ -728,7 +734,6 @@ int ZBarcode_Encode_and_Buffer(struct zint_symbol *symbol, unsigned char *input,
 	error_number = ZBarcode_Buffer(symbol, rotate_angle);
 	return error_number;
 }
-#endif
 
 int ZBarcode_Encode_and_Print_Rotated(struct zint_symbol *symbol, unsigned char *input, int rotate_angle) {
 	/* Depreciated - will be removed in later version */
@@ -803,7 +808,6 @@ int ZBarcode_Encode_File_and_Print(struct zint_symbol *symbol, char *filename, i
 	return ZBarcode_Print(symbol, rotate_angle);
 }
 
-#ifndef NO_PNG
 int ZBarcode_Encode_File_and_Buffer(struct zint_symbol *symbol, char *filename, int rotate_angle)
 {
 	int error_number;
@@ -817,4 +821,3 @@ int ZBarcode_Encode_File_and_Buffer(struct zint_symbol *symbol, char *filename, 
 	
 	return ZBarcode_Buffer(symbol, rotate_angle);
 }
-#endif
