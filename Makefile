@@ -7,10 +7,6 @@ zint:
 	$(MAKE) -C backend/
 	$(MAKE) -C frontend/
 
-zint_noqr:
-	$(MAKE) NO_QR=true -C backend/
-	$(MAKE) -C frontend/
-
 install:
 	$(MAKE) install -C backend/
 	$(MAKE) install -C frontend/
