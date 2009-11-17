@@ -55,7 +55,7 @@ all: $(DLL) $(STATLIB)
 	 
 $(DLL):$(DLL_OBJ)
 	@echo Linking $@...
-	o2dll.sh -o $@ $(DLL_OBJ) $(LIBS) #-version-info 2:2:0 -version-number 2:2:0
+	o2dll.sh -o $@ $(DLL_OBJ) $(LIBS)
 
 $(STATLIB): $(LIB_OBJ)
 	@echo Linking $@...

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="windows-1250"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="libzint"
-	ProjectGUID="{63287BBA-3B4C-44A8-B538-B2E8530B2BE6}"
-	RootNamespace="libzint"
+	ProjectGUID="{5C08DC40-8F7D-475E-AA3C-814DED735A4B}"
+	RootNamespace="libzint_png_qr"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -41,8 +41,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=""
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;ZINT_VERSION=&quot;\&quot;2.1.3\&quot;&quot;;BUILD_ZINT_DLL;NO_PNG;NO_QR"
+				AdditionalIncludeDirectories="d:\opt\include"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;ZINT_VERSION=&quot;\&quot;2.3.0\&quot;&quot;;BUILD_ZINT_DLL;ZLIB_DLL;PNG_DLL"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="3"
@@ -68,9 +68,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
+				AdditionalDependencies="libpng13d.lib zlib1d.lib"
 				OutputFile="$(OutDir)\zintd.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="d:\opt\lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -124,7 +125,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="false"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;ZINT_VERSION=&quot;\&quot;2.1.3\&quot;&quot;;BUILD_ZINT_DLL;NO_PNG;NO_QR"
+				AdditionalIncludeDirectories="d:\opt\include"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;ZINT_VERSION=&quot;\&quot;2.3.0\&quot;&quot;;BUILD_ZINT_DLL;ZLIB_DLL;PNG_DLL"
 				StringPooling="true"
 				ExceptionHandling="0"
 				RuntimeLibrary="2"
@@ -149,8 +151,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
+				AdditionalDependencies="libpng13.lib zlib1.lib"
 				OutputFile="$(OutDir)\zint.dll"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="d:\opt\lib"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -174,6 +178,76 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release_LIB|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="4"
+			CharacterSet="2"
+			WholeProgramOptimization="0"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				EnableIntrinsicFunctions="false"
+				AdditionalIncludeDirectories="d:\opt\include"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;ZINT_VERSION=&quot;\&quot;2.3.0\&quot;&quot;"
+				StringPooling="true"
+				ExceptionHandling="0"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="false"
+				RuntimeTypeInfo="false"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				DebugInformationFormat="0"
+				CompileAs="2"
+				DisableSpecificWarnings="4018;4244;4305"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile="$(OutDir)\libzintMD.lib"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -235,6 +309,14 @@
 			<File
 				RelativePath="..\backend\dllversion.c"
 				>
+				<FileConfiguration
+					Name="Release_LIB|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\backend\dm200.c"
@@ -242,6 +324,10 @@
 			</File>
 			<File
 				RelativePath="..\backend\dmatrix.c"
+				>
+			</File>
+			<File
+				RelativePath="..\backend\gridmtx.c"
 				>
 			</File>
 			<File
@@ -269,15 +355,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\backend\micqr.c"
-				>
-			</File>
-			<File
 				RelativePath="..\backend\pdf417.c"
 				>
 			</File>
 			<File
 				RelativePath="..\backend\plessey.c"
+				>
+			</File>
+			<File
+				RelativePath="..\backend\png.c"
 				>
 			</File>
 			<File
@@ -351,6 +437,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\backend\gb2312.h"
+				>
+			</File>
+			<File
+				RelativePath="..\backend\gridmtx.h"
+				>
+			</File>
+			<File
 				RelativePath="..\backend\gs1.h"
 				>
 			</File>
@@ -367,7 +461,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\backend\micqr.h"
+				RelativePath="..\backend\ms_stdint.h"
 				>
 			</File>
 			<File
@@ -375,7 +469,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\backend\qr.h"
+				>
+			</File>
+			<File
 				RelativePath="..\backend\reedsol.h"
+				>
+			</File>
+			<File
+				RelativePath="..\backend\resource.h"
 				>
 			</File>
 			<File
@@ -397,8 +499,16 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath="..\backend\zint.rc"
+				RelativePath="..\backend\libzint.rc"
 				>
+				<FileConfiguration
+					Name="Release_LIB|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCResourceCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 		</Filter>
 	</Files>

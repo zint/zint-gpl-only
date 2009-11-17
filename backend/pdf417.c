@@ -30,7 +30,7 @@
    symbol->option_2 is used to adjust the width of the resulting symbol (i.e. the
    number of codeword columns not including row start and end data) */
 
-/* @(#) $Id: pdf417.c,v 1.15 2009/10/06 19:31:43 hooper114 Exp $ */
+/* @(#) $Id: pdf417.c,v 1.16 2009/11/17 22:36:04 hooper114 Exp $ */
 
 #include <stdio.h>
 #include <string.h>
@@ -294,10 +294,8 @@ void textprocess(int *chainemc, int *mclength, char chaine[], int start, int len
 		wnet++;
 	}
 	/* Now translate the string chainet into codewords */
-	if (block > 0) {
-		chainemc[*(mclength)] = 900;
-		*(mclength) = *(mclength) + 1;
-	}
+	chainemc[*(mclength)] = 900;
+	*(mclength) = *(mclength) + 1;
 	
 	for(j = 0; j < wnet; j+= 2) {
 		int cw_number;

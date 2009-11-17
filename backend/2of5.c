@@ -23,7 +23,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "common.h"
-
+#ifdef _MSC_VER
+#include <malloc.h>
+#endif
 
 static char *C25MatrixTable[10] = {"113311", "311131", "131131", "331111", "113131", "313111",
 	"133111", "111331", "311311", "131311"};

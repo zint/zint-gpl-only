@@ -132,6 +132,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 	connect(btnMoreData, SIGNAL(clicked( bool )), SLOT(open_data_dialog()));
 	connect(btnSequence, SIGNAL(clicked( bool )), SLOT(open_sequence_dialog()));
 	connect(chkHRTHide, SIGNAL(stateChanged( int )), SLOT(update_preview()));
+	connect(btnZoomIn, SIGNAL(clicked(void)), SLOT(zoomIn(void)));
+	connect(btnZoomOut, SIGNAL(clicked(void)), SLOT(zoomOut(void)));
+	connect(btnRotateLeft, SIGNAL(clicked(void)), SLOT(rotateLeft(void)));
+	connect(btnRotatRight, SIGNAL(clicked(void)), SLOT(rotateRight(void)));
 }
 
 MainWindow::~MainWindow()
@@ -848,4 +852,23 @@ void MainWindow::update_preview()
 	view->scene()->update();
 }
 
-
+void
+MainWindow::zoomIn(void)
+{
+	scaleSlider->setValue(scaleSlider->value() + scaleSlider->singleStep());
+}
+void
+MainWindow::zoomOut(void)
+{
+	scaleSlider->setValue(scaleSlider->value() - scaleSlider->singleStep());
+}
+void
+MainWindow::rotateLeft(void)
+{
+	rotateSlider->setValue(rotateSlider->value() - rotateSlider->singleStep());
+}
+void
+MainWindow::rotateRight(void)
+{
+	rotateSlider->setValue(rotateSlider->value() + rotateSlider->singleStep());
+}
