@@ -157,7 +157,7 @@ int estimate_binary_length(char mode[], int length, int gs1)
 	return count;
 }
 
-void qr_binary(int datastream[], int version, int target_binlen, char mode[], int jisdata[], int length, int gs1)
+void qr_binary(int datastream[], int version, int target_binlen, char mode[], int jisdata[], int length, int gs1, int est_binlen)
 {
 	/* Convert input data to a binary stream and add padding */
 	int position = 0, debug = 0;
@@ -167,9 +167,9 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 	int toggle, percent;
 	
 #ifndef _MSC_VER
-	char binary[target_binlen * 8];
+	char binary[est_binlen + 12];
 #else
-	char* binary = (char *)_alloca(target_binlen * 8);
+	char* binary = (char *)_alloca(est_binlen + 12);
 #endif
 	strcpy(binary, "");
 	
@@ -1241,7 +1241,7 @@ int qr_code(struct zint_symbol *symbol, unsigned char source[], int length)
 	int* fullstream = (int *)_alloca((qr_total_codewords[version - 1] + 1) * sizeof(int));
 #endif
 
-	qr_binary(datastream, version, target_binlen, mode, jisdata, length, gs1);
+	qr_binary(datastream, version, target_binlen, mode, jisdata, length, gs1, est_binlen);
 	add_ecc(fullstream, datastream, version, target_binlen, blocks);
 	
 	size = qr_sizes[version - 1];

@@ -9,7 +9,7 @@
 ZINT_VERSION:=-DZINT_VERSION=\"2.3.0\"
 
 CC := gcc
-CFLAGS := -D_WIN32 -O2 -fms-extensions -mms-bitfields -fno-exceptions -fomit-frame-pointer -Wall
+CFLAGS := -D_WIN32 -O2 -fms-extensions -mms-bitfields -fno-exceptions -fomit-frame-pointer -Wall -I../backend
 prefix := /mingw
 bindir := $(prefix)/bin
 DESTDIR :=
@@ -20,10 +20,10 @@ all: zint zint_static
 	windres -O coff --input-format=rc -i $< -o $@
 
 zint: main.c zint.res
-	$(CC) $(CFLAGS) -DZINT_DLL -DQRENCODE_DLL -DPNG_DLL -DZLIB_DLL $(ZINT_VERSION)  $? zint.res -o $@ -lzint
+	$(CC) $(CFLAGS) -DZINT_DLL -DPNG_DLL -DZLIB_DLL $(ZINT_VERSION)  $? zint.res -o $@ -L../backend  -lzint
 
 zint_static: main.c zint.res
-	$(CC) -static $(CFLAGS) $(ZINT_VERSION) $? zint.res -o $@ -lzint -lqrencode -lpng -lz
+	$(CC) -static $(CFLAGS) $(ZINT_VERSION) $? zint.res -o $@ -L../backend -lzint -lpng -lz
 
 .PHONY: install uninstall clean dist
 

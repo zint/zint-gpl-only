@@ -1,5 +1,5 @@
 Name: zint
-Version: 2.2
+Version: 2.3
 Release: 1
 Summary: A barcode encoding library.
 Summary(ru_RU.UTF8): A barcode encoding library.

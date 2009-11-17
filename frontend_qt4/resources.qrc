@@ -1,10 +1,10 @@
 <!DOCTYPE RCC><RCC version="1.0">
-<qresource prefix="/">
-    <file>zoomin.png</file>
-    <file>zoomout.png</file>
-    <file>rotateleft.png</file>
-    <file>rotateright.png</file>
-    <file>zico.png</file>
+  <qresource>
+    <file>images/zoomout.png</file>
+    <file>images/rotateleft.png</file>
+    <file>images/rotateright.png</file>
+    <file>images/zico.png</file>
+    <file>images/zoomin.png</file>
     <file>grpAztec.ui</file>
     <file>grpC39.ui</file>
     <file>grpDM.ui</file>
@@ -21,5 +21,5 @@
     <file>grpCodeOne.ui</file>
     <file>grpC49.ui</file>
     <file>grpGrid.ui</file>
-</qresource>
+  </qresource>
 </RCC>
