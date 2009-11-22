@@ -1,8 +1,0 @@
-#!/bin/sh
-
-qmake -set ZINT_INSTALL_LIBS /usr/local/lib
-qmake -set ZINT_INSTALL_HEADERS /usr/local/include
-
-qmake && make && make install
-
-ldconfig
