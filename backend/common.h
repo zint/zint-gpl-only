@@ -41,7 +41,7 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-extern const int ustrlen(unsigned char source[]);
+extern int ustrlen(unsigned char source[]);
 extern void ustrcpy(unsigned char target[], unsigned char source[]);
 extern void concat(char dest[], char source[]);
 extern void uconcat(unsigned char dest[], unsigned char source[]);

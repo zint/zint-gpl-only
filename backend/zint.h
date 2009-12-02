@@ -178,7 +178,8 @@ struct zint_symbol {
 #endif
 
 ZINT_EXTERN struct zint_symbol *ZBarcode_Create(void);
-ZINT_EXTERN int ZBarcode_Delete(struct zint_symbol *symbol);
+ZINT_EXTERN void ZBarcode_Clear(struct zint_symbol *symbol);
+ZINT_EXTERN void ZBarcode_Delete(struct zint_symbol *symbol);
 
 ZINT_EXTERN int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input, int length);
 ZINT_EXTERN int ZBarcode_Encode_File(struct zint_symbol *symbol, char *filename);
@@ -187,7 +188,7 @@ ZINT_EXTERN int ZBarcode_Encode_and_Print(struct zint_symbol *symbol, unsigned c
 ZINT_EXTERN int ZBarcode_Encode_File_and_Print(struct zint_symbol *symbol, char *filename, int rotate_angle);
 
 ZINT_EXTERN int ZBarcode_Buffer(struct zint_symbol *symbol, int rotate_angle);
-ZINT_EXTERN int ZBarcide_Encode_and_Buffer(struct zint_symbol *symbol, unsigned char *input, int length, int rotate_angle);
+ZINT_EXTERN int ZBarcode_Encode_and_Buffer(struct zint_symbol *symbol, unsigned char *input, int length, int rotate_angle);
 ZINT_EXTERN int ZBarcode_Encode_File_and_Buffer(struct zint_symbol *symbol, char *filename, int rotate_angle);
 
 ZINT_EXTERN int ZBarcode_ValidID(int symbol_id);

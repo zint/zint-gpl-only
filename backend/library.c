@@ -67,11 +67,30 @@ struct zint_symbol *ZBarcode_Create()
 	return symbol;
 }
 
-
-int ZBarcode_Delete(struct zint_symbol *symbol)
+void ZBarcode_Clear(struct zint_symbol *symbol)
 {
+	int i, j;
+	
+	for(i = 0; i < symbol->rows; i++) {
+		for(j = 0; j < symbol->width; j++) {
+			unset_module(symbol, i, j);
+		}
+	}
+	symbol->rows = 0;
+	symbol->width = 0;
+	symbol->text[0] = '\0';
+	symbol->errtxt[0] = '\0';
+	if (symbol->bitmap != NULL)
+		free(symbol->bitmap);
+	symbol->bitmap_width = 0;
+	symbol->bitmap_height = 0;
+}
+
+void ZBarcode_Delete(struct zint_symbol *symbol)
+{
+	if (symbol->bitmap != NULL)
+		free(symbol->bitmap);
 	free(symbol);
-	return 0;
 }
 
 extern int eanx(struct zint_symbol *symbol, unsigned char source[], int length); /* EAN system barcodes */

@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #include "common.h"
 
-const int ustrlen(unsigned char data[]) {
+int ustrlen(unsigned char data[]) {
 	/* Local replacement for strlen() with unsigned char strings */
 	int i;
 	for (i=0;data[i];i++);
