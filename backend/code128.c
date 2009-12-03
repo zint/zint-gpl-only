@@ -388,27 +388,59 @@ int code_128(struct zint_symbol *symbol, unsigned char source[], int length)
 	
 	
 	/* So now we know what start character to use - we can get on with it! */
-	switch(set[0])
-	{
-		case 'A': /* Start A */
-			concat(dest, C128Table[103]);
-			values[0] = 103;
-			current_set = 'A';
-			break;
-		case 'B': /* Start B */
-			concat(dest, C128Table[104]);
-			values[0] = 104;
-			current_set = 'B';
-			break;
-		case 'C': /* Start C */
-			concat(dest, C128Table[105]);
-			values[0] = 105;
-			current_set = 'C';
-			break;
+	if(symbol->output_options & READER_INIT) {
+		/* Reader Initialisation mode */
+		switch(set[0]) {
+			case 'A': /* Start A */
+				concat(dest, C128Table[103]);
+				values[0] = 103;
+				current_set = 'A';
+				concat(dest, C128Table[96]); /* FNC3 */
+				values[1] = 96;
+				bar_characters++;
+				break;
+			case 'B': /* Start B */
+				concat(dest, C128Table[104]);
+				values[0] = 104;
+				current_set = 'B';
+				concat(dest, C128Table[96]); /* FNC3 */
+				values[1] = 96;
+				bar_characters++;
+				break;
+			case 'C': /* Start C */
+				concat(dest, C128Table[104]); /* Start B */
+				values[0] = 105;
+				concat(dest, C128Table[96]); /* FNC3 */
+				values[1] = 96;
+				oncat(dest, C128Table[99]); /* Code C */
+				values[2] = 99;
+				bar_characters += 2;
+				current_set = 'C';
+				break;
+		}
+	} else {
+		/* Normal mode */
+		switch(set[0]) {
+			case 'A': /* Start A */
+				concat(dest, C128Table[103]);
+				values[0] = 103;
+				current_set = 'A';
+				break;
+			case 'B': /* Start B */
+				concat(dest, C128Table[104]);
+				values[0] = 104;
+				current_set = 'B';
+				break;
+			case 'C': /* Start C */
+				concat(dest, C128Table[105]);
+				values[0] = 105;
+				current_set = 'C';
+				break;
+		}
 	}
 	bar_characters++;
 	last_set = set[0];
-
+	
 	if(fset[0] == 'F') {
 		switch(current_set) {
 			case 'A':

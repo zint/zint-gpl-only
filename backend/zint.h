@@ -147,6 +147,7 @@ struct zint_symbol {
 #define BARCODE_BIND		2
 #define BARCODE_BOX		4
 #define BARCODE_STDOUT		8
+#define READER_INIT		16
 
 #define DATA_MODE	0
 #define UNICODE_MODE	1

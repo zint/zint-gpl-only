@@ -403,18 +403,31 @@ int code16k(struct zint_symbol *symbol, unsigned char source[], int length)
 		case 'C': m = 2; break;
 	}
 	
-	if(gs1) {
-		/* Integrate FNC1 */
-		switch(set[0]) {
-			case 'B': m = 3; break;
-			case 'C': m = 4; break;
+	if(symbol->output_options & READER_INIT) {
+		if(m == 2) { m = 5; }
+		if(gs1) {
+			strcpy(symbol->errtxt, "Cannot use both GS1 mode and Reader Initialisation");
+			return ERROR_INVALID_OPTION;
+		} else {
+			if((set[0] == 'B') && (set[1] == 'C')) { m = 6; }
 		}
+		values[bar_characters] = (7 * (rows_needed - 2)) + m; /* see 4.3.4.2 */
+		values[bar_characters + 1] = 96; /* FNC3 */
+		bar_characters += 2;
 	} else {
-		if((set[0] == 'B') && (set[1] == 'C')) { m = 5; }
-		if(((set[0] == 'B') && (set[1] == 'B')) && (set[2] == 'C')) { m = 6; }
+		if(gs1) {
+			/* Integrate FNC1 */
+			switch(set[0]) {
+				case 'B': m = 3; break;
+				case 'C': m = 4; break;
+			}
+		} else {
+			if((set[0] == 'B') && (set[1] == 'C')) { m = 5; }
+			if(((set[0] == 'B') && (set[1] == 'B')) && (set[2] == 'C')) { m = 6; }
+		}
+		values[bar_characters] = (7 * (rows_needed - 2)) + m; /* see 4.3.4.2 */
+		bar_characters++;
 	}
-	values[bar_characters] = (7 * (rows_needed - 2)) + m; /* see 4.3.4.2 */
-	bar_characters++;
 
 	current_set = set[0];
 	f_state = 0; /* f_state remembers if we are in Extended ASCII mode (value 1) or
