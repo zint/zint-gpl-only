@@ -366,7 +366,7 @@ int kix_code(struct zint_symbol *symbol, unsigned char source[], int length)
 	char height_pattern[50], localstr[13];
 	unsigned int loopey;
 	int writer, i, h;
-	int error_number, /* zeroes; */
+	int error_number; /* zeroes; */
 	strcpy(height_pattern, "");
 
 	error_number = 0;
