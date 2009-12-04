@@ -577,6 +577,13 @@ int maxicode(struct zint_symbol *symbol, unsigned char source[], int length)
 	}
 	memset(maxi_codeword, 0, sizeof(maxi_codeword));
 	
+	if(symbol->output_options & READER_INIT) { mode = 6; }
+	
+	if((mode == 6) && (symbol->input_mode == GS1_MODE)) {
+		strcpy(symbol->errtxt, "Cannot encode GS1 and Reader Initialisation at the same time");
+		return ERROR_INVALID_OPTION;
+	}
+	
 	if(mode == -1) { /* If mode is unspecified */
 		lp = strlen(symbol->primary);
 		if(lp == 0) {

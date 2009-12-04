@@ -93,7 +93,7 @@ int character_subset_select(unsigned char source[], int input_position) {
 	return MODEB;
 }
 
-int data_encode_blockf(unsigned char source[],  int input_length, int subset_selector[], int blockmatrix[][62], int *columns_needed, int *rows_needed, int *final_mode, int gs1)
+int data_encode_blockf(unsigned char source[],  int input_length, int subset_selector[], int blockmatrix[][62], int *columns_needed, int *rows_needed, int *final_mode, int gs1, int reader)
 {
 	int i, j, input_position, current_mode, current_row, error_number;
 	int column_position, c, done, exit_status;
@@ -118,6 +118,12 @@ int data_encode_blockf(unsigned char source[],  int input_length, int subset_sel
 			if((current_row == 0) && gs1) {
 				/* Section 4.4.7.1 */
 				blockmatrix[current_row][column_position] = 102; /* FNC1 */
+				column_position++;
+				c--;
+			}
+			if((current_row == 0) && reader) {
+				/* Reader Initialise (4.4.7.3) */
+				blockmatrix[current_row][column_position] = 96; /* FNC3 */
 				column_position++;
 				c--;
 			}
@@ -578,7 +584,7 @@ int codablock(struct zint_symbol *symbol, unsigned char source[], int length)
 	int subset_selector[44], row_indicator[44], row_check[44];
 	long int k1_sum, k2_sum;
 	int k1_check, k2_check;
-	int gs1;
+	int gs1, reader;
 	
 	error_number = 0;
 	input_length = length;
@@ -590,6 +596,11 @@ int codablock(struct zint_symbol *symbol, unsigned char source[], int length)
 	}
 	
 	if(symbol->input_mode == GS1_MODE) { gs1 = 1; } else { gs1 = 0; }
+	if(symbol->output_options & READER_INIT) { reader = 1; } else { reader = 0; }
+	if((gs1 == 1) && (reader == 1)) {
+		strcpy(symbol->errtxt, "Cannot encode GS1 data and Reader Initialise in the same symbol");
+		return ERROR_INVALID_OPTION;
+	}
 	
 	/* Make a guess at how many characters will be needed to encode the data */
 	estimate_codelength = 0.0;
@@ -622,7 +633,7 @@ int codablock(struct zint_symbol *symbol, unsigned char source[], int length)
 	}
 	
 	/* Encode the data */
-	error_number = data_encode_blockf(source, input_length, subset_selector, blockmatrix, &columns_needed, &rows_needed, &final_mode, gs1);
+	error_number = data_encode_blockf(source, input_length, subset_selector, blockmatrix, &columns_needed, &rows_needed, &final_mode, gs1, reader);
 	if(error_number > 0) {
 		if(error_number == ERROR_TOO_LONG) {
 			strcpy(symbol->errtxt, "Input data too long");
