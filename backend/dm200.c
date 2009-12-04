@@ -369,6 +369,17 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 		if(debug) printf("FN1 ");
 	} /* FNC1 */
 	
+	if(symbol->output_options & READER_INIT) {
+		if(gs1) {
+			strcpy(symbol->errtxt, "Cannot encode in GS1 mode and Reader Initialisation at the same time");
+			return ERROR_INVALID_OPTION;
+		} else {
+			target[tp] = 234; tp++; /* Reader Programming */
+			concat(binary, " ");
+			if(debug) printf("RP ");
+		}
+	}
+	
 	while (sp < inputlen) {
 		
 		current_mode = next_mode;

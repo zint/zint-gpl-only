@@ -30,7 +30,7 @@
    symbol->option_2 is used to adjust the width of the resulting symbol (i.e. the
    number of codeword columns not including row start and end data) */
 
-/* @(#) $Id: pdf417.c,v 1.16 2009/11/17 22:36:04 hooper114 Exp $ */
+/* @(#) $Id: pdf417.c,v 1.17 2009/12/04 23:18:48 hooper114 Exp $ */
 
 #include <stdio.h>
 #include <string.h>
@@ -482,6 +482,10 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
 	/* 541 - now compress the data */
 	indexchaine = 0;
 	mclength = 0;
+	if(symbol->output_options & READER_INIT) {
+		chainemc[mclength] = 921; /* Reader Initialisation */
+		mclength++;
+	}
 	for(i = 0; i < indexliste; i++) {
 		switch(liste[1][i]) {
 			case TEX: /* 547 - text mode */
@@ -807,6 +811,10 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char source[], int length)
 	/* 541 - now compress the data */
 	indexchaine = 0;
 	mclength = 0;
+	if(symbol->output_options & READER_INIT) {
+		chainemc[mclength] = 921; /* Reader Initialisation */
+		mclength++;
+	}
 	for(i = 0; i < indexliste; i++) {
 		switch(liste[1][i]) {
 			case TEX: /* 547 - text mode */

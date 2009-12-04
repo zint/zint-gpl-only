@@ -330,7 +330,7 @@ void add_shift_char(char binary[], int shifty)
 	if(glyph & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
 }
 
-int gm_encode(int gbdata[], int length, char binary[])
+int gm_encode(int gbdata[], int length, char binary[], int reader)
 {
 	/* Create a binary stream representation of the input data.
 	   7 sets are defined - Chinese characters, Numerals, Lower case letters, Upper case letters,
@@ -349,6 +349,10 @@ int gm_encode(int gbdata[], int length, char binary[])
 	current_mode = 0;
 	last_mode = 0;
 	number_pad_posn = 0;
+	
+	if(reader) {
+		concat(binary, "1010"); /* FNC3 - Reader Initialisation */
+	}
 	
 	do {
 		next_mode = seek_forward(gbdata, length, sp, current_mode);
@@ -908,7 +912,7 @@ int grid_matrix(struct zint_symbol *symbol, unsigned char source[], int length)
 	int x, y, i, j, glyph;
 	char binary[9300];
 	int data_cw, input_latch = 0;
-	int word[1460], data_max;
+	int word[1460], data_max, reader = 0;
 	
 #ifndef _MSC_VER
 	int utfdata[length + 1];
@@ -955,7 +959,9 @@ int grid_matrix(struct zint_symbol *symbol, unsigned char source[], int length)
 			break;
 	}
 
-	error_number = gm_encode(gbdata, length, binary);
+	if(symbol->output_options & READER_INIT) reader = 1;
+
+	error_number = gm_encode(gbdata, length, binary, reader);
 	if(error_number != 0) { 
 		strcpy(symbol->errtxt, "Input data too long");
 		return error_number;
