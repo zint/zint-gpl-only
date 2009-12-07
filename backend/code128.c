@@ -412,7 +412,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[], int length)
 				values[0] = 105;
 				concat(dest, C128Table[96]); /* FNC3 */
 				values[1] = 96;
-				oncat(dest, C128Table[99]); /* Code C */
+				concat(dest, C128Table[99]); /* Code C */
 				values[2] = 99;
 				bar_characters += 2;
 				current_set = 'C';
