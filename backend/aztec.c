@@ -653,7 +653,8 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
 	unsigned char desc_data[4], desc_ecc[6];
 	int err_code, ecc_level, compact, data_length, data_maxsize, codeword_size, adjusted_length;
 	int remainder, padbits, count, gs1, adjustment_size;
-	int debug = 0;
+	int debug = 0, reader = 0;
+	int comp_loop = 4;
 
 #ifndef _MSC_VER
         unsigned char local_source[length + 1];
@@ -665,7 +666,12 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
 	memset(adjusted_string,0,20000);
 
 	if(symbol->input_mode == GS1_MODE) { gs1 = 1; } else { gs1 = 0; }
-	/* The following to be replaced by ECI handling */
+	if(symbol->output_options & READER_INIT) { reader = 1; comp_loop = 1; }
+	if((gs1 == 1) && (reader == 1)) {
+		strcpy(symbol->errtxt, "Cannot encode in GS1 and Reader Initialisation mode at the same time");
+		return ERROR_INVALID_OPTION;
+	}
+	
 	switch(symbol->input_mode) {
 		case DATA_MODE:
 		case GS1_MODE:
@@ -726,7 +732,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
 							data_maxsize = Aztec10DataSizes[i - 1];
 						}
 					}
-					for(i = 4; i > 0; i--) {
+					for(i = comp_loop; i > 0; i--) {
 						if((data_length + adjustment_size) < AztecCompact10DataSizes[i - 1]) {
 							layers = i;
 							compact = 1;
@@ -741,7 +747,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
 							data_maxsize = Aztec23DataSizes[i - 1];
 						}
 					}
-					for(i = 4; i > 0; i--) {
+					for(i = comp_loop; i > 0; i--) {
 						if((data_length + adjustment_size) < AztecCompact23DataSizes[i - 1]) {
 							layers = i;
 							compact = 1;
@@ -756,7 +762,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
 							data_maxsize = Aztec36DataSizes[i - 1];
 						}
 					}
-					for(i = 4; i > 0; i--) {
+					for(i = comp_loop; i > 0; i--) {
 						if((data_length + adjustment_size) < AztecCompact36DataSizes[i - 1]) {
 							layers = i;
 							compact = 1;
@@ -771,7 +777,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
 							data_maxsize = Aztec50DataSizes[i - 1];
 						}
 					}
-					for(i = 4; i > 0; i--) {
+					for(i = comp_loop; i > 0; i--) {
 						if((data_length + adjustment_size) < AztecCompact50DataSizes[i - 1]) {
 							layers = i;
 							compact = 1;
@@ -864,6 +870,9 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
 		be encoded in a symbol of the selected size */
 
 	} else { /* The size of the symbol has been specified by the user */
+		if((reader == 1) && ((symbol->option_2 >= 2) && (symbol->option_2 <= 4))) {
+			symbol->option_2 = 5;
+		}
 		if((symbol->option_2 >= 1) && (symbol->option_2 <= 4)) {
 			compact = 1;
 			layers = symbol->option_2;
@@ -947,6 +956,11 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
 			strcpy(symbol->errtxt, "Data too long for specified Aztec Code symbol size");
 			return ERROR_TOO_LONG;
 		}
+	}
+	
+	if(reader && (layers > 22)) {
+		strcpy(symbol->errtxt, "Data too long for reader initialisation symbol");
+		return ERROR_TOO_LONG;
 	}
 	
 	data_blocks = adjusted_length / codeword_size;
@@ -1111,7 +1125,11 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
 		if((layers - 1) & 0x02) { descriptor[0] = '1'; } else { descriptor[0] = '0'; }
 		if((layers - 1) & 0x01) { descriptor[1] = '1'; } else { descriptor[1] = '0'; }
 		/* The next 6 bits represent the number of data blocks minus 1 */
-		if((data_blocks - 1) & 0x20) { descriptor[2] = '1'; } else { descriptor[2] = '0'; }
+		if(reader) {
+			descriptor[2] = '1';
+		} else {
+			if((data_blocks - 1) & 0x20) { descriptor[2] = '1'; } else { descriptor[2] = '0'; }
+		}
 		if((data_blocks - 1) & 0x10) { descriptor[3] = '1'; } else { descriptor[3] = '0'; }
 		if((data_blocks - 1) & 0x08) { descriptor[4] = '1'; } else { descriptor[4] = '0'; }
 		if((data_blocks - 1) & 0x04) { descriptor[5] = '1'; } else { descriptor[5] = '0'; }
@@ -1126,7 +1144,11 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
 		if((layers - 1) & 0x02) { descriptor[3] = '1'; } else { descriptor[3] = '0'; }
 		if((layers - 1) & 0x01) { descriptor[4] = '1'; } else { descriptor[4] = '0'; }
 		/* The next 11 bits represent the number of data blocks minus 1 */
-		if((data_blocks - 1) & 0x400) { descriptor[5] = '1'; } else { descriptor[5] = '0'; }
+		if(reader) {
+			descriptor[5] = '1';
+		} else {
+			if((data_blocks - 1) & 0x400) { descriptor[5] = '1'; } else { descriptor[5] = '0'; }
+		}
 		if((data_blocks - 1) & 0x200) { descriptor[6] = '1'; } else { descriptor[6] = '0'; }
 		if((data_blocks - 1) & 0x100) { descriptor[7] = '1'; } else { descriptor[7] = '0'; }
 		if((data_blocks - 1) & 0x80) { descriptor[8] = '1'; } else { descriptor[8] = '0'; }
