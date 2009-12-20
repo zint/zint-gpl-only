@@ -30,7 +30,7 @@
    symbol->option_2 is used to adjust the width of the resulting symbol (i.e. the
    number of codeword columns not including row start and end data) */
 
-/* @(#) $Id: pdf417.c,v 1.17 2009/12/04 23:18:48 hooper114 Exp $ */
+/* @(#) $Id: pdf417.c,v 1.18 2009/12/20 23:08:04 hooper114 Exp $ */
 
 #include <stdio.h>
 #include <string.h>
@@ -671,7 +671,9 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
 		for(loop = 0; loop < strlen(pattern); loop++) {
 			if(pattern[loop] == '1') { set_module(symbol, i, loop); }
 		}
-		symbol->row_height[i] = 3;
+		if(symbol->height == 0) {
+			symbol->row_height[i] = 3;
+		}
 	}
 	symbol->rows = (mclength / symbol->option_2);
 	symbol->width = strlen(pattern);
@@ -702,19 +704,6 @@ int pdf417enc(struct zint_symbol *symbol, unsigned char source[], int length)
 		strcpy(symbol->errtxt, "Number of columns out of range");
 		symbol->option_2 = 0;
 		error_number = WARN_INVALID_OPTION;
-	}
-
-	/* The following to be replaced by ECI handling */
-	switch(symbol->input_mode) {
-		case DATA_MODE:
-		case GS1_MODE:
-			memcpy(local_source, source, length);
-			local_source[length] = '\0';
-			break;
-		case UNICODE_MODE:
-			error_number = latin1_process(symbol, source, local_source, &length);
-			if(error_number != 0) { return error_number; }
-			break;
 	}
 
 	/* 349 */
