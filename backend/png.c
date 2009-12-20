@@ -486,6 +486,8 @@ int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, c
 		error_number = bmp_pixel_plot(symbol, scale_height, scale_width, scaled_pixelbuf, rotate_angle);
 	}
 	
+	free(scaled_pixelbuf);
+	
 	return error_number;
 }
 
@@ -705,6 +707,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 	float row_height, row_posn;
 	int error_number;
 	int default_text_posn;
+	int next_yposn;
 #ifndef _MSC_VER
 	unsigned char local_text[ustrlen(symbol->text) + 1];
 #else
@@ -816,26 +819,22 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 		default_text_posn = image_height - 17 - symbol->border_width - symbol->border_width;
 	}
 
+	row_posn = textoffset + yoffset;
+	next_yposn = textoffset + yoffset;
+	row_height = 0;
+
 	/* Plot the body of the symbol to the pixel buffer */
 	for(r = 0; r < symbol->rows; r++) {
 		this_row = symbol->rows - r - 1; /* invert r otherwise plots upside down */
+		row_posn += row_height;
+		plot_yposn = next_yposn;
 		if(symbol->row_height[this_row] == 0) {
 			row_height = large_bar_height;
 		} else {
 			row_height = symbol->row_height[this_row];
 		}
-		row_posn = 0;
-		for(i = 0; i < r; i++) {
-			if(symbol->row_height[symbol->rows - i - 1] == 0) {
-				row_posn += large_bar_height;
-			} else {
-				row_posn += symbol->row_height[symbol->rows - i - 1];
-			}
-		}
-		row_posn += (textoffset + yoffset);
-		
-		plot_height = (int)row_height;
-		plot_yposn = (int)row_posn;
+		next_yposn = (int)(row_posn + row_height);
+		plot_height = next_yposn - plot_yposn;
 		
 		i = 0;
 		if(module_is_set(symbol, this_row, 0)) {
