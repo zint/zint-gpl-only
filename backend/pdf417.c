@@ -30,7 +30,7 @@
    symbol->option_2 is used to adjust the width of the resulting symbol (i.e. the
    number of codeword columns not including row start and end data) */
 
-/* @(#) $Id: pdf417.c,v 1.18 2009/12/20 23:08:04 hooper114 Exp $ */
+/* @(#) $Id: pdf417.c,v 1.19 2009/12/21 08:16:03 hooper114 Exp $ */
 
 #include <stdio.h>
 #include <string.h>
@@ -686,12 +686,6 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
 int pdf417enc(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	int codeerr, error_number;
-	
-#ifndef _MSC_VER
-        unsigned char local_source[length + 1];
-#else
-        unsigned char* local_source = (unsigned char*)_alloca(length + 1);
-#endif
 
 	error_number = 0;
 	
@@ -707,7 +701,7 @@ int pdf417enc(struct zint_symbol *symbol, unsigned char source[], int length)
 	}
 
 	/* 349 */
-	codeerr = pdf417(symbol, local_source, length);
+	codeerr = pdf417(symbol, source, length);
 	
 	/* 352 */
 	if(codeerr != 0) {
