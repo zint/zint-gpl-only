@@ -30,7 +30,7 @@
    symbol->option_2 is used to adjust the width of the resulting symbol (i.e. the
    number of codeword columns not including row start and end data) */
 
-/* @(#) $Id: pdf417.c,v 1.19 2009/12/21 08:16:03 hooper114 Exp $ */
+/* @(#) $Id: pdf417.c,v 1.20 2009/12/21 08:42:49 hooper114 Exp $ */
 
 #include <stdio.h>
 #include <string.h>
@@ -734,7 +734,7 @@ int pdf417enc(struct zint_symbol *symbol, unsigned char source[], int length)
 }
 
 
-int micro_pdf417(struct zint_symbol *symbol, unsigned char source[], int length)
+int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
 { /* like PDF417 only much smaller! */
 	
 	int i, k, j, indexchaine, indexliste, mode, longueur, mccorrection[50], offset;
@@ -743,12 +743,6 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char source[], int length)
 	int variant, LeftRAPStart, CentreRAPStart, RightRAPStart, StartCluster;
 	int LeftRAP, CentreRAP, RightRAP, Cluster, writer, flip, loop;
 	int debug = 0;
-
-#ifndef _MSC_VER
-        unsigned char chaine[length + 1];
-#else
-        unsigned char* chaine = (unsigned char*)_alloca(length + 1);
-#endif
 	
 	/* Encoding starts out the same as PDF417, so use the same code */
 	codeerr = 0;
@@ -756,7 +750,6 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char source[], int length)
 	/* 456 */
 	indexliste = 0;
 	indexchaine = 0;
-	
 	
 	mode = quelmode(chaine[indexchaine]);
 	
