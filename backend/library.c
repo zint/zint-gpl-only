@@ -664,6 +664,7 @@ int ZBarcode_Print(struct zint_symbol *symbol, int rotate_angle)
 
 #ifndef NO_PNG
 		if(!(strcmp(output, "PNG"))) {
+			if(symbol->scale < 1.0) { symbol->text[0] = '\0'; }
 			error_number = png_handle(symbol, rotate_angle);
 		} else {
 #endif
