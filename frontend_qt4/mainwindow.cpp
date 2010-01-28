@@ -39,7 +39,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 		"Aztec Runes",
 		"Channel Code",
 		"Codabar",
-		"Codablock-F",
 		"Code 11",
 		"Code 128 (ISO 15417)",
 		"Code 16k",
@@ -107,7 +106,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 		bstyle->addItem(metaObject()->enumerator(0).key(i));
 		bstyle->setItemText(i,bstyle_text[i]);
 	}
-	bstyle->setCurrentIndex(10);
+	bstyle->setCurrentIndex(9);
 	change_options();
 	update_preview();
 	view->scene()->addItem(&m_bc);
@@ -344,19 +343,6 @@ void MainWindow::change_options()
 		} 
 		else 
 			m_optionWidget->findChild<QRadioButton*>("radC39HIBC")->setEnabled(true);
-	}
-
-	if(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_CODABLOCKF)
-	{
-		QFile file(":/grpCodablock.ui");
-		if (!file.open(QIODevice::ReadOnly))
-			return;
-		m_optionWidget=uiload.load(&file);
-		file.close();
-		tabMain->insertTab(1,m_optionWidget,tr("Codablock-F"));
-		connect(m_optionWidget->findChild<QObject*>("radCodaStand"), SIGNAL(clicked( bool )), SLOT(update_preview()));
-		connect(m_optionWidget->findChild<QObject*>("radCodaGS1"), SIGNAL(clicked( bool )), SLOT(update_preview()));
-		connect(m_optionWidget->findChild<QObject*>("radCodaHIBC"), SIGNAL(clicked( bool )), SLOT(update_preview()));
 	}
 
 	if(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_CODE16K)

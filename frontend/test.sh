@@ -66,11 +66,11 @@ echo testing Code 128
 zint -o bar20.png -b 20 --height=50 --border=10 -d 'Code 128'
 zint -o bar20.eps -b 20 --height=50 --border=10 -d 'Code 128'
 zint -o bar20.svg -b 20 --height=50 --border=10 -d 'Code 128'
-echo testing Deutshe Post Leitcode
+echo testing Deutsche Post Leitcode
 zint -o bar21.png -b 21 --height=50 --border=10 -d 3210987654321
 zint -o bar21.eps -b 21 --height=50 --border=10 -d 3210987654321
 zint -o bar21.svg -b 21 --height=50 --border=10 -d 3210987654321
-echo testing Deutche Post Identcode
+echo testing Deutsche Post Identcode
 zint -o bar22.png -b 22 --height=50 --border=10 -d 10987654321
 zint -o bar22.eps -b 22 --height=50 --border=10 -d 10987654321
 zint -o bar22.svg -b 22 --height=50 --border=10 -d 10987654321
@@ -93,15 +93,15 @@ echo testing Flattermarken
 zint -o bar28.png -b 28 --height=50 --border=10 -d 87654321
 zint -o bar28.eps -b 28 --height=50 --border=10 -d 87654321
 zint -o bar28.svg -b 28 --height=50 --border=10 -d 87654321
-echo testing GS1 DataBar-14
+echo testing DataBar-14
 zint -o bar29.png -b 29 --height=33 --border=10 -d 2001234567890
 zint -o bar29.eps -b 29 --height=33 --border=10 -d 2001234567890
 zint -o bar29.svg -b 29 --height=33 --border=10 -d 2001234567890
-echo testing GS1 DataBar Limited
+echo testing DataBar Limited
 zint -o bar30.png -b 30 --height=50 --border=10 -w 2 -d 31234567890
 zint -o bar30.eps -b 30 --height=50 --border=10 -w 2 -d 31234567890
 zint -o bar30.svg -b 30 --height=50 --border=10 -w 2 -d 31234567890
-echo testing GS1 DataBar Expanded
+echo testing DataBar Expanded
 zint -o bar31.png -b 31 --height=50 --border=10 -d "[01]90012345678908[3103]001750"
 zint -o bar31.eps -b 31 --height=50 --border=10 -d "[01]90012345678908[3103]001750"
 zint -o bar31.svg -b 31 --height=50 --border=10 -d "[01]90012345678908[3103]001750"
@@ -258,19 +258,19 @@ echo testing Korea Post
 zint -o bar77.png -b 77 --height=50 --border=10 -d 123456
 zint -o bar77.eps -b 77 --height=50 --border=10 -d 123456
 zint -o bar77.svg -b 77 --height=50 --border=10 -d 123456
-echo testing GS1 DataBar Truncated
+echo testing DataBar Truncated
 zint -o bar78.png -b 29 --height=13 --border=10 -d 1234567890
 zint -o bar78.eps -b 29 --height=13 --border=10 -d 1234567890
 zint -o bar78.svg -b 29 --height=13 --border=10 -d 1234567890
-echo testing GS1 DataBar Stacked
+echo testing DataBar Stacked
 zint -o bar79.png -b 79 --border=10 -d 1234567890
 zint -o bar79.eps -b 79 --border=10 -d 1234567890
 zint -o bar79.svg -b 79 --border=10 -d 1234567890
-echo testing GS1 DataBar Stacked Omnidirectional
+echo testing DataBar Stacked Omnidirectional
 zint -o bar80.png -b 80 --height=69 --border=10 -d 3456789012
 zint -o bar80.eps -b 80 --height=69 --border=10 -d 3456789012
 zint -o bar80.svg -b 80 --height=69 --border=10 -d 3456789012
-echo testing GS1 DataBar Expanded Stacked
+echo testing DataBar Expanded Stacked
 zint -o bar81.png -b 81 --border=10 -d "[01]98898765432106[3202]012345[15]991231"
 zint -o bar81.eps -b 81 --border=10 -d "[01]98898765432106[3202]012345[15]991231"
 zint -o bar81.svg -b 81 --border=10 -d "[01]98898765432106[3202]012345[15]991231"
@@ -380,15 +380,15 @@ echo testing UCC/EAN-128 Composite with CC-C
 zint -o bar131a.png -b 131 --height=100 --border=10 --mode=3 --primary="[00]030123456789012340" -d "[02]13012345678909[10]1234567ABCDEFG"
 zint -o bar131a.eps -b 131 --height=100 --border=10 --mode=3 --primary="[00]030123456789012340" -d "[02]13012345678909[10]1234567ABCDEFG"
 zint -o bar131a.svg -b 131 --height=100 --border=10 --mode=3 --primary="[00]030123456789012340" -d "[02]13012345678909[10]1234567ABCDEFG"
-echo testing RSS-14 Composite with CC-A
+echo testing DataBar-14 Composite with CC-A
 zint -o bar132.png -b 132 --height=100 --border=10 --mode=1 --primary=361234567890 -d "[11]990102"
 zint -o bar132.eps -b 132 --height=100 --border=10 --mode=1 --primary=361234567890 -d "[11]990102"
 zint -o bar132.svg -b 132 --height=100 --border=10 --mode=1 --primary=361234567890 -d "[11]990102"
-echo testing RSS Limited Composite with CC-B
+echo testing DataBar Limited Composite with CC-B
 zint -o bar133.png -b 133 --height=100 --border=10 --mode=2 --primary=351234567890 -d "[21]abcdefghijklmnopqrstuv"
 zint -o bar133.eps -b 133 --height=100 --border=10 --mode=2 --primary=351234567890 -d "[21]abcdefghijklmnopqrstuv"
 zint -o bar133.svg -b 133 --height=100 --border=10 --mode=2 --primary=351234567890 -d "[21]abcdefghijklmnopqrstuv"
-echo testing RSS Expanded Composite with CC-A
+echo testing DataBar Expanded Composite with CC-A
 zint -o bar134.png -b 134 --height=100 --border=10 --mode=1 --primary="[01]93712345678904[3103]001234" -d "[91]1A2B3C4D5E"
 zint -o bar134.eps -b 134 --height=100 --border=10 --mode=1 --primary="[01]93712345678904[3103]001234" -d "[91]1A2B3C4D5E"
 zint -o bar134.svg -b 134 --height=100 --border=10 --mode=1 --primary="[01]93712345678904[3103]001234" -d "[91]1A2B3C4D5E"
@@ -400,15 +400,15 @@ echo testing UPC-E Composite with CC-A
 zint -o bar136.png -b 136 --height=100 --border=10 --mode=1 --primary=121230 -d "[15]021231"
 zint -o bar136.eps -b 136 --height=100 --border=10 --mode=1 --primary=121230 -d "[15]021231"
 zint -o bar136.svg -b 136 --height=100 --border=10 --mode=1 --primary=121230 -d "[15]021231"
-echo testing RSS-14 Stacked Composite with CC-A
+echo testing DataBar-14 Stacked Composite with CC-A
 zint -o bar137.png -b 137 --border=10 --mode=1 --primary=341234567890 -d "[17]010200"
 zint -o bar137.eps -b 137 --border=10 --mode=1 --primary=341234567890 -d "[17]010200"
 zint -o bar137.svg -b 137 --border=10 --mode=1 --primary=341234567890 -d "[17]010200"
-echo testing RSS-14 Stacked Omnidirectional Composite with CC-A
+echo testing DataBar-14 Stacked Omnidirectional Composite with CC-A
 zint -o bar138.png -b 138 --border=10 --mode=1 --primary=341234567890 -d "[17]010200"
 zint -o bar138.eps -b 138 --border=10 --mode=1 --primary=341234567890 -d "[17]010200"
 zint -o bar138.svg -b 138 --border=10 --mode=1 --primary=341234567890 -d "[17]010200"
-echo testing RSS Expanded Stacked Composite with CC-A
+echo testing DataBar Expanded Stacked Composite with CC-A
 zint -o bar139.png -b 139 --height=150 --border=10 --mode=1 --primary="[01]00012345678905[10]ABCDEF" -d "[21]12345678"
 zint -o bar139.eps -b 139 --height=150 --border=10 --mode=1 --primary="[01]00012345678905[10]ABCDEF" -d "[21]12345678"
 zint -o bar139.svg -b 139 --height=150 --border=10 --mode=1 --primary="[01]00012345678905[10]ABCDEF" -d "[21]12345678"
