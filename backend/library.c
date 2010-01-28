@@ -127,7 +127,7 @@ extern int code16k(struct zint_symbol *symbol, unsigned char source[], int lengt
 extern int pdf417enc(struct zint_symbol *symbol, unsigned char source[], int length); /* PDF417 */
 extern int dmatrix(struct zint_symbol *symbol, unsigned char source[], int length); /* Data Matrix (IEC16022) */
 extern int qr_code(struct zint_symbol *symbol, unsigned char source[], int length); /* QR Code */
-extern int micro_pdf417(struct zint_symbol *symbol, unsigned char source[], int length); /* Micro PDF417 */
+extern int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length); /* Micro PDF417 */
 extern int maxicode(struct zint_symbol *symbol, unsigned char source[], int length); /* Maxicode */
 extern int rss14(struct zint_symbol *symbol, unsigned char source[], int length); /* RSS-14 */
 extern int rsslimited(struct zint_symbol *symbol, unsigned char source[], int length); /* RSS Limited */
@@ -136,7 +136,6 @@ extern int composite(struct zint_symbol *symbol, unsigned char source[], int len
 extern int kix_code(struct zint_symbol *symbol, unsigned char source[], int length); /* TNT KIX Code */
 extern int aztec(struct zint_symbol *symbol, unsigned char source[], int length); /* Aztec Code */
 extern int code32(struct zint_symbol *symbol, unsigned char source[], int length); /* Italian Pharmacode */
-extern int codablock(struct zint_symbol *symbol, unsigned char source[], int length); /* Codablock F */
 extern int daft_code(struct zint_symbol *symbol, unsigned char source[], int length); /* DAFT Code */
 extern int ean_14(struct zint_symbol *symbol, unsigned char source[], int length); /* EAN-14 */
 extern int nve_18(struct zint_symbol *symbol, unsigned char source[], int length); /* NVE-18 */
@@ -249,9 +248,6 @@ int hibc(struct zint_symbol *symbol, unsigned char source[], int length)
 		case BARCODE_HIBC_MICPDF:
 			error_number = micro_pdf417(symbol, (unsigned char *)to_process, length);
 			break;
-		case BARCODE_HIBC_BLOCKF:
-			error_number = codablock(symbol, (unsigned char *)to_process, length);
-			break;
 		case BARCODE_HIBC_AZTEC:
 			error_number = aztec(symbol, (unsigned char *)to_process, length);
 			break;
@@ -283,7 +279,6 @@ int gs1_compliant(int symbology)
 		case BARCODE_CODE16K:
 		case BARCODE_AZTEC:
 		case BARCODE_DATAMATRIX:
-		case BARCODE_CODABLOCKF:
 		case BARCODE_CODEONE:
 		case BARCODE_CODE49:
 		case BARCODE_QRCODE:
@@ -368,7 +363,6 @@ int ZBarcode_ValidID(int symbol_id)
 		case BARCODE_HIBC_QR:
 		case BARCODE_HIBC_PDF:
 		case BARCODE_HIBC_MICPDF:
-		case BARCODE_HIBC_BLOCKF:
 		case BARCODE_HIBC_AZTEC:
 		case BARCODE_AZRUNE:
 		case BARCODE_CODE32:
@@ -500,7 +494,6 @@ int reduced_charset(struct zint_symbol *symbol, unsigned char *source, int lengt
 		case BARCODE_RSS_EXPSTACK_CC: error_number = composite(symbol, preprocessed, length); break;
 		case BARCODE_KIX: error_number = kix_code(symbol, preprocessed, length); break;
 		case BARCODE_CODE32: error_number = code32(symbol, preprocessed, length); break;
-		case BARCODE_CODABLOCKF: error_number = codablock(symbol, preprocessed, length); break;
 		case BARCODE_DAFT: error_number = daft_code(symbol, preprocessed, length); break;
 		case BARCODE_EAN14: error_number = ean_14(symbol, preprocessed, length); break;
 		case BARCODE_AZRUNE: error_number = aztec_runes(symbol, preprocessed, length); break;
@@ -511,7 +504,6 @@ int reduced_charset(struct zint_symbol *symbol, unsigned char *source, int lengt
 		case BARCODE_HIBC_QR: error_number = hibc(symbol, preprocessed, length); break;
 		case BARCODE_HIBC_PDF: error_number = hibc(symbol, preprocessed, length); break;
 		case BARCODE_HIBC_MICPDF: error_number = hibc(symbol, preprocessed, length); break;
-		case BARCODE_HIBC_BLOCKF: error_number = hibc(symbol, preprocessed, length); break;
 		case BARCODE_HIBC_AZTEC: error_number = hibc(symbol, preprocessed, length); break;
 		case BARCODE_JAPANPOST: error_number = japan_post(symbol, preprocessed, length); break;
 		case BARCODE_CODE49: error_number = code_49(symbol, preprocessed, length); break;
@@ -586,6 +578,7 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source, int lengt
 	if((symbol->symbology >= 113) && (symbol->symbology <= 127)) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
 	/* Everything from 128 up is Zint-specific */
 	if(symbol->symbology >= 143) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
+	if((symbol->symbology == BARCODE_CODABLOCKF) || (symbol->symbology == BARCODE_HIBC_BLOCKF)) { strcpy(symbol->errtxt, "Codablock F not supported"); error_number = ERROR_INVALID_OPTION; }
 	
 	if(error_number > 4) {
 		error_tag(symbol->errtxt, error_number);

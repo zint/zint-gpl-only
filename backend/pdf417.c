@@ -30,7 +30,7 @@
    symbol->option_2 is used to adjust the width of the resulting symbol (i.e. the
    number of codeword columns not including row start and end data) */
 
-/* @(#) $Id: pdf417.c,v 1.20 2009/12/21 08:42:49 hooper114 Exp $ */
+/* @(#) $Id: pdf417.c,v 1.21 2010/01/28 17:55:59 hooper114 Exp $ */
 
 #include <stdio.h>
 #include <string.h>

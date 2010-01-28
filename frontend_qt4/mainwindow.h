@@ -46,7 +46,6 @@ public:
 		AZRUNE		=128,
 		CHANNEL		=140,
 		CODABAR		=18,
-		CODABLOCKF	=74,
 		CODE11		=1,
 		CODE128		=20,
 		CODE16K		=23,
