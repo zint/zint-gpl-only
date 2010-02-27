@@ -134,6 +134,8 @@ void dxsmooth(int *indexliste)
 			if((current == SHIFTB) && (length > 1)) { /* Rule 5 */ list[1][i] = LATCHB; current = LATCHB; }
 			if((current == SHIFTA) && (last == LATCHA)) { list[1][i] = LATCHA; current = LATCHA; }
 			if((current == SHIFTB) && (last == LATCHB)) { list[1][i] = LATCHB; current = LATCHB; }
+			if((current == SHIFTA) && (last == LATCHC)) { list[1][i] = LATCHA; current = LATCHA; }
+			if((current == SHIFTB) && (last == LATCHC)) { list[1][i] = LATCHB; current = LATCHB; }
 		} /* Rule 2 is implimented elsewhere, Rule 6 is implied */
 	}
 	grwp(indexliste);

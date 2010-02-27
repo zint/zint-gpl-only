@@ -39,7 +39,7 @@ extern int data_matrix_200(struct zint_symbol *symbol, unsigned char source[], i
 
 void crc_machine(char data_prefix_bitstream[], int scheme, unsigned char source[], int length)
 {
-	int input_length, i;
+	int input_length, i, debug = 0;
 	char xor_register[17];
 	int machine_cycles;
 	char input_bit, out1, out2, out3;
@@ -55,11 +55,11 @@ void crc_machine(char data_prefix_bitstream[], int scheme, unsigned char source[
 #endif
 
 	switch(scheme) {
-		case 11: strcpy(precrc_bitstream, "0000000100000000"); break;
-		case 27: strcpy(precrc_bitstream, "0000001000000000"); break;
-		case 41: strcpy(precrc_bitstream, "0000001100000000"); break;
-		case 37: strcpy(precrc_bitstream, "0000010000000000"); break;
-		default: strcpy(precrc_bitstream, "0000010100000000"); break;
+		case 11: strcpy(precrc_bitstream, "0000000100000000"); if(debug) { printf("Scheme 11\n"); } break;
+		case 27: strcpy(precrc_bitstream, "0000001000000000"); if(debug) { printf("Scheme 27\n"); } break;
+		case 41: strcpy(precrc_bitstream, "0000001100000000"); if(debug) { printf("Scheme 41\n"); } break;
+		case 37: strcpy(precrc_bitstream, "0000010000000000"); if(debug) { printf("Scheme 37\n"); } break;
+		default: strcpy(precrc_bitstream, "0000010100000000"); if(debug) { printf("Scheme DE\n"); } break;
 	}
 	
 	for(i = 0; i < input_length; i++) {
@@ -72,6 +72,7 @@ void crc_machine(char data_prefix_bitstream[], int scheme, unsigned char source[
 		if(source[i] & 0x02) { concat(precrc_bitstream, "1"); } else { concat(precrc_bitstream, "0"); }
 		if(source[i] & 0x01) { concat(precrc_bitstream, "1"); } else { concat(precrc_bitstream, "0"); }
 	}
+	if(debug) { printf("CRC bitstream:\n%s\n", precrc_bitstream); }
 	
 	/* pre-CRC bit stream byte reversal */
 	for(i = 0; i < (input_length + 2); i++) {
@@ -86,6 +87,7 @@ void crc_machine(char data_prefix_bitstream[], int scheme, unsigned char source[
 	}
 	precrc_bitstream_reversed[strlen(precrc_bitstream)] = '\0';
 	machine_cycles = strlen(precrc_bitstream_reversed);
+	if(debug) { printf("Reversed CRC bitstream:\n%s\n", precrc_bitstream_reversed); }
 	
 	/* Start up the machine */
 	for(i = 0; i < 16; i++) {
@@ -123,6 +125,7 @@ void crc_machine(char data_prefix_bitstream[], int scheme, unsigned char source[
 		data_prefix_bitstream[i + 5] = xor_register[15 - i];
 	}
 	data_prefix_bitstream[16 + 5] = '\0';
+	if(debug) { printf("Data Prefix:\n%s\n", data_prefix_bitstream); }
 	
 	return;
 }
@@ -704,10 +707,6 @@ void protect_ecc080(char protected_stream[], char unprotected_stream[])
 {
 	/* ECC 080 - 3-2-11 convolutional code */
 	/* State machine illustrated in figure K2 */
-	/* NOTE: Figure K.2 of ISO/IEC 16022:2006 has an error in that input 2 of gate 1 and input 1 of gate 2 are
-	   both connected to module 2 _and_ module 3 of the top register. This is obviously not correct so I have
-	   made a guess at the correct interpretation and made a comment where a correction may be needed if this
-	   guess is not correct */
 	char top_reg[12];
 	char low_reg[12];
 	char u1, u2;
@@ -743,7 +742,7 @@ void protect_ecc080(char protected_stream[], char unprotected_stream[])
 		
 		gate_input[0] = u1;
 		gate_input[1] = top_reg[0];
-		gate_input[2] = top_reg[3]; /* ? top_reg[2] ? */
+		gate_input[2] = top_reg[2];
 		gate_input[3] = top_reg[4];
 		gate_input[4] = top_reg[5];
 		gate_input[5] = top_reg[6];
@@ -767,7 +766,7 @@ void protect_ecc080(char protected_stream[], char unprotected_stream[])
 		}
 		
 		gate_input[0] = top_reg[0];
-		gate_input[1] = top_reg[2]; /* ? top_reg[3] ? */
+		gate_input[1] = top_reg[3];
 		gate_input[2] = top_reg[4];
 		gate_input[3] = top_reg[7];
 		gate_input[4] = top_reg[8];
