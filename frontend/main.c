@@ -94,6 +94,7 @@ void usage(void)
 		"  --mode=NUMBER         (Maxicode and Composite) Set encoding mode.\n"
 		"  --gs1                 Treat input as GS1 data\n"
 		"  --binary              Treat input as Binary data\n"
+		"  --notext              Remove human readable text\n"
 	, ZINT_VERSION);
 }
 
@@ -119,12 +120,14 @@ int main(int argc, char **argv)
 	int error_number;
 	int rotate_angle;
 	int generated;
+	int suppress_human_readable;
 	
 	error_number = 0;
 	rotate_angle = 0;
 	generated = 0;
 	my_symbol = ZBarcode_Create();
 	my_symbol->input_mode = UNICODE_MODE;
+	suppress_human_readable = 0;
 
 	if(argc == 1) {
 		usage();
@@ -162,6 +165,7 @@ int main(int argc, char **argv)
 			{"kanji", 0, 0, 0},
 			{"sjis", 0, 0, 0},
 			{"binary", 0, 0, 0},
+			{"notext", 0, 0, 0},
 			{0, 0, 0, 0}
 		};
 		c = getopt_long(argc, argv, "htb:w:d:o:i:rcmp", long_options, &option_index);
@@ -204,6 +208,9 @@ int main(int argc, char **argv)
 				}
 				if(!strcmp(long_options[option_index].name, "bg")) {
 					strncpy(my_symbol->bgcolour, optarg, 7);
+				}
+				if(!strcmp(long_options[option_index].name, "notext")) {
+					suppress_human_readable = 1;
 				}
 				if(!strcmp(long_options[option_index].name, "scale")) {
 					my_symbol->scale = (float)(atof(optarg));
@@ -322,7 +329,13 @@ int main(int argc, char **argv)
 				break;
 				
 			case 'd': /* we have some data! */
-				error_number = ZBarcode_Encode_and_Print(my_symbol, (unsigned char*)optarg, strlen(optarg), rotate_angle);
+				error_number = ZBarcode_Encode(my_symbol, (unsigned char*)optarg, strlen(optarg));
+				if(error_number == 0) {
+					if(suppress_human_readable) {
+						my_symbol->text[0] = (unsigned char)'\0';
+					}
+					error_number = ZBarcode_Print(my_symbol, rotate_angle);
+				}
 				generated = 1;
 				if(error_number != 0) {
 					fprintf(stderr, "%s\n", my_symbol->errtxt);
@@ -332,7 +345,13 @@ int main(int argc, char **argv)
 				break;
 				
 			case 'i': /* Take data from file */
-				error_number = ZBarcode_Encode_File_and_Print(my_symbol, optarg, rotate_angle);
+				error_number = ZBarcode_Encode_File(my_symbol, optarg);
+				if(error_number == 0) {
+					if(suppress_human_readable) {
+						my_symbol->text[0] = (unsigned char)'\0';
+					}
+					error_number = ZBarcode_Print(my_symbol, rotate_angle);
+				}
 				generated = 1;
 				if(error_number != 0) {
 					fprintf(stderr, "%s\n", my_symbol->errtxt);
