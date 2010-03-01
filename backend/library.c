@@ -340,7 +340,6 @@ int ZBarcode_ValidID(int symbol_id)
 		case BARCODE_RM4SCC:
 		case BARCODE_DATAMATRIX:
 		case BARCODE_EAN14:
-		case BARCODE_CODABLOCKF:
 		case BARCODE_NVE18:
 		case BARCODE_JAPANPOST:
 		case BARCODE_KOREAPOST:
