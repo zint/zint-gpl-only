@@ -1,4 +1,4 @@
-Zint and libzint 2.3.0
+Zint and libzint 2.3.1
 ----------------------
 Zint is a suite of programs to allow easy encoding of data in any of the wide range of public domain
 barcode standards and to allow integration of this capability into your own programs. This version
@@ -15,11 +15,15 @@ Korea Post Barcode, HIBC Code 128, HIBC Code 39, HIBC Data Matrix, HIBC PDF417, 
 HIBC QR Code, HIBC Codablock-F, HIBC Aztec Code, Japanese Postal Code, Code 49, Channel Code, Code One,
 Grid Matrix, FIM and Flattermarken.
 
-Full documentation is available at project website: http://www.zint.org.uk
-
+          ******************************************************************************
+          *     PLEASE NOTE: This is just a simple guide to getting Zint working.      *
+          *     More complete documentation is available from the project website:     *
+          *                      >>>  http://www.zint.org.uk  <<<                      *
+          ******************************************************************************
 
 PROJECT STATUS
 --------------
+Version 2.3.0:
 This release features a complete rebuild of QR Code and Micro QR Code functionality which now:
 
 * Automatically detects and adjusts to Japanese characters
@@ -28,30 +32,23 @@ This release features a complete rebuild of QR Code and Micro QR Code functional
 
 Also new in this release is Grid Matrix support which similarly supports Chinese character encoding.
 
+Version 2.3.1:
+Correction of some minor bugs in Code 128 and Data Matrix, addition of --notext option to CLI and
+better operation of --scale option which now scales human readable text and MaxiCode.
 
 COMPILING THE CODE
 ------------------
-This package includes files for compiling in a number of ways depending on what functionality you
-want and what platform you are targeting. Zint has been tested on both 32 and 64-bit systems.
-It does not use any unusual memory manipulation and so should easily port to a wide range of hardware.
+The CMake Method: (Linux, BSD and Cygwin)
+The easiest way to configure compilation is to take advantage of the CMake utilities. You will
+need to install CMake first. If no Qt libraries are installed then CMake will not attempt to
+build the Zint Barcode Studio GUI. Similarly if libpng is not detected then CMake will not attempt
+to compile PNG image support.
 
-GNU/Linux and OpenBSD:
-To compile the Zint library for you will need libpng and libz pre-installed. Then:
-
-	make
-	make install
-
-For some distributions it may be necessary to run
-
-	ldconfig
-
-as root before libzint can be used.
-
-To install the GUI interface you will need Qt4 and cmake. Follow these steps:
+Once CMake is installed follow these steps:
 
 	cd build
 	cmake ..
-	make -j2
+	make
 	make install
 
 The command line program can be accessed by typing
@@ -63,18 +60,25 @@ data will be ignored. The GUI can be accessed by typing
 
 	zint-qt
 
+The MakeFile Method:
+(Linux, BSD and MinGW)
+MakeFiles are provided for some systems although this method is depreciated. To compile using
+this method simply run:
+
+	make
+	make install
+
+If compiling on BSD, RHEL or CentOS substitute MakeFile.bsd for the default MakeFiles.
+If compiling on MinGW substitute MakeFile.mingw for the default MakeFiles.
+
 MS Windows:
-On the Windows platform you have the choice of compiling with MinGW or with the native compiler,
-Microsoft Visual C++. To compile with MinGW follow the instructions for Linux above substituting
-the MinGW makefiles for the default Linux ones. For compiling with MS Visual Studio open the
-libzint.vcproj project file in the win32 folder and compile in the usual way.
+Compiling on Cygwin and MinGW are covered above. Compiling with MS Visual Studio is more involved!
+Full instructions are currently not available but will be placed on the project website as soon
+as possible.
 
 Mac OSX:
-HELP NEEDED! It _is_ possible to compile and run Zint on the OSX platform. Unfortunately the
-developers of the Zint package do not have access to OSX. If you have any success with comiling
-Zint on OSX then please send us a description of how you did it so that we can put that
-information here!
-
+Efforts are currently under way to allow compiling on OSX using the CMake method. If you have
+any success with compiling Zint on OSX then please get in touch.
 
 THINGS TO DO
 ------------
@@ -97,7 +101,6 @@ Packaging
 ---------
 	Binary packages are needed for distribution in the following formats
 	* RPMs for various Linux distros (.spec file now available thanks to Radist)
-	* Install binaries for MS Windows (MSVC and MinGW make files now included)
 	* Install binaries for Mac OSX
 
 Translations
