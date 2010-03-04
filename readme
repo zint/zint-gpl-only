@@ -36,13 +36,17 @@ Version 2.3.1:
 Correction of some minor bugs in Code 128 and Data Matrix, addition of --notext option to CLI and
 better operation of --scale option which now scales human readable text and MaxiCode.
 
+SPECIAL NOTE: Codablock-F has now been REMOVED from this project because of problems implimenting
+this standard. For full details see the project website.
+
 COMPILING THE CODE
 ------------------
-The CMake Method: (Linux, BSD and Cygwin)
+The CMake Method:
 The easiest way to configure compilation is to take advantage of the CMake utilities. You will
 need to install CMake first. If no Qt libraries are installed then CMake will not attempt to
 build the Zint Barcode Studio GUI. Similarly if libpng is not detected then CMake will not attempt
-to compile PNG image support.
+to compile PNG image support. This method is recommened in most cases, the notable exception
+being MinGW.
 
 Once CMake is installed follow these steps:
 
@@ -61,24 +65,32 @@ data will be ignored. The GUI can be accessed by typing
 	zint-qt
 
 The MakeFile Method:
-(Linux, BSD and MinGW)
-MakeFiles are provided for some systems although this method is depreciated. To compile using
-this method simply run:
+MakeFiles are provided for some systems although this method is now depreciated. This method compiles
+and installs the library and CLI only. If you have installed Zint using this method before please
+note that the binaries will now install to a different location than version 2.3.0 or earlier
+(/usr/bin rather than /usr/local/bin and /usr/lib rather than /usr/local/lib). This makes
+installation easier on Red Hat based systems (RHEL, CentOS, Fedora etc.) and on BSD-like systems
+(FreeBSD, OpenBSD etc.) and is more correctly in line with the LSB. YOU WILL NEED TO UNINSTALL
+PREVIOUS VERSIONS OF ZINT BEFORE USING THIS METHOD.
+
+To compile using this method simply run:
 
 	make
 	make install
 
-If compiling on BSD, RHEL or CentOS substitute MakeFile.bsd for the default MakeFiles.
-If compiling on MinGW substitute MakeFile.mingw for the default MakeFiles.
+If compiling on MinGW substitute the Makefile.mingw files for the default Makefiles in both the
+/frontend and /backend folders.
 
 MS Windows:
 Compiling on Cygwin and MinGW are covered above. Compiling with MS Visual Studio is more involved!
-Full instructions are currently not available but will be placed on the project website as soon
-as possible.
+Full instructions are currently not ready for publication but will be placed on the project website
+as soon as possible.
 
 Mac OSX:
-Efforts are currently under way to allow compiling on OSX using the CMake method. If you have
-any success with compiling Zint on OSX then please get in touch.
+Efforts are currently under way to ease compiling on OSX using the CMake method. It may be possible
+to compile Zint using methods similar to those given above, but this has not been thoroughly tested
+yet. If you have any success with compiling Zint on OSX then please get in touch. An install binary
+for OSX is also in development.
 
 THINGS TO DO
 ------------
