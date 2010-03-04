@@ -9,10 +9,10 @@
 ZINT_VERSION:=-DZINT_VERSION=\"2.3.1\"
 
 CC := gcc
-INCLUDE := -I/usr/local/include
+INCLUDE := -I/usr/include
 CFLAGS := -g
 
-prefix := /usr/local
+prefix := /usr
 bindir := $(prefix)/bin
 DESTDIR :=
 
