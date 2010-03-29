@@ -1982,7 +1982,7 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int src_len)
 	   elements in the data characters. */
 	checksum = 0;
 	for(i = 0; i < data_chars; i++) {
-		row = weight_rows[(((data_chars - 3) / 2) * 21) + i];
+		row = weight_rows[(((data_chars - 2) / 2) * 21) + i];
 		for(j = 0; j < 8; j++) {
 			checksum += (char_widths[i][j] * checksum_weight_exp[(row * 8) + j]);
 			
