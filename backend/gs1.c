@@ -157,6 +157,14 @@ int gs1_verify(struct zint_symbol *symbol, unsigned char source[], const unsigne
 		data_length[i]--;
 	}
 	
+	for(i = 0; i < ai_count; i++) {
+		if(data_length[i] == 0) {
+			/* No data for given AI */
+			strcpy(symbol->errtxt, "Empty data field in input data");
+			return ERROR_INVALID_DATA;
+		}
+	}
+	
 	error_latch = 0;
 	strcpy(ai_string, "");
 	for(i = 0; i < ai_count; i++) {
