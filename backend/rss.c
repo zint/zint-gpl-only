@@ -1882,7 +1882,9 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 	} else {
 		strcpy(padstring, "001000010000");
 	}
-	padstring[12 - remainder] = '\0';
+	remainder = 12 - remainder;
+	if(remainder == 12) { remainder = 0; }
+	padstring[remainder] = '\0';
 	concat(binary_string, padstring);
 	
 	/* Patch variable length symbol bit field */
