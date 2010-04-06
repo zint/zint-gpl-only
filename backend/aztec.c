@@ -129,16 +129,16 @@ int aztec_text_process(unsigned char source[], const unsigned int src_len, char 
 	}while(i < (maplength - 1));
 	
 	/* look for blocks of characters which use the same table */
-	blocks = 0;
+	blocks = 1;
 	blockmap[0][0] = typemap[0];
 	blockmap[1][0] = 1;
 	for(i = 1; i < maplength; i++) {
 		if(typemap[i] == typemap[i - 1]) {
-			blockmap[1][blocks]++;
+			blockmap[1][blocks - 1]++;
 		} else {
 			blocks++;
-			blockmap[0][blocks] = typemap[i];
-			blockmap[1][blocks] = 1;
+			blockmap[0][blocks - 1] = typemap[i];
+			blockmap[1][blocks - 1] = 1;
 		}
 	}
 	
@@ -148,6 +148,7 @@ int aztec_text_process(unsigned char source[], const unsigned int src_len, char 
 	if(blockmap[0][0] & 8) { blockmap[0][0] = 8; }
 	
 	if(blocks > 1) {
+	  
 		/* look for adjacent blocks which can use the same table (left to right search) */
 		for(i = 1; i < blocks; i++) {
 			if(blockmap[0][i] & blockmap[0][i - 1]) {
@@ -193,7 +194,7 @@ int aztec_text_process(unsigned char source[], const unsigned int src_len, char 
 	
 	/* Put the adjusted block data back into typemap */
 	j = 0;
-	for(i = 0; i <= blocks; i++) {
+	for(i = 0; i < blocks; i++) {
 		if((blockmap[1][i] < 3) && (blockmap[0][i] != 32)) { /* Shift character(s) needed */
 			for(k = 0; k < blockmap[1][i]; k++) {
 				typemap[j + k] = blockmap[0][i] + 64;
@@ -693,6 +694,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
 	}
 	
 	err_code = aztec_text_process(local_source, length, binary_string, gs1);
+	
 
 	if(err_code != 0) {
 		strcpy(symbol->errtxt, "Input too long or too many extended ASCII characters");
@@ -836,18 +838,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
 			adjusted_length = strlen(adjusted_string);
 			adjustment_size = adjusted_length - data_length;
 			
-			if(debug) {
-				printf("Codewords:\n");
-				for(i = 0; i < (adjusted_length / codeword_size); i++) {
-					for(j = 0; j < codeword_size; j++) {
-						printf("%c", adjusted_string[(i * codeword_size) + j]);
-					}
-					printf("\n");
-				}
-			}
-			
-				/* Only important if this loop is repeated */
-			
+			/* Add padding */
 			remainder = adjusted_length % codeword_size;
 			
 			padbits = codeword_size - remainder;
@@ -863,6 +854,16 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
 				if(adjusted_string[i] == '1') { count++; }
 			}
 			if(count == codeword_size) { adjusted_string[adjusted_length - 1] = '0'; } 
+			
+			if(debug) {
+				printf("Codewords:\n");
+				for(i = 0; i < (adjusted_length / codeword_size); i++) {
+					for(j = 0; j < codeword_size; j++) {
+						printf("%c", adjusted_string[(i * codeword_size) + j]);
+					}
+					printf("\n");
+				}
+			}
 			
 		} while(adjusted_length > data_maxsize);
 		/* This loop will only repeat on the rare occasions when the rule about not having all 1s or all 0s
@@ -956,6 +957,17 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
 			strcpy(symbol->errtxt, "Data too long for specified Aztec Code symbol size");
 			return ERROR_TOO_LONG;
 		}
+		
+		if(debug) {
+			printf("Codewords:\n");
+			for(i = 0; i < (adjusted_length / codeword_size); i++) {
+				for(j = 0; j < codeword_size; j++) {
+					printf("%c", adjusted_string[(i * codeword_size) + j]);
+				}
+				printf("\n");
+			}
+		}
+
 	}
 	
 	if(reader && (layers > 22)) {
@@ -1136,6 +1148,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
 		if((data_blocks - 1) & 0x02) { descriptor[6] = '1'; } else { descriptor[6] = '0'; }
 		if((data_blocks - 1) & 0x01) { descriptor[7] = '1'; } else { descriptor[7] = '0'; }
 		descriptor[8] = '\0';
+		if(debug) printf("Mode Message = %s\n", descriptor);
 	} else {
 		/* The first 5 bits represent the number of layers minus 1 */
 		if((layers - 1) & 0x10) { descriptor[0] = '1'; } else { descriptor[0] = '0'; }
@@ -1160,6 +1173,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
 		if((data_blocks - 1) & 0x02) { descriptor[14] = '1'; } else { descriptor[14] = '0'; }
 		if((data_blocks - 1) & 0x01) { descriptor[15] = '1'; } else { descriptor[15] = '0'; }
 		descriptor[16] = '\0';
+		if(debug) printf("Mode Message = %s\n", descriptor);
 	}
 	
 	/* Split into 4-bit codewords */
