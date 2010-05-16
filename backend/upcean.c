@@ -388,6 +388,7 @@ char isbn13_check(unsigned char source[]) /* For ISBN(13) only */
 char isbn_check(unsigned char source[]) /* For ISBN(10) and SBN only */
 {
 	unsigned int i, weight, sum, check, h;
+	char check_char;
 
 	sum = 0;
 	weight = 1;
@@ -400,7 +401,9 @@ char isbn_check(unsigned char source[]) /* For ISBN(10) and SBN only */
 	}
 
 	check = sum % 11;
-	return itoc(check);
+	check_char = itoc(check);
+	if(check == 10) { check_char = 'X'; }
+	return check_char;
 }
 
 int isbn(struct zint_symbol *symbol, unsigned char source[], const unsigned int src_len, char dest[]) /* Make an EAN-13 barcode from an SBN or ISBN */

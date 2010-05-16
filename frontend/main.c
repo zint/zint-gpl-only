@@ -95,6 +95,7 @@ void usage(void)
 		"  --gs1                 Treat input as GS1 data\n"
 		"  --binary              Treat input as Binary data\n"
 		"  --notext              Remove human readable text\n"
+		"  --square              Force Data Matrix symbols to be square\n"
 	, ZINT_VERSION);
 }
 
@@ -120,14 +121,12 @@ int main(int argc, char **argv)
 	int error_number;
 	int rotate_angle;
 	int generated;
-	int suppress_human_readable;
 	
 	error_number = 0;
 	rotate_angle = 0;
 	generated = 0;
 	my_symbol = ZBarcode_Create();
 	my_symbol->input_mode = UNICODE_MODE;
-	suppress_human_readable = 0;
 
 	if(argc == 1) {
 		usage();
@@ -166,6 +165,7 @@ int main(int argc, char **argv)
 			{"sjis", 0, 0, 0},
 			{"binary", 0, 0, 0},
 			{"notext", 0, 0, 0},
+			{"square", 0, 0, 0},
 			{0, 0, 0, 0}
 		};
 		c = getopt_long(argc, argv, "htb:w:d:o:i:rcmp", long_options, &option_index);
@@ -210,7 +210,10 @@ int main(int argc, char **argv)
 					strncpy(my_symbol->bgcolour, optarg, 7);
 				}
 				if(!strcmp(long_options[option_index].name, "notext")) {
-					suppress_human_readable = 1;
+					my_symbol->show_hrt = 0;
+				}
+				if(!strcmp(long_options[option_index].name, "square")) {
+					my_symbol->option_3 = DM_SQUARE;
 				}
 				if(!strcmp(long_options[option_index].name, "scale")) {
 					my_symbol->scale = (float)(atof(optarg));
@@ -331,9 +334,6 @@ int main(int argc, char **argv)
 			case 'd': /* we have some data! */
 				error_number = ZBarcode_Encode(my_symbol, (unsigned char*)optarg, strlen(optarg));
 				if(error_number == 0) {
-					if(suppress_human_readable) {
-						my_symbol->text[0] = (unsigned char)'\0';
-					}
 					error_number = ZBarcode_Print(my_symbol, rotate_angle);
 				}
 				generated = 1;
@@ -347,9 +347,6 @@ int main(int argc, char **argv)
 			case 'i': /* Take data from file */
 				error_number = ZBarcode_Encode_File(my_symbol, optarg);
 				if(error_number == 0) {
-					if(suppress_human_readable) {
-						my_symbol->text[0] = (unsigned char)'\0';
-					}
 					error_number = ZBarcode_Print(my_symbol, rotate_angle);
 				}
 				generated = 1;

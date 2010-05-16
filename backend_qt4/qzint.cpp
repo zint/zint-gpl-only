@@ -65,6 +65,11 @@ void QZint::encode()
 	m_zintSymbol->option_1=m_securityLevel;
 	m_zintSymbol->input_mode = m_input_mode;
 	m_zintSymbol->option_2=m_width;
+	if(m_hidetext) {
+		m_zintSymbol->show_hrt = 0;
+	} else {
+		m_zintSymbol->show_hrt = 1;
+	}
 	if(m_symbol == BARCODE_PDF417) {
 		m_zintSymbol->option_3=m_pdf417CodeWords;
 	} else {
@@ -76,9 +81,6 @@ void QZint::encode()
 	int error = ZBarcode_Encode(m_zintSymbol, (unsigned char*)bstr.data(), bstr.length());
 	if (error > WARN_INVALID_OPTION)
 		m_lastError=m_zintSymbol->errtxt;
-	if(m_hidetext) {
-		m_zintSymbol->text[0] = (unsigned char) '\0';
-	}
 
 	if (m_zintSymbol->symbology == BARCODE_MAXICODE)
 		m_zintSymbol->height = 33;
@@ -259,6 +261,11 @@ bool QZint::save_to_file(QString filename)
 	m_zintSymbol->option_1=m_securityLevel;
 	m_zintSymbol->input_mode = m_input_mode;
 	m_zintSymbol->option_2=m_width;
+	if(m_hidetext) {
+		m_zintSymbol->show_hrt = 0;
+	} else {
+		m_zintSymbol->show_hrt = 1;
+	}
 	if(m_symbol == BARCODE_PDF417) {
 		m_zintSymbol->option_3=m_pdf417CodeWords;
 	} else {
@@ -277,9 +284,6 @@ bool QZint::save_to_file(QString filename)
 	int error = ZBarcode_Encode(m_zintSymbol, (unsigned char*)bstr.data(), bstr.length());
 	if (error > WARN_INVALID_OPTION)
 		m_lastError=m_zintSymbol->errtxt;
-	if(m_hidetext) {
-		m_zintSymbol->text[0] = (unsigned char) '\0';
-	}
 	error = ZBarcode_Print(m_zintSymbol, 0);
 	if (error > WARN_INVALID_OPTION)
 		m_lastError=m_zintSymbol->errtxt;
@@ -573,124 +577,126 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 
 	textdone = false;
 	
-	painter.setFont(fontSmall);
-	if(((m_zintSymbol->symbology == BARCODE_EANX) || (m_zintSymbol->symbology == BARCODE_EANX_CC)) ||
-		(m_zintSymbol->symbology == BARCODE_ISBNX)) {
-		/* Add bridge and format text for EAN */
-		switch(caption.size()) {
-			case 8:
-			case 11:
-			case 14:
-				painter.fillRect(0 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
-				painter.fillRect(2 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
-				painter.fillRect(32 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
-				painter.fillRect(34 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
-				painter.fillRect(64 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
-				painter.fillRect(66 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+	if(m_hidetext == false) {
+		painter.setFont(fontSmall);
+		if(((m_zintSymbol->symbology == BARCODE_EANX) || (m_zintSymbol->symbology == BARCODE_EANX_CC)) ||
+			(m_zintSymbol->symbology == BARCODE_ISBNX)) {
+			/* Add bridge and format text for EAN */
+			switch(caption.size()) {
+				case 8:
+				case 11:
+				case 14:
+					painter.fillRect(0 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+					painter.fillRect(2 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+					painter.fillRect(32 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+					painter.fillRect(34 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+					painter.fillRect(64 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+					painter.fillRect(66 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+					painter.setFont(fontLarge);
+					painter.drawText(3 + xoffset, m_zintSymbol->height + yoffset, 29, 9,Qt::AlignCenter, caption.mid(0,4));
+					painter.drawText(35 + xoffset, m_zintSymbol->height + yoffset, 29, 9,Qt::AlignCenter, caption.mid(4,4));
+					if(caption.size() == 11) { /* EAN-2 */ painter.drawText(76 + xoffset, addon_text_height, 20, 9,Qt::AlignCenter, caption.mid(9,2)); };
+					if(caption.size() == 14) { /* EAN-5 */ painter.drawText(76 + xoffset, addon_text_height, 47, 9,Qt::AlignCenter, caption.mid(9,5)); };
+					painter.setFont(fontSmall);
+					textdone = true;
+					break;
+				case 13:
+				case 16:
+				case 19:
+					painter.fillRect(0 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+					painter.fillRect(2 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+					painter.fillRect(46 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+					painter.fillRect(48 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+					painter.fillRect(92 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+					painter.fillRect(94 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+					painter.setFont(fontLarge);
+					painter.drawText(xoffset - 7, m_zintSymbol->height + yoffset, 7, 9,Qt::AlignCenter, caption.mid(0,1));
+					painter.drawText(3 + xoffset, m_zintSymbol->height + yoffset, 43, 9,Qt::AlignCenter, caption.mid(1,6));
+					painter.drawText(49 + xoffset, m_zintSymbol->height + yoffset, 43, 9,Qt::AlignCenter, caption.mid(7,6));
+					if(caption.size() == 16) { /* EAN-2 */ painter.drawText(104 + xoffset, addon_text_height, 20, 9,Qt::AlignCenter, caption.mid(14,2)); };
+					if(caption.size() == 19) { /* EAN-5 */ painter.drawText(104 + xoffset, addon_text_height, 47, 9,Qt::AlignCenter, caption.mid(14,5)); };
+					painter.setFont(fontSmall);
+					textdone = true;
+					break;
+			}
+			if(textdone == false) {
 				painter.setFont(fontLarge);
-				painter.drawText(3 + xoffset, m_zintSymbol->height + yoffset, 29, 9,Qt::AlignCenter, caption.mid(0,4));
-				painter.drawText(35 + xoffset, m_zintSymbol->height + yoffset, 29, 9,Qt::AlignCenter, caption.mid(4,4));
-				if(caption.size() == 11) { /* EAN-2 */ painter.drawText(76 + xoffset, addon_text_height, 20, 9,Qt::AlignCenter, caption.mid(9,2)); };
-				if(caption.size() == 14) { /* EAN-5 */ painter.drawText(76 + xoffset, addon_text_height, 47, 9,Qt::AlignCenter, caption.mid(9,5)); };
+				painter.drawText(0, m_zintSymbol->height, m_zintSymbol->width, 9,Qt::AlignCenter, caption);
 				painter.setFont(fontSmall);
 				textdone = true;
-				break;
-			case 13:
-			case 16:
-			case 19:
-				painter.fillRect(0 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
-				painter.fillRect(2 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
-				painter.fillRect(46 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
-				painter.fillRect(48 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
-				painter.fillRect(92 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
-				painter.fillRect(94 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
-				painter.setFont(fontLarge);
-				painter.drawText(xoffset - 7, m_zintSymbol->height + yoffset, 7, 9,Qt::AlignCenter, caption.mid(0,1));
-				painter.drawText(3 + xoffset, m_zintSymbol->height + yoffset, 43, 9,Qt::AlignCenter, caption.mid(1,6));
-				painter.drawText(49 + xoffset, m_zintSymbol->height + yoffset, 43, 9,Qt::AlignCenter, caption.mid(7,6));
-				if(caption.size() == 16) { /* EAN-2 */ painter.drawText(104 + xoffset, addon_text_height, 20, 9,Qt::AlignCenter, caption.mid(14,2)); };
-				if(caption.size() == 19) { /* EAN-5 */ painter.drawText(104 + xoffset, addon_text_height, 47, 9,Qt::AlignCenter, caption.mid(14,5)); };
-				painter.setFont(fontSmall);
-				textdone = true;
-				break;
+			}
 		}
-		if(textdone == false) {
+		
+		if((m_zintSymbol->symbology == BARCODE_UPCA) || (m_zintSymbol->symbology == BARCODE_UPCA_CC)) {
+			/* Add bridge and format text for UPC-A */
+			int block_width;
+			bool latch = true;
+			
+			j = 0 + comp_offset;
+			do {
+				block_width = 0;
+				do {
+					block_width++;
+				} while (module_set(m_zintSymbol->rows - 1, j + block_width) == module_set(m_zintSymbol->rows - 1, j));
+				if(latch == true) {
+					/* a bar */
+					painter.fillRect(j + xoffset - comp_offset,m_zintSymbol->height,block_width,5,QBrush(m_fgColor));
+					latch = false;
+				} else {
+					/* a space */
+					latch = true;
+				}
+				j += block_width;
+			} while (j < 11 + comp_offset);
+			painter.fillRect(46 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+			painter.fillRect(48 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+			latch = true;
+			j = 85 + comp_offset;
+			do {
+				block_width = 0;
+				do {
+					block_width++;
+				} while (module_set(m_zintSymbol->rows - 1, j + block_width) == module_set(m_zintSymbol->rows - 1, j));
+				if(latch == true) {
+					/* a bar */
+					painter.fillRect(j + xoffset - comp_offset,m_zintSymbol->height,block_width,5,QBrush(m_fgColor));
+					latch = false;
+				} else {
+					/* a space */
+					latch = true;
+				}
+				j += block_width;
+			} while (j < 96 + comp_offset);
+			painter.drawText(xoffset - 7, m_zintSymbol->height + yoffset, 7, 7,Qt::AlignCenter, caption.mid(0,1));
+			painter.drawText(96 + xoffset, m_zintSymbol->height + yoffset, 7, 7,Qt::AlignCenter, caption.mid(11,1));
 			painter.setFont(fontLarge);
-			painter.drawText(0, m_zintSymbol->height, m_zintSymbol->width, 9,Qt::AlignCenter, caption);
+			painter.drawText(11 + xoffset, m_zintSymbol->height + yoffset, 35, 9,Qt::AlignCenter, caption.mid(1,5));
+			painter.drawText(49 + xoffset, m_zintSymbol->height + yoffset, 35, 9,Qt::AlignCenter, caption.mid(6,5));
+			if(caption.size() == 15) { /* EAN-2 */ painter.drawText(104 + xoffset, addon_text_height, 20, 9,Qt::AlignCenter, caption.mid(13,2)); };
+			if(caption.size() == 18) { /* EAN-5 */ painter.drawText(104 + xoffset, addon_text_height, 47, 9,Qt::AlignCenter, caption.mid(13,5)); };
 			painter.setFont(fontSmall);
 			textdone = true;
 		}
-	}
-	
-	if((m_zintSymbol->symbology == BARCODE_UPCA) || (m_zintSymbol->symbology == BARCODE_UPCA_CC)) {
-		/* Add bridge and format text for UPC-A */
-		int block_width;
-		bool latch = true;
 		
-		j = 0 + comp_offset;
-		do {
-			block_width = 0;
-			do {
-				block_width++;
-			} while (module_set(m_zintSymbol->rows - 1, j + block_width) == module_set(m_zintSymbol->rows - 1, j));
-			if(latch == true) {
-				/* a bar */
-				painter.fillRect(j + xoffset - comp_offset,m_zintSymbol->height,block_width,5,QBrush(m_fgColor));
-				latch = false;
-			} else {
-				/* a space */
-				latch = true;
-			}
-			j += block_width;
-		} while (j < 11 + comp_offset);
-		painter.fillRect(46 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
-		painter.fillRect(48 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
-		latch = true;
-		j = 85 + comp_offset;
-		do {
-			block_width = 0;
-			do {
-				block_width++;
-			} while (module_set(m_zintSymbol->rows - 1, j + block_width) == module_set(m_zintSymbol->rows - 1, j));
-			if(latch == true) {
-				/* a bar */
-				painter.fillRect(j + xoffset - comp_offset,m_zintSymbol->height,block_width,5,QBrush(m_fgColor));
-				latch = false;
-			} else {
-				/* a space */
-				latch = true;
-			}
-			j += block_width;
-		} while (j < 96 + comp_offset);
-		painter.drawText(xoffset - 7, m_zintSymbol->height + yoffset, 7, 7,Qt::AlignCenter, caption.mid(0,1));
-		painter.drawText(96 + xoffset, m_zintSymbol->height + yoffset, 7, 7,Qt::AlignCenter, caption.mid(11,1));
-		painter.setFont(fontLarge);
-		painter.drawText(11 + xoffset, m_zintSymbol->height + yoffset, 35, 9,Qt::AlignCenter, caption.mid(1,5));
-		painter.drawText(49 + xoffset, m_zintSymbol->height + yoffset, 35, 9,Qt::AlignCenter, caption.mid(6,5));
-		if(caption.size() == 15) { /* EAN-2 */ painter.drawText(104 + xoffset, addon_text_height, 20, 9,Qt::AlignCenter, caption.mid(13,2)); };
-		if(caption.size() == 18) { /* EAN-5 */ painter.drawText(104 + xoffset, addon_text_height, 47, 9,Qt::AlignCenter, caption.mid(13,5)); };
-		painter.setFont(fontSmall);
-		textdone = true;
-	}
+		if((m_zintSymbol->symbology == BARCODE_UPCE) || (m_zintSymbol->symbology == BARCODE_UPCE_CC)) {
+			/* Add bridge and format text for UPC-E */
+			painter.fillRect(0 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+			painter.fillRect(2 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+			painter.fillRect(46 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+			painter.fillRect(48 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+			painter.fillRect(50 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
+			painter.drawText(xoffset - 7, m_zintSymbol->height + yoffset, 7, 7,Qt::AlignCenter, caption.mid(0,1));
+			painter.drawText(51 + xoffset, m_zintSymbol->height + yoffset, 7, 7,Qt::AlignCenter, caption.mid(7,1));
+			painter.setFont(fontLarge);
+			painter.drawText(3 + xoffset, m_zintSymbol->height + yoffset, 43, 9,Qt::AlignCenter, caption.mid(1,6));
+			if(caption.size() == 11) { /* EAN-2 */ painter.drawText(60 + xoffset, addon_text_height, 20, 9,Qt::AlignCenter, caption.mid(9,2)); };
+			if(caption.size() == 14) { /* EAN-2 */ painter.drawText(60 + xoffset, addon_text_height, 47, 9,Qt::AlignCenter, caption.mid(9,5)); };
+			painter.setFont(fontSmall);
+			textdone = true;
+		}
+	} /* if (m_hidetext == false) */
 	
-	if((m_zintSymbol->symbology == BARCODE_UPCE) || (m_zintSymbol->symbology == BARCODE_UPCE_CC)) {
-		/* Add bridge and format text for UPC-E */
-		painter.fillRect(0 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
-		painter.fillRect(2 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
-		painter.fillRect(46 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
-		painter.fillRect(48 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
-		painter.fillRect(50 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
-		painter.drawText(xoffset - 7, m_zintSymbol->height + yoffset, 7, 7,Qt::AlignCenter, caption.mid(0,1));
-		painter.drawText(51 + xoffset, m_zintSymbol->height + yoffset, 7, 7,Qt::AlignCenter, caption.mid(7,1));
-		painter.setFont(fontLarge);
-		painter.drawText(3 + xoffset, m_zintSymbol->height + yoffset, 43, 9,Qt::AlignCenter, caption.mid(1,6));
-		if(caption.size() == 11) { /* EAN-2 */ painter.drawText(60 + xoffset, addon_text_height, 20, 9,Qt::AlignCenter, caption.mid(9,2)); };
-		if(caption.size() == 14) { /* EAN-2 */ painter.drawText(60 + xoffset, addon_text_height, 47, 9,Qt::AlignCenter, caption.mid(9,5)); };
-		painter.setFont(fontSmall);
-		textdone = true;
-	}
-	
-	if((caption.isEmpty() == false) && (textdone == false)) {
+	if((m_hidetext == false) && (textdone == false)) {
 		/* Add text to any other symbol */
 		painter.drawText(0, m_zintSymbol->height + yoffset, m_zintSymbol->width, 7, Qt::AlignCenter, caption);
 	}

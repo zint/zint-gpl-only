@@ -53,6 +53,7 @@ struct zint_symbol *ZBarcode_Create()
 	symbol->option_1 = -1;
 	symbol->option_2 = 0;
 	symbol->option_3 = 928; // PDF_MAX
+	symbol->show_hrt = 1; // Show human readable text
 	symbol->input_mode = DATA_MODE;
 	strcpy(symbol->primary, "");
 	for(i = 0; i < 178; i++) {
@@ -82,6 +83,7 @@ void ZBarcode_Clear(struct zint_symbol *symbol)
 	symbol->errtxt[0] = '\0';
 	if (symbol->bitmap != NULL)
 		free(symbol->bitmap);
+	symbol->bitmap = NULL;
 	symbol->bitmap_width = 0;
 	symbol->bitmap_height = 0;
 }

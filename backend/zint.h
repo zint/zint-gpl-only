@@ -38,6 +38,7 @@ struct zint_symbol {
 	int option_1;
 	int option_2;
 	int option_3;
+	int show_hrt;
 	int input_mode;
 	unsigned char text[128];
 	int rows;

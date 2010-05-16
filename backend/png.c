@@ -714,7 +714,11 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 	unsigned char* local_text = (unsigned char*)_alloca(ustrlen(symbol->text) + 1);
 #endif
 
-	to_latin1(symbol->text, local_text);
+	if(symbol->show_hrt != 0) {
+		to_latin1(symbol->text, local_text);
+	} else {
+		local_text[0] = '\0';
+	}
 
 	textdone = 0;
 	main_width = symbol->width;

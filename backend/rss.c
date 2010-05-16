@@ -1077,7 +1077,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
         char* general_field_type = (char*)_alloca(strlen(source));
 #endif
 	int remainder, d1, d2, value;
-	char padstring[14];
+	char padstring[40];
 
 	read_posn=0;
 	value=0;
@@ -1643,19 +1643,34 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 	}
 	
 	latch = general_rules(general_field, general_field_type);
+	if(debug) printf("General field type: %s\n", general_field_type);
+	
+	last_mode = NUMERIC;
+	
+	/* Set initial mode if not NUMERIC */
+	if(general_field_type[0] == ALPHA) {
+		concat(binary_string, "0000"); /* Alphanumeric latch */
+		last_mode = ALPHA;
+	}
+	if(general_field_type[0] == ISOIEC) {
+		concat(binary_string, "0000"); /* Alphanumeric latch */
+		concat(binary_string, "00100"); /* ISO/IEC 646 latch */
+		last_mode = ISOIEC;
+	}
 	
 	i = 0;
 	do {
 		if(debug) printf("Processing character %d ", i);
 		switch(general_field_type[i]) {
 			case NUMERIC:
-				if(debug) printf("as NUMERIC\n");
-				if(i != 0) {
-					if((general_field_type[i - 1] != NUMERIC) && (general_field[i - 1] != '[')) {
-						concat(binary_string, "000"); /* Numeric latch */
-					}
+				if(debug) printf("as NUMERIC:");
+				
+				if(last_mode != NUMERIC) {
+					concat(binary_string, "000"); /* Numeric latch */
+					if(debug) printf("<NUMERIC LATCH>\n");
 				}
 				
+				if(debug) printf("  %c%c > ", general_field[i], general_field[i + 1]);
 				if(general_field[i] != '[') {
 					d1 = ctoi(general_field[i]);
 				} else {
@@ -1674,24 +1689,27 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 				for(j = 0; j < 7; j++) {
 					if((value & mask) == 0x00) {
 						concat(binary_string, "0");
+						if(debug) printf("0");
 					} else {
 						concat(binary_string, "1");
+						if(debug) printf("1");
 					}
 					mask = mask >> 1;
 				}
 				
 				i += 2;
+				if(debug) printf("\n");
 				last_mode = NUMERIC;
 				break;
 			
 			case ALPHA:
 				if(debug) printf("as ALPHA\n");
 				if(i != 0) {
-					if((general_field_type[i - 1] == NUMERIC) || (general_field[i - 1] == '[')) {
+					if(last_mode == NUMERIC) {
 						concat(binary_string, "0000"); /* Alphanumeric latch */
 					}
-					if(general_field_type[i - 1] == ISOIEC) {
-						concat(binary_string, "00100"); /* ISO/IEC 646 latch */
+					if(last_mode == ISOIEC) {
+						concat(binary_string, "00100"); /* Alphanumeric latch */
 					}
 				}
 				
@@ -1725,7 +1743,8 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 					}
 				}
 				
-				if(general_field[i] == '[') concat(binary_string, "01111"); /* FNC1/Numeric latch */
+				last_mode = ALPHA;
+				if(general_field[i] == '[') { concat(binary_string, "01111"); last_mode = NUMERIC; } /* FNC1/Numeric latch */
 				if(general_field[i] == '*') concat(binary_string, "111010"); /* asterisk */
 				if(general_field[i] == ',') concat(binary_string, "111011"); /* comma */
 				if(general_field[i] == '-') concat(binary_string, "111100"); /* minus or hyphen */
@@ -1733,17 +1752,16 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 				if(general_field[i] == '/') concat(binary_string, "111110"); /* slash or solidus */
 				
 				i++;
-				last_mode = ALPHA;
 				break;
 			
 			case ISOIEC:
 				if(debug) printf("as ISOIEC\n");
 				if(i != 0) {
-					if((general_field_type[i - 1] == NUMERIC) || (general_field[i - 1] == '[')) {
+					if(last_mode == NUMERIC) {
 						concat(binary_string, "0000"); /* Alphanumeric latch */
 						concat(binary_string, "00100"); /* ISO/IEC 646 latch */
 					}
-					if(general_field_type[i - 1] == ALPHA) {
+					if(last_mode == ALPHA) {
 						concat(binary_string, "00100"); /* ISO/IEC 646 latch */
 					}
 				}
@@ -1793,7 +1811,8 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 					}
 				}
 				
-				if(general_field[i] == '[') concat(binary_string, "01111"); /* FNC1/Numeric latch */
+				last_mode = ISOIEC;
+				if(general_field[i] == '[') { concat(binary_string, "01111"); last_mode = NUMERIC; } /* FNC1/Numeric latch */
 				if(general_field[i] == '!') concat(binary_string, "11101000"); /* exclamation mark */
 				if(general_field[i] == 34) concat(binary_string, "11101001"); /* quotation mark */
 				if(general_field[i] == 37) concat(binary_string, "11101010"); /* percent sign */
@@ -1817,41 +1836,55 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 				if(general_field[i] == ' ') concat(binary_string, "11111100"); /* space */
 				
 				i++;
-				last_mode = ISOIEC;
 				break;
 		}
 	} while (i + latch < strlen(general_field));
 	if(debug) printf("Resultant binary = %s\n", binary_string);
-	if(debug) printf("\tLength: %d\n", strlen(binary_string));
+	if(debug) printf("\tLength: %d\n", (int)strlen(binary_string));
 	
-	remainder = strlen(binary_string) % 12;
+	remainder = 12 - (strlen(binary_string) % 12);
+	if(remainder == 12) { remainder = 0; }
 	if(strlen(binary_string) < 36) { remainder = 36 - strlen(binary_string); }
 
 	if(latch == 1) {
 		/* There is still one more numeric digit to encode */
 		if(debug) printf("Adding extra (odd) numeric digit\n");
 		
-		if((remainder >= 4) && (remainder <= 6)) {
-			value = ctoi(general_field[i]);
-			value++;
-			
-			mask = 0x08;
-			for(j = 0; j < 4; j++) {
-				if((value & mask) == 0x00) {
-					concat(binary_string, "0");
-				} else {
-					concat(binary_string, "1");
+		if(last_mode == NUMERIC) {
+			if((remainder >= 4) && (remainder <= 6)) {
+				value = ctoi(general_field[i]);
+				value++;
+				
+				mask = 0x08;
+				for(j = 0; j < 4; j++) {
+					if((value & mask) == 0x00) {
+						concat(binary_string, "0");
+					} else {
+						concat(binary_string, "1");
+					}
+					mask = mask >> 1;
 				}
-				mask = mask >> 1;
+			} else {
+				d1 = ctoi(general_field[i]);
+				d2 = 10;
+					
+				value = (11 * d1) + d2 + 8;
+					
+				mask = 0x40;
+				for(j = 0; j < 7; j++) {
+					if((value & mask) == 0x00) {
+						concat(binary_string, "0");
+					} else {
+						concat(binary_string, "1");
+					}
+					mask = mask >> 1;
+				}
 			}
 		} else {
-			d1 = ctoi(general_field[i]);
-			d2 = 10;
-				
-			value = (11 * d1) + d2 + 8;
-				
-			mask = 0x40;
-			for(j = 0; j < 7; j++) {
+			value = general_field[i] - 43;
+					
+			mask = 0x10;
+			for(j = 0; j < 5; j++) {
 				if((value & mask) == 0x00) {
 					concat(binary_string, "0");
 				} else {
@@ -1860,11 +1893,12 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 				mask = mask >> 1;
 			}
 		}
-		remainder = strlen(binary_string) % 12;
+		
+		remainder = 12 - (strlen(binary_string) % 12);
+		if(remainder == 12) { remainder = 0; }
 		if(strlen(binary_string) < 36) { remainder = 36 - strlen(binary_string); }
-		last_mode = NUMERIC;
 		if(debug) printf("Resultant binary = %s\n", binary_string);
-		if(debug) printf("\tLength: %d\n", strlen(binary_string));
+		if(debug) printf("\tLength: %d\n", (int)strlen(binary_string));
 	}
 	
 	if(strlen(binary_string) > 252) {
@@ -1872,18 +1906,18 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 		return ERROR_TOO_LONG;
 	}
 	
-	/* Now add padding to binary string */
-	if(strlen(general_field) != 0) {
-		if (last_mode == NUMERIC) {
-			strcpy(padstring, "000000100001");
-		} else {
-			strcpy(padstring, "001000010000");
-		}
+	/* Now add padding to binary string (7.2.5.5.4) */
+	i = remainder;
+	if((strlen(general_field) != 0) && (last_mode == NUMERIC)) {
+		strcpy(padstring, "0000");
+		i -= 4;
 	} else {
-		strcpy(padstring, "001000010000");
+		strcpy(padstring, "");
 	}
-	remainder = 12 - remainder;
-	if(remainder == 12) { remainder = 0; }
+	for(;i > 0;i -= 5) {
+		concat(padstring, "00100");
+	}
+
 	padstring[remainder] = '\0';
 	concat(binary_string, padstring);
 	
@@ -1904,7 +1938,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 		if(d2 == 0) { binary_string[7] = '0'; } else { binary_string[7] = '1'; }
 	}
 	if(debug) printf("Resultant binary = %s\n", binary_string);
-	if(debug) printf("\tLength: %d\n", strlen(binary_string));
+	if(debug) printf("\tLength: %d\n", (int)strlen(binary_string));
 	return 0;
 }
 
