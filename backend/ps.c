@@ -19,6 +19,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include <locale.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -45,6 +46,7 @@ int ps_plot(struct zint_symbol *symbol)
 	float scaler = symbol->scale;
 	float default_text_posn;
 	int plot_text = 1;
+	const char *locale = NULL;
 	
 	row_height=0;
 	textdone = 0;
@@ -85,6 +87,7 @@ int ps_plot(struct zint_symbol *symbol)
 		strcpy(symbol->errtxt, "Malformed background colour target");
 		return ERROR_INVALID_OPTION;
 	}
+	locale = setlocale(LC_ALL, "C");
 	
 	fgred = (16 * ctoi(symbol->fgcolour[0])) + ctoi(symbol->fgcolour[1]);
 	fggrn = (16 * ctoi(symbol->fgcolour[2])) + ctoi(symbol->fgcolour[3]);
@@ -766,6 +769,9 @@ int ps_plot(struct zint_symbol *symbol)
 	fprintf(feps, "\nshowpage\n");
 	
 	fclose(feps);
+	
+	if (locale)
+		setlocale(LC_ALL, locale);
 	
 	return error_number;
 }
