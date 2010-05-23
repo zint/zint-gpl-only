@@ -469,6 +469,17 @@ void MainWindow::change_options()
 		tabMain->insertTab(1,m_optionWidget,tr("Code 49"));
 		connect(m_optionWidget->findChild<QObject*>("radC49GS1"), SIGNAL(toggled( bool )), SLOT(update_preview()));
 	}
+	
+	if(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_RSS_EXPSTACK)
+	{
+		QFile file(":/grpDBExtend.ui");
+		if (!file.open(QIODevice::ReadOnly))
+			return;
+		m_optionWidget=uiload.load(&file);
+		file.close();
+		tabMain->insertTab(1,m_optionWidget,tr("DataBar Stacked"));
+		connect(m_optionWidget->findChild<QObject*>("cmbCols"), SIGNAL(currentIndexChanged ( int )), SLOT(update_preview()));
+	}
 
 	switch(metaObject()->enumerator(0).value(bstyle->currentIndex()))
 	{
@@ -650,6 +661,9 @@ void MainWindow::update_preview()
 				m_bc.bc.setSymbol(BARCODE_RSS_EXPSTACK_CC);
 			else
 				m_bc.bc.setSymbol(BARCODE_RSS_EXPSTACK);
+			
+			if(m_optionWidget->findChild<QComboBox*>("cmbCols")->currentIndex() != 0)
+				m_bc.bc.setWidth(m_optionWidget->findChild<QComboBox*>("cmbCols")->currentIndex());
 			break;
 
 		case BARCODE_PDF417:
