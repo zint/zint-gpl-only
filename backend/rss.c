@@ -36,6 +36,8 @@
    
    The date of publication for these functions is 30 November 2006
 */
+
+/* Includes numerous bugfixes thanks to Pablo Orduña @ the PIRAmIDE project */
 	
 #include <stdio.h>
 #include <string.h>

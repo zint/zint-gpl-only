@@ -38,17 +38,6 @@
 #include "common.h"
 #include "dm200.h"
 
- // simple checked response malloc
-static void *safemalloc(int n)
-{
-	void *p = malloc(n);
-	if (!p) {
-		fprintf(stderr, "Malloc(%d) failed\n", n);
-		exit(1);
-	}
-	return p;
-}
-
 // Annex M placement alorithm low level
 static void ecc200placementbit(int *array, int NR, int NC, int r, int c, int p, char b)
 {
@@ -847,9 +836,9 @@ int data_matrix_200(struct zint_symbol *symbol, unsigned char source[], int leng
 		int x, y, NC, NR, *places;
 		NC = W - 2 * (W / FW);
 		NR = H - 2 * (H / FH);
-		places = (int*)safemalloc(NC * NR * sizeof(int));
+		places = (int*)malloc(NC * NR * sizeof(int));
 		ecc200placement(places, NR, NC);
-		grid = (unsigned char*)safemalloc(W * H);
+		grid = (unsigned char*)malloc(W * H);
 		memset(grid, 0, W * H);
 		for (y = 0; y < H; y += FH) {
 			for (x = 0; x < W; x++)

@@ -1,4 +1,4 @@
-Zint and libzint 2.3.1
+Zint and libzint 2.3.2
 ----------------------
 Zint is a suite of programs to allow easy encoding of data in any of the wide range of public domain
 barcode standards and to allow integration of this capability into your own programs. This version
@@ -38,6 +38,9 @@ better operation of --scale option which now scales human readable text and Maxi
 
 SPECIAL NOTE: Codablock-F has now been REMOVED from this project because of problems implimenting
 this standard. For full details see the project website.
+
+Version 2.3.2:
+More bug corrections including important corrections to RSS Expanded, Maxicode and ISBN.
 
 COMPILING THE CODE
 ------------------
@@ -134,11 +137,17 @@ The home of libzint is:
 
 	http://www.sourceforge.net/projects/zint
 
-and the home for information about Zint is:
+and the home for Zint documentation is:
 
 	http://www.zint.org.uk
 
-I am keen to hear your ideas / recieve bug reports at robin@zint.org.uk
+For feature requests or bug reports please join the mailing list at
+
+	https://lists.sourceforge.net/lists/listinfo/zint-barcode
+
+or send an e-mail to
+
+	zint-barcode@lists.sourceforge.net
 
 Thanks for your interest in libzint.
 Happy encoding.
