@@ -1,70 +1,144 @@
-Name: zint
-Version: 2.3
-Release: 1
-Summary: A barcode encoding library.
-Summary(ru_RU.UTF8): A barcode encoding library.
-License: GPL
-Url:  http://www.zint.org.uk
-Vendor: Robin Stuart <robin@zint.org.uk>
-Packager: Radist Tagan <radist@list.ru>
-Group: Development/Libraries/C and C++
+Name:      zint
+Version:   2.3.1
+Release:   2%{?dist}
+Summary:   A barcode generator and library
+License:   GPLv3+
+URL:       http://www.zint.org.uk
+Source:    http://downloads.sourceforge.net/project/%{name}/%{name}/%{version}/%{name}-%{version}.src.tar.gz
+Group:     Applications/Engineering
+BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
-BuildRoot: %{_tmppath}/%{name}-%{version}-build
-Source:	%name-%version.tar.bz2
-Patch:  error_svg_plot_fix.patch
+# Reset locales to "C" when exporting to EPS or SVG in order to force
+# decimal points in all language environments. 
+# This issue has been reported upstream:
+# http://sourceforge.net/mailarchive/forum.php?thread_name=4BF78012.7090508%40uos.de&forum_name=zint-barcode
+Patch0:    zint-locale.patch
 
-##Requires: Qt >= 4.4
 BuildRequires: cmake
-BuildRequires: libqt4-devel
 BuildRequires: libpng-devel
 BuildRequires: zlib-devel
-BuildRequires: qrencode-devel
 
 %description
-A library for encoding data in barcode symbols. Includes support for over 50 symbologies including
-all ISO/IEC standards.
+Zint is a C library for encoding data in several barcode variants. The
+bundled command-line utility provides a simple interface to the library.
+Features of the library:
+- Over 50 symbologies including all ISO/IEC standards, like QR codes.
+- Unicode translation for symbologies which support Latin-1 and 
+  Kanji character sets.
+- Full GS1 support including data verification and automated insertion of 
+  FNC1 characters.
+- Support for encoding binary data including NULL (ASCII 0) characters.
+- Health Industry Barcode (HIBC) encoding capabilities.
+- Output in PNG, EPS and SVG formats with user adjustable sizes and colors.
+- Verification stage for SBN, ISBN and ISBN-13 data.
+
 
 %package -n zint-devel
-Summary:    Library and header files for zint.
-Group:      Development/C  
-Provides:   %{name}-devel = %{version}  
-Requires:   zint = %{version}
+Summary:       Library and header files for %{name}
+Group:         Development/Libraries
+Requires:      %{name} = %{version}-%{release}
 
 %description -n zint-devel 
-A library for encoding data in barcode symbols. Includes support for over 50 symbologies including
-all ISO/IEC standards.
+C library and header files needed to develop applications using %{name}.
+The API documentation can be found ont the project website:
+http://www.zint.org.uk/zintSite/Manual.aspx
 
-%debug_package
+
+%package -n zint-qt
+Summary:       Zint Barcode Studio GUI and library
+Group:         Applications/Engineering
+Requires:      %{name} = %{version}-%{release}
+BuildRequires: qt-devel >= 4.4
+BuildRequires: desktop-file-utils
+
+%description -n zint-qt
+Zint Barcode Studio is a Qt-based GUI which allows desktop users to generate 
+barcodes which can then be embedded in documents or HTML pages, and a library 
+which can be used to incorporate barcode generation functionality into other 
+software.
+
+
+%package -n zint-qt-devel
+Summary:       Library and header files for %{name}-qt
+Group:         Development/Libraries
+Requires:      %{name}-devel = %{version}-%{release}
+Requires:      %{name}-qt = %{version}-%{release}
+
+%description -n zint-qt-devel 
+C library and header files needed to develop applications using %{name}-qt.
+
 
 %prep
-%setup
-%patch -p1
+%setup -q
+%patch0 -p1
+
+# remove BSD-licensed file required for Windows only (just to ensure that this package is plain GPLv3+)
+rm -f backend/ms_stdint.h
+
+# remove bundled getopt sources (we use the corresponding Fedora package instead)
+rm -f frontend/getopt*.*
 
 %build
-##mkdir 'build'
-##cd build
-cmake CMakeLists.txt
-make -j2
+%cmake CMakeLists.txt
+make VERBOSE=1 %{?_smp_mflags}
+
+cat <<EOF >zint-qt.desktop
+[Desktop Entry]
+Name=Zint Barcode Studio
+GenericName=Zint Barcode Studio
+Exec=zint-qt
+Icon=zint
+Terminal=false
+Type=Application
+Categories=Utility;
+EOF
+
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%makeinstall
-cd %buildroot/usr/ && mv ./local/* ./
-##make install DESTDIR=$RPM_BUILD_ROOT
-%post
-/sbin/ldconfig
-%postun
-ldconfig
+make install DESTDIR=$RPM_BUILD_ROOT
+rm -rf $RPM_BUILD_ROOT/%{_datadir}/cmake
+install -D -p -m 644 frontend_qt4/images/%{name}_white.png %{buildroot}/usr/share/pixmaps/%{name}.png
+install -D -p -m 644 %{name}-qt.desktop %{buildroot}%{_datadir}/applications/%{name}-qt.desktop
+desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}-qt.desktop
+
 %clean
+rm -rf $RPM_BUILD_ROOT
+
+
+%post -p /sbin/ldconfig
+%postun -p /sbin/ldconfig
+%post -n %{name}-qt -p /sbin/ldconfig
+%postun -n %{name}-qt -p /sbin/ldconfig
+
 
 %files
-%{_libdir}/*
-%{_datadir}/cmake/Modules/FindZint.cmake
-
-%files -n zint-devel
 %defattr(-,root,root,-)
-%{_includedir}/*.h
+%doc COPYING readme
+%{_bindir}/%{name}
+%{_libdir}/libzint.so.*
+
+%files -n %{name}-devel
+%defattr(-,root,root,-)
+%{_includedir}/%{name}.h
+%{_libdir}/libzint.so
+
+%files -n %{name}-qt
+%defattr(-,root,root,-)
+%{_bindir}/%{name}-qt
+%{_libdir}/libQZint.so.*
+%{_datadir}/applications/%{name}-qt.desktop
+%{_datadir}/pixmaps/%{name}.png
+
+%files -n %{name}-qt-devel
+%defattr(-,root,root,-)
+%{_includedir}/qzint.h
+%{_libdir}/libQZint.so
+
 
 %changelog
-* Thu Mar 17 2009 radist <radist@list.ru>
-  + Make spec
+* Sat May 22 2010 Martin Gieseking <martin.gieseking@uos.de> - 2.3.1-2
+- Added patch to fix export issue
+
+* Fri May 21 2010 Martin Gieseking <martin.gieseking@uos.de> - 2.3.1-1
+- initial package
