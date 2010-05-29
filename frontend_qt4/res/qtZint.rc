@@ -52,19 +52,19 @@ BEGIN
 
             VALUE "FileDescription", "qtZint barcode generator"
 
-            VALUE "FileVersion", "2.3.0.0"
+            VALUE "FileVersion", "2.3.2.0"
 
             VALUE "InternalName", "qtZint"
 
-            VALUE "LegalCopyright", "Copyright © 2009 Robin Stuart & BogDan Vatra"
+            VALUE "LegalCopyright", "Copyright © 2010 Robin Stuart & BogDan Vatra"
 
             VALUE "License", "GNU General Public License version 3"
 
             VALUE "OriginalFilename", "qtZint"
 
-            VALUE "ProductName", "qtZint"
+            VALUE "ProductName", "Zint Barcode Studio"
 
-            VALUE "ProductVersion", "2.3.0.0"
+            VALUE "ProductVersion", "2.3.2.0"
 
             VALUE "WWW", "http://www.zint.org.uk"
 
@@ -82,4 +82,4 @@ BEGIN
 
 END
 
-100 ICON MOVEABLE PURE LOADONCALL DISCARDABLE "zint_white.ico"
+100 ICON MOVEABLE PURE LOADONCALL DISCARDABLE "zint.ico"

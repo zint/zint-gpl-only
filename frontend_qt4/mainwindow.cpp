@@ -181,7 +181,7 @@ void MainWindow::about()
 			   tr("<h2>Zint Barcode Studio 2.3.2</h2>"
 					   "<p>A free barcode generator"
 					   "<p>Visit the <a href=\"http://www.zint.org.uk\">Zint Project Homepage</a> for more information."
-					   "<p>Copyright &copy; 2009 Robin Stuart.<br>"
+					   "<p>Copyright &copy; 2010 Robin Stuart.<br>"
 					   "Qt4 code by BogDan Vatra, MS Windows port by \"tgotic\".<br>"
 					   "With thanks to Norbert Szab&oacute;, and Robert Elliott."
 					   "<p>Released under the GNU General Public License ver. 3 or later.<br>"
