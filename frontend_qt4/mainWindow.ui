@@ -30,7 +30,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="resources.qrc">
-    <normaloff>:/images/zint_white.png</normaloff>:/images/zint_white.png</iconset>
+    <normaloff>:/images/zint.png</normaloff>:/images/zint.png</iconset>
   </property>
   <property name="locale">
    <locale language="English" country="UnitedStates"/>

@@ -22,6 +22,6 @@
         <file>grpC49.ui</file>
         <file>grpGrid.ui</file>
 	<file>grpDBExtend.ui</file>
-        <file>images/zint_white.png</file>
+        <file>images/zint.png</file>
     </qresource>
 </RCC>
