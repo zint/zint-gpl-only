@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Zint Barcode Studio
+GenericName=Zint Barcode Studio
+Exec=zint-qt
+Icon=zint
+Terminal=false
+Type=Application
+Categories=Utility;
