@@ -92,6 +92,30 @@ void ZBarcode_Delete(struct zint_symbol *symbol)
 {
 	if (symbol->bitmap != NULL)
 		free(symbol->bitmap);
+
+	// If there is a rendered version, ensure it's memory is released
+	if (symbol->rendered != NULL) {
+		struct zint_render_line *line, *l;
+		struct zint_render_char *bchar, *bc;
+
+		// Free lines
+		line = symbol->rendered->lines;
+		while(line) {
+			l = line;
+			line = line->next;
+			free(l);
+		}
+		// Free Chars
+		bchar = symbol->rendered->chars;
+		while (bchar) {
+			bc = bchar;
+			bchar = bchar->next;
+			free(bc);
+		}
+
+		// Free Render
+		free(symbol->rendered);
+	}
 	free(symbol);
 }
 
@@ -153,6 +177,8 @@ extern int grid_matrix(struct zint_symbol *symbol, unsigned char source[], int l
 #ifndef NO_PNG
 extern int png_handle(struct zint_symbol *symbol, int rotate_angle);
 #endif
+
+extern int render_plot(struct zint_symbol *symbol, unsigned int hide_text);
 
 extern int bmp_handle(struct zint_symbol *symbol, int rotate_angle);
 extern int ps_plot(struct zint_symbol *symbol);
@@ -834,4 +860,16 @@ int ZBarcode_Encode_File_and_Buffer(struct zint_symbol *symbol, char *filename, 
 	}
 	
 	return ZBarcode_Buffer(symbol, rotate_angle);
+}
+
+/*
+ * Rendering support, initially added by Sam Lown.
+ *
+ * Converts encoded data into an intermediate format to be interpreted
+ * in other applications using this library.
+ */
+int ZBarcode_Render(struct zint_symbol *symbol, unsigned int hide_text)
+{
+	// Send the request to the render_plot method
+	return render_plot(symbol, hide_text);
 }

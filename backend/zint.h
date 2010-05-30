@@ -25,6 +25,23 @@
 extern "C" {
 #endif /* __cplusplus */
 
+struct zint_render_line {
+	float x, y, length, width;
+	struct zint_render_line *next;      /* Pointer to next line */
+};
+
+struct zint_render_char {
+	float x, y, fsize;
+	char c;
+	struct zint_render_char *next;      /* Pointer to next character */
+};
+
+struct zint_render {
+	float width, height;
+	struct zint_render_line *lines;	 		/* Pointer to first line */
+	struct zint_render_char *chars;		  /* Pointer to first character */
+};
+
 struct zint_symbol {
 	int symbology;
 	int height;
@@ -50,7 +67,9 @@ struct zint_symbol {
 	char *bitmap;
 	int bitmap_width;
 	int bitmap_height;
+	struct zint_render *rendered;
 };
+
 
 /* Tbarcode 7 codes */
 #define BARCODE_CODE11		1
@@ -188,6 +207,8 @@ ZINT_EXTERN int ZBarcode_Encode_File(struct zint_symbol *symbol, char *filename)
 ZINT_EXTERN int ZBarcode_Print(struct zint_symbol *symbol, int rotate_angle);
 ZINT_EXTERN int ZBarcode_Encode_and_Print(struct zint_symbol *symbol, unsigned char *input, int length, int rotate_angle);
 ZINT_EXTERN int ZBarcode_Encode_File_and_Print(struct zint_symbol *symbol, char *filename, int rotate_angle);
+
+ZINT_EXTERN int ZBarcode_Render(struct zint_symbol *symbol, unsigned int hide_text);
 
 ZINT_EXTERN int ZBarcode_Buffer(struct zint_symbol *symbol, int rotate_angle);
 ZINT_EXTERN int ZBarcode_Encode_and_Buffer(struct zint_symbol *symbol, unsigned char *input, int length, int rotate_angle);
