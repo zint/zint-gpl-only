@@ -31,6 +31,11 @@
 #include <stdio.h>
 #include "common.h"
 
+struct zint_render_line *render_plot_create_line(float x, float y, float width, float length);
+int render_plot_add_line(struct zint_symbol *symbol, struct zint_render_line *line, struct zint_render_line **last_line);
+
+int render_plot_add_string(struct zint_symbol *symbol, char *text, float x, float y, float fsize, float scaler, struct zint_render_char **last_bchar);
+
 int render_plot(struct zint_symbol *symbol, unsigned int hide_text)
 {
 	struct zint_render      *render;
@@ -41,17 +46,20 @@ int render_plot(struct zint_symbol *symbol, unsigned int hide_text)
 	float textpos, large_bar_height, preset_height, row_height, row_posn = 0.0;
 	// int error_number = 0;
 	int textoffset, textheight, xoffset, yoffset, textdone, main_width;
-	char addon[6]; //, textpart[10];
+	char addon[6], textpart[10];
 	int large_bar_count, comp_offset;
 	float addon_text_posn;
 	float default_text_posn;
 	float scaler = symbol->scale;
 	unsigned char *p;
+	const char *locale = NULL;
 
 	// Allocate memory for the rendered version
 	render = symbol->rendered = malloc(sizeof(struct zint_render));
 	render->lines = NULL;
 	render->chars = NULL;
+
+	locale = setlocale(LC_ALL, "C");
 
 	row_height = 0;
 	textdone = 0;
@@ -66,7 +74,7 @@ int render_plot(struct zint_symbol *symbol, unsigned int hide_text)
 	}
 	// symbol->height = 50;
 
-	if(!hide_text && strlen((char *) symbol->text)) {
+	if(!hide_text && ustrlen(symbol->text)) {
 		textheight = 9.0;
 		textoffset = 2.0;
 	} else {
@@ -93,15 +101,89 @@ int render_plot(struct zint_symbol *symbol, unsigned int hide_text)
 		comp_offset++;
 	}
 
+	/* Certain symbols need whitespace otherwise characters get chopped off the sides */
+	if ((((symbol->symbology == BARCODE_EANX) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_EANX_CC))
+		|| (symbol->symbology == BARCODE_ISBNX)) {
+		switch(ustrlen(symbol->text)) {
+			case 13: /* EAN 13 */
+			case 16:
+			case 19:
+				if(symbol->whitespace_width == 0) {
+					symbol->whitespace_width = 10;
+				}
+				main_width = 96 + comp_offset;
+				break;
+			default:
+				main_width = 68 + comp_offset;
+		}
+	}
+
+	if (((symbol->symbology == BARCODE_UPCA) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_UPCA_CC)) {
+		if(symbol->whitespace_width == 0) {
+			symbol->whitespace_width = 10;
+			main_width = 96 + comp_offset;
+		}
+	}
+	
+	if (((symbol->symbology == BARCODE_UPCE) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_UPCE_CC)) {
+		if(symbol->whitespace_width == 0) {
+			symbol->whitespace_width = 10;
+			main_width = 51 + comp_offset;
+		}
+	}
+
+	latch = 0;
+	r = 0;
+	/* Isolate add-on text */
+	if(is_extendable(symbol->symbology)) {
+		for(i = 0; i < ustrlen(symbol->text); i++) {
+			if (latch == 1) {
+				addon[r] = symbol->text[i];
+				r++;
+			}
+			if (symbol->text[i] == '+') {
+				latch = 1;
+			}
+		}
+	}
+	addon[r] = '\0';
+
+	if((symbol->show_hrt == 0) || (ustrlen(symbol->text) != 0)) {
+		hide_text = 0;
+	}
+	if(hide_text) {
+		textoffset = 0;
+	} else {
+		textoffset = 3.0;
+	}
+
 	xoffset = symbol->border_width + symbol->whitespace_width;
 	yoffset = symbol->border_width;
 
-	render->width = (symbol->width + xoffset + xoffset) * scaler;
+	/*
+	 * If main_width is bigger than symbol->width we need to recalculate the 
+	 * scaler so the barcode fits in the same area!
+	 */
+	if (main_width != symbol->width) {
+		scaler = scaler / ((symbol->width + (xoffset * 2.0)) / symbol->width);
+	}
+
+	render->width = (symbol->width + (xoffset * 2)) * scaler;
 	render->height = (symbol->height + textheight + textoffset + yoffset + yoffset) * scaler;
 
-	default_text_posn = (symbol->height + textoffset + symbol->border_width) * scaler;
+	if(((symbol->output_options & BARCODE_BOX) != 0) || ((symbol->output_options & BARCODE_BIND) != 0)) {
+		default_text_posn = (symbol->height + textoffset + symbol->border_width + symbol->border_width) * scaler;
+	} else {
+		default_text_posn = (symbol->height + textoffset + symbol->border_width) * scaler;
+	}
+	// SAMS ORIGINAL // default_text_posn = (symbol->height + textoffset + symbol->border_width) * scaler;
 
-	if(symbol->symbology != BARCODE_MAXICODE) {
+  if(symbol->symbology == BARCODE_MAXICODE) {
+		/*
+		 * TODO INSERT BARCODE_MAXICODE HERE!
+		 */
+	
+	} else {
 		/* everything else uses rectangles (or squares) */
 		/* Works from the bottom of the symbol up */
 		int addon_latch = 0;
@@ -156,11 +238,7 @@ int render_plot(struct zint_symbol *symbol, unsigned int hide_text)
 					}
 					latch = 0;
 					
-					if (last_line)
-						last_line->next = line;
-					else
-						render->lines = line; // first line
-				  last_line = line;
+					render_plot_add_line(symbol, line, &last_line);
 				} else {
 					/* a space */
 					latch = 1;
@@ -175,37 +253,211 @@ int render_plot(struct zint_symbol *symbol, unsigned int hide_text)
 
 	/* Add the text */
 	xoffset -= comp_offset;
+	row_posn = (row_posn + large_bar_height) * scaler;
 
 	if (!hide_text) {
-		// caculate start xoffset to center text
-		xoffset = symbol->width / 2.0;
-		xoffset -= (strlen((char *) symbol->text) / 2) * 5.0;
+		if ((((symbol->symbology == BARCODE_EANX) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_EANX_CC)) ||
+			(symbol->symbology == BARCODE_ISBNX)) {
+			/* guard bar extensions and text formatting for EAN8 and EAN13 */
+			switch(ustrlen(symbol->text)) {
+				case 8: /* EAN-8 */
+				case 11:
+				case 14:
+					line = render_plot_create_line((0 + xoffset) * scaler, row_posn, scaler, 5.0 * scaler);
+					render_plot_add_line(symbol, line, &last_line);
+					line = render_plot_create_line((2 + xoffset) * scaler, row_posn, scaler, 5.0 * scaler);
+					render_plot_add_line(symbol, line, &last_line);
+					line = render_plot_create_line((32 + xoffset) * scaler, row_posn, scaler, 5.0 * scaler);
+					render_plot_add_line(symbol, line, &last_line);
+					line = render_plot_create_line((34 + xoffset) * scaler, row_posn, scaler, 5.0 * scaler);
+					render_plot_add_line(symbol, line, &last_line);
+					line = render_plot_create_line((64 + xoffset) * scaler, row_posn, scaler, 5.0 * scaler);
+					render_plot_add_line(symbol, line, &last_line);
+					line = render_plot_create_line((66 + xoffset) * scaler, row_posn, scaler, 5.0 * scaler);
+					render_plot_add_line(symbol, line, &last_line);
 
-		for (p = symbol->text; *p != 0; p++) {
-			if (p != symbol->text && *p == '(') xoffset += 3.0;
+					for(i = 0; i < 4; i++) {
+						textpart[i] = symbol->text[i];
+					}
+					textpart[4] = '\0';
+					textpos = 17;
+					render_plot_add_string(symbol, textpart, (textpos + xoffset) * scaler, default_text_posn, 9.0 * scaler, scaler, &last_bchar);
+					for(i = 0; i < 4; i++) {
+						textpart[i] = symbol->text[i + 4];
+					}
+					textpart[4] = '\0';
+					textpos = 50;
+					render_plot_add_string(symbol, textpart, (textpos + xoffset) * scaler, default_text_posn, 9.0 * scaler, scaler, &last_bchar);
+					textdone = 1;
+					switch(strlen(addon)) {
+						case 2:	
+							textpos = xoffset + 86;
+					    render_plot_add_string(symbol, addon, textpos * scaler, addon_text_posn * scaler, 9.0 * scaler, scaler, &last_bchar);
+							break;
+						case 5:
+							textpos = xoffset + 100;
+					    render_plot_add_string(symbol, addon, textpos * scaler, addon_text_posn * scaler, 9.0 * scaler, scaler, &last_bchar);
+							break;
+					}
 
-			bchar = malloc(sizeof(struct zint_render_char));
-			bchar->next = NULL;
-			bchar->x = (textpos + xoffset) * scaler;
-			bchar->y = default_text_posn;
-			bchar->fsize = 8.0 * scaler;
-			bchar->c = (char) *p;
+					break;
+				case 13: /* EAN 13 */
+				case 16:
+				case 19:
+					line = render_plot_create_line((0 + xoffset) * scaler, row_posn, scaler, 5.0 * scaler);
+					render_plot_add_line(symbol, line, &last_line);
+					line = render_plot_create_line((2 + xoffset) * scaler, row_posn, scaler, 5.0 * scaler);
+					render_plot_add_line(symbol, line, &last_line);
+					line = render_plot_create_line((46 + xoffset) * scaler, row_posn, scaler, 5.0 * scaler);
+					render_plot_add_line(symbol, line, &last_line);
+					line = render_plot_create_line((48 + xoffset) * scaler, row_posn, scaler, 5.0 * scaler);
+					render_plot_add_line(symbol, line, &last_line);
+					line = render_plot_create_line((92 + xoffset) * scaler, row_posn, scaler, 5.0 * scaler);
+					render_plot_add_line(symbol, line, &last_line);
+					line = render_plot_create_line((94 + xoffset) * scaler, row_posn, scaler, 5.0 * scaler); 
+					render_plot_add_line(symbol, line, &last_line);
 
-			if (last_bchar)
-				last_bchar->next = bchar;
-			else
-				render->chars = bchar; // First character
-			last_bchar = bchar;
+					textpart[0] = symbol->text[0];
+					textpart[1] = '\0';
+					textpos = -5; // 7
+					render_plot_add_string(symbol, textpart, (textpos + xoffset) * scaler, default_text_posn, 9.0 * scaler, scaler, &last_bchar);
 
-			// Poor mans kerning for next character
-			if (*p == '(') {
-				xoffset += 3.0;
-			} else if (*p == ')') {
-				xoffset += 3.0;
-			} else {
-				xoffset += 5.0;
+					for(i = 0; i < 6; i++) {
+						textpart[i] = symbol->text[i + 1];
+					}
+					textpart[6] = '\0';
+					textpos = 27;
+					render_plot_add_string(symbol, textpart, (textpos + xoffset) * scaler, default_text_posn, 9.0 * scaler, scaler, &last_bchar);
+					for(i = 0; i < 6; i++) {
+						textpart[i] = symbol->text[i + 7];
+					}
+					textpart[6] = '\0';
+					textpos = 74;
+					render_plot_add_string(symbol, textpart, (textpos + xoffset) * scaler, default_text_posn, 9.0 * scaler, scaler, &last_bchar);
+					textdone = 1;
+					switch(strlen(addon)) {
+						case 2:	
+							textpos = xoffset + 114;
+							render_plot_add_string(symbol, addon, textpos * scaler, addon_text_posn * scaler, 9.0 * scaler, scaler, &last_bchar);
+							break;
+						case 5:
+							textpos = xoffset + 128;
+							render_plot_add_string(symbol, addon, textpos * scaler, addon_text_posn * scaler, 9.0 * scaler, scaler, &last_bchar);
+							break;
+					}
+					break;
 			}
 		}
+
+		/* Put normal human readable text at the bottom (and centered) */
+		if (textdone == 0) {
+			// caculate start xoffset to center text
+			xoffset = symbol->width / 2.0;
+			xoffset -= (strlen((char *) symbol->text) / 2) * 5.0;
+
+			for (p = symbol->text; *p != 0; p++) {
+				if (p != symbol->text && *p == '(') xoffset += 3.0;
+
+				bchar = malloc(sizeof(struct zint_render_char));
+				bchar->next = NULL;
+				bchar->x = (textpos + xoffset) * scaler;
+				bchar->y = default_text_posn;
+				bchar->fsize = 9.0 * scaler;
+				bchar->c = (char) *p;
+
+				if (last_bchar)
+					last_bchar->next = bchar;
+				else
+					render->chars = bchar; // First character
+				last_bchar = bchar;
+
+				// Poor mans kerning for next character
+				if (*p == '(') {
+					xoffset += 3.0;
+				} else if (*p == ')') {
+					xoffset += 3.0;
+				} else {
+					xoffset += 5.0;
+				}
+			}
+		}
+	}
+
+	if (locale)
+		setlocale(LC_ALL, locale);
+
+	return 1;
+}
+
+
+/*
+ * Create a new line with its memory allocated ready for adding to the 
+ * rendered structure.
+ *
+ * This is much quicker than writing out each line manually (in some cases!)
+ */
+struct zint_render_line *render_plot_create_line(float x, float y, float width, float length)
+{
+	struct zint_render_line *line;
+	
+	line = malloc(sizeof(struct zint_render_line));
+	line->next = NULL;
+	line->x = x;
+	line->y = y;
+	line->width = width;
+	line->length = length;	
+
+	return line;
+}
+
+/*
+ * Add the line to the current rendering and update the last line's 
+ * next value.
+ */
+int render_plot_add_line(struct zint_symbol *symbol, struct zint_render_line *line, struct zint_render_line **last_line)
+{
+	if (*last_line)
+		(*last_line)->next = line;
+	else
+		symbol->rendered->lines = line; // first line
+
+	*last_line = line;
+	return 1;
+}
+
+/*
+ * Add the provided string by spliting it into substrings and adding
+ * at the provided coordinates.
+ * This will center the string at the provided location.
+ */
+int render_plot_add_string(struct zint_symbol *symbol,
+		char *text, float x, float y, float fsize, float scaler,
+		struct zint_render_char **last_bchar)
+{
+	struct zint_render_char *bchar;
+	char *p;
+	int xoffset = x;
+	float width = 0.0;
+	float char_width = 7.0 * scaler;
+
+	width = ustrlen((unsigned char *) text) * char_width;
+	xoffset -= (width / 2.0); // Center
+
+	for (p = text; *p != 0; p++) {
+		bchar = malloc(sizeof(struct zint_render_char));
+		bchar->next = NULL;
+		bchar->x = xoffset;
+		bchar->y = y;
+		bchar->fsize = fsize;
+		bchar->c = (char) *p;
+
+		if (*last_bchar)
+			(*last_bchar)->next = bchar;
+		else
+			symbol->rendered->chars = bchar; // First character
+		*last_bchar = bchar;
+
+	  xoffset += char_width;
 	}
 
 	return 1;
