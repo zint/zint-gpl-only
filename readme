@@ -1,0 +1,158 @@
+Zint and libzint 2.3.2
+----------------------
+Zint is a suite of programs to allow easy encoding of data in any of the wide range of public domain
+barcode standards and to allow integration of this capability into your own programs. This version
+of Zint is able to encode data in the following formats:
+
+Code 11, Standard Code 2 of 5, IATA Code 2 of 5, Industrial Code 2 of 5, Interleaved Code 2 of 5,
+Code 2 of 5 Data Logic, ITF-14, Deutche Post Leitcode, Deutche Post Identcode, UPC-A, UPC-E, EAN-2,
+EAN-5, EAN-8, EAN-13, UK Plessey, MSI Plessey, Telepen Alpha, Telepen Numeric, Code 39,
+Extended Code 39, Code 93, PZN, Code 23, LOGMARS, Codabar, Pharmacode, Code 128, EAN-128, NVE-18,
+Code 16k, PDF417, MicroPDF417, Two-Track Pharmacode, PostNet, PLANET, Australia Post 4-State Symbols,
+RM4SCC, USPS OneCode, GS1 DataBar, DataBar-14, DataBar Limited, DataBar Extended, DataBar Stacked,
+Composite Symbology, Data Matrix, QR Code, Maxicode, Aztec Code, EAN-13, Micro QR,
+Korea Post Barcode, HIBC Code 128, HIBC Code 39, HIBC Data Matrix, HIBC PDF417, HIBC MicroPDF417,
+HIBC QR Code, HIBC Codablock-F, HIBC Aztec Code, Japanese Postal Code, Code 49, Channel Code, Code One,
+Grid Matrix, FIM and Flattermarken.
+
+          ******************************************************************************
+          *     PLEASE NOTE: This is just a simple guide to getting Zint working.      *
+          *     More complete documentation is available from the project website:     *
+          *                      >>>  http://www.zint.org.uk  <<<                      *
+          ******************************************************************************
+
+PROJECT STATUS
+--------------
+Version 2.3.0:
+This release features a complete rebuild of QR Code and Micro QR Code functionality which now:
+
+* Automatically detects and adjusts to Japanese characters
+* Supports GS1 encoding
+* Does not require the qrencode library.
+
+Also new in this release is Grid Matrix support which similarly supports Chinese character encoding.
+
+Version 2.3.1:
+Correction of some minor bugs in Code 128 and Data Matrix, addition of --notext option to CLI and
+better operation of --scale option which now scales human readable text and MaxiCode.
+
+SPECIAL NOTE: Codablock-F has now been REMOVED from this project because of problems implimenting
+this standard. For full details see the project website.
+
+Version 2.3.2:
+More bug corrections including important corrections to RSS Expanded, Maxicode and ISBN.
+
+COMPILING THE CODE
+------------------
+The CMake Method:
+The easiest way to configure compilation is to take advantage of the CMake utilities. You will
+need to install CMake first. If no Qt libraries are installed then CMake will not attempt to
+build the Zint Barcode Studio GUI. Similarly if libpng is not detected then CMake will not attempt
+to compile PNG image support. This method is recommened in most cases, the notable exception
+being MinGW.
+
+Once CMake is installed follow these steps:
+
+	cd build
+	cmake ..
+	make
+	make install
+
+The command line program can be accessed by typing
+
+	zint {options} -d {data}
+
+Notice that the data needs to be entered after all other options. Any options given after the
+data will be ignored. The GUI can be accessed by typing
+
+	zint-qt
+
+The MakeFile Method:
+MakeFiles are provided for some systems although this method is now depreciated. This method compiles
+and installs the library and CLI only. If you have installed Zint using this method before please
+note that the binaries will now install to a different location than version 2.3.0 or earlier
+(/usr/bin rather than /usr/local/bin and /usr/lib rather than /usr/local/lib). This makes
+installation easier on Red Hat based systems (RHEL, CentOS, Fedora etc.) and on BSD-like systems
+(FreeBSD, OpenBSD etc.) and is more correctly in line with the LSB. YOU WILL NEED TO UNINSTALL
+PREVIOUS VERSIONS OF ZINT BEFORE USING THIS METHOD.
+
+To compile using this method simply run:
+
+	make
+	make install
+
+If compiling on MinGW substitute the Makefile.mingw files for the default Makefiles in both the
+/frontend and /backend folders.
+
+MS Windows:
+Compiling on Cygwin and MinGW are covered above. Compiling with MS Visual Studio is more involved!
+Full instructions are currently not ready for publication but will be placed on the project website
+as soon as possible.
+
+Mac OSX:
+Efforts are currently under way to ease compiling on OSX using the CMake method. It may be possible
+to compile Zint using methods similar to those given above, but this has not been thoroughly tested
+yet. If you have any success with compiling Zint on OSX then please get in touch. An install binary
+for OSX is also in development.
+
+THINGS TO DO
+------------
+If you are interested in improving this package then here are a few ideas.
+
+Backend
+-------
+	* Create filters for more output file formats.
+	* Add ECI character support to allow encoding in more languages than are covered
+	  by the Latin-1 character set.
+	* The code was developed to be easy to understand rather than efficient so may benefit
+	  from some memory optimisation for embedded systems.
+
+GUI Frontend
+------------
+	* Allow copying of generated barcodes to the clipboard with a "Copy" button.
+	* Allow dragging and dropping to external apps.
+
+Packaging
+---------
+	Binary packages are needed for distribution in the following formats
+	* RPMs for various Linux distros (.spec file now available thanks to Radist)
+	* Install binaries for Mac OSX
+
+Translations
+------------
+	Documentation is currently only in English. If you have the knowledge and the
+	time please consider translating into other languages.
+
+Research
+--------
+	The following standards would be welcomed in Zint but the full documentation has
+	not yet been found.
+	* DPD Code
+	* Italian Postal Code
+
+
+CONTACT ME
+----------
+The home of libzint is:
+
+	http://www.sourceforge.net/projects/zint
+
+and the home for Zint documentation is:
+
+	http://www.zint.org.uk
+
+For feature requests or bug reports please join the mailing list at
+
+	https://lists.sourceforge.net/lists/listinfo/zint-barcode
+
+or send an e-mail to
+
+	zint-barcode@lists.sourceforge.net
+
+Thanks for your interest in libzint.
+Happy encoding.
+
+Robin.
+
+
+

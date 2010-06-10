@@ -1,0 +1,6 @@
+how to :
+mkdir build
+cd build
+cmake ..
+make [-j nr_proc+1]
+make install

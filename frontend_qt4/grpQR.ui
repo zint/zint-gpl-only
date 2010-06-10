@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>grpQR</class>
+ <widget class="QWidget" name="grpQR">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>441</width>
+    <height>238</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QRadioButton" name="radQRAuto">
+       <property name="text">
+        <string>A&amp;utomatic Resizing</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QRadioButton" name="radQRSize">
+       <property name="text">
+        <string>Adjust Si&amp;ze To:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QComboBox" name="cmbQRSize">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <item>
+        <property name="text">
+         <string>21 x 21 (Version 1)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>25 x 25 (Version 2)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>29 x 29 (Version 3)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>33 x 33 (Version 4)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>37 x 37 (Version 5)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>41 x 41 (Version 6)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>45 x 45 (Version 7)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>49 x 49 (Version 8)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>53 x 53 (Version 9)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>57 x 57 (Version 10)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>61 x 61 (Version 11)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>65 x 65 (Version 12)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>69 x 69 (Version 13)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>73 x 73 (Version 14)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>77 x 77 (Version 15)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>81 x 81 (Version 16)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>85 x 85 (Version 17)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>89 x 89 (Version 18)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>93 x 93 (Version 19)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>97 x 97 (Version 20)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>101 x 101 (Version 21)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>105 x 105 (Version 22)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>109 x 109 (Version 23)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>113 x 113 (Version 24)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>117 x 117 (Version 25)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>121 x 121 (Version 26)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>125 x 125 (Version 27)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>129 x 129 (Version 28)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>133 x 133 (Version 29)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>137 x 137 (Version 30)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>141 x 141 (Version 31)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>145 x 145 (Version 32)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>149 x 149 (Version 33)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>153 x 153 (Version 34)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>157 x 157 (Version 35)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>161 x 161 (Version 36)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>165 x 165 (Version 37)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>169 x 169 (Version 38)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>173 x 173 (Version 39)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>177 x 177 (Version 40)</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QRadioButton" name="radQRECC">
+       <property name="text">
+        <string>Add &amp;Error Correction:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QComboBox" name="cmbQRECC">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <item>
+        <property name="text">
+         <string>~20% (Level L)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>~37% (Level M)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>~55% (Level Q)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>~65% (Level H)</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="grpAztecMode">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>70</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>Data Encoding</string>
+     </property>
+     <widget class="QWidget" name="gridLayoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>30</y>
+        <width>411</width>
+        <height>80</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QRadioButton" name="radQRStand">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>S&amp;tandard Mode</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QRadioButton" name="radQRHIBC">
+         <property name="text">
+          <string>&amp;HIBC QR Code</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QRadioButton" name="radQRGS1">
+         <property name="text">
+          <string>&amp;GS-1 Data Mode</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <zorder>gridLayoutWidget</zorder>
+     <zorder></zorder>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>radQRSize</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>cmbQRSize</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>89</x>
+     <y>39</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>255</x>
+     <y>46</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radQRECC</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>cmbQRECC</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>95</x>
+     <y>79</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>308</x>
+     <y>79</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
