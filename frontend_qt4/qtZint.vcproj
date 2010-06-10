@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding = "Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9,00"
+	Name="qtZint"
+	ProjectGUID="{6B8BFC0E-48F8-3D3B-BC6F-9EBEC23A8BC1}"
+	Keyword="Qt4VSv1.0">
+	<Platforms>
+		<Platform
+			Name="Win32"/>
+	</Platforms>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="."
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			ConfigurationType="1"
+			IntermediateDirectory="debug\"
+			UseOfMfc="0">
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;d:\Prog\Qt\4.6.0-beta1\include\QtUiTools&quot;,&quot;d:\Prog\Qt\4.6.0-beta1\include\QtCore&quot;,&quot;d:\Prog\Qt\4.6.0-beta1\include\QtGui&quot;,&quot;d:\Prog\Qt\4.6.0-beta1\include\QtXml&quot;,&quot;d:\Prog\Qt\4.6.0-beta1\include&quot;,&quot;..\backend_qt4&quot;,&quot;..\backend&quot;,&quot;d:\Prog\Qt\4.6.0-beta1\include\ActiveQt&quot;,&quot;debug&quot;,&quot;d:\src\zint\frontend_qt4&quot;,d:\Prog\Qt\4.6.0-beta1\mkspecs\default"
+				AdditionalOptions="-Zm200 -w34100 -w34189 -w34100 -w34189"
+				AssemblerListingLocation="debug\"
+				BufferSecurityCheck="false"
+				DebugInformationFormat="3"
+				ExceptionHandling="1"
+				GeneratePreprocessedFile="0"
+				ObjectFile="debug\"
+				Optimization ="4"
+				PreprocessorDefinitions="_WINDOWS,UNICODE,WIN32,QT_LARGEFILE_SUPPORT,QT_XML_LIB,QT_GUI_LIB,QT_CORE_LIB,QT_THREAD_SUPPORT"
+				ProgramDataBaseFileName=".\"
+				RuntimeLibrary="3"
+				RuntimeTypeInfo="true"
+				SuppressStartupBanner="true"
+				TreatWChar_tAsBuiltInType="false"
+				WarningLevel="3"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="d:\Prog\Qt\4.6.0-beta1\lib\qtmainVSd.lib QtZint2.lib d:\Prog\Qt\4.6.0-beta1\lib\QtXmlVSd.lib d:\Prog\Qt\4.6.0-beta1\lib\QtGuiVSd.lib d:\Prog\Qt\4.6.0-beta1\lib\QtCoreVSd.lib d:\Prog\Qt\4.6.0-beta1\lib\QtUiToolsd.lib kernel32.lib user32.lib shell32.lib uuid.lib ole32.lib advapi32.lib ws2_32.lib gdi32.lib comdlg32.lib oleaut32.lib imm32.lib winmm.lib winspool.lib msimg32.lib"
+				AdditionalLibraryDirectories="..\backend_qt4\debug,d:\Prog\Qt\4.6.0-beta1\lib"
+				AdditionalOptions="&quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot; &quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot;"
+				GenerateDebugInformation="true"
+				IgnoreImportLibrary="true"
+				LinkTimeCodeGeneration="0"
+				OutputFile="debug\qtZint.exe"
+				ProgramDatabaseFile=""
+				SubSystem="2"
+				SuppressStartupBanner="true"/>
+			<Tool
+				Name="VCMIDLTool"
+				DefaultCharType="0"
+				EnableErrorChecks="1"
+				WarningLevel="0"/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_WINDOWS,UNICODE,WIN32,QT_LARGEFILE_SUPPORT,QT_XML_LIB,QT_GUI_LIB,QT_CORE_LIB,QT_THREAD_SUPPORT,_DEBUG"/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="."
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			ConfigurationType="1"
+			IntermediateDirectory="release\"
+			UseOfMfc="0">
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;d:\Prog\Qt\4.6.0-beta1\include\QtUiTools&quot;,&quot;d:\Prog\Qt\4.6.0-beta1\include\QtCore&quot;,&quot;d:\Prog\Qt\4.6.0-beta1\include\QtGui&quot;,&quot;d:\Prog\Qt\4.6.0-beta1\include\QtXml&quot;,&quot;d:\Prog\Qt\4.6.0-beta1\include&quot;,&quot;..\backend_qt4&quot;,&quot;..\backend&quot;,&quot;d:\Prog\Qt\4.6.0-beta1\include\ActiveQt&quot;,&quot;release&quot;,&quot;d:\src\zint\frontend_qt4&quot;,d:\Prog\Qt\4.6.0-beta1\mkspecs\default"
+				AdditionalOptions="-Zm200 -w34100 -w34189 -w34100 -w34189"
+				AssemblerListingLocation="release\"
+				BufferSecurityCheck="false"
+				DebugInformationFormat="0"
+				ExceptionHandling="1"
+				GeneratePreprocessedFile="0"
+				ObjectFile="release\"
+				Optimization ="2"
+				PreprocessorDefinitions="QT_NO_DEBUG,NDEBUG,_WINDOWS,UNICODE,WIN32,QT_LARGEFILE_SUPPORT,QT_NO_DEBUG,QT_XML_LIB,QT_GUI_LIB,QT_CORE_LIB,QT_THREAD_SUPPORT,NDEBUG"
+				ProgramDataBaseFileName=".\"
+				RuntimeLibrary="2"
+				RuntimeTypeInfo="true"
+				SuppressStartupBanner="true"
+				TreatWChar_tAsBuiltInType="false"
+				WarningLevel="3"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="d:\Prog\Qt\4.6.0-beta1\lib\qtmainVS.lib QtZint2.lib d:\Prog\Qt\4.6.0-beta1\lib\QtXmlVS.lib d:\Prog\Qt\4.6.0-beta1\lib\QtGuiVS.lib d:\Prog\Qt\4.6.0-beta1\lib\QtCoreVS.lib d:\Prog\Qt\4.6.0-beta1\lib\QtUiTools.lib kernel32.lib user32.lib shell32.lib uuid.lib ole32.lib advapi32.lib ws2_32.lib gdi32.lib comdlg32.lib oleaut32.lib imm32.lib winmm.lib winspool.lib msimg32.lib"
+				AdditionalLibraryDirectories="..\backend_qt4\release,d:\Prog\Qt\4.6.0-beta1\lib"
+				AdditionalOptions="&quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot; &quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot;"
+				GenerateDebugInformation="false"
+				IgnoreImportLibrary="true"
+				LinkIncremental="1"
+				LinkTimeCodeGeneration="0"
+				OutputFile="release\qtZint.exe"
+				ProgramDatabaseFile=""
+				SubSystem="2"
+				SuppressStartupBanner="true"/>
+			<Tool
+				Name="VCMIDLTool"
+				DefaultCharType="0"
+				EnableErrorChecks="1"
+				WarningLevel="0"/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="QT_NO_DEBUG,NDEBUG,_WINDOWS,UNICODE,WIN32,QT_LARGEFILE_SUPPORT,QT_NO_DEBUG,QT_XML_LIB,QT_GUI_LIB,QT_CORE_LIB,QT_THREAD_SUPPORT"/>
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter
+			Name="Source Files"
+			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
+			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
+			<File
+				RelativePath="barcodeitem.cpp"/>
+			<File
+				RelativePath="datawindow.cpp"/>
+			<File
+				RelativePath="exportwindow.cpp"/>
+			<File
+				RelativePath="main.cpp"/>
+			<File
+				RelativePath="mainwindow.cpp"/>
+			<File
+				RelativePath="sequencewindow.cpp"/>
+		</Filter>
+		<Filter
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl;inc;xsd"
+			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			<File
+				RelativePath="barcodeitem.h"/>
+			<File
+				RelativePath="datawindow.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="d:\Prog\Qt\4.6.0-beta1\bin\moc.exe;datawindow.h"
+						CommandLine="d:\Prog\Qt\4.6.0-beta1\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtUiTools&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtCore&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtGui&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtXml&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include&quot; -I&quot;..\backend_qt4&quot; -I&quot;..\backend&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\ActiveQt&quot; -I&quot;debug&quot; -I&quot;d:\src\zint\frontend_qt4&quot; -Id:\Prog\Qt\4.6.0-beta1\mkspecs\default -D_MSC_VER=1500 -DWIN32 datawindow.h -o debug\moc_datawindow.cpp"
+						Description="MOC datawindow.h"
+						Outputs="debug\moc_datawindow.cpp"
+						Path="d:\Prog\Qt\4.6.0-beta1\bin"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="d:\Prog\Qt\4.6.0-beta1\bin\moc.exe;datawindow.h"
+						CommandLine="d:\Prog\Qt\4.6.0-beta1\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtUiTools&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtCore&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtGui&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtXml&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include&quot; -I&quot;..\backend_qt4&quot; -I&quot;..\backend&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\ActiveQt&quot; -I&quot;release&quot; -I&quot;d:\src\zint\frontend_qt4&quot; -Id:\Prog\Qt\4.6.0-beta1\mkspecs\default -D_MSC_VER=1500 -DWIN32 datawindow.h -o release\moc_datawindow.cpp"
+						Description="MOC datawindow.h"
+						Outputs="release\moc_datawindow.cpp"
+						Path="d:\Prog\Qt\4.6.0-beta1\bin"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="exportwindow.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="d:\Prog\Qt\4.6.0-beta1\bin\moc.exe;exportwindow.h"
+						CommandLine="d:\Prog\Qt\4.6.0-beta1\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtUiTools&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtCore&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtGui&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtXml&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include&quot; -I&quot;..\backend_qt4&quot; -I&quot;..\backend&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\ActiveQt&quot; -I&quot;debug&quot; -I&quot;d:\src\zint\frontend_qt4&quot; -Id:\Prog\Qt\4.6.0-beta1\mkspecs\default -D_MSC_VER=1500 -DWIN32 exportwindow.h -o debug\moc_exportwindow.cpp"
+						Description="MOC exportwindow.h"
+						Outputs="debug\moc_exportwindow.cpp"
+						Path="d:\Prog\Qt\4.6.0-beta1\bin"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="d:\Prog\Qt\4.6.0-beta1\bin\moc.exe;exportwindow.h"
+						CommandLine="d:\Prog\Qt\4.6.0-beta1\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtUiTools&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtCore&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtGui&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtXml&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include&quot; -I&quot;..\backend_qt4&quot; -I&quot;..\backend&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\ActiveQt&quot; -I&quot;release&quot; -I&quot;d:\src\zint\frontend_qt4&quot; -Id:\Prog\Qt\4.6.0-beta1\mkspecs\default -D_MSC_VER=1500 -DWIN32 exportwindow.h -o release\moc_exportwindow.cpp"
+						Description="MOC exportwindow.h"
+						Outputs="release\moc_exportwindow.cpp"
+						Path="d:\Prog\Qt\4.6.0-beta1\bin"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="mainwindow.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="d:\Prog\Qt\4.6.0-beta1\bin\moc.exe;mainwindow.h"
+						CommandLine="d:\Prog\Qt\4.6.0-beta1\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtUiTools&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtCore&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtGui&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtXml&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include&quot; -I&quot;..\backend_qt4&quot; -I&quot;..\backend&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\ActiveQt&quot; -I&quot;debug&quot; -I&quot;d:\src\zint\frontend_qt4&quot; -Id:\Prog\Qt\4.6.0-beta1\mkspecs\default -D_MSC_VER=1500 -DWIN32 mainwindow.h -o debug\moc_mainwindow.cpp"
+						Description="MOC mainwindow.h"
+						Outputs="debug\moc_mainwindow.cpp"
+						Path="d:\Prog\Qt\4.6.0-beta1\bin"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="d:\Prog\Qt\4.6.0-beta1\bin\moc.exe;mainwindow.h"
+						CommandLine="d:\Prog\Qt\4.6.0-beta1\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtUiTools&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtCore&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtGui&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtXml&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include&quot; -I&quot;..\backend_qt4&quot; -I&quot;..\backend&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\ActiveQt&quot; -I&quot;release&quot; -I&quot;d:\src\zint\frontend_qt4&quot; -Id:\Prog\Qt\4.6.0-beta1\mkspecs\default -D_MSC_VER=1500 -DWIN32 mainwindow.h -o release\moc_mainwindow.cpp"
+						Description="MOC mainwindow.h"
+						Outputs="release\moc_mainwindow.cpp"
+						Path="d:\Prog\Qt\4.6.0-beta1\bin"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="sequencewindow.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="d:\Prog\Qt\4.6.0-beta1\bin\moc.exe;sequencewindow.h"
+						CommandLine="d:\Prog\Qt\4.6.0-beta1\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtUiTools&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtCore&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtGui&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtXml&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include&quot; -I&quot;..\backend_qt4&quot; -I&quot;..\backend&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\ActiveQt&quot; -I&quot;debug&quot; -I&quot;d:\src\zint\frontend_qt4&quot; -Id:\Prog\Qt\4.6.0-beta1\mkspecs\default -D_MSC_VER=1500 -DWIN32 sequencewindow.h -o debug\moc_sequencewindow.cpp"
+						Description="MOC sequencewindow.h"
+						Outputs="debug\moc_sequencewindow.cpp"
+						Path="d:\Prog\Qt\4.6.0-beta1\bin"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="d:\Prog\Qt\4.6.0-beta1\bin\moc.exe;sequencewindow.h"
+						CommandLine="d:\Prog\Qt\4.6.0-beta1\bin\moc.exe  -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtUiTools&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtCore&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtGui&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\QtXml&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include&quot; -I&quot;..\backend_qt4&quot; -I&quot;..\backend&quot; -I&quot;d:\Prog\Qt\4.6.0-beta1\include\ActiveQt&quot; -I&quot;release&quot; -I&quot;d:\src\zint\frontend_qt4&quot; -Id:\Prog\Qt\4.6.0-beta1\mkspecs\default -D_MSC_VER=1500 -DWIN32 sequencewindow.h -o release\moc_sequencewindow.cpp"
+						Description="MOC sequencewindow.h"
+						Outputs="release\moc_sequencewindow.cpp"
+						Path="d:\Prog\Qt\4.6.0-beta1\bin"/>
+				</FileConfiguration>
+			</File>
+		</Filter>
+		<Filter
+			Name="Generated Files"
+			Filter="cpp;c;cxx;moc;h;def;odl;idl;res;"
+			UniqueIdentifier="{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}">
+			<File
+				RelativePath="debug\moc_datawindow.cpp">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="release\moc_datawindow.cpp">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="debug\moc_exportwindow.cpp">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="release\moc_exportwindow.cpp">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="debug\moc_mainwindow.cpp">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="release\moc_mainwindow.cpp">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="debug\moc_sequencewindow.cpp">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="release\moc_sequencewindow.cpp">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="debug\qrc_resources.cpp">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="release\qrc_resources.cpp">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="debug\qtZint.res">
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="release\qtZint.res">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"/>
+			</File>
+			<File
+				RelativePath="ui_extData.h"/>
+			<File
+				RelativePath="ui_extExport.h"/>
+			<File
+				RelativePath="ui_extSequence.h"/>
+			<File
+				RelativePath="ui_mainWindow.h"/>
+		</Filter>
+		<Filter
+			Name="Form Files"
+			Filter="ui"
+			UniqueIdentifier="{99349809-55BA-4b9d-BF79-8FDBB0286EB3}"
+			ParseFiles="false">
+			<File
+				RelativePath="extData.ui">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="d:\Prog\Qt\4.6.0-beta1\bin\uic.exe;extData.ui"
+						CommandLine="d:\Prog\Qt\4.6.0-beta1\bin\uic.exe extData.ui -o ui_extData.h"
+						Description="UIC extData.ui"
+						Outputs="ui_extData.h"
+						Path="d:\Prog\Qt\4.6.0-beta1\bin"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="d:\Prog\Qt\4.6.0-beta1\bin\uic.exe;extData.ui"
+						CommandLine="d:\Prog\Qt\4.6.0-beta1\bin\uic.exe extData.ui -o ui_extData.h"
+						Description="UIC extData.ui"
+						Outputs="ui_extData.h"
+						Path="d:\Prog\Qt\4.6.0-beta1\bin"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="extExport.ui">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="d:\Prog\Qt\4.6.0-beta1\bin\uic.exe;extExport.ui"
+						CommandLine="d:\Prog\Qt\4.6.0-beta1\bin\uic.exe extExport.ui -o ui_extExport.h"
+						Description="UIC extExport.ui"
+						Outputs="ui_extExport.h"
+						Path="d:\Prog\Qt\4.6.0-beta1\bin"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="d:\Prog\Qt\4.6.0-beta1\bin\uic.exe;extExport.ui"
+						CommandLine="d:\Prog\Qt\4.6.0-beta1\bin\uic.exe extExport.ui -o ui_extExport.h"
+						Description="UIC extExport.ui"
+						Outputs="ui_extExport.h"
+						Path="d:\Prog\Qt\4.6.0-beta1\bin"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="extSequence.ui">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="d:\Prog\Qt\4.6.0-beta1\bin\uic.exe;extSequence.ui"
+						CommandLine="d:\Prog\Qt\4.6.0-beta1\bin\uic.exe extSequence.ui -o ui_extSequence.h"
+						Description="UIC extSequence.ui"
+						Outputs="ui_extSequence.h"
+						Path="d:\Prog\Qt\4.6.0-beta1\bin"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="d:\Prog\Qt\4.6.0-beta1\bin\uic.exe;extSequence.ui"
+						CommandLine="d:\Prog\Qt\4.6.0-beta1\bin\uic.exe extSequence.ui -o ui_extSequence.h"
+						Description="UIC extSequence.ui"
+						Outputs="ui_extSequence.h"
+						Path="d:\Prog\Qt\4.6.0-beta1\bin"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="mainWindow.ui">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="d:\Prog\Qt\4.6.0-beta1\bin\uic.exe;mainWindow.ui"
+						CommandLine="d:\Prog\Qt\4.6.0-beta1\bin\uic.exe mainWindow.ui -o ui_mainWindow.h"
+						Description="UIC mainWindow.ui"
+						Outputs="ui_mainWindow.h"
+						Path="d:\Prog\Qt\4.6.0-beta1\bin"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="d:\Prog\Qt\4.6.0-beta1\bin\uic.exe;mainWindow.ui"
+						CommandLine="d:\Prog\Qt\4.6.0-beta1\bin\uic.exe mainWindow.ui -o ui_mainWindow.h"
+						Description="UIC mainWindow.ui"
+						Outputs="ui_mainWindow.h"
+						Path="d:\Prog\Qt\4.6.0-beta1\bin"/>
+				</FileConfiguration>
+			</File>
+		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="qrc;*"
+			UniqueIdentifier="{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}"
+			ParseFiles="false">
+			<File
+				RelativePath="grpAztec.ui"/>
+			<File
+				RelativePath="grpC128.ui"/>
+			<File
+				RelativePath="grpC16k.ui"/>
+			<File
+				RelativePath="grpC39.ui"/>
+			<File
+				RelativePath="grpC49.ui"/>
+			<File
+				RelativePath="grpChannel.ui"/>
+			<File
+				RelativePath="grpCodablock.ui"/>
+			<File
+				RelativePath="grpCodeOne.ui"/>
+			<File
+				RelativePath="grpDM.ui"/>
+			<File
+				RelativePath="grpGrid.ui"/>
+			<File
+				RelativePath="grpMQR.ui"/>
+			<File
+				RelativePath="grpMSICheck.ui"/>
+			<File
+				RelativePath="grpMaxicode.ui"/>
+			<File
+				RelativePath="grpMicroPDF.ui"/>
+			<File
+				RelativePath="grpPDF417.ui"/>
+			<File
+				RelativePath="grpQR.ui"/>
+			<File
+				RelativePath="resources.qrc">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="d:\Prog\Qt\4.6.0-beta1\bin\rcc.exe;grpAztec.ui;grpC128.ui;grpC16k.ui;grpC39.ui;grpC49.ui;grpChannel.ui;grpCodablock.ui;grpCodeOne.ui;grpDM.ui;grpGrid.ui;grpMQR.ui;grpMSICheck.ui;grpMaxicode.ui;grpMicroPDF.ui;grpPDF417.ui;grpQR.ui;images\rotateleft.png;images\rotateright.png;images\zico.png;images\zoomin.png;images\zoomout.png;resources.qrc"
+						CommandLine="d:\Prog\Qt\4.6.0-beta1\bin\rcc.exe -name resources resources.qrc -o debug\qrc_resources.cpp"
+						Description="RCC resources.qrc"
+						Outputs="debug\qrc_resources.cpp"
+						Path="d:\Prog\Qt\4.6.0-beta1\bin"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						AdditionalDependencies="d:\Prog\Qt\4.6.0-beta1\bin\rcc.exe;grpAztec.ui;grpC128.ui;grpC16k.ui;grpC39.ui;grpC49.ui;grpChannel.ui;grpCodablock.ui;grpCodeOne.ui;grpDM.ui;grpGrid.ui;grpMQR.ui;grpMSICheck.ui;grpMaxicode.ui;grpMicroPDF.ui;grpPDF417.ui;grpQR.ui;images\rotateleft.png;images\rotateright.png;images\zico.png;images\zoomin.png;images\zoomout.png;resources.qrc"
+						CommandLine="d:\Prog\Qt\4.6.0-beta1\bin\rcc.exe -name resources resources.qrc -o release\qrc_resources.cpp"
+						Description="RCC resources.qrc"
+						Outputs="release\qrc_resources.cpp"
+						Path="d:\Prog\Qt\4.6.0-beta1\bin"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="images\rotateleft.png"/>
+			<File
+				RelativePath="images\rotateright.png"/>
+			<File
+				RelativePath="images\zico.png"/>
+			<File
+				RelativePath="images\zoomin.png"/>
+			<File
+				RelativePath="images\zoomout.png"/>
+		</Filter>
+		<File
+			RelativePath="res\qtZint.rc"/>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

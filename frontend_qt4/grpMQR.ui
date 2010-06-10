@@ -1,0 +1,143 @@
+<ui version="4.0" >
+ <class>grpMQR</class>
+ <widget class="QWidget" name="grpMQR" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>423</width>
+    <height>159</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <item>
+    <layout class="QGridLayout" name="gridLayout" >
+     <item row="0" column="0" >
+      <widget class="QRadioButton" name="radMQRAuto" >
+       <property name="text" >
+        <string>A&amp;utomatic Resizing</string>
+       </property>
+       <property name="checked" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" >
+      <widget class="QRadioButton" name="radMQRSize" >
+       <property name="text" >
+        <string>Adjust Si&amp;ze To:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1" >
+      <widget class="QComboBox" name="cmbMQRSize" >
+       <property name="enabled" >
+        <bool>false</bool>
+       </property>
+       <item>
+        <property name="text" >
+         <string>11 x 11 (Version M1)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>13 x 13 (Version M2)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>15 x 15 (Version M3)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>17 x 17 (Version M4)</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="2" column="0" >
+      <widget class="QRadioButton" name="radMQRECC" >
+       <property name="text" >
+        <string>Add &amp;Error Correction:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1" >
+      <widget class="QComboBox" name="cmbMQRECC" >
+       <property name="enabled" >
+        <bool>false</bool>
+       </property>
+       <item>
+        <property name="text" >
+         <string>~20% (Level L)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>~37% (Level M)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>~55% (Level Q)</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <spacer name="verticalSpacer" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>50</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>radMQRSize</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>cmbMQRSize</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>98</x>
+     <y>54</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>279</x>
+     <y>53</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radMQRECC</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>cmbMQRECC</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>114</x>
+     <y>89</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>279</x>
+     <y>89</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
