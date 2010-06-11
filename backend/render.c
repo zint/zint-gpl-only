@@ -36,7 +36,7 @@ int render_plot_add_line(struct zint_symbol *symbol, struct zint_render_line *li
 
 int render_plot_add_string(struct zint_symbol *symbol, char *text, float x, float y, float fsize, float width, struct zint_render_string **last_string);
 
-int render_plot(struct zint_symbol *symbol, unsigned int hide_text)
+int render_plot(struct zint_symbol *symbol, unsigned int hide_text, float width, float height)
 {
 	struct zint_render        *render;
 	struct zint_render_line   *line, *last_line = NULL;
@@ -51,6 +51,7 @@ int render_plot(struct zint_symbol *symbol, unsigned int hide_text)
 	float addon_text_posn;
 	float default_text_posn;
 	float scaler = symbol->scale;
+  float w, h;
 	const char *locale = NULL;
 
 	// Allocate memory for the rendered version
@@ -68,33 +69,39 @@ int render_plot(struct zint_symbol *symbol, unsigned int hide_text)
 	comp_offset = 0;
 	addon_text_posn = 0.0;
 
-	if (symbol->height < 15) {
-		symbol->height = 15;
+  /*
+   * Determine if there will be any addon texts and text height 
+   */
+	latch = 0;
+	r = 0;
+	/* Isolate add-on text */
+	if(is_extendable(symbol->symbology)) {
+		for(i = 0; i < ustrlen(symbol->text); i++) {
+			if (latch == 1) {
+				addon[r] = symbol->text[i];
+				r++;
+			}
+			if (symbol->text[i] == '+') {
+				latch = 1;
+			}
+		}
 	}
-	// symbol->height = 50;
-
+	addon[r] = '\0';
+	if((symbol->show_hrt == 0) || (ustrlen(symbol->text) != 0)) {
+		hide_text = 0;
+	}
 	if(!hide_text && ustrlen(symbol->text)) {
 		textheight = 9.0;
 		textoffset = 2.0;
 	} else {
 		textheight = textoffset = 0.0;
 	}
-	// Update height for texts
-	symbol->height -= textheight + textoffset;
 
-	large_bar_count = 0;
-	preset_height = 0.0;
-	for(i = 0; i < symbol->rows; i++) {
-		preset_height += symbol->row_height[i];
-		if(symbol->row_height[i] == 0) {
-			large_bar_count++;
-		}
-	}
-	large_bar_height = (symbol->height - preset_height) / large_bar_count;
 
-	if (large_bar_count == 0) {
-		symbol->height = preset_height;
-	}
+  /*
+   * Calculate the width of the barcode, especially if there are any extra
+   * borders or white space to add.
+   */
 	
 	while(!(module_is_set(symbol, symbol->rows - 1, comp_offset))) {
 		comp_offset++;
@@ -131,44 +138,52 @@ int render_plot(struct zint_symbol *symbol, unsigned int hide_text)
 		}
 	}
 
-	latch = 0;
-	r = 0;
-	/* Isolate add-on text */
-	if(is_extendable(symbol->symbology)) {
-		for(i = 0; i < ustrlen(symbol->text); i++) {
-			if (latch == 1) {
-				addon[r] = symbol->text[i];
-				r++;
-			}
-			if (symbol->text[i] == '+') {
-				latch = 1;
-			}
+	xoffset = symbol->border_width + symbol->whitespace_width;
+
+  // Calculate the initial scale factor if width provided
+  w = main_width + (xoffset * 2);
+  if (width) {
+    scaler = width / w;
+  }
+
+  /*
+   * Calculate the height
+   */
+  if (height) {
+    symbol->height = height / scaler; // starting height
+  } else if (symbol->height == 0) {
+		symbol->height = 50;
+  }
+
+	// Update height for texts
+	symbol->height -= textheight + textoffset;
+
+  // Determine if height should be overridden
+	large_bar_count = 0;
+	preset_height = 0.0;
+	for(i = 0; i < symbol->rows; i++) {
+		preset_height += symbol->row_height[i];
+		if(symbol->row_height[i] == 0) {
+			large_bar_count++;
 		}
 	}
-	addon[r] = '\0';
+	large_bar_height = (symbol->height - preset_height) / large_bar_count;
 
-	if((symbol->show_hrt == 0) || (ustrlen(symbol->text) != 0)) {
-		hide_text = 0;
+	if (large_bar_count == 0) {
+		symbol->height = preset_height;
 	}
-	if(hide_text) {
-		textoffset = 0;
-	} else {
-		textoffset = 3.0;
-	}
-
-	xoffset = symbol->border_width + symbol->whitespace_width;
 	yoffset = symbol->border_width;
 
-	/*
-	 * If main_width is bigger than symbol->width we need to recalculate the 
-	 * scaler so the barcode fits in the same area!
-	 */
-	if (main_width != symbol->width) {
-		scaler = scaler / ((symbol->width + (xoffset * 2.0)) / symbol->width);
-	}
+  // Calculate the scale factor from the height, incase it needs to be lowered for width
+	h = (symbol->height + textheight + textoffset + (yoffset * 2));
+  if ((h * scaler) > height) {
+    scaler = height / h;
+  }
 
-	render->width = (symbol->width + (xoffset * 2)) * scaler;
-	render->height = (symbol->height + textheight + textoffset + yoffset + yoffset) * scaler;
+  // Set initial render dimensions
+  render->width = w * scaler;
+  render->height = h * scaler;
+
 
 	if(((symbol->output_options & BARCODE_BOX) != 0) || ((symbol->output_options & BARCODE_BIND) != 0)) {
 		default_text_posn = (symbol->height + textoffset + symbol->border_width + symbol->border_width) * scaler;
