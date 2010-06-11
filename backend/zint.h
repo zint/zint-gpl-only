@@ -25,7 +25,6 @@
 extern "C" {
 #endif /* __cplusplus */
 
-<<<<<<< HEAD
 struct zint_render_line {
 	float x, y, length, width;
 	struct zint_render_line *next;      /* Pointer to next line */
@@ -44,8 +43,6 @@ struct zint_render {
 	struct zint_render_string *strings;	/* Pointer to first string */
 };
 
-=======
->>>>>>> 511fadef30c0f8634c6a7126edae0554914bcb92
 struct zint_symbol {
 	int symbology;
 	int height;
@@ -71,15 +68,10 @@ struct zint_symbol {
 	char *bitmap;
 	int bitmap_width;
 	int bitmap_height;
-<<<<<<< HEAD
 	struct zint_render *rendered;
 };
 
 
-=======
-};
-
->>>>>>> 511fadef30c0f8634c6a7126edae0554914bcb92
 /* Tbarcode 7 codes */
 #define BARCODE_CODE11		1
 #define BARCODE_C25MATRIX	2
