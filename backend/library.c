@@ -92,7 +92,6 @@ void ZBarcode_Delete(struct zint_symbol *symbol)
 {
 	if (symbol->bitmap != NULL)
 		free(symbol->bitmap);
-<<<<<<< HEAD
 
 	// If there is a rendered version, ensure it's memory is released
 	if (symbol->rendered != NULL) {
@@ -118,8 +117,6 @@ void ZBarcode_Delete(struct zint_symbol *symbol)
 		// Free Render
 		free(symbol->rendered);
 	}
-=======
->>>>>>> 511fadef30c0f8634c6a7126edae0554914bcb92
 	free(symbol);
 }
 
