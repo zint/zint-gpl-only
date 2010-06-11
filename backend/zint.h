@@ -30,16 +30,17 @@ struct zint_render_line {
 	struct zint_render_line *next;      /* Pointer to next line */
 };
 
-struct zint_render_char {
+struct zint_render_string {
 	float x, y, fsize;
-	char c;
-	struct zint_render_char *next;      /* Pointer to next character */
+  float width;                        /* Suggested string width, may be 0 if none recommended */
+	char *text;
+	struct zint_render_string *next;    /* Pointer to next character */
 };
 
 struct zint_render {
 	float width, height;
 	struct zint_render_line *lines;	 		/* Pointer to first line */
-	struct zint_render_char *chars;		  /* Pointer to first character */
+	struct zint_render_string *strings;	/* Pointer to first string */
 };
 
 struct zint_symbol {
