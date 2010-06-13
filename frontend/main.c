@@ -31,6 +31,11 @@
 #endif
 #define NESET "0123456789"
 
+#ifdef _MSC_VER
+#include <malloc.h> 
+#endif
+
+
 void types(void) {
 	printf( 	" 1: Code 11           51: Pharma One-Track         90: KIX Code\n"
 			" 2: Standard 2of5     52: PZN                      92: Aztec Code\n"
@@ -112,6 +117,54 @@ int validator(char test_string[], char source[])
 	}
 	
 	return 0;
+}
+
+int escape_char_process(struct zint_symbol *my_symbol, unsigned char input_string[], int length)
+{
+	int error_number;
+	int i, j;
+	
+#ifndef _MSC_VER
+	unsigned char escaped_string[length + 1];
+#else
+	unsigned char* escaped_string = (unsigned char*)_alloca(length + 1);
+#endif
+
+	i = 0;
+	j = 0;
+	
+	do {
+		if(input_string[i] == '\\') {
+			switch(input_string[i + 1]) {
+				case '0': escaped_string[j] = 0x00; i += 2; break; /* Null */
+				case 'E': escaped_string[j] = 0x04; i += 2; break; /* End of Transmission */
+				case 'a': escaped_string[j] = 0x07; i += 2; break; /* Bell */
+				case 'b': escaped_string[j] = 0x08; i += 2; break; /* Backspace */
+				case 't': escaped_string[j] = 0x09; i += 2; break; /* Horizontal tab */
+				case 'n': escaped_string[j] = 0x0a; i += 2; break; /* Line feed */
+				case 'v': escaped_string[j] = 0x0b; i += 2; break; /* Vertical tab */
+				case 'f': escaped_string[j] = 0x0c; i += 2; break; /* Form feed */
+				case 'r': escaped_string[j] = 0x0d; i += 2; break; /* Carriage return */
+				case 'e': escaped_string[j] = 0x1b; i += 2; break; /* Escape */
+				case 'G': escaped_string[j] = 0x1d; i += 2; break; /* Group Separator */
+				case 'R': escaped_string[j] = 0x1e; i += 2; break; /* Record Separator */
+				case '\\': escaped_string[j] = '\\'; i += 2; break;
+				default: escaped_string[j] = input_string[i]; i++; break;
+			}
+		} else {
+			escaped_string[j] = input_string[i];
+			i++;
+		}
+		j++;
+	} while (i < length);
+	escaped_string[j] = '\0';
+
+	printf("Input: %s\n", input_string);
+	printf("Output:%s\n", escaped_string);
+	
+	error_number = ZBarcode_Encode(my_symbol, escaped_string, j);
+	
+	return error_number;
 }
 
 int main(int argc, char **argv)
@@ -277,8 +330,6 @@ int main(int argc, char **argv)
 					}
 				}
 				if(!strcmp(long_options[option_index].name, "mode")) {
-					/* Don't allow specification of modes 2 and 3 - do it
-					automagically instead */
 					if((optarg[0] >= '0') && (optarg[0] <= '6')) {
 						my_symbol->option_1 = optarg[0] - '0';
 					} else {
@@ -332,7 +383,7 @@ int main(int argc, char **argv)
 				break;
 				
 			case 'd': /* we have some data! */
-				error_number = ZBarcode_Encode(my_symbol, (unsigned char*)optarg, strlen(optarg));
+				error_number = escape_char_process(my_symbol, (unsigned char*)optarg, strlen(optarg));
 				if(error_number == 0) {
 					error_number = ZBarcode_Print(my_symbol, rotate_angle);
 				}
