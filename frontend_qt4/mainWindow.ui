@@ -5,241 +5,73 @@
   <property name="windowModality">
    <enum>Qt::NonModal</enum>
   </property>
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>749</width>
-    <height>711</height>
-   </rect>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
-    <width>749</width>
-    <height>711</height>
+    <width>590</width>
+    <height>600</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>749</width>
-    <height>711</height>
+    <width>590</width>
+    <height>600</height>
    </size>
   </property>
   <property name="windowTitle">
-   <string>Zint Barcode Studio</string>
+   <string>Zint Barcode Studio 2.4</string>
   </property>
   <property name="windowIcon">
    <iconset resource="resources.qrc">
     <normaloff>:/images/zint.png</normaloff>:/images/zint.png</iconset>
   </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <property name="locale">
    <locale language="English" country="UnitedStates"/>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_7">
+  <layout class="QVBoxLayout" name="verticalLayout_5">
    <item>
-    <widget class="QGroupBox" name="groupPreview">
+    <widget class="QGraphicsView" name="view">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>1000</width>
+       <height>1000</height>
+      </size>
+     </property>
+     <property name="toolTip">
+      <string>Resulting barcode shown here</string>
+     </property>
      <property name="autoFillBackground">
       <bool>false</bool>
      </property>
-     <property name="title">
-      <string>Preview</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0" rowspan="3" colspan="3">
-       <widget class="QGraphicsView" name="view">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="autoFillBackground">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="3">
-       <widget class="QToolButton" name="btnZoomOut">
-        <property name="minimumSize">
-         <size>
-          <width>28</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>28</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Zoom out</string>
-        </property>
-        <property name="text">
-         <string>...</string>
-        </property>
-        <property name="icon">
-         <iconset resource="resources.qrc">
-          <normaloff>:/images/zoomout.png</normaloff>:/images/zoomout.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>22</width>
-          <height>22</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="3">
-       <widget class="QSlider" name="scaleSlider">
-        <property name="toolTip">
-         <string>Adjust zoom</string>
-        </property>
-        <property name="locale">
-         <locale language="English" country="UnitedStates"/>
-        </property>
-        <property name="minimum">
-         <number>50</number>
-        </property>
-        <property name="maximum">
-         <number>400</number>
-        </property>
-        <property name="value">
-         <number>100</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="invertedAppearance">
-         <bool>true</bool>
-        </property>
-        <property name="invertedControls">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="3">
-       <widget class="QToolButton" name="btnZoomIn">
-        <property name="minimumSize">
-         <size>
-          <width>28</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>28</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Zoom in</string>
-        </property>
-        <property name="icon">
-         <iconset resource="resources.qrc">
-          <normaloff>:/images/zoomin.png</normaloff>:/images/zoomin.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>22</width>
-          <height>22</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QToolButton" name="btnRotateLeft">
-        <property name="minimumSize">
-         <size>
-          <width>28</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>28</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Rotate anti-clockwise</string>
-        </property>
-        <property name="locale">
-         <locale language="English" country="UnitedStates"/>
-        </property>
-        <property name="icon">
-         <iconset resource="resources.qrc">
-          <normaloff>:/images/rotateleft.png</normaloff>:/images/rotateleft.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>22</width>
-          <height>22</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1">
-       <widget class="QSlider" name="rotateSlider">
-        <property name="toolTip">
-         <string>Adjust Rotation</string>
-        </property>
-        <property name="locale">
-         <locale language="English" country="UnitedStates"/>
-        </property>
-        <property name="maximum">
-         <number>360</number>
-        </property>
-        <property name="pageStep">
-         <number>15</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="tickPosition">
-         <enum>QSlider::TicksBelow</enum>
-        </property>
-        <property name="tickInterval">
-         <number>90</number>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="2">
-       <widget class="QToolButton" name="btnRotatRight">
-        <property name="minimumSize">
-         <size>
-          <width>28</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>28</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Rotate clockwise</string>
-        </property>
-        <property name="icon">
-         <iconset resource="resources.qrc">
-          <normaloff>:/images/rotateright.png</normaloff>:/images/rotateright.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>22</width>
-          <height>22</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="sizeConstraint">
-      <enum>QLayout::SetMaximumSize</enum>
+      <enum>QLayout::SetMinimumSize</enum>
      </property>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -267,7 +99,7 @@
             </sizepolicy>
            </property>
            <property name="toolTip">
-            <string>Select type of barcode to generate.</string>
+            <string>Type of barcode</string>
            </property>
           </widget>
          </item>
@@ -276,7 +108,7 @@
        <item>
         <widget class="QTabWidget" name="tabMain">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -294,7 +126,7 @@
           <string notr="true"/>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="tabGeneral">
           <attribute name="title">
@@ -304,7 +136,7 @@
            <item>
             <widget class="QGroupBox" name="grpData">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+              <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -316,7 +148,7 @@
               <item>
                <widget class="QLineEdit" name="txtData">
                 <property name="toolTip">
-                 <string>Enter data to be encoded.</string>
+                 <string>Data to encode</string>
                 </property>
                 <property name="text">
                  <string>Your Data Here!</string>
@@ -325,8 +157,34 @@
               </item>
               <item>
                <widget class="QToolButton" name="btnMoreData">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="toolTip">
+                 <string>Encode more data
+or import from file</string>
+                </property>
                 <property name="text">
                  <string>...</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="btnSequence">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="toolTip">
+                 <string>Encode a sequence</string>
+                </property>
+                <property name="text">
+                 <string>123..</string>
                 </property>
                </widget>
               </item>
@@ -339,7 +197,7 @@
               <bool>true</bool>
              </property>
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -365,7 +223,7 @@
                 <item>
                  <widget class="QCheckBox" name="chkComposite">
                   <property name="toolTip">
-                   <string>Create a composite symbol.</string>
+                   <string>Create a composite symbol</string>
                   </property>
                   <property name="text">
                    <string>Add &amp;2D Component</string>
@@ -403,6 +261,9 @@
                   <property name="enabled">
                    <bool>false</bool>
                   </property>
+                  <property name="toolTip">
+                   <string>Type of 2D component</string>
+                  </property>
                   <item>
                    <property name="text">
                     <string>Automatic</string>
@@ -429,13 +290,16 @@
               </item>
               <item>
                <layout class="QVBoxLayout" name="verticalLayout">
+                <property name="sizeConstraint">
+                 <enum>QLayout::SetMinimumSize</enum>
+                </property>
                 <item>
                  <widget class="QLabel" name="lblComposite">
                   <property name="enabled">
                    <bool>false</bool>
                   </property>
                   <property name="text">
-                   <string>2D Component Data:</string>
+                   <string>2D &amp;Component Data:</string>
                   </property>
                   <property name="buddy">
                    <cstring>txtComposite</cstring>
@@ -460,14 +324,15 @@
                    </size>
                   </property>
                   <property name="toolTip">
-                   <string/>
+                   <string>Data to be encoded in 2D component
+Remember to place [square brackets] around AI data</string>
                   </property>
                   <property name="html">
                    <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans Serif'; font-size:9pt;&quot;&gt;Your Data Here!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Your Data Here!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                   <property name="acceptRichText">
                    <bool>false</bool>
@@ -478,19 +343,6 @@ p, li { white-space: pre-wrap; }
               </item>
              </layout>
             </widget>
-           </item>
-           <item>
-            <spacer name="verticalSpacer_3">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
            </item>
           </layout>
          </widget>
@@ -556,7 +408,7 @@ p, li { white-space: pre-wrap; }
              <item row="0" column="1">
               <widget class="QSpinBox" name="heightb">
                <property name="toolTip">
-                <string>Adjust overall symbol height.</string>
+                <string>Overall symbol height</string>
                </property>
                <property name="suffix">
                 <string> X</string>
@@ -575,7 +427,7 @@ p, li { white-space: pre-wrap; }
              <item row="1" column="1">
               <widget class="QSpinBox" name="bwidth">
                <property name="toolTip">
-                <string>Adjust width of boundary bars or border.</string>
+                <string>Width of boundary bars or border</string>
                </property>
                <property name="suffix">
                 <string> X</string>
@@ -594,7 +446,7 @@ p, li { white-space: pre-wrap; }
              <item row="2" column="1">
               <widget class="QSpinBox" name="spnWhitespace">
                <property name="toolTip">
-                <string>Adjust whitespace to left and right of barcode.</string>
+                <string>Width of whitespace</string>
                </property>
                <property name="suffix">
                 <string> X</string>
@@ -604,7 +456,7 @@ p, li { white-space: pre-wrap; }
              <item row="3" column="1">
               <widget class="QDoubleSpinBox" name="spnScale">
                <property name="toolTip">
-                <string>Adjust image size when output to file.</string>
+                <string>Image scale when output to file</string>
                </property>
                <property name="suffix">
                 <string/>
@@ -629,7 +481,7 @@ p, li { white-space: pre-wrap; }
              <item row="0" column="2">
               <widget class="QLabel" name="label_9">
                <property name="text">
-                <string>Border Ty&amp;pe:</string>
+                <string>Border &amp;Type:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -641,6 +493,9 @@ p, li { white-space: pre-wrap; }
              </item>
              <item row="0" column="3">
               <widget class="QComboBox" name="btype">
+               <property name="toolTip">
+                <string>Add border or box</string>
+               </property>
                <item>
                 <property name="text">
                  <string>No border</string>
@@ -660,6 +515,9 @@ p, li { white-space: pre-wrap; }
              </item>
              <item row="1" column="3">
               <widget class="QPushButton" name="fgcolor">
+               <property name="toolTip">
+                <string>Change ink colour</string>
+               </property>
                <property name="text">
                 <string>&amp;Foreground Colour</string>
                </property>
@@ -668,10 +526,20 @@ p, li { white-space: pre-wrap; }
              <item row="2" column="3">
               <widget class="QPushButton" name="bgcolor">
                <property name="toolTip">
-                <string/>
+                <string>Change paper colour</string>
                </property>
                <property name="text">
                 <string>&amp;Backgound Colour</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="3">
+              <widget class="QPushButton" name="btnReset">
+               <property name="toolTip">
+                <string>Reset to black on white</string>
+               </property>
+               <property name="text">
+                <string>&amp;Reset Colours</string>
                </property>
               </widget>
              </item>
@@ -679,8 +547,11 @@ p, li { white-space: pre-wrap; }
            </item>
            <item>
             <widget class="QCheckBox" name="chkHRTHide">
+             <property name="toolTip">
+              <string>Show text in image</string>
+             </property>
              <property name="text">
-              <string>Show Human Readable Text</string>
+              <string>Show H&amp;uman Readable Text</string>
              </property>
              <property name="checked">
               <bool>true</bool>
@@ -691,6 +562,9 @@ p, li { white-space: pre-wrap; }
             <spacer name="verticalSpacer">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Minimum</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -706,63 +580,67 @@ p, li { white-space: pre-wrap; }
        </item>
       </layout>
      </item>
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout_5">
-       <item>
-        <widget class="QPushButton" name="btnAbout">
-         <property name="text">
-          <string>&amp;About Zint</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="btnReset">
-         <property name="toolTip">
-          <string>Reset zoom, rotation and colour.</string>
-         </property>
-         <property name="text">
-          <string>&amp;Reset Preview</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QPushButton" name="btnSequence">
-         <property name="text">
-          <string>Se&amp;quence</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="btnSave">
-         <property name="toolTip">
-          <string>Save barcode image to file.</string>
-         </property>
-         <property name="text">
-          <string>&amp;Save</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="btnExit">
-         <property name="text">
-          <string>E&amp;xit</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
+    </layout>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="0">
+      <widget class="QPushButton" name="btnAbout">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>About Zint</string>
+       </property>
+       <property name="text">
+        <string>&amp;About</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="4">
+      <widget class="QPushButton" name="btnSave">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Save image to file</string>
+       </property>
+       <property name="text">
+        <string>&amp;Save</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="5">
+      <widget class="QPushButton" name="btnExit">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>E&amp;xit</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
      </item>
     </layout>
    </item>
@@ -774,17 +652,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>chkComposite</tabstop>
   <tabstop>cmbCompType</tabstop>
   <tabstop>txtComposite</tabstop>
-  <tabstop>btnAbout</tabstop>
-  <tabstop>btnReset</tabstop>
-  <tabstop>btnSave</tabstop>
-  <tabstop>btnExit</tabstop>
-  <tabstop>view</tabstop>
-  <tabstop>btnZoomOut</tabstop>
-  <tabstop>scaleSlider</tabstop>
-  <tabstop>btnZoomIn</tabstop>
-  <tabstop>btnRotateLeft</tabstop>
-  <tabstop>rotateSlider</tabstop>
-  <tabstop>btnRotatRight</tabstop>
  </tabstops>
  <resources>
   <include location="resources.qrc"/>
