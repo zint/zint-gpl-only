@@ -116,11 +116,6 @@ public slots:
 	void datamatrix_options();
 	void maxi_primary();
 	void change_print_scale();
-	void scaleRotate();
-	void zoomIn(void);
-	void zoomOut(void);
-	void rotateLeft(void);
-	void rotateRight(void);
 
 private slots:
 	bool save();
