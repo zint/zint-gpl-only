@@ -158,9 +158,6 @@ int escape_char_process(struct zint_symbol *my_symbol, unsigned char input_strin
 		j++;
 	} while (i < length);
 	escaped_string[j] = '\0';
-
-	printf("Input: %s\n", input_string);
-	printf("Output:%s\n", escaped_string);
 	
 	error_number = ZBarcode_Encode(my_symbol, escaped_string, j);
 	

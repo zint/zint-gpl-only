@@ -14,7 +14,6 @@
         <file>grpMaxicode.ui</file>
         <file>grpPDF417.ui</file>
         <file>grpC16k.ui</file>
-        <file>grpCodablock.ui</file>
         <file>grpMQR.ui</file>
         <file>grpQR.ui</file>
         <file>grpCodeOne.ui</file>
