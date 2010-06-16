@@ -340,7 +340,7 @@ void MainWindow::change_options()
 		tabMain->insertTab(1,m_optionWidget,tr("Code 16K"));
 		connect(m_optionWidget->findChild<QObject*>("radC16kStand"), SIGNAL(toggled( bool )), SLOT(update_preview()));
 	}
-
+	
 	if(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_DATAMATRIX)
 	{
 		QFile file(":/grpDM.ui");
@@ -349,17 +349,13 @@ void MainWindow::change_options()
 		m_optionWidget=uiload.load(&file);
 		file.close();
 		tabMain->insertTab(1,m_optionWidget,tr("Data Matrix"));
-		connect(m_optionWidget->findChild<QObject*>("cmbDMMode"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
-		connect(m_optionWidget->findChild<QObject*>("cmbDMMode"), SIGNAL(currentIndexChanged( int )), SLOT(datamatrix_options()));
 		connect(m_optionWidget->findChild<QObject*>("radDM200Stand"), SIGNAL(clicked( bool )), SLOT(update_preview()));
 		connect(m_optionWidget->findChild<QObject*>("radDM200GS1"), SIGNAL(clicked( bool )), SLOT(update_preview()));
 		connect(m_optionWidget->findChild<QObject*>("radDM200HIBC"), SIGNAL(clicked( bool )), SLOT(update_preview()));
 		connect(m_optionWidget->findChild<QObject*>("cmbDM200Size"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
-		connect(m_optionWidget->findChild<QObject*>("cmbDMNon200Size"), SIGNAL(currentIndexChanged( int )), SLOT(update_preview()));
 		connect(m_optionWidget->findChild<QObject*>("chkDMRectangle"), SIGNAL(stateChanged( int )), SLOT(update_preview()));
-		datamatrix_options();
 	}
-
+	
 	if(metaObject()->enumerator(0).value(bstyle->currentIndex()) == BARCODE_QRCODE)
 	{
 		QFile file(":/grpQR.ui");
@@ -514,23 +510,6 @@ void MainWindow::composite_ean_check()
 		return;
 	if(!m_optionWidget->findChild<QRadioButton*>("radC128EAN")->isChecked())
 		chkComposite->setChecked(false);
-}
-
-
-void MainWindow::datamatrix_options()
-{
-	if (metaObject()->enumerator(0).value(bstyle->currentIndex())!=BARCODE_DATAMATRIX)
-		return;
-	if(m_optionWidget->findChild<QComboBox*>("cmbDMMode")->currentIndex() == 0)
-	{
-		m_optionWidget->findChild<QGroupBox*>("grpDMNon200")->hide();
-		m_optionWidget->findChild<QGroupBox*>("grpDM200")->show();
-	}
-	else
-	{
-		m_optionWidget->findChild<QGroupBox*>("grpDM200")->hide();
-		m_optionWidget->findChild<QGroupBox*>("grpDMNon200")->show();
-	}
 }
 
 void MainWindow::maxi_primary()
@@ -718,41 +697,23 @@ void MainWindow::update_preview()
 				m_bc.bc.setInputMode(GS1_MODE);
 			break;
 
-		case BARCODE_CODABLOCKF:
-			if(m_optionWidget->findChild<QRadioButton*>("radCodaGS1")->isChecked())
+		case BARCODE_DATAMATRIX:
+			m_bc.bc.setSecurityLevel(1);
+			if(m_optionWidget->findChild<QRadioButton*>("radDM200HIBC")->isChecked())
+				m_bc.bc.setSymbol(BARCODE_HIBC_DM);
+			else
+				m_bc.bc.setSymbol(BARCODE_DATAMATRIX);
+
+			if(m_optionWidget->findChild<QRadioButton*>("radDM200GS1")->isChecked())
 				m_bc.bc.setInputMode(GS1_MODE);
 
-			if(m_optionWidget->findChild<QRadioButton*>("radCodaHIBC")->isChecked())
-				m_bc.bc.setSymbol(BARCODE_HIBC_BLOCKF);
+			m_bc.bc.setWidth(m_optionWidget->findChild<QComboBox*>("cmbDM200Size")->currentIndex());
+			if(m_optionWidget->findChild<QCheckBox*>("chkDMRectangle")->isChecked())
+				m_bc.bc.setOption3(DM_SQUARE);
 			else
-				m_bc.bc.setSymbol(BARCODE_CODABLOCKF);
+				m_bc.bc.setOption3(0);
 			break;
-
-		case BARCODE_DATAMATRIX:
-			m_bc.bc.setSecurityLevel(m_optionWidget->findChild<QComboBox*>("cmbDMMode")->currentIndex() + 1);
-			if(m_optionWidget->findChild<QComboBox*>("cmbDMMode")->currentIndex() == 0) 
-			{	/* ECC 200 */
-				if(m_optionWidget->findChild<QRadioButton*>("radDM200HIBC")->isChecked())
-					m_bc.bc.setSymbol(BARCODE_HIBC_DM);
-				else
-					m_bc.bc.setSymbol(BARCODE_DATAMATRIX);
-
-				if(m_optionWidget->findChild<QRadioButton*>("radDM200GS1")->isChecked())
-					m_bc.bc.setInputMode(GS1_MODE);
-
-				m_bc.bc.setWidth(m_optionWidget->findChild<QComboBox*>("cmbDM200Size")->currentIndex());
-				if(m_optionWidget->findChild<QCheckBox*>("chkDMRectangle")->isChecked())
-					m_bc.bc.setOption3(DM_SQUARE);
-				else
-					m_bc.bc.setOption3(0);
-			} 
-			else
-			{	/* Not ECC 200 */
-				m_bc.bc.setSymbol(BARCODE_DATAMATRIX);
-				m_bc.bc.setWidth(m_optionWidget->findChild<QComboBox*>("cmbDMNon200Size")->currentIndex());
-			}
-			break;
-
+			
 		case BARCODE_QRCODE:
 			if(m_optionWidget->findChild<QRadioButton*>("radQRHIBC")->isChecked())
 				m_bc.bc.setSymbol(BARCODE_HIBC_QR);
