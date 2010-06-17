@@ -706,21 +706,6 @@ int ps_plot(struct zint_symbol *symbol)
 	xoffset -= comp_offset;
 
 	switch(symbol->symbology) {
-		case BARCODE_CODABLOCKF:
-		case BARCODE_HIBC_BLOCKF:
-			fprintf(feps, "TE\n");
-			fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-			fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", symbol->border_width * scaler, textoffset * scaler, xoffset * scaler, symbol->width * scaler);
-			fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", symbol->border_width * scaler, (textoffset + symbol->height + symbol->border_width) * scaler, xoffset * scaler, symbol->width * scaler);
-			if(symbol->rows > 1) {
-				/* row binding */
-				fprintf(feps, "TE\n");
-				fprintf(feps, "%.2f %.2f %.2f setrgbcolor\n", red_ink, green_ink, blue_ink);
-				for(r = 1; r < symbol->rows; r++) {
-					fprintf(feps, "%.2f %.2f TB %.2f %.2f TR\n", 2.0 * scaler, ((r * row_height) + textoffset + yoffset - 1) * scaler, (xoffset + 11) * scaler, (symbol->width - 24) * scaler);
-				}
-			}
-			break;
 		case BARCODE_MAXICODE:
 			/* Do nothing! (It's already been done) */
 			break;
