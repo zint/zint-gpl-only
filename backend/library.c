@@ -179,7 +179,7 @@ extern int grid_matrix(struct zint_symbol *symbol, unsigned char source[], int l
 extern int png_handle(struct zint_symbol *symbol, int rotate_angle);
 #endif
 
-extern int render_plot(struct zint_symbol *symbol, unsigned int hide_text, float width, float height);
+extern int render_plot(struct zint_symbol *symbol, float width, float height);
 
 extern int bmp_handle(struct zint_symbol *symbol, int rotate_angle);
 extern int ps_plot(struct zint_symbol *symbol);
@@ -863,8 +863,8 @@ int ZBarcode_Encode_File_and_Buffer(struct zint_symbol *symbol, char *filename, 
  * dimensions. The symbol->scale and symbol->height values are totally ignored in this case.
  *
  */
-int ZBarcode_Render(struct zint_symbol *symbol, unsigned int hide_text, float width, float height)
+int ZBarcode_Render(struct zint_symbol *symbol, float width, float height)
 {
 	// Send the request to the render_plot method
-	return render_plot(symbol, hide_text, width, height);
+	return render_plot(symbol, width, height);
 }
