@@ -167,7 +167,7 @@ int svg_plot(struct zint_symbol *symbol)
 	}
 	addon[r] = '\0';
 	
-	if((symbol->show_hrt == 0) || (ustrlen(symbol->text) != 0)) {
+	if((symbol->show_hrt == 0) || (ustrlen(symbol->text) == 0)) {
 		plot_text = 0;
 	}
 	if(plot_text) {
