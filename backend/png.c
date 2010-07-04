@@ -1067,12 +1067,14 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 	/* Put boundary bars or box around symbol */
 	if(((symbol->output_options & BARCODE_BOX) != 0) || ((symbol->output_options & BARCODE_BIND) != 0)) {
 		/* boundary bars */
-		draw_bar(pixelbuf, xoffset * 2, symbol->width * 2, textoffset * 2, symbol->border_width * 2, image_width, image_height);
-		draw_bar(pixelbuf, xoffset * 2, symbol->width * 2, (textoffset + symbol->height + symbol->border_width) * 2, symbol->border_width * 2, image_width, image_height);
-		if(symbol->rows > 1) {
-			/* row binding */
-			for(r = 1; r < symbol->rows; r++) {
-				draw_bar(pixelbuf, (xoffset + 11) * 2, (symbol->width - 24) * 2, ((r * row_height) + textoffset + yoffset - 1) * 2, 2 * 2, image_width, image_height);
+		draw_bar(pixelbuf, 0, (symbol->width + xoffset + xoffset) * 2, textoffset * 2, symbol->border_width * 2, image_width, image_height);
+		draw_bar(pixelbuf, 0, (symbol->width + xoffset + xoffset) * 2, (textoffset + symbol->height + symbol->border_width) * 2, symbol->border_width * 2, image_width, image_height);
+		if((symbol->output_options & BARCODE_BIND) != 0) {
+			if((symbol->rows > 1) && (is_stackable(symbol->symbology) == 1)) {
+				/* row binding */
+				for(r = 1; r < symbol->rows; r++) {
+					draw_bar(pixelbuf, xoffset * 2, symbol->width * 2, ((r * row_height) + textoffset + yoffset - 1) * 2, 2 * 2, image_width, image_height);
+				}
 			}
 		}
 	}
