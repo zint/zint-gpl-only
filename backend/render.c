@@ -50,10 +50,12 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 	int large_bar_count, comp_offset;
 	float addon_text_posn;
 	float default_text_posn;
-	float scaler = symbol->scale;
-	float w, h;
+	float scaler;
 	const char *locale = NULL;
 	int hide_text = 0;
+	float required_aspect;
+	float symbol_aspect;
+	float x_spacer, y_spacer;
 
 	// Allocate memory for the rendered version
 	render = symbol->rendered = malloc(sizeof(struct zint_render));
@@ -139,22 +141,7 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 	}
 
 	xoffset = symbol->border_width + symbol->whitespace_width;
-
-	// Calculate the initial scale factor if width provided
-	w = main_width + (xoffset * 2);
-	if (width) {
-		scaler = width / w;
-	}
-
-	// Calculate the height
-	if (height) {
-		symbol->height = height / scaler; // starting height
-	} else if (symbol->height == 0) {
-		symbol->height = 50;
-	}
-
-	// Update height for texts
-	symbol->height -= textheight + textoffset;
+	yoffset = symbol->border_width;
 
 	// Determine if height should be overridden
 	large_bar_count = 0;
@@ -165,23 +152,34 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 			large_bar_count++;
 		}
 	}
-	large_bar_height = (symbol->height - preset_height) / large_bar_count;
 
 	if (large_bar_count == 0) {
+		required_aspect = width / height;
+		symbol_aspect = (main_width + (2 * xoffset)) / (preset_height + (2 * yoffset) + textoffset + textheight);
 		symbol->height = preset_height;
+		if (required_aspect > symbol_aspect) {
+			/* horizontal padding is required */
+			scaler = height / (preset_height + (2 * yoffset) + textoffset + textheight);
+			x_spacer = ((width / scaler) - (main_width + (2 * xoffset))) / 2;
+			y_spacer = 0.0;
+		} else {
+			/* vertical padding is required */
+			scaler = width / (main_width + (2 * xoffset));
+			y_spacer = ((height / scaler) - (preset_height + (2 * yoffset) + textoffset + textheight)) / 2;
+			x_spacer = 0.0;
+		}
+	} else {
+		scaler = width / (main_width + (2 * xoffset));
+		symbol->height = (height / scaler) - ((2 * yoffset) + textoffset + textheight);
+		
+		x_spacer = 0.0;
+		y_spacer = 0.0;
 	}
-	yoffset = symbol->border_width;
-
-	// Calculate the scale factor from the height, incase it needs to be lowered for width
-	h = (symbol->height + textheight + textoffset + (yoffset * 2));
-	if ((h * scaler) > height) {
-		scaler = height / h;
-	}
-
+	large_bar_height = (symbol->height - preset_height) / large_bar_count;
+	
 	// Set initial render dimensions
-	render->width = w * scaler;
-	render->height = h * scaler;
-
+	render->width = width;
+	render->height = height;
 
 	if(((symbol->output_options & BARCODE_BOX) != 0) || ((symbol->output_options & BARCODE_BIND) != 0)) {
 		default_text_posn = (symbol->height + textoffset + symbol->border_width + symbol->border_width) * scaler;
@@ -239,13 +237,13 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 					line->next = NULL;
 					
 					line->width = block_width * scaler;
-					line->x = (i + xoffset) * scaler;
+					line->x = (i + xoffset + x_spacer) * scaler;
 				
 					if(addon_latch == 0) {
-						line->y = row_posn * scaler;
+						line->y = (row_posn + y_spacer) * scaler;
 						line->length = row_height * scaler;
 					} else {
-						line->y = (row_posn + 10.0) * scaler;
+						line->y = (row_posn + 10.0 + y_spacer) * scaler;
 						line->length = (row_height - 5.0) * scaler;
 					}
 					latch = 0;
