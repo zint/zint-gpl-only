@@ -56,12 +56,10 @@ struct zint_symbol *ZBarcode_Create()
 	symbol->show_hrt = 1; // Show human readable text
 	symbol->input_mode = DATA_MODE;
 	strcpy(symbol->primary, "");
+	memset(&(symbol->encoded_data[0][0]),0,sizeof(symbol->encoded_data));
 	for(i = 0; i < 178; i++) {
-		for(j = 0; j < 1000; j++) {
-			unset_module(symbol, i, j);
-		}
-		symbol->row_height[i] = 0;
-	}
+                symbol->row_height[i] = 0;
+        }
 	symbol->bitmap = NULL;
 	symbol->bitmap_width = 0;
 	symbol->bitmap_height = 0;
