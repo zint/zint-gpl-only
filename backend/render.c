@@ -449,8 +449,38 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 		/* Put normal human readable text at the bottom (and centered) */
 		if (textdone == 0) {
 			// caculate start xoffset to center text
-			render_plot_add_string(symbol, symbol->text, (symbol->width / 2.0) * scaler, default_text_posn, 9.0 * scaler, 0.0, &last_string); 
+			render_plot_add_string(symbol, symbol->text, ((symbol->width / 2.0) + xoffset) * scaler, default_text_posn, 9.0 * scaler, 0.0, &last_string); 
 		}
+	}
+	
+	switch(symbol->symbology) {
+		case BARCODE_MAXICODE:
+			/* Do nothing! */
+			break;
+		default:
+			if((symbol->output_options & BARCODE_BIND) != 0) {
+				if((symbol->rows > 1) && (is_stackable(symbol->symbology) == 1)) {
+					/* row binding */
+					for(r = 1; r < symbol->rows; r++) {
+						line = render_plot_create_line((xoffset + x_spacer) * scaler, ((r * row_height) + yoffset - 1 + y_spacer) * scaler, symbol->width * scaler, 2.0 * scaler);
+						render_plot_add_line(symbol, line, &last_line);
+					}
+				}
+			}
+			if (((symbol->output_options & BARCODE_BOX) != 0) || ((symbol->output_options & BARCODE_BIND) != 0)) {
+				line = render_plot_create_line((x_spacer * scaler), (y_spacer * scaler), (symbol->width + xoffset + xoffset) * scaler, symbol->border_width * scaler);
+				render_plot_add_line(symbol, line, &last_line);
+				line = render_plot_create_line((x_spacer * scaler), (symbol->height + symbol->border_width + y_spacer) * scaler, (symbol->width + xoffset + xoffset) * scaler, symbol->border_width * scaler);
+				render_plot_add_line(symbol, line, &last_line);
+			}
+			if((symbol->output_options & BARCODE_BOX) != 0) {
+				/* side bars */
+				line = render_plot_create_line((x_spacer * scaler), (y_spacer * scaler), symbol->border_width * scaler, (symbol->height + (2 * symbol->border_width)) * scaler);
+				render_plot_add_line(symbol, line, &last_line);
+				line = render_plot_create_line((symbol->width + xoffset + xoffset - symbol->border_width + x_spacer) * scaler, (y_spacer * scaler), symbol->border_width * scaler, (symbol->height + (2 * symbol->border_width)) * scaler);
+				render_plot_add_line(symbol, line, &last_line);
+			}
+			break;
 	}
 
 	if (locale)
