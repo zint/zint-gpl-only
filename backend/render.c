@@ -33,14 +33,20 @@
 
 struct zint_render_line *render_plot_create_line(float x, float y, float width, float length);
 int render_plot_add_line(struct zint_symbol *symbol, struct zint_render_line *line, struct zint_render_line **last_line);
+struct zint_render_ring *render_plot_create_ring(float x, float y, float radius, float line_width);
+int render_plot_add_ring(struct zint_symbol *symbol, struct zint_render_ring *ring, struct zint_render_ring **last_ring);
+struct zint_render_hexagon *render_plot_create_hexagon(float x, float y);
+int render_plot_add_hexagon(struct zint_symbol *symbol, struct zint_render_hexagon *ring, struct zint_render_hexagon **last_hexagon);
 
 int render_plot_add_string(struct zint_symbol *symbol, unsigned char *text, float x, float y, float fsize, float width, struct zint_render_string **last_string);
 
 int render_plot(struct zint_symbol *symbol, float width, float height)
 {
-	struct zint_render        *render;
-	struct zint_render_line   *line, *last_line = NULL;
-	struct zint_render_string *last_string = NULL;
+	struct zint_render           *render;
+	struct zint_render_line      *line, *last_line = NULL;
+	struct zint_render_string    *last_string = NULL;
+	struct zint_render_ring      *ring, *last_ring = NULL;
+	struct zint_render_hexagon   *hexagon, *last_hexagon = NULL;
 
 	int i, r, block_width, latch, this_row;
 	float textpos, textwidth, large_bar_height, preset_height, row_height, row_posn = 0.0;
@@ -61,6 +67,8 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 	render = symbol->rendered = malloc(sizeof(struct zint_render));
 	render->lines = NULL;
 	render->strings = NULL;
+	render->rings = NULL;
+	render->hexagons = NULL;
 
 	locale = setlocale(LC_ALL, "C");
 
@@ -189,9 +197,31 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 	// SAMS ORIGINAL // default_text_posn = (symbol->height + textoffset + symbol->border_width) * scaler;
 
 	if(symbol->symbology == BARCODE_MAXICODE) {
-		/*
-		 * TODO INSERT BARCODE_MAXICODE HERE!
-		 */
+		/* Maxicode is a fixed size */
+		render->width = 28.16;
+		render->height = 26.86;
+		
+		/* Central bullseye pattern */
+		ring = render_plot_create_ring(13.64, 13.43, 0.85, 0.67);
+		render_plot_add_ring(symbol, ring, &last_ring);
+		ring = render_plot_create_ring(13.64, 13.43, 2.20, 0.67);
+		render_plot_add_ring(symbol, ring, &last_ring);
+		ring = render_plot_create_ring(13.64, 13.43, 3.54, 0.67);
+		render_plot_add_ring(symbol, ring, &last_ring);
+		
+		/* Hexagons */
+		for(r = 0; r < symbol->rows; r++) {
+			for(i = 0; i < symbol->width; i++) {
+				if(module_is_set(symbol, r, i)) {
+					if(r % 2 == 1) {
+						hexagon = render_plot_create_hexagon((i * 0.88) + 1.76, (r * 0.76) + 0.76);
+					} else {
+						hexagon = render_plot_create_hexagon((i * 0.88) + 1.32, (r * 0.76) + 0.76);
+					}
+					render_plot_add_hexagon(symbol, hexagon, &last_hexagon);
+				}
+			}
+		}
 	
 	} else {
 		/* everything else uses rectangles (or squares) */
@@ -233,18 +263,10 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 				} 
 				if(latch == 1) {
 					/* a bar */
-					line = malloc(sizeof(struct zint_render_line));
-					line->next = NULL;
-					
-					line->width = block_width * scaler;
-					line->x = (i + xoffset + x_spacer) * scaler;
-				
 					if(addon_latch == 0) {
-						line->y = (row_posn + y_spacer) * scaler;
-						line->length = row_height * scaler;
+						line = render_plot_create_line((i + xoffset + x_spacer) * scaler, (row_posn + y_spacer) * scaler, block_width * scaler, row_height * scaler);
 					} else {
-						line->y = (row_posn + 10.0 + y_spacer) * scaler;
-						line->length = (row_height - 5.0) * scaler;
+						line = render_plot_create_line((i + xoffset + x_spacer) * scaler, (row_posn + 10.0 + y_spacer) * scaler, block_width * scaler, (row_height - 5.0) * scaler);
 					}
 					latch = 0;
 					
@@ -522,6 +544,54 @@ int render_plot_add_line(struct zint_symbol *symbol, struct zint_render_line *li
 		symbol->rendered->lines = line; // first line
 
 	*last_line = line;
+	return 1;
+}
+
+struct zint_render_ring *render_plot_create_ring(float x, float y, float radius, float line_width)
+{
+	struct zint_render_ring *ring;
+	
+	ring = malloc(sizeof(struct zint_render_ring));
+	ring->next = NULL;
+	ring->x = x;
+	ring->y = y;
+	ring->radius = radius;
+	ring->line_width = line_width;
+	
+	return ring;
+}
+
+int render_plot_add_ring(struct zint_symbol *symbol, struct zint_render_ring *ring, struct zint_render_ring **last_ring)
+{
+	if (*last_ring)
+		(*last_ring)->next = ring;
+	else
+		symbol->rendered->rings = ring; // first ring
+		
+	*last_ring = ring;
+	return 1;
+}
+
+struct zint_render_hexagon *render_plot_create_hexagon(float x, float y)
+{
+	struct zint_render_hexagon *hexagon;
+	
+	hexagon = malloc(sizeof(struct zint_render_hexagon));
+	hexagon->next = NULL;
+	hexagon->x = x;
+	hexagon->y = y;
+	
+	return hexagon;
+}
+
+int render_plot_add_hexagon(struct zint_symbol *symbol, struct zint_render_hexagon *hexagon, struct zint_render_hexagon **last_hexagon)
+{
+	if (*last_hexagon)
+		(*last_hexagon)->next = hexagon;
+	else
+		symbol->rendered->hexagons = hexagon; // first hexagon
+		
+	*last_hexagon = hexagon;
 	return 1;
 }
 

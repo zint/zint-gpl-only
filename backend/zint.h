@@ -38,10 +38,22 @@ struct zint_render_string {
 	struct zint_render_string *next;    /* Pointer to next character */
 };
 
+struct zint_render_ring {
+	float x, y, radius, line_width;
+	struct zint_render_ring *next;      /* Pointer to next ring */
+};
+
+struct zint_render_hexagon {
+	float x, y;
+	struct zint_render_hexagon *next;   /* Pointer to next hexagon */
+};
+
 struct zint_render {
 	float width, height;
-	struct zint_render_line *lines;	 		/* Pointer to first line */
+	struct zint_render_line *lines;	 	/* Pointer to first line */
 	struct zint_render_string *strings;	/* Pointer to first string */
+	struct zint_render_ring *rings;         /* Pointer to first ring */
+	struct zint_render_hexagon *hexagons;   /* Pointer to first hexagon */
 };
 
 struct zint_symbol {
