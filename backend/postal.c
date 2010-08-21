@@ -363,7 +363,7 @@ int kix_code(struct zint_symbol *symbol, unsigned char source[], int length)
 	/* Handles Dutch Post TNT KIX symbols */
 	/* The same as RM4SCC but without check digit */
 	/* Specification at http://www.tntpost.nl/zakelijk/klantenservice/downloads/kIX_code/download.aspx */
-	char height_pattern[50], localstr[13];
+	char height_pattern[50], localstr[20];
 	unsigned int loopey;
 	int writer, i, h;
 	int error_number; /* zeroes; */
@@ -371,7 +371,7 @@ int kix_code(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	error_number = 0;
 	
-	if(length > 11) {
+	if(length > 18) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
