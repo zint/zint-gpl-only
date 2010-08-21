@@ -198,15 +198,16 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 
 	if(symbol->symbology == BARCODE_MAXICODE) {
 		/* Maxicode is a fixed size */
-		render->width = 28.16;
-		render->height = 26.86;
+		scaler = 2.8346; /* Converts from millimeters to the scale used by glabels */
+		render->width = 28.16 * scaler;
+		render->height = 26.86 * scaler;
 		
 		/* Central bullseye pattern */
-		ring = render_plot_create_ring(13.64, 13.43, 0.85, 0.67);
+		ring = render_plot_create_ring(13.64 * scaler, 13.43 * scaler, 0.85 * scaler, 0.67 * scaler);
 		render_plot_add_ring(symbol, ring, &last_ring);
-		ring = render_plot_create_ring(13.64, 13.43, 2.20, 0.67);
+		ring = render_plot_create_ring(13.64 * scaler, 13.43 * scaler, 2.20 * scaler, 0.67 * scaler);
 		render_plot_add_ring(symbol, ring, &last_ring);
-		ring = render_plot_create_ring(13.64, 13.43, 3.54, 0.67);
+		ring = render_plot_create_ring(13.64 * scaler, 13.43 * scaler, 3.54 * scaler, 0.67 * scaler);
 		render_plot_add_ring(symbol, ring, &last_ring);
 		
 		/* Hexagons */
@@ -214,9 +215,9 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 			for(i = 0; i < symbol->width; i++) {
 				if(module_is_set(symbol, r, i)) {
 					if(r % 2 == 1) {
-						hexagon = render_plot_create_hexagon((i * 0.88) + 1.76, (r * 0.76) + 0.76);
+						hexagon = render_plot_create_hexagon(((i * 0.88) + 1.76) * scaler, ((r * 0.76) + 0.76) * scaler);
 					} else {
-						hexagon = render_plot_create_hexagon((i * 0.88) + 1.32, (r * 0.76) + 0.76);
+						hexagon = render_plot_create_hexagon(((i * 0.88) + 1.32) * scaler, ((r * 0.76) + 0.76) * scaler);
 					}
 					render_plot_add_hexagon(symbol, hexagon, &last_hexagon);
 				}
