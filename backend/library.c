@@ -33,7 +33,7 @@
 struct zint_symbol *ZBarcode_Create()
 {
 	struct zint_symbol *symbol;
-	int i, j;
+	int i;
 	
 	symbol = (struct zint_symbol*)malloc(sizeof(*symbol));
 	if (!symbol) return NULL;
