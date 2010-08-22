@@ -526,36 +526,8 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 						if (ed != module_set(row, j))
 							break;
 					QColor color;
-					/* switch(ed)
-					{
-						case 'R':
-							color=qRgb(0xff,0x00,0x00);
-							break;
-
-						case 'G':
-							color=qRgb(0x00,0xff,0x00);
-							break;
-
-						case 'B':
-							color=qRgb(0x00,0x00,0xff);
-							break;
-
-						case 'C':
-							color=qRgb(0x00,0xff,0xff);
-							break;
-
-						case 'M':
-							color=qRgb(0xff,0x00,0xff);
-							break;
-
-						case 'Y':
-							color=qRgb(0xff,0xff,0x00);
-							break;
-
-						default: */
-							color=m_fgColor;
-							/* break;
-					} */
+					color=m_fgColor;
+					
 					if(!((i > main_width) && (row == m_zintSymbol->rows - 1)))  {
 						painter.fillRect(i,y,linewidth,m_zintSymbol->row_height[row],QBrush(color));
 					} else {
@@ -664,8 +636,8 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 				}
 				j += block_width;
 			} while (j < 96 + comp_offset);
-			painter.drawText(xoffset - 7, m_zintSymbol->height + yoffset, 7, 7,Qt::AlignCenter, caption.mid(0,1));
-			painter.drawText(96 + xoffset, m_zintSymbol->height + yoffset, 7, 7,Qt::AlignCenter, caption.mid(11,1));
+			painter.drawText(xoffset - 7, m_zintSymbol->height + yoffset + 2, 7, 7,Qt::AlignCenter, caption.mid(0,1));
+			painter.drawText(96 + xoffset, m_zintSymbol->height + yoffset + 2, 7, 7,Qt::AlignCenter, caption.mid(11,1));
 			painter.setFont(fontLarge);
 			painter.drawText(11 + xoffset, m_zintSymbol->height + yoffset, 35, 9,Qt::AlignCenter, caption.mid(1,5));
 			painter.drawText(49 + xoffset, m_zintSymbol->height + yoffset, 35, 9,Qt::AlignCenter, caption.mid(6,5));
@@ -682,8 +654,8 @@ void QZint::render(QPainter & painter, const QRectF & paintRect, AspectRatioMode
 			painter.fillRect(46 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
 			painter.fillRect(48 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
 			painter.fillRect(50 + xoffset,m_zintSymbol->height,1,5,QBrush(m_fgColor));
-			painter.drawText(xoffset - 7, m_zintSymbol->height + yoffset, 7, 7,Qt::AlignCenter, caption.mid(0,1));
-			painter.drawText(51 + xoffset, m_zintSymbol->height + yoffset, 7, 7,Qt::AlignCenter, caption.mid(7,1));
+			painter.drawText(xoffset - 7, m_zintSymbol->height + yoffset + 2, 7, 7,Qt::AlignCenter, caption.mid(0,1));
+			painter.drawText(51 + xoffset, m_zintSymbol->height + yoffset + 2, 7, 7,Qt::AlignCenter, caption.mid(7,1));
 			painter.setFont(fontLarge);
 			painter.drawText(3 + xoffset, m_zintSymbol->height + yoffset, 43, 9,Qt::AlignCenter, caption.mid(1,6));
 			if(caption.size() == 11) { /* EAN-2 */ painter.drawText(60 + xoffset, addon_text_height, 20, 9,Qt::AlignCenter, caption.mid(9,2)); };
