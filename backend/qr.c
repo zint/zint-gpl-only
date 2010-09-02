@@ -157,6 +157,13 @@ int estimate_binary_length(char mode[], int length, int gs1)
 	return count;
 }
 
+static inline void qr_bscan(char *binary, int data, int h)
+{
+	for (; h; h>>=1) {
+		concat(binary, data & h ? "1" : "0");
+	}
+}
+
 void qr_binary(int datastream[], int version, int target_binlen, char mode[], int jisdata[], int length, int gs1, int est_binlen)
 {
 	/* Convert input data to a binary stream and add padding */
@@ -210,24 +217,7 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 				concat(binary, "1000");
 				
 				/* Character count indicator */
-				switch(scheme) {
-					case 3:
-						if(short_data_block_length & 0x800) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x400) { concat(binary, "1"); } else { concat(binary, "0"); }
-					case 2:
-						if(short_data_block_length & 0x200) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x100) { concat(binary, "1"); } else { concat(binary, "0"); }
-					case 1:
-						if(short_data_block_length & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
-						break;
-				}
+				qr_bscan(binary, short_data_block_length, 0x20 << (scheme*2)); /* scheme = 1..3 */
 				
 				if(debug) { printf("Kanji block (length %d)\n\t", short_data_block_length); }
 				
@@ -240,20 +230,8 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 					msb = (jis & 0xff00) >> 4;
 					lsb = (jis & 0xff);
 					prod = (msb * 0xc0) + lsb;
-					
-					if(prod & 0x1000) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(prod & 0x800) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(prod & 0x400) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(prod & 0x200) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(prod & 0x100) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(prod & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(prod & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(prod & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(prod & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(prod & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(prod & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(prod & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(prod & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
+				
+					qr_bscan(binary, prod, 0x1000);
 					
 					if(debug) { printf("0x%4X ", prod); }
 				}
@@ -267,28 +245,7 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 				concat(binary, "0100");
 				
 				/* Character count indicator */
-				switch (scheme) {
-					case 3:
-					case 2:
-						if(short_data_block_length & 0x8000) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x4000) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x2000) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x1000) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x800) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x400) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x200) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x100) { concat(binary, "1"); } else { concat(binary, "0"); }
-					case 1:
-						if(short_data_block_length & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
-						break;
-				}
+				qr_bscan(binary, short_data_block_length, scheme > 1 ? 0x8000 : 0x80); /* scheme = 1..3 */
 				
 				if(debug) { printf("Byte block (length %d)\n\t", short_data_block_length); }
 				
@@ -300,14 +257,7 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 						byte = 0x1d; /* FNC1 */
 					}
 					
-					if(byte & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(byte & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(byte & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(byte & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(byte & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(byte & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(byte & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(byte & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
+					qr_bscan(binary, byte, 0x80);
 					
 					if(debug) { printf("0x%4X ", byte); }
 				}
@@ -321,25 +271,7 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 				concat(binary, "0010");
 				
 				/* Character count indicator */
-				switch (scheme) {
-					case 3:
-						if(short_data_block_length & 0x1000) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x800) { concat(binary, "1"); } else { concat(binary, "0"); }
-					case 2:
-						if(short_data_block_length & 0x400) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x200) { concat(binary, "1"); } else { concat(binary, "0"); }
-					case 1:
-						if(short_data_block_length & 0x100) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
-						break;
-				}
+				qr_bscan(binary, short_data_block_length, 0x40 << (2 * scheme)); /* scheme = 1..3 */
 				
 				if(debug) { printf("Alpha block (length %d)\n\t", short_data_block_length); }
 				
@@ -410,22 +342,7 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 						}
 					}
 
-					switch(count) {
-						case 2:
-							if(prod & 0x400) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x200) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x100) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
-						case 1:
-							if(prod & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
-							break;
-					}
+					qr_bscan(binary, prod, count == 2 ? 0x400 : 0x20); /* count = 1..2 */
 					
 					if(debug) { printf("0x%4X ", prod); }
 				};
@@ -439,26 +356,7 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 				concat(binary, "0001");
 				
 				/* Character count indicator */
-				switch (scheme) {
-					case 3:
-						if(short_data_block_length & 0x2000) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x1000) { concat(binary, "1"); } else { concat(binary, "0"); }
-					case 2:
-						if(short_data_block_length & 0x800) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x400) { concat(binary, "1"); } else { concat(binary, "0"); }
-					case 1:
-						if(short_data_block_length & 0x200) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x100) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
-						if(short_data_block_length & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
-						break;
-				}
+				qr_bscan(binary, short_data_block_length, 0x80 << (2 * scheme)); /* scheme = 1..3 */
 				
 				if(debug) { printf("Number block (length %d)\n\t", short_data_block_length); }
 				
@@ -484,22 +382,7 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 						prod = (prod * 10) + third;
 					}
 					
-					switch(count) {
-						case 3:
-							if(prod & 0x200) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x100) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
-						case 2:
-							if(prod & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
-						case 1:
-							if(prod & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
-							break;
-					}
+					qr_bscan(binary, prod, 1 << (3 * count)); /* count = 1..3 */
 					
 					if(debug) { printf("0x%4X (%d)", prod, prod); }
 					
@@ -1334,20 +1217,8 @@ int micro_qr_intermediate(char binary[], int jisdata[], char mode[], int length,
 					msb = (jis & 0xff00) >> 4;
 					lsb = (jis & 0xff);
 					prod = (msb * 0xc0) + lsb;
-					
-					if(prod & 0x1000) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(prod & 0x800) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(prod & 0x400) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(prod & 0x200) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(prod & 0x100) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(prod & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(prod & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(prod & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(prod & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(prod & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(prod & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(prod & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(prod & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
+				
+					qr_bscan(binary, prod, 0x1000);
 					
 					if(debug) { printf("0x%4X ", prod); }
 					
@@ -1376,14 +1247,7 @@ int micro_qr_intermediate(char binary[], int jisdata[], char mode[], int length,
 				for(i = 0; i < short_data_block_length; i++) {
 					int byte = jisdata[position + i];
 					
-					if(byte & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(byte & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(byte & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(byte & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(byte & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(byte & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(byte & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(byte & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
+					qr_bscan(binary, byte, 0x80);
 					
 					if(debug) { printf("0x%4X ", byte); }
 					
@@ -1423,23 +1287,8 @@ int micro_qr_intermediate(char binary[], int jisdata[], char mode[], int length,
 						count = 2;
 						prod = (first * 45) + second;
 					}
-					
-					switch(count) {
-						case 2:
-							if(prod & 0x400) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x200) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x100) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
-						case 1:
-							if(prod & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
-							break;
-					}
+				
+					qr_bscan(binary, prod, 1 << (5 * count)); /* count = 1..2 */
 					
 					if(debug) { printf("0x%4X ", prod); }
 					
@@ -1486,23 +1335,8 @@ int micro_qr_intermediate(char binary[], int jisdata[], char mode[], int length,
 						count = 3;
 						prod = (prod * 10) + third;
 					}
-					
-					switch(count) {
-						case 3:
-							if(prod & 0x200) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x100) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
-						case 2:
-							if(prod & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
-						case 1:
-							if(prod & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
-							if(prod & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
-							break;
-					}
+				
+					qr_bscan(binary, prod, 1 << (3 * count)); /* count = 1..3 */
 					
 					if(debug) { printf("0x%4X (%d)", prod, prod); }
 					
@@ -1592,18 +1426,7 @@ void microqr_expand_binary(char binary_stream[], char full_stream[], int version
 				}
 				
 				/* Character count indicator */
-				switch(version) {
-					case 3:
-						if(binary_stream[i + 1] & 0x20) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
-					case 2:
-						if(binary_stream[i + 1] & 0x10) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
-					case 1:
-						if(binary_stream[i + 1] & 0x08) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
-					case 0:
-						if(binary_stream[i + 1] & 0x04) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
-						if(binary_stream[i + 1] & 0x02) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
-						if(binary_stream[i + 1] & 0x01) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
-				}
+				qr_bscan(full_stream, binary_stream[i + 1], 4 << version); /* version = 0..3 */
 				
 				i += 2;
 				break;
@@ -1617,16 +1440,7 @@ void microqr_expand_binary(char binary_stream[], char full_stream[], int version
 				}
 				
 				/* Character count indicator */
-				switch(version) {
-					case 3:
-						if(binary_stream[i + 1] & 0x10) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
-					case 2:
-						if(binary_stream[i + 1] & 0x08) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
-					case 1:
-						if(binary_stream[i + 1] & 0x04) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
-						if(binary_stream[i + 1] & 0x02) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
-						if(binary_stream[i + 1] & 0x01) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
-				}
+				qr_bscan(full_stream, binary_stream[i + 1], 2 << version); /* version = 1..3 */
 				
 				i += 2;
 				break;
@@ -1639,15 +1453,7 @@ void microqr_expand_binary(char binary_stream[], char full_stream[], int version
 				}
 				
 				/* Character count indicator */
-				switch(version) {
-					case 3:
-						if(binary_stream[i + 1] & 0x10) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
-					case 2:
-						if(binary_stream[i + 1] & 0x08) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
-						if(binary_stream[i + 1] & 0x04) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
-						if(binary_stream[i + 1] & 0x02) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
-						if(binary_stream[i + 1] & 0x01) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
-				}
+				qr_bscan(full_stream, binary_stream[i + 1], 2 << version); /* version = 2..3 */
 				
 				i += 2;
 				break;
@@ -1660,14 +1466,7 @@ void microqr_expand_binary(char binary_stream[], char full_stream[], int version
 				}
 				
 				/* Character count indicator */
-				switch(version) {
-					case 3:
-						if(binary_stream[i + 1] & 0x08) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
-					case 2:
-						if(binary_stream[i + 1] & 0x04) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
-						if(binary_stream[i + 1] & 0x02) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
-						if(binary_stream[i + 1] & 0x01) { concat(full_stream, "1"); } else { concat(full_stream, "0"); }
-				}
+				qr_bscan(full_stream, binary_stream[i + 1], 1 << version); /* version = 2..3 */
 				
 				i += 2;
 				break;
@@ -1757,14 +1556,7 @@ void micro_qr_m1(char binary_data[])
 	
 	/* Add Reed-Solomon codewords to binary data */
 	for(i = 0; i < ecc_codewords; i++) {
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x80) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x40) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x20) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x10) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x08) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x04) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x02) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x01) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		qr_bscan(binary_data, ecc_blocks[ecc_codewords - i - 1], 0x80);
 	}
 }
 
@@ -1832,14 +1624,7 @@ void micro_qr_m2(char binary_data[], int ecc_mode)
 	
 	/* Add Reed-Solomon codewords to binary data */
 	for(i = 0; i < ecc_codewords; i++) {
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x80) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x40) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x20) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x10) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x08) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x04) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x02) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x01) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		qr_bscan(binary_data, ecc_blocks[ecc_codewords - i - 1], 0x80);
 	}
 	
 	return;
@@ -1939,14 +1724,7 @@ void micro_qr_m3(char binary_data[], int ecc_mode)
 	
 	/* Add Reed-Solomon codewords to binary data */
 	for(i = 0; i < ecc_codewords; i++) {
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x80) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x40) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x20) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x10) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x08) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x04) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x02) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x01) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		qr_bscan(binary_data, ecc_blocks[ecc_codewords - i - 1], 0x80);
 	}
 	
 	return;
@@ -2018,14 +1796,7 @@ void micro_qr_m4(char binary_data[], int ecc_mode)
 	
 	/* Add Reed-Solomon codewords to binary data */
 	for(i = 0; i < ecc_codewords; i++) {
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x80) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x40) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x20) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x10) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x08) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x04) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x02) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
-		if(ecc_blocks[ecc_codewords - i - 1] & 0x01) { concat(binary_data, "1"); } else { concat(binary_data, "0"); }
+		qr_bscan(binary_data, ecc_blocks[ecc_codewords - i - 1], 0x80);
 	}
 }
 
