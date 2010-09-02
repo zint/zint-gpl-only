@@ -127,7 +127,7 @@ void lookup(char set_string[], char *table[], char data, char dest[])
 
 int module_is_set(struct zint_symbol *symbol, int y_coord, int x_coord)
 {
-	return (symbol->encoded_data[y_coord][x_coord / 7] & (1 << (x_coord % 7))) ? 1 : 0;
+	return (symbol->encoded_data[y_coord][x_coord / 7] >> (x_coord % 7)) & 1;
 #if 0	
 	switch(x_sub) {
 		case 0: if((symbol->encoded_data[y_coord][x_char] & 0x01) != 0) { result = 1; } break;
@@ -145,8 +145,7 @@ int module_is_set(struct zint_symbol *symbol, int y_coord, int x_coord)
 
 void set_module(struct zint_symbol *symbol, int y_coord, int x_coord)
 {
-        if(module_is_set(symbol, y_coord, x_coord)) { return; }
-	symbol->encoded_data[y_coord][x_coord / 7] += 1 << (x_coord % 7);
+	symbol->encoded_data[y_coord][x_coord / 7] |= 1 << (x_coord % 7);
 #if 0
 	int x_char, x_sub;
 	
@@ -168,8 +167,7 @@ void set_module(struct zint_symbol *symbol, int y_coord, int x_coord)
 
 void unset_module(struct zint_symbol *symbol, int y_coord, int x_coord)
 {
-        if(!(module_is_set(symbol, y_coord, x_coord))) { return; }
-	symbol->encoded_data[y_coord][x_coord / 7] -= 1 << (x_coord % 7);
+	symbol->encoded_data[y_coord][x_coord / 7] &= ~(1 << (x_coord % 7));
 #if 0
 	int x_char, x_sub;
 	
