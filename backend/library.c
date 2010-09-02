@@ -777,22 +777,27 @@ int ZBarcode_Encode_File(struct zint_symbol *symbol, char *filename)
 	unsigned int nRead = 0, n = 0;
 	int ret;
 
-	file = fopen(filename, "rb");
-	if (!file) {
-		strcpy(symbol->errtxt, "Unable to read input file");
-		return ERROR_INVALID_DATA;
-	}
+	if (!strcmp(filename, "-")) {
+		file = stdin;
+		fileLen = 7100;
+	} else {
+		file = fopen(filename, "rb");
+		if (!file) {
+			strcpy(symbol->errtxt, "Unable to read input file");
+			return ERROR_INVALID_DATA;
+		}
 	
-	/* Get file length */
-	fseek(file, 0, SEEK_END);
-	fileLen = ftell(file);
-	fseek(file, 0, SEEK_SET);
+		/* Get file length */
+		fseek(file, 0, SEEK_END);
+		fileLen = ftell(file);
+		fseek(file, 0, SEEK_SET);
 	
-	if(fileLen > 7100) {
-		/* The largest amount of data that can be encoded is 7089 numeric digits in QR Code */
-		strcpy(symbol->errtxt, "Input file too long");
-		fclose(file);
-		return ERROR_INVALID_DATA;
+		if(fileLen > 7100) {
+			/* The largest amount of data that can be encoded is 7089 numeric digits in QR Code */
+			strcpy(symbol->errtxt, "Input file too long");
+			fclose(file);
+			return ERROR_INVALID_DATA;
+		}
 	}
 	
 	/* Allocate memory */
