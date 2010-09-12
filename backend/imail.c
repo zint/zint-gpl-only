@@ -690,9 +690,9 @@ int imail(struct zint_symbol *symbol, unsigned char source[], int length)
 		read += 2;
 	}
 
-	symbol->row_height[0] = 2;
+	symbol->row_height[0] = 3;
 	symbol->row_height[1] = 2;
-	symbol->row_height[2] = 2;
+	symbol->row_height[2] = 3;
 
 	symbol->rows = 3;
 	symbol->width = read - 1;
