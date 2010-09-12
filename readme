@@ -1,5 +1,5 @@
-Zint and libzint 2.3.2
-----------------------
+Zint and libzint 2.4
+--------------------
 Zint is a suite of programs to allow easy encoding of data in any of the wide range of public domain
 barcode standards and to allow integration of this capability into your own programs. This version
 of Zint is able to encode data in the following formats:
@@ -12,8 +12,8 @@ Code 16k, PDF417, MicroPDF417, Two-Track Pharmacode, PostNet, PLANET, Australia 
 RM4SCC, USPS OneCode, GS1 DataBar, DataBar-14, DataBar Limited, DataBar Extended, DataBar Stacked,
 Composite Symbology, Data Matrix, QR Code, Maxicode, Aztec Code, EAN-13, Micro QR,
 Korea Post Barcode, HIBC Code 128, HIBC Code 39, HIBC Data Matrix, HIBC PDF417, HIBC MicroPDF417,
-HIBC QR Code, HIBC Codablock-F, HIBC Aztec Code, Japanese Postal Code, Code 49, Channel Code, Code One,
-Grid Matrix, FIM and Flattermarken.
+HIBC QR Code, HIBC Aztec Code, Japanese Postal Code, Code 49, Channel Code, Code One, Grid Matrix,
+FIM and Flattermarken.
 
           ******************************************************************************
           *     PLEASE NOTE: This is just a simple guide to getting Zint working.      *
@@ -41,6 +41,10 @@ this standard. For full details see the project website.
 
 Version 2.3.2:
 More bug corrections including important corrections to RSS Expanded, Maxicode and ISBN.
+
+Version 2.4:
+Simplified GUI. Addition of "render" functions provides an API for glabels. Corrections to 4-state codes.
+Simplification in QR code. Added --dump option.
 
 COMPILING THE CODE
 ------------------
