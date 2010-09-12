@@ -275,10 +275,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\backend\blockf.c"
-				>
-			</File>
-			<File
 				RelativePath="..\backend\code.c"
 				>
 			</File>
