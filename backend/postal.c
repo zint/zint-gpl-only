@@ -349,9 +349,9 @@ int royal_plot(struct zint_symbol *symbol, unsigned char source[], int length)
 		writer += 2;
 	}
 
-	symbol->row_height[0] = 4;
+	symbol->row_height[0] = 3;
 	symbol->row_height[1] = 2;
-	symbol->row_height[2] = 4;
+	symbol->row_height[2] = 3;
 	symbol->rows = 3;
 	symbol->width = writer - 1;
 	
@@ -409,9 +409,9 @@ int kix_code(struct zint_symbol *symbol, unsigned char source[], int length)
 		writer += 2;
 	}
 
-	symbol->row_height[0] = 4;
+	symbol->row_height[0] = 3;
 	symbol->row_height[1] = 2;
-	symbol->row_height[2] = 4;
+	symbol->row_height[2] = 3;
 	symbol->rows = 3;
 	symbol->width = writer - 1;
 	
@@ -463,9 +463,9 @@ int daft_code(struct zint_symbol *symbol, unsigned char source[], int length)
 		writer += 2;
 	}
 	
-	symbol->row_height[0] = 4;
+	symbol->row_height[0] = 3;
 	symbol->row_height[1] = 2;
-	symbol->row_height[2] = 4;
+	symbol->row_height[2] = 3;
 	symbol->rows = 3;
 	symbol->width = writer - 1;
 	
@@ -593,9 +593,9 @@ int japan_post(struct zint_symbol *symbol, unsigned char source[], int length)
 		writer += 2;
 	}
 	
-	symbol->row_height[0] = 2;
+	symbol->row_height[0] = 3;
 	symbol->row_height[1] = 2;
-	symbol->row_height[2] = 2;
+	symbol->row_height[2] = 3;
 	symbol->rows = 3;
 	symbol->width = writer - 1;
 	

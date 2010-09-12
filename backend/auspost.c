@@ -236,9 +236,9 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[], int lengt
 		writer += 2;
 	}
 
-	symbol->row_height[0] = 4;
+	symbol->row_height[0] = 3;
 	symbol->row_height[1] = 2;
-	symbol->row_height[2] = 4;
+	symbol->row_height[2] = 3;
 
 	symbol->rows = 3;
 	symbol->width = writer - 1;
