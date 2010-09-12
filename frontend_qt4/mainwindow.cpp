@@ -91,7 +91,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags fl)
 		"UK Plessey",
 		"Universal Product Code (UPC-A)",
 		"Universal Product Code (UPC-E)",
-		"USPS One Code"
+		"USPS Intelligent Mail"
 	};
 		
 	/* createActions();
@@ -163,7 +163,7 @@ bool MainWindow::save()
 void MainWindow::about()
 {
 	QMessageBox::about(this, tr("About Zint"),
-			   tr("<h2>Zint Barcode Studio 2.3.2</h2>"
+			   tr("<h2>Zint Barcode Studio 2.4</h2>"
 					   "<p>A free barcode generator"
 					   "<p>Visit the <a href=\"http://www.zint.org.uk\">Zint Project Homepage</a> for more information."
 					   "<p>Copyright &copy; 2010 Robin Stuart.<br>"
