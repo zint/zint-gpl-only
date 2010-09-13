@@ -389,7 +389,7 @@ int kix_code(struct zint_symbol *symbol, unsigned char source[], int length)
 	strcpy(localstr, (char *)source);
 	
 	/* Encode data */
-	for (i = 0; i < 11; i++) {
+	for (i = 0; i < 18; i++) {
 		lookup(KRSET, RoyalTable, localstr[i], height_pattern);
 	}
 	
