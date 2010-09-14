@@ -47,8 +47,8 @@ Maxicode and ISBN.
 
 Version 2.4:
 Simplified GUI. Addition of "render" functions provides an API for
-glabels. Corrections to 4-state codes.  Simplification in QR code. Added
---dump option.
+glabels. Corrections to 4-state codes. Simplification in QR code. Added
+--dump option and support for reading from stdin.
 
 
 CONTACT ME
