@@ -201,11 +201,8 @@ void expand(struct zint_symbol *symbol, char data[])
 			if(latch == '1') { set_module(symbol, symbol->rows, writer); }
 			writer++;
 		}
-		if(latch == '1') {
-			latch = '0';
-		} else {
-			latch = '1';
-		}
+
+		latch = (latch == '1' ? '0' : '1');
 	}
 	
 	if(symbol->symbology != BARCODE_PHARMA) {
@@ -325,7 +322,7 @@ int latin1_process(struct zint_symbol *symbol, unsigned char source[], unsigned 
 
 int utf8toutf16(struct zint_symbol *symbol, unsigned char source[], int vals[], int *length)
 {
-	int bpos, jpos, error_number, done;
+	int bpos, jpos, error_number;
 	int next;
 	
 	bpos = 0;
@@ -334,51 +331,33 @@ int utf8toutf16(struct zint_symbol *symbol, unsigned char source[], int vals[], 
 	next = 0;
 	
 	do {
-		done = 0;
-		
 		if(source[bpos] <= 0x7f) {
 			/* 1 byte mode (7-bit ASCII) */
 			vals[jpos] = source[bpos];
 			next = bpos + 1;
 			jpos++;
-			done = 1;
-		}
-		
-		if(done == 0) {
+		} else {
 			if((source[bpos] >= 0x80) && (source[bpos] <= 0xbf)) {
 				strcpy(symbol->errtxt, "Corrupt Unicode data");
 				return ERROR_INVALID_DATA;
 			}
-		}
-		
-		if(done == 0) {
 			if((source[bpos] >= 0xc0) && (source[bpos] <= 0xc1)) {
 				strcpy(symbol->errtxt, "Overlong encoding not supported");
 				return ERROR_INVALID_DATA;
 			}
-		}
-		
-		if(done == 0) {
+
 			if((source[bpos] >= 0xc2) && (source[bpos] <= 0xdf)) {
 				/* 2 byte mode */
 				vals[jpos] = ((source[bpos] & 0x1f) << 6) + (source[bpos + 1] & 0x3f);
 				next = bpos + 2;
 				jpos++;
-				done = 1;
-			}
-		}
-		
-		if(done == 0) {
+			} else
 			if((source[bpos] >= 0xe0) && (source[bpos] <= 0xef)) {
 				/* 3 byte mode */
 				vals[jpos] = ((source[bpos] & 0x0f) << 12) + ((source[bpos + 1] & 0x3f) << 6) + (source[bpos + 2] & 0x3f);
 				next = bpos + 3;
 				jpos ++;
-				done = 1;
-			}
-		}
-		
-		if(done == 0) {
+			} else
 			if(source[bpos] >= 0xf0) {
 				strcpy(symbol->errtxt, "Unicode sequences of more than 3 bytes not supported");
 				return ERROR_INVALID_DATA;

@@ -151,7 +151,7 @@ int msi_plessey_mod10(struct zint_symbol *symbol, unsigned char source[], int le
 
 	/* caluculate check digit */
 	wright = 0;
-	n = ((length % 2) == 0) ? 1 : 0;
+	n = !(length & 1);
 	for(i = n; i < length; i += 2)
 	{
 		un[wright++] = source[i];
@@ -170,7 +170,7 @@ int msi_plessey_mod10(struct zint_symbol *symbol, unsigned char source[], int le
 		pedwar += ctoi(tri[i]);
 	}
 
-	n = length % 2;
+	n = length & 1;
 	for(i = n; i < length; i+=2)
 	{
 		pedwar += ctoi(source[i]);
@@ -223,7 +223,7 @@ int msi_plessey_mod1010(struct zint_symbol *symbol, unsigned char source[], cons
 	/* calculate first check digit */
 	wright = 0;
 
-	n = ((src_len %2) == 0) ? 1 : 0;
+	n = !(src_len & 1);
 	for(i = n; i < src_len; i += 2)
 	{
 		un[wright++] = source[i];
@@ -242,7 +242,7 @@ int msi_plessey_mod1010(struct zint_symbol *symbol, unsigned char source[], cons
 		pedwar += ctoi(tri[i]);
 	}
 
-	n = src_len % 2;
+	n = src_len & 1;
 	for(i = n; i < src_len; i += 2)
 	{
 		pedwar += ctoi(source[i]);
@@ -256,7 +256,7 @@ int msi_plessey_mod1010(struct zint_symbol *symbol, unsigned char source[], cons
 
 	/* calculate second check digit */
 	wright = 0;
-	n = src_len % 2;
+	n = src_len & 1;
 	for(i = n; i < src_len; i += 2)
 	{
 		un[wright++] = source[i];
@@ -277,7 +277,7 @@ int msi_plessey_mod1010(struct zint_symbol *symbol, unsigned char source[], cons
 	}
 
 
-	i = ((src_len % 2) == 0) ? 1 : 0;
+	i = !(src_len & 1);
 	for(; i < src_len; i += 2)
 	{
 		pedwar += ctoi(source[i]);
@@ -424,7 +424,7 @@ int msi_plessey_mod1110(struct zint_symbol *symbol, unsigned char source[], cons
 	
 	/* caluculate second (mod 10) check digit */
 	wright = 0;
-	i = ((temp_len % 2) == 0) ? 1 : 0;
+	i = !(temp_len & 1);
 	for(; i < temp_len; i += 2)
 	{
 		un[wright++] = temp[i];
@@ -443,7 +443,7 @@ int msi_plessey_mod1110(struct zint_symbol *symbol, unsigned char source[], cons
 		pedwar += ctoi(tri[i]);
 	}
 
-	i = temp_len % 2;
+	i = temp_len & 1;
 	for(; i < temp_len; i+=2)
 	{
 		pedwar += ctoi(temp[i]);

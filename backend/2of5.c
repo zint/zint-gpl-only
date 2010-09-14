@@ -194,7 +194,7 @@ int interleaved_two_of_five(struct zint_symbol *symbol, unsigned char source[], 
 	ustrcpy(temp, (unsigned char *) "");
 	/* Input must be an even number of characters for Interlaced 2 of 5 to work:
 	   if an odd number of characters has been entered then add a leading zero */
-	if ((length % 2) != 0)
+	if (length & 1)
 	{
 		ustrcpy(temp, (unsigned char *) "0");
 		length++;
@@ -262,12 +262,10 @@ int itf14(struct zint_symbol *symbol, unsigned char source[], int length)
 	
 	/* Calculate the check digit - the same method used for EAN-13 */
 
-	for (i = 12; i >= 0; i--)
-	{
+	for (i = 12; i >= 0; i--) {
 		count += ctoi(localstr[i]);
 
-		if ((i%2) == 0)
-		{
+		if (!(i & 1)) {
 			count += 2 * ctoi(localstr[i]);
 		}
 	}
@@ -308,8 +306,7 @@ int dpleit(struct zint_symbol *symbol, unsigned char source[], int length)
 	{
 		count += 4 * ctoi(localstr[i]);
 
-		if (!((i%2) == 0))
-		{
+		if (i & 1) {
 			count += 5 * ctoi(localstr[i]);
 		}
 	}
@@ -348,8 +345,7 @@ int dpident(struct zint_symbol *symbol, unsigned char source[], int length)
 	{
 		count += 4 * ctoi(localstr[i]);
 
-		if (!((i%2) == 0))
-		{
+		if (i & 1) {
 			count += 5 * ctoi(localstr[i]);
 		}
 	}

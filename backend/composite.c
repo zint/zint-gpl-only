@@ -71,7 +71,7 @@ int _min(int first, int second) {
 
 /* gets bit in bitString at bitPos */
 int getBit(UINT *bitStr, int bitPos) {
-	return(((bitStr[bitPos/16] & (0x8000>>(bitPos%16))) == 0) ? 0 : 1);
+	return !!(bitStr[bitPos >> 4] & (0x8000 >> (bitPos & 15)));
 }
 
 /* initialize pwr928 encoding table */

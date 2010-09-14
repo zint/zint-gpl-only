@@ -758,7 +758,7 @@ void gm_add_ecc(char binary[], int data_posn, int layers, int ecc_level, int wor
 	/* Add padding codewords */
 	data[data_posn] = 0x00;
 	for(i = (data_posn + 1); i < data_cw; i++) {
-		if(i % 2) {
+		if(i & 1) {
 			data[i] = 0x7e;
 			toggle = 1;
 		} else {
@@ -1055,7 +1055,7 @@ int grid_matrix(struct zint_symbol *symbol, unsigned char source[], int length)
 	
 	/* Add macromodule frames */
 	for(x = 0; x < modules; x++) {
-		dark = 1 - (x % 2);
+		dark = 1 - (x & 1);
 		for(y = 0; y < modules; y++) {
 			if(dark == 1) {
 				for(i = 0; i < 5; i++) {

@@ -71,7 +71,7 @@ void maxi_do_secondary_chk_odd( int ecclen )
 		datalen = 84;
 
 	for(j = 0; j < datalen; j += 1)
-		if ((j % 2) ==  1)  // odd
+		if (j & 1)  // odd
 			data[(j-1)/2] = maxi_codeword[j + 20];
 
 	rs_encode(datalen/2, data, results);
@@ -96,7 +96,7 @@ void maxi_do_secondary_chk_even(int ecclen )
 	rs_init_code(ecclen, 1);
 
 	for(j = 0; j < datalen + 1; j += 1)
-		if ((j % 2) ==  0) // even
+		if (!(j & 1)) // even
 			data[j/2] = maxi_codeword[j + 20];
 
 	rs_encode(datalen/2, data, results);

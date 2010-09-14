@@ -635,12 +635,12 @@ int maxi_png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 		for(column = 0; column < symbol->width; column++) {
 			xposn = column * 10;
 			if(module_is_set(symbol, row, column)) {
-				if((row % 2) == 0) {
-					/* Even (full) row */
-					draw_hexagon(pixelbuf, image_width, xposn + (2 * xoffset), yposn + (2 * yoffset));
-				} else {
+				if(row & 1) {
 					/* Odd (reduced) row */
 					xposn += 5;
+					draw_hexagon(pixelbuf, image_width, xposn + (2 * xoffset), yposn + (2 * yoffset));
+				} else {
+					/* Even (full) row */
 					draw_hexagon(pixelbuf, image_width, xposn + (2 * xoffset), yposn + (2 * yoffset));
 				}
 			}

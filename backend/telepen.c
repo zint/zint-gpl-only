@@ -114,7 +114,7 @@ int telepen_num(struct zint_symbol *symbol, unsigned char source[], int src_len)
 	}
 	
 	/* Add a leading zero if required */
-	if ((temp_length % 2) != 0)
+	if (temp_length & 1)
 	{
 		memmove(temp + 1, temp, temp_length);
 		temp[0] = '0';
