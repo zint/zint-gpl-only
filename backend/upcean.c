@@ -49,12 +49,10 @@ char upc_check(char source[])
 
 	count = 0;
 
-	for (i = 0; i < strlen(source); i++)
-	{
+	for (i = 0; i < strlen(source); i++) {
 		count += ctoi(source[i]);
 
-		if ((i%2) == 0)
-		{
+		if (!(i & 1)) {
 			count += 2 * (ctoi(source[i]));
 		}
 	}
@@ -290,12 +288,10 @@ char ean_check(char source[])
 	count = 0;
 
 	h = strlen(source);
-	for (i = h - 1; i >= 0; i--)
-	{
+	for (i = h - 1; i >= 0; i--) {
 		count += ctoi(source[i]);
 
-		if (!((i%2) == 0))
-		{
+		if (i & 1) {
 			count += 2 * ctoi(source[i]);
 		}
 	}

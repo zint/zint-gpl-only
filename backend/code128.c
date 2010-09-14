@@ -290,7 +290,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[], int length)
 	dxsmooth(&indexliste);
 
 	/* Resolve odd length LATCHC blocks */
-	if((list[1][0] == LATCHC) && ((list[0][0] % 2) == 1)) {
+	if((list[1][0] == LATCHC) && (list[0][0] & 1)) {
 		/* Rule 2 */
 		list[0][1]++;
 		list[0][0]--;
@@ -302,7 +302,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[], int length)
 	}	
 	if(indexliste > 1) {
 		for(i = 1; i < indexliste; i++) {
-			if((list[1][i] == LATCHC) && ((list[0][i] % 2) == 1)) {
+			if((list[1][i] == LATCHC) && (list[0][i] & 1)) {
 				/* Rule 3b */
 				list[0][i - 1]++;
 				list[0][i]--;
@@ -688,7 +688,7 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[], int length)
 	for(i = 0; i < read; i++) {
 		if(set[i] == 'C') {
 			if(reduced[i] == '[') {
-				if(c_count % 2) {
+				if(c_count & 1) {
 					if((i - c_count) != 0) {
 						set[i - c_count] = 'B';
 					} else {
@@ -700,7 +700,7 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[], int length)
 				c_count++;
 			}
 		} else {
-			if(c_count % 2) {
+			if(c_count & 1) {
 				if((i - c_count) != 0) {
 					set[i - c_count] = 'B';
 				} else {
@@ -710,7 +710,7 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[], int length)
 			c_count = 0;
 		}
 	}
-	if(c_count % 2) {
+	if(c_count & 1) {
 		if((i - c_count) != 0) {
 			set[i - c_count] = 'B';
 		} else {
@@ -941,7 +941,7 @@ int nve_18(struct zint_symbol *symbol, unsigned char source[], int length)
 	{
 		total_sum += ctoi(source[i]);
 		
-		if(!((i%2) == 1)) {
+		if(!(i & 1)) {
 			total_sum += 2 * ctoi(source[i]);
 		}
 	}
@@ -979,12 +979,10 @@ int ean_14(struct zint_symbol *symbol, unsigned char source[], int length)
 	ustrcpy(ean128_equiv + 4 + zeroes, source);
 	
 	count = 0;
-	for (i = length - 1; i >= 0; i--)
-	{
+	for (i = length - 1; i >= 0; i--) {
 		count += ctoi(source[i]);
 
-		if (!((i % 2) == 1))
-		{
+		if (!(i & 1)) {
 			count += 2 * ctoi(source[i]);
 		}
 	}

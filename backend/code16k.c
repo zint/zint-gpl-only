@@ -294,7 +294,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[], int length)
 	for(i = 0; i < read; i++) {
 		if(set[i] == 'C') {
 			if(source[i] == '[') {
-				if(c_count % 2) {
+				if(c_count & 1) {
 					if((i - c_count) != 0) {
 						set[i - c_count] = 'B';
 					} else {
@@ -306,7 +306,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[], int length)
 				c_count++;
 			}
 		} else {
-			if(c_count % 2) {
+			if(c_count & 1) {
 				if((i - c_count) != 0) {
 					set[i - c_count] = 'B';
 				} else {
@@ -316,7 +316,7 @@ int code16k(struct zint_symbol *symbol, unsigned char source[], int length)
 			c_count = 0;
 		}
 	}
-	if(c_count % 2) {
+	if(c_count & 1) {
 		if((i - c_count) != 0) {
 			set[i - c_count] = 'B';
 		} else {

@@ -133,7 +133,7 @@ int estimate_binary_length(char mode[], int length, int gs1)
 		case 'B': count += 8; break;
 		case 'A':
 			a_count++;
-			if((a_count % 2) == 0) {
+			if((a_count & 1) == 0) {
 				count += 5;        // 11 in total
 				a_count = 0;
 			}
@@ -146,10 +146,10 @@ int estimate_binary_length(char mode[], int length, int gs1)
 				count += 3;        // 10 in total
 				n_count = 0;
 			}
-			else if ((n_count % 2) == 0)
-					count += 3;        // 7 in total
-				else
-					count += 4;
+			else if ((n_count & 1) == 0)
+				count += 3;        // 7 in total
+			else
+				count += 4;
 			break;
 		}
 	}
@@ -186,11 +186,9 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 	
 	if(version <= 9) {
 		scheme = 1;
-	}
-	if((version >= 10) && (version <= 26)) {
+	} else if((version >= 10) && (version <= 26)) {
 		scheme = 2;
-	}
-	if(version >= 27) {
+	} else if(version >= 27) {
 		scheme = 3;
 	}
 	
@@ -879,14 +877,14 @@ int apply_bitmask(unsigned char *grid, int size)
 			mask[(y * size) + x] = 0x00;
 			
 			if (!(grid[(y * size) + x] & 0xf0)) {
-				if(((y + x) % 2) == 0) { mask[(y * size) + x] += 0x01; }
-				if((y % 2) == 0) { mask[(y * size) + x] += 0x02; }
+				if(((y + x) & 1) == 0) { mask[(y * size) + x] += 0x01; }
+				if((y & 1) == 0) { mask[(y * size) + x] += 0x02; }
 				if((x % 3) == 0) { mask[(y * size) + x] += 0x04; }
 				if(((y + x) % 3) == 0) { mask[(y * size) + x] += 0x08; }
-				if((((y / 2) + (x / 3)) % 2) == 0) { mask[(y * size) + x] += 0x10; }
-				if((((y * x) % 2) + ((y * x) % 3)) == 0) { mask[(y * size) + x] += 0x20; }
-				if(((((y * x) % 2) + ((y * x) % 3)) % 2) == 0) { mask[(y * size) + x] += 0x40; }
-				if(((((y + x) % 2) + ((y * x) % 3)) % 2) == 0) { mask[(y * size) + x] += 0x80; }
+				if((((y / 2) + (x / 3)) & 1) == 0) { mask[(y * size) + x] += 0x10; }
+				if((((y * x) & 1) + ((y * x) % 3)) == 0) { mask[(y * size) + x] += 0x20; }
+				if(((((y * x) & 1) + ((y * x) % 3)) & 1) == 0) { mask[(y * size) + x] += 0x40; }
+				if(((((y + x) & 1) + ((y * x) % 3)) & 1) == 0) { mask[(y * size) + x] += 0x80; }
 			}
 		}
 	}
@@ -1010,11 +1008,7 @@ int qr_code(struct zint_symbol *symbol, unsigned char source[], int length)
 	char* mode = (char *)_alloca(length + 1);
 #endif
 	
-	if(symbol->input_mode == GS1_MODE) {
-		gs1 = 1;
-	} else {
-		gs1 = 0;
-	}
+	gs1 = (symbol->input_mode == GS1_MODE);
 	
 	switch(symbol->input_mode) {
 		case DATA_MODE:
@@ -1520,8 +1514,7 @@ void micro_qr_m1(char binary_data[])
 		if(bits_left > 4) {
 			remainder = (bits_left - 4) / 8;
 			for(i = 0; i < remainder; i++) {
-				if((i % 2) == 0) { concat(binary_data, "11101100"); }
-				if((i % 2) == 1) { concat(binary_data, "00010001"); }
+				concat(binary_data, i & 1 ? "00010001" : "11101100"); 
 			}
 		}
 		concat(binary_data, "0000");
@@ -1595,8 +1588,7 @@ void micro_qr_m2(char binary_data[], int ecc_mode)
 		bits_left = bits_total - strlen(binary_data);
 		remainder = bits_left / 8;
 		for(i = 0; i < remainder; i++) {
-			if((i % 2) == 0) { concat(binary_data, "11101100"); }
-			if((i % 2) == 1) { concat(binary_data, "00010001"); }
+			concat(binary_data, i & 1 ? "00010001" : "11101100"); 
 		}
 	}
 	
@@ -1677,8 +1669,7 @@ void micro_qr_m3(char binary_data[], int ecc_mode)
 		if(bits_left > 4) {
 			remainder = (bits_left - 4) / 8;
 			for(i = 0; i < remainder; i++) {
-				if((i % 2) == 0) { concat(binary_data, "11101100"); }
-				if((i % 2) == 1) { concat(binary_data, "00010001"); }
+				concat(binary_data, i & 1 ? "00010001" : "11101100");
 			}
 		}
 		concat(binary_data, "0000");
@@ -1766,8 +1757,7 @@ void micro_qr_m4(char binary_data[], int ecc_mode)
 		bits_left = bits_total - strlen(binary_data);
 		remainder = bits_left / 8;
 		for(i = 0; i < remainder; i++) {
-			if((i % 2) == 0) { concat(binary_data, "11101100"); }
-			if((i % 2) == 1) { concat(binary_data, "00010001"); }
+			concat(binary_data, i & 1 ? "00010001" : "11101100");
 		}
 	}
 	
@@ -1930,10 +1920,21 @@ int micro_apply_bitmask(unsigned char *grid, int size)
 			mask[(y * size) + x] = 0x00;
 			
 			if (!(grid[(y * size) + x] & 0xf0)) {
-				if((y % 2) == 0) { mask[(y * size) + x] += 0x01; }
-				if((((y / 2) + (x / 3)) % 2) == 0) { mask[(y * size) + x] += 0x02; }
-				if(((((y * x) % 2) + ((y * x) % 3)) % 2) == 0) { mask[(y * size) + x] += 0x04; }
-				if(((((y + x) % 2) + ((y * x) % 3)) % 2) == 0) { mask[(y * size) + x] += 0x08; }
+				if((y & 1) == 0) {
+					mask[(y * size) + x] += 0x01;
+				}
+
+				if((((y / 2) + (x / 3)) & 1) == 0) {
+					mask[(y * size) + x] += 0x02;
+				}
+				
+				if(((((y * x) & 1) + ((y * x) % 3)) & 1) == 0) {
+					mask[(y * size) + x] += 0x04;
+				}
+				
+				if(((((y + x) & 1) + ((y * x) % 3)) & 1) == 0) {
+					mask[(y * size) + x] += 0x08;
+				}
 			}
 		}
 	}

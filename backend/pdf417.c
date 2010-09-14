@@ -289,7 +289,7 @@ void textprocess(int *chainemc, int *mclength, char chaine[], int start, int len
 	}
 	
 	/* 663 */
-	if ((wnet % 2) > 0) {
+	if (wnet & 1) {
 		chainet[wnet] = 29;
 		wnet++;
 	}
