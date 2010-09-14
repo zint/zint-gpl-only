@@ -1,8 +1,9 @@
-Zint and libzint 2.4
---------------------
+Zint and libzint
+----------------
 Zint is a suite of programs to allow easy encoding of data in any of the wide range of public domain
-barcode standards and to allow integration of this capability into your own programs. This version
-of Zint is able to encode data in the following formats:
+barcode standards and to allow integration of this capability into your own programs.
+
+Zint is able to encode data in the following formats:
 
 Code 11, Standard Code 2 of 5, IATA Code 2 of 5, Industrial Code 2 of 5, Interleaved Code 2 of 5,
 Code 2 of 5 Data Logic, ITF-14, Deutche Post Leitcode, Deutche Post Identcode, UPC-A, UPC-E, EAN-2,
@@ -72,13 +73,14 @@ data will be ignored. The GUI can be accessed by typing
 	zint-qt
 
 The MakeFile Method:
-MakeFiles are provided for some systems although this method is now depreciated. This method compiles
+MakeFiles are provided for some systems although this method is now deprecated. It compiles
 and installs the library and CLI only. If you have installed Zint using this method before please
 note that the binaries will now install to a different location than version 2.3.0 or earlier
 (/usr/bin rather than /usr/local/bin and /usr/lib rather than /usr/local/lib). This makes
 installation easier on Red Hat based systems (RHEL, CentOS, Fedora etc.) and on BSD-like systems
-(FreeBSD, OpenBSD etc.) and is more correctly in line with the LSB. YOU WILL NEED TO UNINSTALL
-PREVIOUS VERSIONS OF ZINT BEFORE USING THIS METHOD.
+(FreeBSD, OpenBSD etc.) and is more correctly in line with the LSB.
+
+ *** UNINSTALL ANY PREVIOUS VERSION OF ZINT BEFORE USING THIS METHOD ***
 
 To compile using this method simply run:
 
