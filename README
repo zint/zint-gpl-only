@@ -1,82 +1,94 @@
 Zint and libzint
 ----------------
-Zint is a suite of programs to allow easy encoding of data in any of the wide range of public domain
-barcode standards and to allow integration of this capability into your own programs.
+Zint is a suite of programs to allow easy encoding of data in any of the
+wide range of public domain barcode standards and to allow integration of
+this capability into your own programs.
 
 Zint is able to encode data in the following formats:
 
-Code 11, Standard Code 2 of 5, IATA Code 2 of 5, Industrial Code 2 of 5, Interleaved Code 2 of 5,
-Code 2 of 5 Data Logic, ITF-14, Deutche Post Leitcode, Deutche Post Identcode, UPC-A, UPC-E, EAN-2,
-EAN-5, EAN-8, EAN-13, UK Plessey, MSI Plessey, Telepen Alpha, Telepen Numeric, Code 39,
-Extended Code 39, Code 93, PZN, Code 23, LOGMARS, Codabar, Pharmacode, Code 128, EAN-128, NVE-18,
-Code 16k, PDF417, MicroPDF417, Two-Track Pharmacode, PostNet, PLANET, Australia Post 4-State Symbols,
-RM4SCC, USPS OneCode, GS1 DataBar, DataBar-14, DataBar Limited, DataBar Extended, DataBar Stacked,
-Composite Symbology, Data Matrix, QR Code, Maxicode, Aztec Code, EAN-13, Micro QR,
-Korea Post Barcode, HIBC Code 128, HIBC Code 39, HIBC Data Matrix, HIBC PDF417, HIBC MicroPDF417,
-HIBC QR Code, HIBC Aztec Code, Japanese Postal Code, Code 49, Channel Code, Code One, Grid Matrix,
-FIM and Flattermarken.
+Code 11, Standard Code 2 of 5, IATA Code 2 of 5, Industrial Code 2 of 5,
+Interleaved Code 2 of 5, Code 2 of 5 Data Logic, ITF-14, Deutche Post
+Leitcode, Deutche Post Identcode, UPC-A, UPC-E, EAN-2, EAN-5, EAN-8,
+EAN-13, UK Plessey, MSI Plessey, Telepen Alpha, Telepen Numeric, Code 39,
+Extended Code 39, Code 93, PZN, Code 23, LOGMARS, Codabar, Pharmacode, Code
+128, EAN-128, NVE-18, Code 16k, PDF417, MicroPDF417, Two-Track Pharmacode,
+PostNet, PLANET, Australia Post 4-State Symbols, RM4SCC, USPS OneCode, GS1
+DataBar, DataBar-14, DataBar Limited, DataBar Extended, DataBar Stacked,
+Composite Symbology, Data Matrix, QR Code, Maxicode, Aztec Code, EAN-13,
+Micro QR, Korea Post Barcode, HIBC Code 128, HIBC Code 39, HIBC Data Matrix,
+HIBC PDF417, HIBC MicroPDF417, HIBC QR Code, HIBC Aztec Code, Japanese Postal
+Code, Code 49, Channel Code, Code One, Grid Matrix, FIM and Flattermarken.
 
 
 PROJECT STATUS
 --------------
 Version 2.3.0:
-This release features a complete rebuild of QR Code and Micro QR Code functionality which now:
+This release features a complete rebuild of QR Code and Micro QR Code
+functionality which now:
 
 * Automatically detects and adjusts to Japanese characters
 * Supports GS1 encoding
 * Does not require the qrencode library.
 
-Also new in this release is Grid Matrix support which similarly supports Chinese character encoding.
+Also new in this release is Grid Matrix support which similarly supports
+Chinese character encoding.
 
 Version 2.3.1:
-Correction of some minor bugs in Code 128 and Data Matrix, addition of --notext option to CLI and
-better operation of --scale option which now scales human readable text and MaxiCode.
+Correction of some minor bugs in Code 128 and Data Matrix, addition of
+--notext option to CLI and better operation of --scale option which now
+scales human readable text and MaxiCode.
 
-SPECIAL NOTE: Codablock-F has now been REMOVED from this project because of problems implimenting
-this standard. For full details see the project website.
+SPECIAL NOTE: Codablock-F has now been REMOVED from this project because of
+problems implimenting this standard. For full details see the project website.
 
 Version 2.3.2:
-More bug corrections including important corrections to RSS Expanded, Maxicode and ISBN.
+More bug corrections including important corrections to RSS Expanded,
+Maxicode and ISBN.
 
 Version 2.4:
-Simplified GUI. Addition of "render" functions provides an API for glabels. Corrections to 4-state codes.
-Simplification in QR code. Added --dump option.
+Simplified GUI. Addition of "render" functions provides an API for
+glabels. Corrections to 4-state codes.  Simplification in QR code. Added
+--dump option.
 
 
 CONTACT ME
 ----------
 The home of libzint is:
 
-	http://www.sourceforge.net/projects/zint
+	<http://www.sourceforge.net/projects/zint>
 
 and the home for Zint documentation is:
 
-	http://www.zint.org.uk
+	<http://www.zint.org.uk>
 
 For feature requests or bug reports please join the mailing list at
 
-	https://lists.sourceforge.net/lists/listinfo/zint-barcode
+	<https://lists.sourceforge.net/lists/listinfo/zint-barcode>
 
 or send an e-mail to
 
-	zint-barcode@lists.sourceforge.net
+	<zint-barcode@lists.sourceforge.net>
 
 BEFORE POSTING TO THIS LIST
 ---------------------------
 Please note the following points...
-* You do not need to join the list to post messages, although joining the list will usually
-  mean your request is answered more promptly.
-* Zint is primarily developed for Linux. If you are using another platform then we will be
-  less able to help you, although we will do so if we can. We cannot provide support for
-  commercial packages such as MS Office or Crystal Reports.
-* Always ensure you are using the latest version of Zint before posting bug reports - the bug
-  you are reporting may have been fixed already.
-* Please remember to state what operating system you are using and include enough information
-  to allow us to reproduce the error - including input data if appropriate.
-* Please DO NOT post messages asking for us to change the license arrangements. You will be
-  ignored. If you want a barcode encoder with a different license then please look elsewhere.
-* Please remember that Zint is developed by volunteers - don't be surprised if we are unable
-  to help you or if it takes a long time to answer your questions.
+* You do not need to join the list to post messages, although joining
+  the list will usually mean your request is answered more promptly.
+* Zint is primarily developed for Linux. If you are using another platform
+  then we will be less able to help you, although we will do so if we can.
+  We cannot provide support for commercial packages such as MS Office or
+  Crystal Reports.
+* Always ensure you are using the latest version of Zint before posting bug
+  reports - the bug you are reporting may have been fixed already.
+* Please remember to state what operating system you are using and include
+  enough information to allow us to reproduce the error - including input
+  data if appropriate.
+* Please DO NOT post messages asking for us to change the license
+  arrangements. You will be ignored. If you want a barcode encoder with a
+  different license then please look elsewhere.
+* Please remember that Zint is developed by volunteers - don't be surprised
+  if we are unable to help you or if it takes a long time to answer your
+  questions.
 
 Thanks for your interest in libzint.
 Happy encoding.
