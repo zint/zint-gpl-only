@@ -334,11 +334,7 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 		for(r = 0; r < symbol->rows; r++) {
 			for(i = 0; i < symbol->width; i++) {
 				if(module_is_set(symbol, r, i)) {
-					if(r % 2 == 1) {
-						hexagon = render_plot_create_hexagon(((i * 0.88) + 1.76) * scaler, ((r * 0.76) + 0.76) * scaler);
-					} else {
-						hexagon = render_plot_create_hexagon(((i * 0.88) + 1.32) * scaler, ((r * 0.76) + 0.76) * scaler);
-					}
+					hexagon = render_plot_create_hexagon(((i * 0.88) + (r & 1 ? 1.76 : 1.32)) * scaler, ((r * 0.76) + 0.76) * scaler);
 					render_plot_add_hexagon(symbol, hexagon, &last_hexagon);
 				}
 			}

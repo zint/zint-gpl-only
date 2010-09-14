@@ -112,7 +112,7 @@ void getRSSwidths(int val, int n, int elements, int maxWidth, int noNarrow)
 			/* get all combinations */
 			subVal = combins(n-elmWidth-1, elements-bar-2);
 			/* less combinations with no single-module element */
-			if ((!noNarrow) && (narrowMask == 0) &&
+			if ((!noNarrow) && (!narrowMask) &&
 						   (n-elmWidth-(elements-bar-1) >= elements-bar-1))
 			{
 				subVal -= combins(n-elmWidth-(elements-bar), elements-bar-2);
@@ -440,12 +440,10 @@ int rss14(struct zint_symbol *symbol, unsigned char source[], int src_len)
 		}
 		hrt[14] = '\0';
 	
-		for (i = 0; i < 13; i++)
-		{
+		for (i = 0; i < 13; i++) {
 			count += ctoi(hrt[i]);
 
-			if ((i%2) == 0)
-			{
+			if (!(i & 1)) {
 				count += 2 * (ctoi(hrt[i]));
 			}
 		}
@@ -550,11 +548,7 @@ int rss14(struct zint_symbol *symbol, unsigned char source[], int src_len)
 				if(latch == '1') { set_module(symbol, symbol->rows, writer); } else { unset_module(symbol, symbol->rows, writer); }
 				writer++;
 			}
-			if(latch == '1') {
-				latch = '0';
-			} else {
-				latch = '1';
-			}
+			latch = (latch == '1' ? '0' : '1');
 		}
 		set_module(symbol, symbol->rows, writer);
 		unset_module(symbol, symbol->rows, writer + 1);
@@ -901,11 +895,7 @@ int rsslimited(struct zint_symbol *symbol, unsigned char source[], int src_len)
 			if(latch == '1') { set_module(symbol, symbol->rows, writer); } else { unset_module(symbol, symbol->rows, writer); }
 			writer++;
 		}
-		if(latch == '1') {
-			latch = '0';
-		} else {
-			latch = '1';
-		}
+		latch = (latch == '1' ? '0' : '1');
 	}
 	if(symbol->width < writer) { symbol->width = writer; }
 	symbol->rows = symbol->rows + 1;
@@ -932,12 +922,10 @@ int rsslimited(struct zint_symbol *symbol, unsigned char source[], int src_len)
 		hrt[12 - i] = source[src_len - i - 1];
 	}
 	
-	for (i = 0; i < 13; i++)
-	{
+	for (i = 0; i < 13; i++) {
 		count += ctoi(hrt[i]);
 
-		if ((i%2) == 0)
-		{
+		if (!(i & 1)) {
 			count += 2 * (ctoi(hrt[i]));
 		}
 	}
@@ -1045,7 +1033,7 @@ int general_rules(char field[], char type[])
 	}
 
 	for(i = 0; i < block_count - 1; i++) {
-		if((block[1][i] == NUMERIC) && (block[0][i] % 2 == 1)) {
+		if((block[1][i] == NUMERIC) && (block[0][i] & 1)) {
 			/* Odd size numeric block */
 			block[0][i] = block[0][i] - 1;
 			block[0][i + 1] = block[0][i + 1] + 1;
@@ -1060,7 +1048,7 @@ int general_rules(char field[], char type[])
 		}
 	}
 	
-	if((block[1][block_count - 1] == NUMERIC) && (block[0][block_count - 1] % 2 == 1)) {
+	if((block[1][block_count - 1] == NUMERIC) && (block[0][block_count - 1] & 1)) {
 		/* If the last block is numeric and an odd size, further
 		processing needs to be done outside this procedure */
 		return 1;
@@ -1274,11 +1262,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 		
 		mask = 0x08;
 		for(j = 0; j < 4; j++) {
-			if((group_val & mask) == 0x00) {
-				concat(binary_string, "0");
-			} else {
-				concat(binary_string, "1");
-			}
+			concat(binary_string, (group_val & mask) ? "1" : "0");
 			mask = mask >> 1;
 		}
 		
@@ -1291,11 +1275,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 			
 			mask = 0x200;
 			for(j = 0; j < 10; j++) {
-				if((group_val & mask) == 0x00) {
-					concat(binary_string, "0");
-				} else {
-					concat(binary_string, "1");
-				}
+				concat(binary_string, (group_val & mask) ? "1" : "0");
 				mask = mask >> 1;
 			}
 		}
@@ -1320,11 +1300,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 			
 			mask = 0x200;
 			for(j = 0; j < 10; j++) {
-				if((group_val & mask) == 0x00) {
-					concat(binary_string, "0");
-				} else {
-					concat(binary_string, "1");
-				}
+				concat(binary_string, (group_val & mask) ? "1" : "0");
 				mask = mask >> 1;
 			}
 		}
@@ -1337,11 +1313,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 		
 		mask = 0x4000;
 		for(j = 0; j < 15; j++) {
-			if((group_val & mask) == 0x00) {
-				concat(binary_string, "0");
-			} else {
-				concat(binary_string, "1");
-			}
+			concat(binary_string, (group_val & mask) ? "1" : "0");
 			mask = mask >> 1;
 		}
 		
@@ -1364,11 +1336,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 			
 			mask = 0x200;
 			for(j = 0; j < 10; j++) {
-				if((group_val & mask) == 0x00) {
-					concat(binary_string, "0");
-				} else {
-					concat(binary_string, "1");
-				}
+				concat(binary_string, (group_val & mask) ? "1" : "0");
 				mask = mask >> 1;
 			}
 		}
@@ -1385,11 +1353,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 		
 		mask = 0x4000;
 		for(j = 0; j < 15; j++) {
-			if((group_val & mask) == 0x00) {
-				concat(binary_string, "0");
-			} else {
-				concat(binary_string, "1");
-			}
+			concat(binary_string, (group_val & mask) ? "1" : "0");
 			mask = mask >> 1;
 		}
 		
@@ -1413,11 +1377,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 			
 			mask = 0x200;
 			for(j = 0; j < 10; j++) {
-				if((group_val & mask) == 0x00) {
-					concat(binary_string, "0");
-				} else {
-					concat(binary_string, "1");
-				}
+				concat(binary_string, (group_val & mask) ? "1" : "0");
 				mask = mask >> 1;
 			}
 		}
@@ -1432,11 +1392,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 		
 		mask = 0x80000;
 		for(j = 0; j < 20; j++) {
-			if((group_val & mask) == 0x00) {
-				concat(binary_string, "0");
-			} else {
-				concat(binary_string, "1");
-			}
+			concat(binary_string, (group_val & mask) ? "1" : "0");
 			mask = mask >> 1;
 		}
 		
@@ -1460,11 +1416,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 		
 		mask = 0x8000;
 		for(j = 0; j < 16; j++) {
-			if((group_val & mask) == 0x00) {
-				concat(binary_string, "0");
-			} else {
-				concat(binary_string, "1");
-			}
+			concat(binary_string, (group_val & mask) ? "1" : "0");
 			mask = mask >> 1;
 		}
 		
@@ -1484,11 +1436,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 			
 			mask = 0x200;
 			for(j = 0; j < 10; j++) {
-				if((group_val & mask) == 0x00) {
-					concat(binary_string, "0");
-				} else {
-					concat(binary_string, "1");
-				}
+				concat(binary_string, (group_val & mask) ? "1" : "0");
 				mask = mask >> 1;
 			}
 		}
@@ -1518,11 +1466,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 			
 			mask = 0x200;
 			for(j = 0; j < 10; j++) {
-				if((group_val & mask) == 0x00) {
-					concat(binary_string, "0");
-				} else {
-					concat(binary_string, "1");
-				}
+				concat(binary_string, (group_val & mask) ? "1" : "0");
 				mask = mask >> 1;
 			}
 		}
@@ -1542,11 +1486,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 		
 		mask = 0x200;
 		for(j = 0; j < 10; j++) {
-			if((group_val & mask) == 0x00) {
-				concat(binary_string, "0");
-			} else {
-				concat(binary_string, "1");
-			}
+			concat(binary_string, (group_val & mask) ? "1" : "0");
 			mask = mask >> 1;
 		}
 		
@@ -1689,12 +1629,9 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 				
 				mask = 0x40;
 				for(j = 0; j < 7; j++) {
-					if((value & mask) == 0x00) {
-						concat(binary_string, "0");
-						if(debug) printf("0");
-					} else {
-						concat(binary_string, "1");
-						if(debug) printf("1");
+					concat(binary_string, (value & mask) ? "1" : "0");
+					if (debug) {
+						printf("%d", !!(value & mask));
 					}
 					mask = mask >> 1;
 				}
@@ -1721,11 +1658,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 					
 					mask = 0x10;
 					for(j = 0; j < 5; j++) {
-						if((value & mask) == 0x00) {
-							concat(binary_string, "0");
-						} else {
-							concat(binary_string, "1");
-						}
+						concat(binary_string, (value & mask) ? "1" : "0");
 						mask = mask >> 1;
 					}
 				}
@@ -1736,11 +1669,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 					
 					mask = 0x20;
 					for(j = 0; j < 6; j++) {
-						if((value & mask) == 0x00) {
-							concat(binary_string, "0");
-						} else {
-							concat(binary_string, "1");
-						}
+						concat(binary_string, (value & mask) ? "1" : "0");
 						mask = mask >> 1;
 					}
 				}
@@ -1774,11 +1703,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 					
 					mask = 0x10;
 					for(j = 0; j < 5; j++) {
-						if((value & mask) == 0x00) {
-							concat(binary_string, "0");
-						} else {
-							concat(binary_string, "1");
-						}
+						concat(binary_string, (value & mask) ? "1" : "0");
 						mask = mask >> 1;
 					}
 				}
@@ -1789,11 +1714,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 					
 					mask = 0x40;
 					for(j = 0; j < 7; j++) {
-						if((value & mask) == 0x00) {
-							concat(binary_string, "0");
-						} else {
-							concat(binary_string, "1");
-						}
+						concat(binary_string, (value & mask) ? "1" : "0");
 						mask = mask >> 1;
 					}
 				}
@@ -1804,11 +1725,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 					
 					mask = 0x40;
 					for(j = 0; j < 7; j++) {
-						if((value & mask) == 0x00) {
-							concat(binary_string, "0");
-						} else {
-							concat(binary_string, "1");
-						}
+						concat(binary_string, (value & mask) ? "1" : "0");
 						mask = mask >> 1;
 					}
 				}
@@ -1859,11 +1776,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 				
 				mask = 0x08;
 				for(j = 0; j < 4; j++) {
-					if((value & mask) == 0x00) {
-						concat(binary_string, "0");
-					} else {
-						concat(binary_string, "1");
-					}
+					concat(binary_string, (value & mask) ? "1" : "0");
 					mask = mask >> 1;
 				}
 			} else {
@@ -1874,11 +1787,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 					
 				mask = 0x40;
 				for(j = 0; j < 7; j++) {
-					if((value & mask) == 0x00) {
-						concat(binary_string, "0");
-					} else {
-						concat(binary_string, "1");
-					}
+					concat(binary_string, (value & mask) ? "1" : "0");
 					mask = mask >> 1;
 				}
 			}
@@ -1887,11 +1796,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 					
 			mask = 0x10;
 			for(j = 0; j < 5; j++) {
-				if((value & mask) == 0x00) {
-					concat(binary_string, "0");
-				} else {
-					concat(binary_string, "1");
-				}
+				concat(binary_string, (value & mask) ? "1" : "0");
 				mask = mask >> 1;
 			}
 		}
@@ -1924,20 +1829,20 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 	concat(binary_string, padstring);
 	
 	/* Patch variable length symbol bit field */
-	d1 = ((strlen(binary_string) / 12) + 1) % 2;
+	d1 = ((strlen(binary_string) / 12) + 1) & 1;
 	if(strlen(binary_string) <= 156) { d2 = 0; } else { d2 = 1; }
 	
 	if(encoding_method == 1) {
-		if(d1 == 0) { binary_string[2] = '0'; } else { binary_string[2] = '1'; }
-		if(d2 == 0) { binary_string[3] = '0'; } else { binary_string[3] = '1'; }
+		binary_string[2] = d1 ? '1' : '0';
+		binary_string[3] = d2 ? '1' : '0';
 	}
 	if(encoding_method == 2) {
-		if(d1 == 0) { binary_string[3] = '0'; } else { binary_string[3] = '1'; }
-		if(d2 == 0) { binary_string[4] = '0'; } else { binary_string[4] = '1'; }
+		binary_string[3] = d1 ? '1' : '0';
+		binary_string[4] = d2 ? '1' : '0';
 	}
 	if((encoding_method == 5) || (encoding_method == 6)) {
-		if(d1 == 0) { binary_string[6] = '0'; } else { binary_string[6] = '1'; }
-		if(d2 == 0) { binary_string[7] = '0'; } else { binary_string[7] = '1'; }
+		binary_string[6] = d1 ? '1' : '0';
+		binary_string[7] = d2 ? '1' : '0';
 	}
 	if(debug) printf("Resultant binary = %s\n", binary_string);
 	if(debug) printf("\tLength: %d\n", (int)strlen(binary_string));
@@ -2070,7 +1975,7 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int src_len)
 	check_widths[7] = widths[3];
 	
 	/* Initialise element array */
-	pattern_width = ((((data_chars + 1) / 2) + ((data_chars + 1) % 2)) * 5) + ((data_chars + 1) * 8) + 4;
+	pattern_width = ((((data_chars + 1) / 2) + ((data_chars + 1) & 1)) * 5) + ((data_chars + 1) * 8) + 4;
 	for(i = 0; i < pattern_width; i++) {
 		elements[i] = 0;
 	}
@@ -2081,8 +1986,8 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int src_len)
 	elements[pattern_width - 1] = 1;
 	
 	/* Put finder patterns in element array */
-	for(i = 0; i < (((data_chars + 1) / 2) + ((data_chars + 1) % 2)); i++) {
-		k = ((((((data_chars + 1) - 2) / 2) + ((data_chars + 1) % 2)) - 1) * 11) + i;
+	for(i = 0; i < (((data_chars + 1) / 2) + ((data_chars + 1) & 1)); i++) {
+		k = ((((((data_chars + 1) - 2) / 2) + ((data_chars + 1) & 1)) - 1) * 11) + i;
 		for(j = 0; j < 5; j++) {
 			elements[(21 * i) + j + 10] = finder_pattern_exp[((finder_sequence[k] - 1) * 5) + j];
 		}
@@ -2194,9 +2099,9 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int src_len)
 			/* Row Data */
 			reader = 0;
 			do {
-				if(((symbol->option_2 % 2 == 1) || (current_row % 2 == 1)) ||
+				if(((symbol->option_2 & 1) || (current_row & 1)) ||
 					((current_row == stack_rows) && (codeblocks != (current_row * symbol->option_2)) &&
-					((((current_row * symbol->option_2) - codeblocks) % 2) == 1) )) {
+					(((current_row * symbol->option_2) - codeblocks) & 1))) {
 					/* left to right */
 					left_to_right = 1;
 					i = 2 + (current_block * 21);
@@ -2233,15 +2138,11 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int src_len)
 			sub_elements[elements_in_sub] = 1;
 			sub_elements[elements_in_sub + 1] = 1;
 			elements_in_sub += 2;
-			
-			if(current_row % 2 == 1) {
-				latch = '0';
-			} else {
-				latch = '1';
-			}
+		
+			latch = current_row & 1 ? '0' : '1';
 			
 			if ((current_row == stack_rows) && (codeblocks != (current_row * symbol->option_2)) &&
-				((((current_row * symbol->option_2) - codeblocks) % 2) == 1) ) {
+				(((current_row * symbol->option_2) - codeblocks) & 1) ) {
 				/* Special case bottom row */
 				special_case_row = 1;
 				sub_elements[0] = 2;
@@ -2279,11 +2180,7 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int src_len)
 				symbol->row_height[symbol->rows - 1] = 1;
 				/* finder bar adjustment */
 				for(j = 0; j < reader; j++) {
-					if(special_case_row == 0) {
-						k = (49 * j) + 18;
-					} else {
-						k = (49 * j) + 19;
-					}
+					k = (49 * j) + (special_case_row ? 19 : 18);
 					if(left_to_right) {
 						for(i = 0; i < 15; i++) {
 							if((!(module_is_set(symbol, symbol->rows, i + k - 1))) &&

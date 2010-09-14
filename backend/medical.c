@@ -73,7 +73,7 @@ int pharma_one(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	do
 	{
-		if(tester % 2 == 0) {
+		if(!(tester & 1)) {
 			concat(inter, "W");
 			tester = (tester - 2) / 2;
 		} else {

@@ -256,11 +256,9 @@ int ps_plot(struct zint_symbol *symbol)
 					dy = my - 1.0 + yoffset;
 					ey = my - 0.5 + yoffset;
 					fy = my + 0.5 + yoffset;
-					if(r % 2 == 1) {
-						mx = (2.46 * i) + 1.23 + 1.23;
-					} else {
-						mx = (2.46 * i) + 1.23;
-					}
+
+					mx = 2.46 * i + 1.23 + (r & 1 ? 1.23 : 0);
+
 					ax = mx + xoffset;
 					bx = mx + 0.86 + xoffset;
 					cx = mx + 0.86 + xoffset;
