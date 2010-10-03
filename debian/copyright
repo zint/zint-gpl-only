@@ -1,6 +1,7 @@
 This package was debianized by:
 
     BogDan Vatra <bogdan@licentia.eu> on Sat, 11 Apr 2009 23:45:53 +0300
+    Modified by Robin Stuart <robin@zint.org.uk> on Sat, 02 Oct 2010 11:40:00 +0000
 
 It was downloaded from:
 
@@ -12,7 +13,7 @@ Upstream Author(s):
 
 Copyright:
 
-    <Copyright (C) 2006-2009 Robin Stuart>
+    <Copyright (C) 2006-2010 Robin Stuart>
 
 License:
 
@@ -34,6 +35,6 @@ Public License version 3 can be found in `/usr/share/common-licenses/GPL-3'.
 
 The Debian packaging is:
 
-    Copyright (C) 2009 BogDan Vatra <bogdan@licentia.eu>
+    Copyright (C) 2010 Robin Stuart <robin@zint.org.uk>
 
 and is licensed under the GPL version 3, see above.

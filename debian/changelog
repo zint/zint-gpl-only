@@ -1,3 +1,64 @@
+zint (2.4-1) unstable; urgency=low
+
+  * Update and review of files required by Debian including changelog.
+
+ -- Robin Stuart <robin@zint.org.uk>  Sat, 02 Oct 2010 09:26:00 +0000 
+
+zint (2.4) unstable; urgency=low
+
+  * Built extensions to the API for integrating with glabels thanks
+    to Sam Lown and Jim Evins.
+  * Added code optimisation and input from stdin thanks to Ismael
+    Luceno.
+  * Reinstated escape character input.
+  * Simplification of Barcode Studio.
+
+ -- Robin Stuart <robin@zint.org.uk>  Sat, 02 Oct 2010 05:00:00 +0000 
+
+zint (2.3.2) unstable; urgency=low
+
+  * Corrected many bugs in GS1 DataBar Extended thanks to the careful
+    study of the code by Pablo Orduña at the PIRAmIDE project.
+  * Similarly corrected some bugs in Maxicode thanks to Monica Swanson
+    at Source Technologies.
+  * Also minor bugfixes for ISBN and Aztec Code, and added some small
+    features like a --square option in the CLI.
+
+ -- Robin Stuart <robin@zint.org.uk>  Sat, 02 Oct 2010 04:00:00 +0000 
+
+zint (2.3.1) unstable; urgency=low
+
+  * Removed Codablock-F.
+  * Redesigned scale function so that human readable text and Maxicode
+    symbols can be scaled consistently.
+  * Corrected encoding bugs with Code 128/Code 16k and Data Matrix ECC
+    050.
+  * Added --notext option to CLI.
+
+ -- Robin Stuart <robin@zint.org.uk>  Sat, 02 Oct 2010 03:00:00 +0000 
+
+zint (2.3) unstable; urgency=low
+
+  * Fixed problems with Micro QR Code and rebuilt QR Code support
+    removing dependence on libqrencode.
+  * Improved Kanji character support for QR Code and Micro QR Code
+    which now auto-detects and automatically converts to Shift-JIS.
+  * Added Grid Matrix symbology with Kanji character support and
+    automatic conversion to GB 2312.
+  * Removed no_qr compile option.
+  * Advanced Barcode Studio version number to match library version
+    number.
+
+ -- Robin Stuart <robin@zint.org.uk>  Sat, 02 Oct 2010 02:00:00 +0000 
+
+zint (2.2.2) unstable; urgency=low
+
+  * A beta release previewing the new API structure.
+  * Better NULL character support with "nullchar" value removed.
+  * Added loading from file and sequence dialogs in Barcode Studio.
+
+ -- Robin Stuart <robin@zint.org.uk>  Sat, 02 Oct 2010 01:00:00 +0000
+
 zint (2.2.1-1) unstable; urgency=low
 
   * fix .so version
