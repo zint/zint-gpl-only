@@ -168,7 +168,7 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 {
 	/* Convert input data to a binary stream and add padding */
 	int position = 0, debug = 0;
-	int short_data_block_length, i, scheme;
+	int short_data_block_length, i, scheme = 1;
 	char data_block, padbits;
 	int current_binlen, current_bytes;
 	int toggle, percent;
