@@ -9,7 +9,7 @@ Homepage: http://www.zint.org.uk/
 Package: libzint
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: libpng12-dev
 Description: A library for encoding data in barcode symbols.
    Zint is an Open Source barcode encoding and image generating library.
    It currently features support for over 50 symbologies including
@@ -22,7 +22,7 @@ Package: libzint-dbg
 Section: libs
 Architecture: any
 Priority: extra
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: libzint (= ${binary:Version})
 Description: Debugging symbols for Zint library.
    This package contains debugging files used to investigate problems with
  Zint binaries and libraries.
@@ -38,14 +38,14 @@ Description: Zint development files
 Package: libqzint
 Section: libs
 Architecture: any
-Depends: libzint (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Depends: libzint (= ${binary:Version}), libqt4-dev
 Description: Qt wrapper for Zint
    This package contains a Qt wrapper for the Zint barcode encoding library.
 
 Package: libqzint-dev
 Section: libdevel
 Architecture: any
-Depends: libqzint (= ${binary:Version}), libzint-dev (= ${source:Version})
+Depends: libqzint (= ${binary:Version}), libzint-dev (= ${source:Version}), libqt4-dev
 Description: QZint development files.
    This package contains development files for the Qt wrapper over the Zint
  library.
@@ -53,14 +53,14 @@ Description: QZint development files.
 Package: zint-cli
 Section: libs
 Architecture: any
-Depends: libzint (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Depends: libzint (= ${binary:Version})
 Description: Zint console frontend.
    This package contains a console frontend for the Zint barcode encoder.
 
 Package: zint-qt
 Section: libs
 Architecture: any
-Depends: libzint (= ${binary:Version}), libqzint (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Depends: libzint (= ${binary:Version}), libqzint (= ${binary:Version}), libqt4-dev
 Description: Zint Barcode Studio.
    This package contains Zint Barcode Studio, a QT frontend for the Zint
  barcode encoding library.
