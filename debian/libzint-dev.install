@@ -1,3 +1,2 @@
 usr/include/zint.h
 usr/lib/libzint.so
-usr/share/cmake-2.6/Modules/FindZint.cmake
