@@ -764,7 +764,7 @@ void add_tail(unsigned char target[], int tp, int tail_length, int last_mode)
 int data_matrix_200(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	int inputlen, i;
-	unsigned char binary[2000];
+	unsigned char binary[2200];
 	int binlen;
 	int symbolsize, optionsize, calcsize;
 	int taillength, error_number = 0;
