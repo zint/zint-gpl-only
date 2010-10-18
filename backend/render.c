@@ -29,6 +29,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#ifdef _MSC_VER
+#include <malloc.h>
+#endif
 #include "common.h"
 
 #define   GL_CONST  2.8346
@@ -67,7 +70,11 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 	int upceanflag = 0;
 
 	// Allocate memory for the rendered version
+#ifndef _MSC_VER
 	render = symbol->rendered = malloc(sizeof(struct zint_render));
+#else
+	render = symbol->rendered = (struct zint_render *)_alloca(sizeof(struct zint_render));
+#endif
 	render->lines = NULL;
 	render->strings = NULL;
 	render->rings = NULL;
@@ -662,7 +669,11 @@ struct zint_render_line *render_plot_create_line(float x, float y, float width, 
 {
 	struct zint_render_line *line;
 	
+#ifndef _MSC_VER
 	line = malloc(sizeof(struct zint_render_line));
+#else
+	line = (struct zint_render_line *)_alloca(sizeof(struct zint_render_line));
+#endif
 	line->next = NULL;
 	line->x = x;
 	line->y = y;
@@ -691,7 +702,11 @@ struct zint_render_ring *render_plot_create_ring(float x, float y, float radius,
 {
 	struct zint_render_ring *ring;
 	
+#ifndef _MSC_VER
 	ring = malloc(sizeof(struct zint_render_ring));
+#else
+	ring = (struct zint_render_ring *)_alloca(sizeof(struct zint_render_ring));
+#endif
 	ring->next = NULL;
 	ring->x = x;
 	ring->y = y;
@@ -716,7 +731,11 @@ struct zint_render_hexagon *render_plot_create_hexagon(float x, float y)
 {
 	struct zint_render_hexagon *hexagon;
 	
+#ifndef _MSC_VER
 	hexagon = malloc(sizeof(struct zint_render_hexagon));
+#else
+	hexagon = (struct zint_render_hexagon *)_alloca(sizeof(struct zint_render_hexagon));
+#endif
 	hexagon->next = NULL;
 	hexagon->x = x;
 	hexagon->y = y;
@@ -745,14 +764,22 @@ int render_plot_add_string(struct zint_symbol *symbol,
 {
 	struct zint_render_string *string;
 
+#ifndef _MSC_VER
 	string = malloc(sizeof(struct zint_render_string));
+#else
+	string = (struct zint_render_string *)_alloca(sizeof(struct zint_render_string));
+#endif
 	string->next = NULL;
 	string->x = x;
 	string->y = y;
 	string->width = width; 
 	string->fsize = fsize;
 	string->length = ustrlen(text);
+#ifndef _MSC_VER
 	string->text = malloc(sizeof(unsigned char) * (ustrlen(text) + 1));
+#else
+	string->text = (unsigned char *)_alloca((ustrlen(text) + 1) * sizeof(unsigned char));
+#endif
 	ustrcpy(string->text, text);
 
 	if (*last_string)

@@ -379,6 +379,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\backend\render.c"
+				>
+			</File>
+			<File
 				RelativePath="..\backend\rss.c"
 				>
 			</File>
