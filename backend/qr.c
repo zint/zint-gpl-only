@@ -257,7 +257,7 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 					
 					qr_bscan(binary, byte, 0x80);
 					
-					if(debug) { printf("0x%4X ", byte); }
+					if(debug) { printf("0x%2X(%d) ", byte, byte); }
 				}
 				
 				if(debug) { printf("\n"); }
@@ -372,12 +372,12 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 						second = posn(NEON, (char) jisdata[position + i + 1]);
 						count = 2;
 						prod = (prod * 10) + second;
-					}
-					
-					if(mode[position + i + 2] == 'N') {
-						third = posn(NEON, (char) jisdata[position + i + 2]);
-						count = 3;
-						prod = (prod * 10) + third;
+						
+						if(mode[position + i + 2] == 'N') {
+							third = posn(NEON, (char) jisdata[position + i + 2]);
+							count = 3;
+							prod = (prod * 10) + third;
+						}
 					}
 					
 					qr_bscan(binary, prod, 1 << (3 * count)); /* count = 1..3 */
@@ -434,6 +434,7 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 	}
 
 	if(debug) {
+		printf("Resulting codewords:\n\t");
 		for(i = 0; i < target_binlen; i++) {
 			printf("0x%2X ", datastream[i]);
 		}
