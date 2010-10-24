@@ -231,8 +231,6 @@ int look_ahead_test(unsigned char source[], int sourcelen, int position, int cur
 	/* A custom version of the 'look ahead test' from Annex P */
 	/* This version is deliberately very reluctant to end a data stream with EDIFACT encoding */
 	
-	return DM_ASCII;
-	
 	float ascii_count, c40_count, text_count, x12_count, edf_count, b256_count, best_count;
 	int sp, done, best_scheme;
 	char reduced_char;
