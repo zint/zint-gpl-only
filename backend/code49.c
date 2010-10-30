@@ -180,10 +180,10 @@ int code_49(struct zint_symbol *symbol, unsigned char source[], int length)
 	} while(i < h);
 	
 	switch(codewords[0]) { /* Set starting mode value */
-		case 48: M = 2;
-		case 43: M = 4;
-		case 44: M = 5;
-		default: M = 0;
+		case 48: M = 2; break;
+		case 43: M = 4; break;
+		case 44: M = 5; break;
+		default: M = 0; break;
 	}
 	
 	if(M != 0) {
