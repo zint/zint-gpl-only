@@ -63,7 +63,7 @@ int telepen(struct zint_symbol *symbol, unsigned char source[], int src_len)
 	strcpy(dest, TeleTable['_']);
 
 	for(i = 0; i < src_len; i++) {
-		if(source[i] > 127) {
+		if(source[i] > 126) {
 			/* Cannot encode extended ASCII */
 			strcpy(symbol->errtxt, "Invalid characters in input data");
 			return ERROR_INVALID_DATA;
