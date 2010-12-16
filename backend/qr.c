@@ -984,12 +984,12 @@ void add_version_info(unsigned char *grid, int size, int version)
 	
 	long int version_data = qr_annex_d[version - 7];
 	for(i = 0; i < 6; i++) {
-		grid[((size - 11) * size) + i] += (version_data >> (17 - (i * 3))) & 0x01;
-		grid[((size - 10) * size) + i] += (version_data >> (16 - (i * 3))) & 0x01;
-		grid[((size - 9) * size) + i] += (version_data >> (15 - (i * 3))) & 0x01;
-		grid[(i * size) + (size - 11)] += (version_data >> (17 - (i * 3))) & 0x01;
-		grid[(i * size) + (size - 10)] += (version_data >> (16 - (i * 3))) & 0x01;
-		grid[(i * size) + (size - 9)] += (version_data >> (15 - (i * 3))) & 0x01;
+		grid[((size - 11) * size) + i] += (version_data >> (i * 3)) & 0x01;
+		grid[((size - 10) * size) + i] += (version_data >> ((i * 3) + 1)) & 0x01;
+		grid[((size - 9) * size) + i] += (version_data >> ((i * 3) + 2)) & 0x01;
+		grid[(i * size) + (size - 11)] += (version_data >> (i * 3)) & 0x01;
+		grid[(i * size) + (size - 10)] += (version_data >> ((i * 3) + 1)) & 0x01;
+		grid[(i * size) + (size - 9)] += (version_data >> ((i * 3) + 2)) & 0x01;
 	}
 }
 
