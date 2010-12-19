@@ -800,7 +800,7 @@ int data_matrix_200(struct zint_symbol *symbol, unsigned char source[], int leng
 	
 	calcsize = 29;
 	for(i = 29; i > -1; i--) {
-		if(matrixbytes[i] > binlen) {
+		if(matrixbytes[i] >= binlen) {
 			calcsize = i;
 		}
 	}
