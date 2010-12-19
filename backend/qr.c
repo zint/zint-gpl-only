@@ -393,7 +393,7 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 		}
 		
 		position += short_data_block_length;
-	} while (position < length - 1) ;
+	} while (position < length) ;
 	
 	/* Terminator */
 	concat(binary, "0000");
