@@ -557,7 +557,7 @@ void draw_hexagon(char *pixelbuf, int image_width, int xposn, int yposn)
 	}
 }
 
-void draw_letter(char *pixelbuf, unsigned char letter, int xposn, int yposn, int image_width, int image_height)
+void draw_letter(char *pixelbuf, unsigned char letter, int xposn, int yposn, int smalltext, int image_width, int image_height)
 {
 	/* Put a letter into a position */
 	int skip, i, j, glyph_no, alphabet;
@@ -576,15 +576,31 @@ void draw_letter(char *pixelbuf, unsigned char letter, int xposn, int yposn, int
 			glyph_no = letter - 33;
 		}
 		
-		for(i = 0; i <= 13; i++) {
-			for(j = 0; j < 7; j++) {
-				if(alphabet == 0) {
-					if(ascii_font[(glyph_no * 7) + (i * 665) + j - 1] == 1) {
-						*(pixelbuf + (i * image_width) + (yposn * image_width) + xposn + j) = '1';
+		if(smalltext) {
+			for(i = 0; i <= 8; i++) {
+				for(j = 0; j < 5; j++) {
+					if(alphabet == 0) {
+						if(small_font[(glyph_no * 5) + (i * 475) + j - 1] == 1) {
+							*(pixelbuf + (i * image_width) + (yposn * image_width) + xposn + j) = '1';
+						}
+					} else {
+						if(small_font_extended[(glyph_no * 5) + (i * 475) + j - 1] == 1) {
+							*(pixelbuf + (i * image_width) + (yposn * image_width) + xposn + j) = '1';
+						}
 					}
-				} else {
-					if(ascii_ext_font[(glyph_no * 7) + (i * 665) + j - 1] == 1) {
-						*(pixelbuf + (i * image_width) + (yposn * image_width) + xposn + j) = '1';
+				}
+			}
+		} else {
+			for(i = 0; i <= 13; i++) {
+				for(j = 0; j < 7 ; j++) {
+					if(alphabet == 0) {
+						if(ascii_font[(glyph_no * 7) + (i * 665) + j - 1] == 1) {
+							*(pixelbuf + (i * image_width) + (yposn * image_width) + xposn + j) = '1';
+						}
+					} else {
+						if(ascii_ext_font[(glyph_no * 7) + (i * 665) + j - 1] == 1) {
+							*(pixelbuf + (i * image_width) + (yposn * image_width) + xposn + j) = '1';
+						}
 					}
 				}
 			}
@@ -592,7 +608,7 @@ void draw_letter(char *pixelbuf, unsigned char letter, int xposn, int yposn, int
 	}
 }
 
-void draw_string(char *pixbuf, char input_string[], int xposn, int yposn, int image_width, int image_height)
+void draw_string(char *pixbuf, char input_string[], int xposn, int yposn, int smalltext, int image_width, int image_height)
 {
 	/* Plot a string into the pixel buffer */
 	int i, string_length, string_left_hand;
@@ -601,7 +617,7 @@ void draw_string(char *pixbuf, char input_string[], int xposn, int yposn, int im
 	string_left_hand = xposn - ((7 * string_length) / 2);
 	
 	for(i = 0; i < string_length; i++) {
-		draw_letter(pixbuf, input_string[i], string_left_hand + (i * 7), yposn, image_width, image_height);
+		draw_letter(pixbuf, input_string[i], string_left_hand + (i * 7), yposn, smalltext, image_width, image_height);
 	}
 	
 }
@@ -702,7 +718,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 	float addon_text_posn, preset_height, large_bar_height;
 	int i, r, textoffset, yoffset, xoffset, latch, image_width, image_height;
 	char *pixelbuf;
-	int addon_latch = 0;
+	int addon_latch = 0, smalltext = 0;
 	int this_row, block_width, plot_height, plot_yposn, textpos;
 	float row_height, row_posn;
 	int error_number;
@@ -726,6 +742,9 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 	comp_offset = 0;
 	addon_text_posn = 0.0;
 	row_height = 0;
+	if(symbol->output_options &= SMALL_TEXT) {
+		smalltext = 1;
+	}
 
 	if (symbol->height == 0) {
 		symbol->height = 50;
@@ -891,22 +910,22 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 				textpart[4] = '\0';
 				textpos = 2 * (17 + xoffset);
 				
-				draw_string(pixelbuf, textpart, textpos, default_text_posn, image_width, image_height);
+				draw_string(pixelbuf, textpart, textpos, default_text_posn, smalltext, image_width, image_height);
 				for(i = 0; i < 4; i++) {
 					textpart[i] = symbol->text[i + 4];
 				}
 				textpart[4] = '\0';
 				textpos = 2 * (50 + xoffset);
-				draw_string(pixelbuf, textpart, textpos, default_text_posn, image_width, image_height);
+				draw_string(pixelbuf, textpart, textpos, default_text_posn, smalltext, image_width, image_height);
 				textdone = 1;
 				switch(strlen(addon)) {
 					case 2:	
 						textpos = 2 * (xoffset + 86);
-						draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, image_width, image_height);
+						draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, smalltext, image_width, image_height);
 						break;
 					case 5:
 						textpos = 2 * (xoffset + 100);
-						draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, image_width, image_height);
+						draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, smalltext, image_width, image_height);
 						break;
 				}
 
@@ -924,28 +943,28 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 				textpart[0] = symbol->text[0];
 				textpart[1] = '\0';
 				textpos = 2 * (-7 + xoffset);
-				draw_string(pixelbuf, textpart, textpos, default_text_posn, image_width, image_height);
+				draw_string(pixelbuf, textpart, textpos, default_text_posn, smalltext, image_width, image_height);
 				for(i = 0; i < 6; i++) {
 					textpart[i] = symbol->text[i + 1];
 				}
 				textpart[6] = '\0';
 				textpos = 2 * (24 + xoffset);
-				draw_string(pixelbuf, textpart, textpos, default_text_posn, image_width, image_height);
+				draw_string(pixelbuf, textpart, textpos, default_text_posn, smalltext, image_width, image_height);
 				for(i = 0; i < 6; i++) {
 					textpart[i] = symbol->text[i + 7];
 				}
 				textpart[6] = '\0';
 				textpos = 2 * (71 + xoffset);
-				draw_string(pixelbuf, textpart, textpos, default_text_posn, image_width, image_height);
+				draw_string(pixelbuf, textpart, textpos, default_text_posn, smalltext, image_width, image_height);
 				textdone = 1;
 				switch(strlen(addon)) {
 					case 2:	
 						textpos = 2 * (xoffset + 114);
-						draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, image_width, image_height);
+						draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, smalltext, image_width, image_height);
 						break;
 					case 5:
 						textpos = 2 * (xoffset + 128);
-						draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, image_width, image_height);
+						draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, smalltext, image_width, image_height);
 						break;
 				}
 				break;
@@ -995,32 +1014,32 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 		textpart[0] = symbol->text[0];
 		textpart[1] = '\0';
 		textpos = 2 * (-5 + xoffset);
-		draw_string(pixelbuf, textpart, textpos, default_text_posn, image_width, image_height);
+		draw_string(pixelbuf, textpart, textpos, default_text_posn, smalltext, image_width, image_height);
 		for(i = 0; i < 5; i++) {
 			textpart[i] = symbol->text[i + 1];
 		}
 		textpart[5] = '\0';
 		textpos = 2 * (27 + xoffset);
-		draw_string(pixelbuf, textpart, textpos, default_text_posn, image_width, image_height);
+		draw_string(pixelbuf, textpart, textpos, default_text_posn, smalltext, image_width, image_height);
 		for(i = 0; i < 5; i++) {
 			textpart[i] = symbol->text[i + 6];
 		}
 		textpart[6] = '\0';
 		textpos = 2 * (68 + xoffset);
-		draw_string(pixelbuf, textpart, textpos, default_text_posn, image_width, image_height);
+		draw_string(pixelbuf, textpart, textpos, default_text_posn, smalltext, image_width, image_height);
 		textpart[0] = symbol->text[11];
 		textpart[1] = '\0';
 		textpos = 2 * (100 + xoffset);
-		draw_string(pixelbuf, textpart, textpos, default_text_posn, image_width, image_height);
+		draw_string(pixelbuf, textpart, textpos, default_text_posn, smalltext, image_width, image_height);
 		textdone = 1;
 		switch(strlen(addon)) {
 			case 2:	
 				textpos = 2 * (xoffset + 116);
-				draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, image_width, image_height);
+				draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, smalltext, image_width, image_height);
 				break;
 			case 5:
 				textpos = 2 * (xoffset + 130);
-				draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, image_width, image_height);
+				draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, smalltext, image_width, image_height);
 				break;
 		}
 
@@ -1037,26 +1056,26 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 		textpart[0] = symbol->text[0];
 		textpart[1] = '\0';
 		textpos = 2 * (-5 + xoffset);
-		draw_string(pixelbuf, textpart, textpos, default_text_posn, image_width, image_height);
+		draw_string(pixelbuf, textpart, textpos, default_text_posn, smalltext, image_width, image_height);
 		for(i = 0; i < 6; i++) {
 			textpart[i] = symbol->text[i + 1];
 		}
 		textpart[6] = '\0';
 		textpos = 2 * (24 + xoffset);
-		draw_string(pixelbuf, textpart, textpos, default_text_posn, image_width, image_height);
+		draw_string(pixelbuf, textpart, textpos, default_text_posn, smalltext, image_width, image_height);
 		textpart[0] = symbol->text[7];
 		textpart[1] = '\0';
 		textpos = 2 * (55 + xoffset);
-		draw_string(pixelbuf, textpart, textpos, default_text_posn, image_width, image_height);
+		draw_string(pixelbuf, textpart, textpos, default_text_posn, smalltext, image_width, image_height);
 		textdone = 1;
 		switch(strlen(addon)) {
 			case 2:	
 				textpos = 2 * (xoffset + 70);
-				draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, image_width, image_height);
+				draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, smalltext, image_width, image_height);
 				break;
 			case 5:
 				textpos = 2 * (xoffset + 84);
-				draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, image_width, image_height);
+				draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, smalltext, image_width, image_height);
 				break;
 		}
 
@@ -1088,7 +1107,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 	/* Put the human readable text at the bottom */
 	if((textdone == 0) && (ustrlen(local_text) != 0)) {
 		textpos = (image_width / 2);
-		draw_string(pixelbuf, (char*)local_text, textpos, default_text_posn, image_width, image_height);
+		draw_string(pixelbuf, (char*)local_text, textpos, default_text_posn, smalltext, image_width, image_height);
 	}
 
 	error_number=png_to_file(symbol, image_height, image_width, pixelbuf, rotate_angle, data_type);
