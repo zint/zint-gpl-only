@@ -103,6 +103,7 @@ void usage(void)
 		"  --notext              Remove human readable text\n"
 		"  --square              Force Data Matrix symbols to be square\n"
 		"  --init                Create reader initialisation symbol (Code 128)\n"
+		"  --smalltext           Use half-size text in PNG images\n"
 		, ZINT_VERSION);
 }
 
@@ -220,6 +221,7 @@ int main(int argc, char **argv)
 			{"notext", 0, 0, 0},
 			{"square", 0, 0, 0},
 			{"init", 0, 0, 0},
+			{"smalltext", 0, 0, 0},
 			{0, 0, 0, 0}
 		};
 		c = getopt_long(argc, argv, "htb:w:d:o:i:rcmp", long_options, &option_index);
@@ -235,6 +237,9 @@ int main(int argc, char **argv)
 				}
 				if(!strcmp(long_options[option_index].name, "init")) {
 					my_symbol->output_options += READER_INIT;
+				}
+				if(!strcmp(long_options[option_index].name, "smalltext")) {
+					my_symbol->output_options += SMALL_TEXT;
 				}
 				if(!strcmp(long_options[option_index].name, "directeps")) {
 					my_symbol->output_options += BARCODE_STDOUT;
