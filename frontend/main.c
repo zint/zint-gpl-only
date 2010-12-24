@@ -104,6 +104,7 @@ void usage(void)
 		"  --square              Force Data Matrix symbols to be square\n"
 		"  --init                Create reader initialisation symbol (Code 128)\n"
 		"  --smalltext           Use half-size text in PNG images\n"
+		"  --batch               Treat each line of input as a separate data set\n"
 		, ZINT_VERSION);
 }
 
@@ -167,6 +168,69 @@ int escape_char_process(struct zint_symbol *my_symbol, unsigned char input_strin
 	return error_number;
 }
 
+char itoc(int source)
+{ /* Converts an integer value to its hexadecimal character */
+	if ((source >= 0) && (source <= 9)) {
+		return ('0' + source); }
+	else {
+		return ('A' + (source - 10)); }
+}
+
+void concat(char dest[], char source[])
+{ /* Concatinates dest[] with the contents of source[], copying /0 as well */
+	unsigned int i, j, n;
+
+	j = strlen(dest);
+	n = strlen(source);
+	for(i = 0; i <= n; i++) {
+		dest[i + j] = source[i]; }
+}
+
+int batch_process(struct zint_symbol *symbol, char *filename)
+{
+	FILE *file;
+	unsigned char buffer[7100];
+	unsigned char character;
+	int posn = 0, error_number = 0, line_count = 1;
+	char output_file[127];
+	
+	memset(buffer, 0, sizeof(unsigned char) * 7100);
+	
+	if(!strcmp(filename, "-")) {
+		file = stdin;
+	} else {
+		file = fopen(filename, "rb");
+		if (!file) {
+			strcpy(symbol->errtxt, "Unable to read input file");
+			return ERROR_INVALID_DATA;
+		}
+	}
+	
+	do {
+		character = fgetc(file);
+		if(character == '\n') {
+			output_file[0] = itoc(line_count);
+			concat(output_file, ".png");
+			strcpy(symbol->outfile, output_file);
+			error_number = ZBarcode_Encode_and_Print(symbol, buffer, posn, 0);
+			if(error_number != 0) {
+				printf("On line %d: %s\n", line_count, symbol->errtxt);
+			}
+			ZBarcode_Clear(symbol);
+			memset(buffer, 0, sizeof(unsigned char) * 7100);
+			memset(output_file, 0, sizeof(char) * 127);
+			posn = 0;
+			line_count++;
+		} else {
+			buffer[posn] = character;
+			posn++;
+		}
+	} while (!feof(file));
+	
+	fclose(file);
+	return error_number;
+}
+
 int main(int argc, char **argv)
 {
 	struct zint_symbol *my_symbol;
@@ -174,12 +238,14 @@ int main(int argc, char **argv)
 	int error_number;
 	int rotate_angle;
 	int generated;
+	int batch_mode;
 	
 	error_number = 0;
 	rotate_angle = 0;
 	generated = 0;
 	my_symbol = ZBarcode_Create();
 	my_symbol->input_mode = UNICODE_MODE;
+	batch_mode = 0;
 
 	if(argc == 1) {
 		usage();
@@ -222,6 +288,7 @@ int main(int argc, char **argv)
 			{"square", 0, 0, 0},
 			{"init", 0, 0, 0},
 			{"smalltext", 0, 0, 0},
+			{"batch", 0, 0, 0},
 			{0, 0, 0, 0}
 		};
 		c = getopt_long(argc, argv, "htb:w:d:o:i:rcmp", long_options, &option_index);
@@ -363,6 +430,10 @@ int main(int argc, char **argv)
 						default: rotate_angle = 0; break;
 					}
 				}
+				if(!strcmp(long_options[option_index].name, "batch")) {
+					/* Switch to batch processing mode */
+					batch_mode = 1;
+				}
 				break;
 				
 			case 'h':
@@ -396,28 +467,43 @@ int main(int argc, char **argv)
 				break;
 				
 			case 'd': /* we have some data! */
-				error_number = escape_char_process(my_symbol, (unsigned char*)optarg, strlen(optarg));
-				if(error_number == 0) {
-					error_number = ZBarcode_Print(my_symbol, rotate_angle);
-				}
-				generated = 1;
-				if(error_number != 0) {
-					fprintf(stderr, "%s\n", my_symbol->errtxt);
-					ZBarcode_Delete(my_symbol);
-					return 1;
+				if(batch_mode == 0) {
+					error_number = escape_char_process(my_symbol, (unsigned char*)optarg, strlen(optarg));
+					if(error_number == 0) {
+						error_number = ZBarcode_Print(my_symbol, rotate_angle);
+					}
+					generated = 1;
+					if(error_number != 0) {
+						fprintf(stderr, "%s\n", my_symbol->errtxt);
+						ZBarcode_Delete(my_symbol);
+						return 1;
+					}
+				} else {
+					fprintf(stderr, "Cannot define data in batch mode");
 				}
 				break;
 				
 			case 'i': /* Take data from file */
-				error_number = ZBarcode_Encode_File(my_symbol, optarg);
-				if(error_number == 0) {
-					error_number = ZBarcode_Print(my_symbol, rotate_angle);
-				}
-				generated = 1;
-				if(error_number != 0) {
-					fprintf(stderr, "%s\n", my_symbol->errtxt);
-					ZBarcode_Delete(my_symbol);
-					return 1;
+				if(batch_mode == 0) {
+					error_number = ZBarcode_Encode_File(my_symbol, optarg);
+					if(error_number == 0) {
+						error_number = ZBarcode_Print(my_symbol, rotate_angle);
+					}
+					generated = 1;
+					if(error_number != 0) {
+						fprintf(stderr, "%s\n", my_symbol->errtxt);
+						ZBarcode_Delete(my_symbol);
+						return 1;
+					}
+				} else {
+					/* Take each line of text as a separate data set */
+					error_number = batch_process(my_symbol, optarg);
+					generated = 1;
+					if(error_number != 0) {
+						fprintf(stderr, "%s\n", my_symbol->errtxt);
+						ZBarcode_Delete(my_symbol);
+						return 1;
+					}
 				}
 				break;
 
