@@ -193,8 +193,19 @@ int batch_process(struct zint_symbol *symbol, char *filename)
 	unsigned char character;
 	int posn = 0, error_number = 0, line_count = 1;
 	char output_file[127];
+	char number[12], reverse_number[12];
+	int inpos, local_line_count;
+	char format_string[127], reversed_string[127], format_char;
+	int format_len, i;
+	char adjusted[2];
 	
 	memset(buffer, 0, sizeof(unsigned char) * 7100);
+	if(symbol->outfile[0] = '\0') {
+		strcpy(format_string, "$$$$$.png");
+	} else {
+		strcpy(format_string, symbol->outfile);
+	}
+	memset(adjusted, 0, sizeof(char) * 2);
 	
 	if(!strcmp(filename, "-")) {
 		file = stdin;
@@ -209,16 +220,70 @@ int batch_process(struct zint_symbol *symbol, char *filename)
 	do {
 		character = fgetc(file);
 		if(character == '\n') {
-			output_file[0] = itoc(line_count);
-			concat(output_file, ".png");
+			inpos = 0;
+			local_line_count = line_count;
+			memset(number, 0, sizeof(char) * 12);
+			memset(reverse_number, 0, sizeof(char) * 12);
+			memset(reversed_string, 0, sizeof(char) * 127);
+			memset(output_file, 0, sizeof(char) * 127);
+			do {
+				number[inpos] = itoc(local_line_count % 10);
+				local_line_count /= 10;
+				inpos++;
+			} while (local_line_count > 0);
+			
+			for(i = 0; i < inpos; i++) {
+				reverse_number[i] = number[inpos - i - 1];
+			}
+
+			
+			format_len = strlen(format_string);
+			for(i = format_len; i > 0; i--) {
+				format_char = format_string[i - 1];
+				
+				switch(format_char) {
+					case '#':
+						if (inpos > 0) {
+							adjusted[0] = reverse_number[inpos - 1];
+							inpos--;
+						} else {
+							adjusted[0] = ' ';
+						}
+						break;
+					case '$':
+						if (inpos > 0) {
+							adjusted[0] = reverse_number[inpos - 1];
+							inpos--;
+						} else {
+							adjusted[0] = '0';
+						}
+						break;
+					case '*':
+						if (inpos > 0) {
+							adjusted[0] = reverse_number[inpos - 1];
+							inpos--;
+						} else {
+							adjusted[0] = '*';
+						}
+						break;
+					default:
+						adjusted[0] = format_string[i - 1];
+						break;
+				}
+				concat(reversed_string, adjusted);
+			}
+			
+			for(i = 0; i < format_len; i++) {
+				output_file[i] = reversed_string[format_len - i - 1];
+			}
+			
 			strcpy(symbol->outfile, output_file);
 			error_number = ZBarcode_Encode_and_Print(symbol, buffer, posn, 0);
 			if(error_number != 0) {
-				printf("On line %d: %s\n", line_count, symbol->errtxt);
+				fprintf(stderr, "On line %d: %s\n", line_count, symbol->errtxt);
 			}
 			ZBarcode_Clear(symbol);
 			memset(buffer, 0, sizeof(unsigned char) * 7100);
-			memset(output_file, 0, sizeof(char) * 127);
 			posn = 0;
 			line_count++;
 		} else {
