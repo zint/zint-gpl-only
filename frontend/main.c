@@ -200,10 +200,15 @@ int batch_process(struct zint_symbol *symbol, char *filename)
 	char adjusted[2];
 	
 	memset(buffer, 0, sizeof(unsigned char) * 7100);
-	if(symbol->outfile[0] = '\0') {
+	if(symbol->outfile[0] == '\0') {
 		strcpy(format_string, "$$$$$.png");
 	} else {
-		strcpy(format_string, symbol->outfile);
+		if(strlen(format_string) < 127) {
+			strcpy(format_string, symbol->outfile);
+		} else {
+			strcpy(symbol->errtxt, "Format string too long");
+			return ERROR_INVALID_DATA;
+		}
 	}
 	memset(adjusted, 0, sizeof(char) * 2);
 	
@@ -220,6 +225,11 @@ int batch_process(struct zint_symbol *symbol, char *filename)
 	do {
 		character = fgetc(file);
 		if(character == '\n') {
+			if(buffer[posn - 1] == '\r') {
+				/* CR+LF - assume Windows formatting and remove CR */
+				posn--;
+				buffer[posn] = '\0';
+			}
 			inpos = 0;
 			local_line_count = line_count;
 			memset(number, 0, sizeof(char) * 12);
@@ -290,7 +300,17 @@ int batch_process(struct zint_symbol *symbol, char *filename)
 			buffer[posn] = character;
 			posn++;
 		}
-	} while (!feof(file));
+		if(posn > 7090) {
+			fprintf(stderr, "On line %d: Input data too long\n", line_count);
+			do {
+				character = fgetc(file);
+			} while((!feof(file)) && (character != '\n'));
+		}
+	} while ((!feof(file)) && (line_count < 2000000000));
+	
+	if(character != '\n') {
+		fprintf(stderr, "Warning: No newline at end of file\n");
+	}
 	
 	fclose(file);
 	return error_number;
