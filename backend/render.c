@@ -309,6 +309,12 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 		render->width = 0.508 * GL_CONST * total_area_width_x;
 		render->height = 4.064 * GL_CONST;
 	}
+	
+	if((symbol->symbology == BARCODE_POSTNET) || (symbol->symbology == BARCODE_PLANET)) {
+		/* The size of PostNet and PLANET are fized */
+		render->width = 0.508 * GL_CONST * total_area_width_x;
+		render->height = 2.921 * GL_CONST;
+	}
 
 	if(((symbol->symbology == BARCODE_AUSPOST) || (symbol->symbology == BARCODE_AUSREPLY)) ||
 		((symbol->symbology == BARCODE_AUSROUTE) || (symbol->symbology == BARCODE_AUSREDIRECT))) {
