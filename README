@@ -50,6 +50,11 @@ Simplified GUI. Addition of "render" functions provides an API for
 glabels. Corrections to 4-state codes. Simplification in QR code. Added
 --dump option and support for reading from stdin.
 
+Version 2.4.1:
+Contains bugfixes for Data Matrix and QR Code. Add option to produce multiple
+files from the command line. Add option to change font size in PNG images.
+Tidy up information for creating Debian packages and for compiling on MS
+Visual Studio. Correct bug preventing compilation without PNG support.
 
 CONTACT ME
 ----------
