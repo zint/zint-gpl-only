@@ -34,8 +34,8 @@
 
 #ifndef NO_PNG
 #include "png.h"        /* libpng header; includes zlib.h and setjmp.h */
-#include "maxipng.h"	/* Maxicode shapes */
 #endif /* NO_PNG */
+#include "maxipng.h"	/* Maxicode shapes */
 
 #include "font.h"	/* Font for human readable text */
 

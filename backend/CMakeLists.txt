@@ -22,6 +22,7 @@ set_target_properties(zint PROPERTIES 	SOVERSION "${ZINT_VERSION_MAJOR}.${ZINT_V
 					VERSION ${ZINT_VERSION})
 
 target_link_libraries(zint ${PNG_LIBRARIES} )
+target_link_libraries(zint -lm)
 
 install(TARGETS zint  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 install(FILES zint.h DESTINATION ${INCLUDE_INSTALL_DIR} COMPONENT Devel)
