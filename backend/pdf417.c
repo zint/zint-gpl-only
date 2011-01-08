@@ -511,10 +511,8 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
 
 	/* 752 - Now take care of the number of CWs per row */
 	if (symbol->option_1 < 0) {
-		/* note that security level 8 is never used automatically */
-		symbol->option_1 = 7;
-		if(mclength <= 1280) { symbol->option_1 = 6; }
-		if(mclength <= 640) { symbol->option_1 = 5; }
+		symbol->option_1 = 6;
+		if(mclength <= 863) { symbol->option_1 = 5; }
 		if(mclength <= 320) { symbol->option_1 = 4; }
 		if(mclength <= 160) { symbol->option_1 = 3; }
 		if(mclength <= 40) { symbol->option_1 = 2; }
@@ -527,30 +525,18 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
 	longueur = mclength;
 	if(symbol->option_2 > 30) { symbol->option_2 = 30; }
 	if(symbol->option_2 < 1) {
-		/* This is a much more simple formula to Grand Zebu's - 
-		   it does not try to make the symbol square */
 		symbol->option_2 = 0.5 + sqrt((longueur + k) / 3.0);
 	}
 	if(((longueur + k) / symbol->option_2) > 90) {
 		/* stop the symbol from becoming too high */
 		symbol->option_2 = symbol->option_2 + 1;
 	}
-
-	/* Reduce the correction level if there isn't room */
-	/* while((longueur + k > PDF_MAX) && (symbol->option_1 > 0)) {
-		symbol->option_1 = symbol->option_1 - 1
-		for(loop = 0; loop <= (symbol->option_1 + 1); loop++)
-		{
-			k *= 2;
-		}
-	} */
-	/* this bit of the code would allow Zint to happily encode 2698 code words with
-	only 2 check digits, so I have abandoned it! - Zint now insists on a proportional
-	amount of check data unless overruled by the user */
 	
-	if(longueur + k > symbol->option_3) {
+	if(longueur + k > 928) {
+		/* Enforce maximum codeword limit */
 		return 2;
 	}
+	
 	if(((longueur + k) / symbol->option_2) > 90) {
 		return 4;
 	}
