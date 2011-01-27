@@ -110,19 +110,15 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[], int lengt
 			case 8:
 				strcpy(fcc, "11");
 				break;
+			case 16:
+				error_number = is_sane(NEON, source, length);
 			case 13:
 				strcpy(fcc, "59");
 				break;
-			case 16:
-				strcpy(fcc, "59");
+			case 23:
 				error_number = is_sane(NEON, source, length);
-				break;
 			case 18:
 				strcpy(fcc, "62");
-				break;
-			case 23:
-				strcpy(fcc, "62");
-				error_number = is_sane(NEON, source, length);
 				break;
 			default:
 				strcpy(symbol->errtxt, "Auspost input is wrong length");
