@@ -192,7 +192,7 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[], int lengt
 				lookup(GDSET, AusCTable, localstr[reader], data_pattern);
 			}
 		}
-		if((h == 16) || (h == 23)) {
+		else if((h == 16) || (h == 23)) {
 			for(reader = 8; reader < h; reader++) {
 				lookup(NEON, AusNTable, localstr[reader], data_pattern);
 			}
