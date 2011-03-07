@@ -1200,29 +1200,8 @@ int code_one(struct zint_symbol *symbol, unsigned char source[], int length)
 		
 		data_blocks = c1_blocks[size - 1];
 		
-		/*
-		Section 2.2.5.1 states:
-		"The polynomial arithmetic... is calculated using bit-wise modulo 2 arithmetic
-		and byte-wise modulo 100101101 arithmetic (this is a Galois Field of 2^8 with
-		100101101 representing the field's prime modulus polynomial:
-		x^8 + x^5 + x^3 + x^2 + 1)."
-		This is the same as Data Matrix (ISO/IEC 16022) however the calculations in Appendix F
-		of the Code One specification do not agree with those in Annex E of ISO/IEC 16022.
-		For example Code One Appendix F states:
-		"The polynomial divisor for generating ten check characters for Version T-16
-		and Version A is:
-		g(x)=x^10 + 136x^9 + 141x^8 + 113x^7 + 76x^6 + 218x^5 + 43x^4 + 85x^3
-		+ 182x^2 + 31x + 52."
-		Whereas ISO/IEC 16022 Annex E states:
-		"The polynomial divisor for generating 10 check characters is:
-		g(x)=x^10 + 61x^9 + 110x^8 + 255x^7 + 116x^6 + 248x^5 + 223x^4 + 166x^3
-		+ 185x^2 + 24x + 28."
-		For this code I have assumed that ISO/IEC 16022 is correct and the USS Code One
-		specifications are incorrect
-		*/
-		
 		rs_init_gf(0x12d);
-		rs_init_code(c1_ecc_blocks[size - 1], 1);	
+		rs_init_code(c1_ecc_blocks[size - 1], 0);	
 		for(i = 0; i < data_blocks; i++) {
 			for(j = 0; j < c1_data_blocks[size - 1]; j++) {
 				
