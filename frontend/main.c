@@ -201,7 +201,7 @@ int batch_process(struct zint_symbol *symbol, char *filename)
 	
 	memset(buffer, 0, sizeof(unsigned char) * 7100);
 	if(symbol->outfile[0] == '\0') {
-		strcpy(format_string, "$$$$$.png");
+		strcpy(format_string, "~~~~~.png");
 	} else {
 		if(strlen(format_string) < 127) {
 			strcpy(format_string, symbol->outfile);
@@ -241,11 +241,11 @@ int batch_process(struct zint_symbol *symbol, char *filename)
 				local_line_count /= 10;
 				inpos++;
 			} while (local_line_count > 0);
+			number[inpos] = '\0';
 			
 			for(i = 0; i < inpos; i++) {
 				reverse_number[i] = number[inpos - i - 1];
 			}
-
 			
 			format_len = strlen(format_string);
 			for(i = format_len; i > 0; i--) {
@@ -260,7 +260,7 @@ int batch_process(struct zint_symbol *symbol, char *filename)
 							adjusted[0] = ' ';
 						}
 						break;
-					case '$':
+					case '~':
 						if (inpos > 0) {
 							adjusted[0] = reverse_number[inpos - 1];
 							inpos--;
@@ -268,7 +268,7 @@ int batch_process(struct zint_symbol *symbol, char *filename)
 							adjusted[0] = '0';
 						}
 						break;
-					case '*':
+					case '@':
 						if (inpos > 0) {
 							adjusted[0] = reverse_number[inpos - 1];
 							inpos--;
