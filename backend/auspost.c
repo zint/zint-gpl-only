@@ -43,39 +43,24 @@ static char *AusBarTable[64] = {"000", "001", "002", "003", "010", "011", "012",
 #include "common.h"
 #include "reedsol.h"
 
+static inline char convert_pattern(char data, int shift)
+{
+	return (data - '0') << shift;
+}
+
 void rs_error(char data_pattern[])
 {
 	/* Adds Reed-Solomon error correction to auspost */
 
-	int reader, triple_writer;
+	int reader, triple_writer = 0;
 	char triple[31], inv_triple[31];
 	unsigned char result[5];
 
-	triple_writer = 0;
-
-	for(reader = 2; reader < strlen(data_pattern); reader+= 3)
+	for(reader = 2; reader < strlen(data_pattern); reader += 3, triple_writer++)
 	{
-		triple[triple_writer] = 0;
-		switch(data_pattern[reader])
-		{
-			case '1': triple[triple_writer] += 16; break;
-			case '2': triple[triple_writer] += 32; break;
-			case '3': triple[triple_writer] += 48; break;
-		}
-		switch(data_pattern[reader + 1])
-		{
-			case '1': triple[triple_writer] += 4; break;
-			case '2': triple[triple_writer] += 8; break;
-			case '3': triple[triple_writer] += 12; break;
-		}
-		switch(data_pattern[reader + 2])
-		{
-			case '1': triple[triple_writer] += 1; break;
-			case '2': triple[triple_writer] += 2; break;
-			case '3': triple[triple_writer] += 3; break;
-		}
-		triple_writer++;
-
+		triple[triple_writer] = convert_pattern(data_pattern[reader], 4)
+			+ convert_pattern(data_pattern[reader + 1], 2)
+			+ convert_pattern(data_pattern[reader + 2], 0);
 	}
 
 	for(reader = 0; reader < triple_writer; reader++)
@@ -122,13 +107,26 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[], int lengt
 		/* Format control code (FCC) */
 		switch(length)
 		{
-			case 8: strcpy(fcc, "11"); break;
-			case 13: strcpy(fcc, "59"); break;
-			case 16: strcpy(fcc, "59"); error_number = is_sane(NEON, source, length); break;
-			case 18: strcpy(fcc, "62"); break;
-			case 23: strcpy(fcc, "62"); error_number = is_sane(NEON, source, length); break;
-			default: strcpy(symbol->errtxt, "Auspost input is wrong length");
-			return ERROR_TOO_LONG;
+			case 8:
+				strcpy(fcc, "11");
+				break;
+			case 13:
+				strcpy(fcc, "59");
+				break;
+			case 16:
+				strcpy(fcc, "59");
+				error_number = is_sane(NEON, source, length);
+				break;
+			case 18:
+				strcpy(fcc, "62");
+				break;
+			case 23:
+				strcpy(fcc, "62");
+				error_number = is_sane(NEON, source, length);
+				break;
+			default:
+				strcpy(symbol->errtxt, "Auspost input is wrong length");
+				return ERROR_TOO_LONG;
 				break;
 		}
 		if(error_number == ERROR_INVALID_DATA) {
@@ -194,7 +192,7 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[], int lengt
 				lookup(GDSET, AusCTable, localstr[reader], data_pattern);
 			}
 		}
-		if((h == 16) || (h == 23)) {
+		else if((h == 16) || (h == 23)) {
 			for(reader = 8; reader < h; reader++) {
 				lookup(NEON, AusNTable, localstr[reader], data_pattern);
 			}
