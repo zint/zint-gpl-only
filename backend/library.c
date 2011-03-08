@@ -48,7 +48,7 @@ struct zint_symbol *ZBarcode_Create()
 	symbol->width = 0;
 	strcpy(symbol->fgcolour, "000000");
 	strcpy(symbol->bgcolour, "ffffff");
-	strcpy(symbol->outfile, "out.png");
+	strcpy(symbol->outfile, "");
 	symbol->scale = 1.0;
 	symbol->option_1 = -1;
 	symbol->option_2 = 0;
@@ -590,7 +590,9 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source, int lengt
 		return ERROR_INVALID_DATA;
 	}
 
-	
+	if(strcmp(symbol->outfile, "") == 0) {
+		strcpy(symbol->outfile, "out.png");
+	}
 #ifndef _MSC_VER
         unsigned char local_source[length + 1];
 #else
