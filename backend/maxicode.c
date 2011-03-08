@@ -602,6 +602,9 @@ int maxicode(struct zint_symbol *symbol, unsigned char source[], int length)
 	}
 
 	if((mode == 2) || (mode == 3)) { /* Modes 2 and 3 need data in symbol->primary */
+		if(lp == 0){ /* Mode set manually means lp doesn't get set */
+			lp = strlen( symbol->primary );
+		}
 		if(lp != 15) {
 			strcpy(symbol->errtxt, "Invalid Primary String");
 			return ERROR_INVALID_DATA;
