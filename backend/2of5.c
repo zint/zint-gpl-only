@@ -36,7 +36,11 @@ static char *C25IndustTable[10] = {"1111313111", "3111111131", "1131111131", "31
 static char *C25InterTable[10] = {"11331", "31113", "13113", "33111", "11313", "31311", "13311", "11133",
 	"31131", "13131"};
 
-	
+static inline char check_digit(unsigned int count)
+{
+	return itoc((10 - (count % 10)) % 10);
+}
+
 int matrix_two_of_five(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* Code 2 of 5 Standard (Code 2 of 5 Matrix) */
 	
@@ -235,7 +239,7 @@ int interleaved_two_of_five(struct zint_symbol *symbol, unsigned char source[], 
 int itf14(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	int i, error_number, zeroes;
-	unsigned int count, check_digit;
+	unsigned int count;
 	char localstr[16];
 	
 	error_number = 0;
@@ -269,9 +273,7 @@ int itf14(struct zint_symbol *symbol, unsigned char source[], int length)
 			count += 2 * ctoi(localstr[i]);
 		}
 	}
-	check_digit = 10 - (count%10);
-	if (check_digit == 10) { check_digit = 0; }
-	localstr[13] = itoc(check_digit);
+	localstr[13] = check_digit(count);
 	localstr[14] = '\0';
 	error_number = interleaved_two_of_five(symbol, (unsigned char *)localstr, strlen(localstr));
 	ustrcpy(symbol->text, (unsigned char*)localstr);
@@ -281,7 +283,7 @@ int itf14(struct zint_symbol *symbol, unsigned char source[], int length)
 int dpleit(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* Deutshe Post Leitcode */
 	int i, error_number;
-	unsigned int count, check_digit;
+	unsigned int count;
 	char localstr[16];
 	int zeroes;
 
@@ -310,9 +312,7 @@ int dpleit(struct zint_symbol *symbol, unsigned char source[], int length)
 			count += 5 * ctoi(localstr[i]);
 		}
 	}
-	check_digit = 10 - (count%10);
-	if (check_digit == 10) { check_digit = 0; }
-	localstr[13] = itoc(check_digit);
+	localstr[13] = check_digit(count);
 	localstr[14] = '\0';
 	error_number = interleaved_two_of_five(symbol, (unsigned char *)localstr, strlen(localstr));
 	ustrcpy(symbol->text, (unsigned char*)localstr);
@@ -322,7 +322,7 @@ int dpleit(struct zint_symbol *symbol, unsigned char source[], int length)
 int dpident(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* Deutsche Post Identcode */
 	int i, error_number, zeroes;
-	unsigned int count, check_digit;
+	unsigned int count;
 	char localstr[16];
 
 	count = 0;
@@ -349,9 +349,7 @@ int dpident(struct zint_symbol *symbol, unsigned char source[], int length)
 			count += 5 * ctoi(localstr[i]);
 		}
 	}
-	check_digit = 10 - (count%10);
-	if (check_digit == 10) { check_digit = 0; }
-	localstr[11] = itoc(check_digit);
+	localstr[11] = check_digit(count);
 	localstr[12] = '\0';
 	error_number = interleaved_two_of_five(symbol, (unsigned char *)localstr, strlen(localstr));
 	ustrcpy(symbol->text, (unsigned char*)localstr);
