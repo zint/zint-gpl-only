@@ -742,14 +742,14 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 	comp_offset = 0;
 	addon_text_posn = 0.0;
 	row_height = 0;
-	if(symbol->output_options &= SMALL_TEXT) {
+	if(symbol->output_options & SMALL_TEXT) {
 		smalltext = 1;
 	}
 
 	if (symbol->height == 0) {
 		symbol->height = 50;
 	}
-	
+
 	large_bar_count = 0;
 	preset_height = 0.0;
 	for(i = 0; i < symbol->rows; i++) {
@@ -786,7 +786,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 				main_width = 68 + comp_offset;
 		}
 	}
-	
+
 	if (((symbol->symbology == BARCODE_UPCA) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_UPCA_CC)) {
 		if(symbol->whitespace_width == 0) {
 			symbol->whitespace_width = 10;
@@ -816,7 +816,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 		}
 	}
 	addon[r] = '\0';
-	
+
 	if(ustrlen(local_text) != 0) {
 		textoffset = 9;
 	} else {
@@ -835,7 +835,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 			*(pixelbuf + i) = '0';
 		}
 	}
-	
+
 	if(((symbol->output_options & BARCODE_BOX) != 0) || ((symbol->output_options & BARCODE_BIND) != 0)) {
 		default_text_posn = image_height - 17;
 	} else {
@@ -1123,6 +1123,7 @@ int png_handle(struct zint_symbol *symbol, int rotate_angle)
 	if(symbol->symbology == BARCODE_MAXICODE) {
 		error = maxi_png_plot(symbol, rotate_angle, PNG_DATA);
 	} else {
+
 		error = png_plot(symbol, rotate_angle, PNG_DATA);
 	}
 	
