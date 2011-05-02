@@ -6,7 +6,7 @@
 # make clean		cleans up a previous compilation and any object or editor files
 #
 
-ZINT_VERSION:=-DZINT_VERSION=\"2.4.1\"
+ZINT_VERSION:=-DZINT_VERSION=\"2.4.2\"
 
 
 CC := gcc
@@ -25,7 +25,7 @@ ONEDIM_OBJ:= code.o code128.o 2of5.o upcean.o telepen.o medical.o plessey.o rss.
 POSTAL:= postal.c auspost.c imail.c
 POSTAL_OBJ:= postal.o auspost.o imail.o
 TWODIM:= code16k.c dmatrix.c pdf417.c qr.c maxicode.c composite.c aztec.c code49.c code1.c gridmtx.c
-TWODIM_OBJ:= code16k.o dmatrix.o dm200.o pdf417.o qr.o maxicode.o composite.o aztec.o code49.o code1.o gridmtx.o
+TWODIM_OBJ:= code16k.o dmatrix.o pdf417.o qr.o maxicode.o composite.o aztec.o code49.o code1.o gridmtx.o
 LIBS:= `libpng12-config --I_opts --L_opts --ldflags` -lz -lm
  
 libzint: code.c code128.c 2of5.c upcean.c medical.c telepen.c plessey.c postal.c auspost.c imail.c code16k.c dmatrix.c reedsol.c pdf417.c maxicode.c rss.c common.c render.c png.c library.c ps.c qr.c large.c composite.c aztec.c gs1.c svg.c code49.c code1.c gridmtx.c
