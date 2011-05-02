@@ -56,6 +56,9 @@ files from the command line. Add option to change font size in PNG images.
 Tidy up information for creating Debian packages and for compiling on MS
 Visual Studio. Correct bug preventing compilation without PNG support.
 
+Version 2.4.2:
+Fix bugs in batch processing - this now works from the command line.
+
 CONTACT ME
 ----------
 The home of libzint is:
