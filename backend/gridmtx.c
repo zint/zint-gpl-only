@@ -167,6 +167,7 @@ int seek_forward(int gbdata[], int length, int position, int current_mode)
 			upper_count = 4;
 			lower_count = 4;
 			chinese_count = 4;
+			break;
 		default: /* Start of symbol */
 			number_count = 4;
 			byte_count = 4;
