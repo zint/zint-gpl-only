@@ -378,6 +378,7 @@ char isbn13_check(unsigned char source[]) /* For ISBN(13) only */
 
 	check = sum % 10;
 	check = 10 - check;
+	if(check == 10) check = 0;
 	return itoc(check);
 }
 
