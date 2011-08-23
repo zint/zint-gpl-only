@@ -34,7 +34,7 @@ static char *C11Table[11] = {"111121", "211121", "121121", "221111", "112121", "
 
 
 /* Code 39 tables checked against ISO/IEC 16388:2007 */
-	
+
 /* Incorporates Table A1 */
 
 static char *C39Table[43] = { "1112212111", "2112111121", "1122111121", "2122111111", "1112211121",
@@ -82,7 +82,7 @@ char pattern[30];
 /* Function Prototypes */
 void NextS(int Chan, int i, int MaxS, int MaxB);
 void NextB(int Chan, int i, int MaxB, int MaxS);
-	
+
 /* *********************** CODE 11 ******************** */
 
 int code_11(struct zint_symbol *symbol, unsigned char source[], int length)
@@ -93,7 +93,7 @@ int code_11(struct zint_symbol *symbol, unsigned char source[], int length)
 	int weight[128], error_number;
 	char dest[1024]; /* 6 +  121 * 6 + 2 * 6 + 5 + 1 ~ 1024*/
 	char checkstr[3];
-	
+
 	error_number = 0;
 
 	if(length > 121) {
@@ -153,7 +153,7 @@ int code_11(struct zint_symbol *symbol, unsigned char source[], int length)
 	checkstr[2] = '\0';
 	lookup(SODIUM, C11Table, checkstr[0], dest);
 	lookup(SODIUM, C11Table, checkstr[1], dest);
-	
+
 	/* Stop character */
 	concat (dest, "11221");
 
@@ -172,14 +172,14 @@ int c39(struct zint_symbol *symbol, unsigned char source[], int length)
 	int error_number;
 	char dest[775];
 	char localstr[2] = { 0 };
-	
+
 	error_number = 0;
 	counter = 0;
 
 	if((symbol->option_2 < 0) || (symbol->option_2 > 1)) {
 		symbol->option_2 = 0;
 	}
-	
+
 	if((symbol->symbology == BARCODE_LOGMARS) && (length > 59)) {
 			strcpy(symbol->errtxt, "Input too long");
 			return ERROR_TOO_LONG;
@@ -201,9 +201,9 @@ int c39(struct zint_symbol *symbol, unsigned char source[], int length)
 		lookup(SILVER, C39Table, source[i], dest);
 		counter += posn(SILVER, source[i]);
 	}
-	
+
 	if((symbol->symbology == BARCODE_LOGMARS) || (symbol->option_2 == 1)) {
-		
+
 		counter = counter % 43;
 		if(counter < 10) {
 			check_digit = itoc(counter);
@@ -224,19 +224,19 @@ int c39(struct zint_symbol *symbol, unsigned char source[], int length)
 			}
 		}
 		lookup(SILVER, C39Table, check_digit, dest);
-	
+
 		/* Display a space check digit as _, otherwise it looks like an error */
 		if(check_digit == ' ') {
 			check_digit = '_';
 		}
-		
+
 		localstr[0] = check_digit;
 		localstr[1] = '\0';
 	}
-	
+
 	/* Stop character */
 	concat (dest, "121121211");
-	
+
 	if((symbol->symbology == BARCODE_LOGMARS) || (symbol->symbology == BARCODE_HIBC_39)) {
 		/* LOGMARS uses wider 'wide' bars than normal Code 39 */
 		counter = strlen(dest);
@@ -246,9 +246,9 @@ int c39(struct zint_symbol *symbol, unsigned char source[], int length)
 			}
 		}
 	}
-	
+
 	expand(symbol, dest);
-	
+
 	if(symbol->symbology == BARCODE_CODE39) {
 		ustrcpy(symbol->text, (unsigned char*)"*");
 		uconcat(symbol->text, source);
@@ -263,11 +263,11 @@ int c39(struct zint_symbol *symbol, unsigned char source[], int length)
 
 int pharmazentral(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* Pharmazentral Nummer (PZN) */
-	
+
 	int i, error_number, zeroes;
 	unsigned int count, check_digit;
 	char localstr[10];
-	
+
 	error_number = 0;
 
 	count = 0;
@@ -280,22 +280,22 @@ int pharmazentral(struct zint_symbol *symbol, unsigned char source[], int length
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
-	
+
 	localstr[0] = '-';
 	zeroes = 6 - length + 1;
 	for(i = 1; i < zeroes; i++)
 		localstr[i] = '0';
 	strcpy(localstr + zeroes, (char *)source);
-	
+
 	for (i = 1; i < 7; i++) {
 		count += (i + 1) * ctoi(localstr[i]);
 	}
-	
+
 	check_digit = count%11;
 	if (check_digit == 11) { check_digit = 0; }
 	localstr[7] = itoc(check_digit);
 	localstr[8] = '\0';
-	if(localstr[7] == 'A') { 
+	if(localstr[7] == 'A') {
 		strcpy(symbol->errtxt, "Invalid PZN Data");
 		return ERROR_INVALID_DATA;
 	}
@@ -321,7 +321,7 @@ int ec39(struct zint_symbol *symbol, unsigned char source[], int length)
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	
+
 	/* Creates a buffer string and places control characters into it */
 	for(i = 0; i < length; i++) {
 		if(source[i] > 127) {
@@ -329,12 +329,12 @@ int ec39(struct zint_symbol *symbol, unsigned char source[], int length)
 			strcpy(symbol->errtxt, "Invalid characters in input data");
 			return ERROR_INVALID_DATA;
 		}
-		concat((char*)buffer, EC39Ctrl[source[i]]);		
+		concat((char*)buffer, EC39Ctrl[source[i]]);
 	}
 
 	/* Then sends the buffer to the C39 function */
 	error_number = c39(symbol, buffer, ustrlen(buffer));
-	
+
 	for(i = 0; i < length; i++)
 		symbol->text[i] = source[i] ? source[i] : ' ';
 	symbol->text[length] = '\0';
@@ -356,15 +356,15 @@ int c93(struct zint_symbol *symbol, unsigned char source[], int length)
 	char buffer[220];
 	char dest[670];
 	char set_copy[] = SILVER;
-	
+
 	error_number = 0;
     strcpy(buffer, "");
-	
+
 	if(length > 107) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	
+
 	/* Message Content */
 	for (i = 0; i < length; i++) {
 		if (source[i] > 127) {
@@ -375,14 +375,14 @@ int c93(struct zint_symbol *symbol, unsigned char source[], int length)
 		concat(buffer, C93Ctrl[source[i]]);
 		symbol->text[i] = source[i] ? source[i] : ' ';
 	}
-	
+
 	/* Now we can check the true length of the barcode */
 	h = strlen(buffer);
 	if (h > 107) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	
+
 	for (i = 0; i < h; i++) {
 		values[i] = posn(SILVER, buffer[i]);
 	}
@@ -437,7 +437,7 @@ int c93(struct zint_symbol *symbol, unsigned char source[], int length)
 /* Their are used here on the understanding that they form part of the specification
    for Channel Code and therefore their use is permitted under the following terms
    set out in that document:
-   
+
    "It is the intent and understanding of AIM [t]hat the symbology presented in this
    specification is entirely in the public domain and free of all use restrictions,
    licenses and fees. AIM USA, its memer companies, or individual officers
@@ -446,7 +446,7 @@ int c93(struct zint_symbol *symbol, unsigned char source[], int length)
 void CheckCharacter() {
 	int i;
 	char part[3];
-	
+
 	if(value == target_value) {
 		/* Target reached - save the generated pattern */
 		strcpy(pattern, "11110");
@@ -461,7 +461,7 @@ void CheckCharacter() {
 
 void NextB(int Chan, int i, int MaxB, int MaxS) {
 	int b;
-	
+
 	b = (S[i]+B[i-1]+S[i-1]+B[i-2] > 4)? 1:2;
 	if (i < Chan+2) {
 		for (; b <= MaxB; b++) {
@@ -477,7 +477,7 @@ void NextB(int Chan, int i, int MaxB, int MaxS) {
 
 void NextS(int Chan, int i, int MaxS, int MaxB) {
 	int s;
-	
+
 	for (s = (i<Chan+2)? 1: MaxS; s <= MaxS; s++) {
 		S[i] = s;
 		NextB(Chan,i,MaxB,MaxS+1-s);
@@ -486,13 +486,13 @@ void NextS(int Chan, int i, int MaxS, int MaxB) {
 
 int channel_code(struct zint_symbol *symbol, unsigned char source[], int length) {
 	/* Channel Code - According to ANSI/AIM BC12-1998 */
-	
+
 	int channels, i;
 	int error_number = 0, range = 0, zeroes;
 	char hrt[9];
 
 	target_value = 0;
-	
+
 	if(length > 7) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
@@ -502,16 +502,16 @@ int channel_code(struct zint_symbol *symbol, unsigned char source[], int length)
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
-	
+
 	if((symbol->option_2 < 3) || (symbol->option_2 > 8)) { channels = 0; } else { channels = symbol->option_2; }
 	if(channels == 0) { channels = length + 1; }
 	if(channels == 2) { channels = 3; }
-	
+
 	for(i = 0; i < length; i++) {
 		target_value *= 10;
 		target_value += ctoi((char) source[i]);
 	}
-	
+
 	switch(channels) {
 		case 3: if(target_value > 26) { range = 1; } break;
 		case 4: if(target_value > 292) { range = 1; } break;
@@ -524,19 +524,19 @@ int channel_code(struct zint_symbol *symbol, unsigned char source[], int length)
 		strcpy(symbol->errtxt, "Value out of range");
 		return ERROR_INVALID_DATA;
 	}
-	
+
 	for(i = 0; i < 11; i++) { B[i] = 0; S[i] = 0; }
-	
+
 	B[0] = S[1] = B[1] = S[2] = B[2] = 1;
 	value = 0;
 	NextS(channels,3,channels,channels);
-	
+
 	zeroes = channels - 1 - length;
 	memset(hrt, '0', zeroes);
 	strcpy(hrt + zeroes, (char *)source);
 	ustrcpy(symbol->text, (unsigned char *)hrt);
-	
+
 	expand(symbol, pattern);
-	
+
 	return error_number;
 }

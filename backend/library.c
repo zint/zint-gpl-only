@@ -23,7 +23,7 @@
 #include <string.h>
 #include <errno.h>
 #ifdef _MSC_VER
-#include <malloc.h> 
+#include <malloc.h>
 #endif
 #include "common.h"
 #include "gs1.h"
@@ -34,7 +34,7 @@ struct zint_symbol *ZBarcode_Create()
 {
 	struct zint_symbol *symbol;
 	int i;
-	
+
 	symbol = (struct zint_symbol*)malloc(sizeof(*symbol));
 	if (!symbol) return NULL;
 
@@ -69,7 +69,7 @@ struct zint_symbol *ZBarcode_Create()
 void ZBarcode_Clear(struct zint_symbol *symbol)
 {
 	int i, j;
-	
+
 	for(i = 0; i < symbol->rows; i++) {
 		for(j = 0; j < symbol->width; j++) {
 			unset_module(symbol, i, j);
@@ -186,16 +186,16 @@ extern int svg_plot(struct zint_symbol *symbol);
 void error_tag(char error_string[], int error_number)
 {
 	char error_buffer[100];
-	
+
 	if(error_number != 0) {
 		strcpy(error_buffer, error_string);
-		
+
 		if(error_number > 4) {
 			strcpy(error_string, "error: ");
 		} else {
 			strcpy(error_string, "warning: ");
 		}
-		
+
 		concat(error_string, error_buffer);
 	}
 }
@@ -234,7 +234,7 @@ int hibc(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	int counter, error_number, i;
 	char to_process[40], temp[2], check_digit;
-	
+
 	if(length > 36) {
 		strcpy(symbol->errtxt, "Data too long for HIBC LIC");
 		return ERROR_TOO_LONG;
@@ -245,14 +245,14 @@ int hibc(struct zint_symbol *symbol, unsigned char source[], int length)
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
-	
+
 	strcpy(to_process, "+");
 	counter = 41;
 	for(i = 0; i < length; i++) {
 		counter += posn(TECHNETIUM, source[i]);
 	}
 	counter = counter % 43;
-	
+
 	if(counter < 10) {
 		check_digit = itoc(counter);
 	} else {
@@ -271,14 +271,14 @@ int hibc(struct zint_symbol *symbol, unsigned char source[], int length)
 			}
 		}
 	}
-	
+
 	temp[0] = check_digit;
 	temp[1] = '\0';
-	
+
 	concat(to_process, (char *)source);
 	concat(to_process, temp);
 	length = strlen(to_process);
-	
+
 	switch(symbol->symbology) {
 		case BARCODE_HIBC_128:
 			error_number = code_128(symbol, (unsigned char *)to_process, length);
@@ -309,16 +309,16 @@ int hibc(struct zint_symbol *symbol, unsigned char source[], int length)
 			error_number = aztec(symbol, (unsigned char *)to_process, length);
 			break;
 	}
-	
+
 	return error_number;
 }
 
 int gs1_compliant(int symbology)
 {
 	/* Returns 1 if symbology supports GS1 data */
-	
+
 	int result = 0;
-	
+
 	switch(symbology) {
 		case BARCODE_EAN128:
 		case BARCODE_RSS_EXP:
@@ -342,14 +342,14 @@ int gs1_compliant(int symbology)
 			result = 1;
 			break;
 	}
-	
+
 	return result;
 }
 
 int ZBarcode_ValidID(int symbol_id)
 {
 	/* Checks whether a symbology is supported */
-	
+
 	int result = 0;
 
 	switch(symbol_id) {
@@ -438,14 +438,14 @@ int ZBarcode_ValidID(int symbol_id)
 			result = 1;
 			break;
 	}
-	
+
 	return result;
 }
 
 int extended_charset(struct zint_symbol *symbol, unsigned char *source, int length)
 {
 	int error_number = 0;
-	
+
 	/* These are the "elite" standards which can support multiple character sets */
 	switch(symbol->symbology) {
 		case BARCODE_QRCODE: error_number = qr_code(symbol, source, length); break;
@@ -460,25 +460,25 @@ int reduced_charset(struct zint_symbol *symbol, unsigned char *source, int lengt
 {
 	/* These are the "norm" standards which only support Latin-1 at most */
 	int error_number = 0;
-	
+
 #ifndef _MSC_VER
 	unsigned char preprocessed[length + 1];
 #else
         unsigned char* preprocessed = (unsigned char*)_alloca(length + 1);
 #endif
-	
+
 	if(symbol->symbology == BARCODE_CODE16K) {
 		symbol->whitespace_width = 16;
 		symbol->border_width = 2;
 		symbol->output_options = BARCODE_BIND;
 	}
-	
+
 	if(symbol->symbology == BARCODE_ITF14) {
 		symbol->whitespace_width = 20;
 		symbol->border_width = 8;
 		symbol->output_options = BARCODE_BOX;
 	}
-	
+
 	switch(symbol->input_mode) {
 		case DATA_MODE:
 		case GS1_MODE:
@@ -572,7 +572,7 @@ int reduced_charset(struct zint_symbol *symbol, unsigned char *source, int lengt
 		case BARCODE_MAXICODE: error_number = maxicode(symbol, preprocessed, length); break;
 		case BARCODE_AZTEC: error_number = aztec(symbol, preprocessed, length); break;
 	}
-	
+
 	return error_number;
 }
 
@@ -593,12 +593,13 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source, int lengt
 	if(strcmp(symbol->outfile, "") == 0) {
 		strcpy(symbol->outfile, "out.png");
 	}
+	
 #ifndef _MSC_VER
         unsigned char local_source[length + 1];
 #else
         unsigned char* local_source = (unsigned char*)_alloca(length + 1);
 #endif
-	
+
 	/* First check the symbology field */
 	if(symbol->symbology < 1) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
 
@@ -637,16 +638,16 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source, int lengt
 	/* Everything from 128 up is Zint-specific */
 	if(symbol->symbology >= 143) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }
 	if((symbol->symbology == BARCODE_CODABLOCKF) || (symbol->symbology == BARCODE_HIBC_BLOCKF)) { strcpy(symbol->errtxt, "Codablock F not supported"); error_number = ERROR_INVALID_OPTION; }
-	
+
 	if(error_number > 4) {
 		error_tag(symbol->errtxt, error_number);
 		return error_number;
 	} else {
 		error_buffer = error_number;
 	}
-	
+
 	if((symbol->input_mode < 0) || (symbol->input_mode > 2)) { symbol->input_mode = DATA_MODE; }
-	
+
 	if(symbol->input_mode == GS1_MODE) {
 		for(i = 0; i < length; i++) {
 			if(source[i] == '\0') {
@@ -666,7 +667,7 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source, int lengt
 		memcpy(local_source, source, length);
 		local_source[length] = '\0';
 	}
-	
+
 	switch(symbol->symbology) {
 		case BARCODE_QRCODE:
 		case BARCODE_MICROQR:
@@ -677,7 +678,7 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source, int lengt
 			error_number = reduced_charset(symbol, local_source, length);
 			break;
 	}
-	
+
 	if((symbol->symbology == BARCODE_CODE128) || (symbol->symbology == BARCODE_CODE128B)) {
 		for(i = 0; i < length; i++) {
 			if(local_source[i] == '\0') {
@@ -687,7 +688,7 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source, int lengt
 			}
 		}
 	}
-	
+
 	if(error_number == 0) {
 		error_number = error_buffer;
 	}
@@ -700,7 +701,7 @@ int ZBarcode_Print(struct zint_symbol *symbol, int rotate_angle)
 {
 	int error_number;
 	char output[4];
-	
+
 	switch(rotate_angle) {
 		case 0:
 		case 90:
@@ -712,7 +713,7 @@ int ZBarcode_Print(struct zint_symbol *symbol, int rotate_angle)
 			return ERROR_INVALID_OPTION;
 			break;
 	}
-	
+
 	if(strlen(symbol->outfile) > 3) {
 		output[0] = symbol->outfile[strlen(symbol->outfile) - 3];
 		output[1] = symbol->outfile[strlen(symbol->outfile) - 2];
@@ -753,7 +754,7 @@ int ZBarcode_Print(struct zint_symbol *symbol, int rotate_angle)
 int ZBarcode_Buffer(struct zint_symbol *symbol, int rotate_angle)
 {
 	int error_number;
-	
+
 	switch(rotate_angle) {
 		case 0:
 		case 90:
@@ -765,7 +766,7 @@ int ZBarcode_Buffer(struct zint_symbol *symbol, int rotate_angle)
 			return ERROR_INVALID_OPTION;
 			break;
 	}
-	
+
 	error_number = bmp_handle(symbol, rotate_angle);
 	error_tag(symbol->errtxt, error_number);
 	return error_number;
@@ -774,9 +775,9 @@ int ZBarcode_Buffer(struct zint_symbol *symbol, int rotate_angle)
 int ZBarcode_Encode_and_Print(struct zint_symbol *symbol, unsigned char *input, int length, int rotate_angle)
 {
 	int error_number;
-	
+
 	error_number = 0;
-	
+
 	error_number = ZBarcode_Encode(symbol, input, length);
 	if(error_number != 0) {
 		return error_number;
@@ -789,9 +790,9 @@ int ZBarcode_Encode_and_Print(struct zint_symbol *symbol, unsigned char *input, 
 int ZBarcode_Encode_and_Buffer(struct zint_symbol *symbol, unsigned char *input, int length, int rotate_angle)
 {
 	int error_number;
-	
+
 	error_number = 0;
-	
+
 	error_number = ZBarcode_Encode(symbol, input, length);
 	if(error_number != 0) {
 		return error_number;
@@ -818,12 +819,12 @@ int ZBarcode_Encode_File(struct zint_symbol *symbol, char *filename)
 			strcpy(symbol->errtxt, "Unable to read input file");
 			return ERROR_INVALID_DATA;
 		}
-	
+
 		/* Get file length */
 		fseek(file, 0, SEEK_END);
 		fileLen = ftell(file);
 		fseek(file, 0, SEEK_SET);
-	
+
 		if(fileLen > 7100) {
 			/* The largest amount of data that can be encoded is 7089 numeric digits in QR Code */
 			strcpy(symbol->errtxt, "Input file too long");
@@ -831,7 +832,7 @@ int ZBarcode_Encode_File(struct zint_symbol *symbol, char *filename)
 			return ERROR_INVALID_DATA;
 		}
 	}
-	
+
 	/* Allocate memory */
 	buffer = (unsigned char *)malloc(fileLen * sizeof(unsigned char));
 	if(!buffer) {
@@ -839,7 +840,7 @@ int ZBarcode_Encode_File(struct zint_symbol *symbol, char *filename)
 		fclose(file);
 		return ERROR_MEMORY;
 	}
-	
+
 	/* Read file contents into buffer */
 
 	do
@@ -853,7 +854,7 @@ int ZBarcode_Encode_File(struct zint_symbol *symbol, char *filename)
 		}
 		nRead += n;
 	} while (!feof(file) && (0 < n) && (nRead < fileLen));
-	
+
 	fclose(file);
 	ret = ZBarcode_Encode(symbol, buffer, nRead);
 	free(buffer);
@@ -863,28 +864,28 @@ int ZBarcode_Encode_File(struct zint_symbol *symbol, char *filename)
 int ZBarcode_Encode_File_and_Print(struct zint_symbol *symbol, char *filename, int rotate_angle)
 {
 	int error_number;
-	
+
 	error_number = 0;
-	
+
 	error_number = ZBarcode_Encode_File(symbol, filename);
 	if(error_number != 0) {
 		return error_number;
 	}
-	
+
 	return ZBarcode_Print(symbol, rotate_angle);
 }
 
 int ZBarcode_Encode_File_and_Buffer(struct zint_symbol *symbol, char *filename, int rotate_angle)
 {
 	int error_number;
-	
+
 	error_number = 0;
-	
+
 	error_number = ZBarcode_Encode_File(symbol, filename);
 	if(error_number != 0) {
 		return error_number;
 	}
-	
+
 	return ZBarcode_Buffer(symbol, rotate_angle);
 }
 

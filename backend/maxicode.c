@@ -27,9 +27,9 @@
 #include <string.h>
 #include <stdlib.h>
 #ifdef __APPLE__
-#include <sys/malloc.h> 
+#include <sys/malloc.h>
 #else
-#include <malloc.h> 
+#include <malloc.h>
 #endif
 
 int maxi_codeword[144];

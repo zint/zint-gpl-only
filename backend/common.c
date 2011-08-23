@@ -95,16 +95,16 @@ int is_sane(char test_string[], unsigned char source[], int length)
 	for(i = 0; i < length; i++) {
 		latch = FALSE;
 		for(j = 0; j < lt; j++) {
-			if (source[i] == test_string[j]) { 
-				latch = TRUE; 
+			if (source[i] == test_string[j]) {
+				latch = TRUE;
 				break;
-			} 
+			}
 		}
-		if (!(latch)) { 
-			return ERROR_INVALID_DATA; 
+		if (!(latch)) {
+			return ERROR_INVALID_DATA;
 		}
 	}
-	
+
 	return 0;
 }
 
@@ -128,7 +128,7 @@ void lookup(char set_string[], char *table[], char data, char dest[])
 int module_is_set(struct zint_symbol *symbol, int y_coord, int x_coord)
 {
 	return (symbol->encoded_data[y_coord][x_coord / 7] >> (x_coord % 7)) & 1;
-#if 0	
+#if 0
 	switch(x_sub) {
 		case 0: if((symbol->encoded_data[y_coord][x_char] & 0x01) != 0) { result = 1; } break;
 		case 1: if((symbol->encoded_data[y_coord][x_char] & 0x02) != 0) { result = 1; } break;
@@ -138,7 +138,7 @@ int module_is_set(struct zint_symbol *symbol, int y_coord, int x_coord)
 		case 5: if((symbol->encoded_data[y_coord][x_char] & 0x20) != 0) { result = 1; } break;
 		case 6: if((symbol->encoded_data[y_coord][x_char] & 0x40) != 0) { result = 1; } break;
 	}
-	
+
 	return result;
 #endif
 }
@@ -148,11 +148,11 @@ void set_module(struct zint_symbol *symbol, int y_coord, int x_coord)
 	symbol->encoded_data[y_coord][x_coord / 7] |= 1 << (x_coord % 7);
 #if 0
 	int x_char, x_sub;
-	
+
 
 	x_char = x_coord / 7;
 	x_sub = x_coord % 7;
-	
+
 	switch(x_sub) {
 		case 0: symbol->encoded_data[y_coord][x_char] += 0x01; break;
 		case 1: symbol->encoded_data[y_coord][x_char] += 0x02; break;
@@ -170,10 +170,10 @@ void unset_module(struct zint_symbol *symbol, int y_coord, int x_coord)
 	symbol->encoded_data[y_coord][x_coord / 7] &= ~(1 << (x_coord % 7));
 #if 0
 	int x_char, x_sub;
-	
+
 	x_char = x_coord / 7;
 	x_sub = x_coord % 7;
-	
+
 	switch(x_sub) {
 		case 0: symbol->encoded_data[y_coord][x_char] -= 0x01; break;
 		case 1: symbol->encoded_data[y_coord][x_char] -= 0x02; break;
@@ -188,14 +188,14 @@ void unset_module(struct zint_symbol *symbol, int y_coord, int x_coord)
 
 void expand(struct zint_symbol *symbol, char data[])
 { /* Expands from a width pattern to a bit pattern */
-	
+
 	unsigned int reader, n = strlen(data);
 	int writer, i;
 	char latch;
-	
+
 	writer = 0;
 	latch = '1';
-	
+
 	for(reader = 0; reader < n; reader++) {
 		for(i = 0; i < ctoi(data[reader]); i++) {
 			if(latch == '1') { set_module(symbol, symbol->rows, writer); }
@@ -204,7 +204,7 @@ void expand(struct zint_symbol *symbol, char data[])
 
 		latch = (latch == '1' ? '0' : '1');
 	}
-	
+
 	if(symbol->symbology != BARCODE_PHARMA) {
 		if(writer > symbol->width) {
 			symbol->width = writer;
@@ -230,7 +230,7 @@ int is_stackable(int symbology) {
 	if(symbology == BARCODE_TELEPEN_NUM) { return 1; }
 	if(symbology == BARCODE_ITF14) { return 1; }
 	if(symbology == BARCODE_CODE32) { return 1; }
-	
+
 	return 0;
 }
 
@@ -243,7 +243,7 @@ int is_extendable(int symbology) {
 	if(symbology == BARCODE_UPCA_CC) { return 1; }
 	if(symbology == BARCODE_UPCE_CC) { return 1; }
 	if(symbology == BARCODE_EANX_CC) { return 1; }
-	
+
 	return 0;
 }
 
@@ -251,14 +251,14 @@ int roundup(float input)
 {
 	float remainder;
 	int integer_part;
-	
+
 	integer_part = (int)input;
 	remainder = input - integer_part;
-	
+
 	if(remainder > 0.1) {
 		integer_part++;
 	}
-	
+
 	return integer_part;
 }
 
@@ -269,24 +269,24 @@ int istwodigits(unsigned char source[], int position)
 			return 1;
 		}
 	}
-	
+
 	return 0;
 }
 
 float froundup(float input)
 {
 	float fraction, output = 0.0;
-	
+
 	fraction = input - (int)input;
 	if(fraction > 0.01) { output = (input - fraction) + 1.0; } else { output = input; }
-	
+
 	return output;
 }
 
 int latin1_process(struct zint_symbol *symbol, unsigned char source[], unsigned char preprocessed[], int *length)
 {
 	int j, i, next;
-	
+
 	/* Convert Unicode to Latin-1 for those symbologies which only support Latin-1 */
 	j = 0;
 	i = 0;
@@ -316,7 +316,7 @@ int latin1_process(struct zint_symbol *symbol, unsigned char source[], unsigned 
 	} while(i < *length);
 	preprocessed[j] = '\0';
 	*length = j;
-	
+
 	return 0;
 }
 
@@ -324,12 +324,12 @@ int utf8toutf16(struct zint_symbol *symbol, unsigned char source[], int vals[], 
 {
 	int bpos, jpos, error_number;
 	int next;
-	
+
 	bpos = 0;
 	jpos = 0;
 	error_number = 0;
 	next = 0;
-	
+
 	do {
 		if(source[bpos] <= 0x7f) {
 			/* 1 byte mode (7-bit ASCII) */
@@ -363,12 +363,12 @@ int utf8toutf16(struct zint_symbol *symbol, unsigned char source[], int vals[], 
 				return ERROR_INVALID_DATA;
 			}
 		}
-		
+
 		bpos = next;
-		
+
 	} while(bpos < *length);
 	*length = jpos;
-	
+
 	return error_number;
 }
 
