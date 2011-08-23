@@ -36,19 +36,21 @@ static char *C25IndustTable[10] = {"1111313111", "3111111131", "1131111131", "31
 static char *C25InterTable[10] = {"11331", "31113", "13113", "33111", "11313", "31311", "13311", "11133",
 	"31131", "13131"};
 
+
 static inline char check_digit(unsigned int count)
 {
 	return itoc((10 - (count % 10)) % 10);
 }
 
+
 int matrix_two_of_five(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* Code 2 of 5 Standard (Code 2 of 5 Matrix) */
-	
+
 	int i, error_number;
 	char dest[512]; /* 6 + 80 * 6 + 6 + 1 ~ 512*/
 
 	error_number = 0;
-	
+
 	if(length > 80) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
@@ -58,7 +60,7 @@ int matrix_two_of_five(struct zint_symbol *symbol, unsigned char source[], int l
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
-	
+
 	/* start character */
 	strcpy(dest, "411111");
 
@@ -68,7 +70,7 @@ int matrix_two_of_five(struct zint_symbol *symbol, unsigned char source[], int l
 
 	/* Stop character */
 	concat (dest, "41111");
-	
+
 	expand(symbol, dest);
 	ustrcpy(symbol->text, source);
 	return error_number;
@@ -81,7 +83,7 @@ int industrial_two_of_five(struct zint_symbol *symbol, unsigned char source[], i
 	char dest[512]; /* 6 + 40 * 10 + 6 + 1 */
 
 	error_number = 0;
-	
+
 	if(length > 45) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
@@ -91,7 +93,7 @@ int industrial_two_of_five(struct zint_symbol *symbol, unsigned char source[], i
 		strcpy(symbol->errtxt, "Invalid character in data");
 		return error_number;
 	}
-	
+
 	/* start character */
 	strcpy(dest, "313111");
 
@@ -101,7 +103,7 @@ int industrial_two_of_five(struct zint_symbol *symbol, unsigned char source[], i
 
 	/* Stop character */
 	concat (dest, "31113");
-	
+
 	expand(symbol, dest);
 	ustrcpy(symbol->text, source);
 	return error_number;
@@ -111,9 +113,9 @@ int iata_two_of_five(struct zint_symbol *symbol, unsigned char source[], int len
 { /* Code 2 of 5 IATA */
 	int i, error_number;
 	char dest[512]; /* 4 + 45 * 10 + 3 + 1 */
-	
+
 	error_number = 0;
-	
+
 	if(length > 45) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
@@ -123,17 +125,17 @@ int iata_two_of_five(struct zint_symbol *symbol, unsigned char source[], int len
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
-	
+
 	/* start */
 	strcpy(dest, "1111");
-	
+
 	for(i = 0; i < length; i++) {
 		lookup(NEON, C25IndustTable, source[i], dest);
 	}
-	
+
 	/* stop */
 	concat (dest, "311");
-	
+
 	expand(symbol, dest);
 	ustrcpy(symbol->text, source);
 	return error_number;
@@ -141,10 +143,10 @@ int iata_two_of_five(struct zint_symbol *symbol, unsigned char source[], int len
 
 int logic_two_of_five(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* Code 2 of 5 Data Logic */
-	
+
 	int i, error_number;
 	char dest[512]; /* 4 + 80 * 6 + 3 + 1 */
-	
+
 	error_number = 0;
 
 	if(length > 80) {
@@ -166,7 +168,7 @@ int logic_two_of_five(struct zint_symbol *symbol, unsigned char source[], int le
 
 	/* Stop character */
 	concat (dest, "311");
-	
+
 	expand(symbol, dest);
 	ustrcpy(symbol->text, source);
 	return error_number;
@@ -184,7 +186,7 @@ int interleaved_two_of_five(struct zint_symbol *symbol, unsigned char source[], 
 #endif
 
 	error_number = 0;
-	
+
 	if(length > 89) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
@@ -194,7 +196,7 @@ int interleaved_two_of_five(struct zint_symbol *symbol, unsigned char source[], 
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
-	
+
 	ustrcpy(temp, (unsigned char *) "");
 	/* Input must be an even number of characters for Interlaced 2 of 5 to work:
 	   if an odd number of characters has been entered then add a leading zero */
@@ -229,7 +231,7 @@ int interleaved_two_of_five(struct zint_symbol *symbol, unsigned char source[], 
 
 	/* Stop character */
 	concat (dest, "311");
-	
+
 	expand(symbol, dest);
 	ustrcpy(symbol->text, temp);
 	return error_number;
@@ -241,16 +243,16 @@ int itf14(struct zint_symbol *symbol, unsigned char source[], int length)
 	int i, error_number, zeroes;
 	unsigned int count;
 	char localstr[16];
-	
+
 	error_number = 0;
 
 	count = 0;
-	
+
 	if(length > 13) {
 		strcpy(symbol->errtxt, "Input too long");
 		return ERROR_TOO_LONG;
 	}
-	
+
 	error_number = is_sane(NEON, source, length);
 	if(error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid character in data");
@@ -263,7 +265,7 @@ int itf14(struct zint_symbol *symbol, unsigned char source[], int length)
 		localstr[i] = '0';
 	}
 	strcpy(localstr + zeroes, (char *)source);
-	
+
 	/* Calculate the check digit - the same method used for EAN-13 */
 
 	for (i = 12; i >= 0; i--) {
@@ -273,6 +275,7 @@ int itf14(struct zint_symbol *symbol, unsigned char source[], int length)
 			count += 2 * ctoi(localstr[i]);
 		}
 	}
+
 	localstr[13] = check_digit(count);
 	localstr[14] = '\0';
 	error_number = interleaved_two_of_five(symbol, (unsigned char *)localstr, strlen(localstr));
@@ -303,7 +306,7 @@ int dpleit(struct zint_symbol *symbol, unsigned char source[], int length)
 	for(i = 0; i < zeroes; i++)
 		localstr[i] = '0';
 	strcpy(localstr + zeroes, (char *)source);
-	
+
 	for (i = 12; i >= 0; i--)
 	{
 		count += 4 * ctoi(localstr[i]);
@@ -312,6 +315,7 @@ int dpleit(struct zint_symbol *symbol, unsigned char source[], int length)
 			count += 5 * ctoi(localstr[i]);
 		}
 	}
+
 	localstr[13] = check_digit(count);
 	localstr[14] = '\0';
 	error_number = interleaved_two_of_five(symbol, (unsigned char *)localstr, strlen(localstr));
@@ -340,7 +344,7 @@ int dpident(struct zint_symbol *symbol, unsigned char source[], int length)
 	for(i = 0; i < zeroes; i++)
 		localstr[i] = '0';
 	strcpy(localstr + zeroes, (char *)source);
-	
+
 	for (i = 10; i >= 0; i--)
 	{
 		count += 4 * ctoi(localstr[i]);
@@ -349,6 +353,7 @@ int dpident(struct zint_symbol *symbol, unsigned char source[], int length)
 			count += 5 * ctoi(localstr[i]);
 		}
 	}
+
 	localstr[11] = check_digit(count);
 	localstr[12] = '\0';
 	error_number = interleaved_two_of_five(symbol, (unsigned char *)localstr, strlen(localstr));

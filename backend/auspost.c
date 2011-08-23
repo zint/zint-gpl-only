@@ -101,7 +101,7 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[], int lengt
 
 	error_number = 0;
         strcpy(localstr, "");
-	
+
 	/* Do all of the length checking first to avoid stack smashing */
 	if(symbol->symbology == BARCODE_AUSPOST) {
 		/* Format control code (FCC) */
@@ -143,7 +143,7 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[], int lengt
 			case BARCODE_AUSROUTE: strcpy(fcc, "87"); break;
 			case BARCODE_AUSREDIRECT: strcpy(fcc, "92"); break;
 		}
-		
+
 		/* Add leading zeros as required */
 		zeroes = 8 - length;
 		memset(localstr, '0', zeroes);
@@ -157,7 +157,7 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[], int lengt
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
-	
+
 	/* Verifiy that the first 8 characters are numbers */
 	memcpy(dpid, localstr, 8);
 	dpid[8] = '\0';
@@ -216,7 +216,7 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[], int lengt
 
 	/* Stop character */
 	concat(data_pattern, "13");
-	
+
 	/* Turn the symbol into a bar pattern ready for plotting */
 	writer = 0;
 	h = strlen(data_pattern);

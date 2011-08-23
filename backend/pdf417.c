@@ -39,14 +39,14 @@
 #ifndef _MSC_VER
 #include <stdint.h>
 #else
-#include <malloc.h> 
+#include <malloc.h>
 #include "ms_stdint.h"
-#endif 
+#endif
 #include "pdf417.h"
 #include "common.h"
 #include "large.h"
 
-/* 
+/*
    Three figure numbers in comments give the location of command equivalents in the
    original Visual Basic source code file pdf417.frm
    this code retains some original (French) procedure and variable names to ease conversion */
@@ -88,7 +88,7 @@ int quelmode(char codeascii)
 void regroupe(int *indexliste)
 {
 	int i, j;
-	
+
 	/* bring together same type blocks */
 	if(*(indexliste) > 1) {
 		i = 1;
@@ -97,7 +97,7 @@ void regroupe(int *indexliste)
 				/* bring together */
 				liste[0][i - 1] = liste[0][i - 1] + liste[0][i];
 				j = i + 1;
-				
+
 				/* decreace the list */
 				while(j < *(indexliste)) {
 					liste[0][j - 1] = liste[0][j];
@@ -117,13 +117,13 @@ void regroupe(int *indexliste)
 void pdfsmooth(int *indexliste)
 {
 	int i, crnt, last, next, length;
-	
+
 	for(i = 0; i < *(indexliste); i++) {
 		crnt = liste[1][i];
 		length = liste[0][i];
 		if(i != 0) { last = liste[1][i - 1]; } else { last = FALSE; }
 		if(i != *(indexliste) - 1) { next = liste[1][i + 1]; } else { next = FALSE; }
-		
+
 		if(crnt == NUM) {
 			if(i == 0) { /* first block */
 				if(*(indexliste) > 1) { /* and there are others */
@@ -150,7 +150,7 @@ void pdfsmooth(int *indexliste)
 		length = liste[0][i];
 		if(i != 0) { last = liste[1][i - 1]; } else { last = FALSE; }
 		if(i != *(indexliste) - 1) { next = liste[1][i + 1]; } else { next = FALSE; }
-		
+
 		if((crnt == TEX) && (i > 0)) { /* not the first */
 			if(i == *(indexliste) - 1) { /* the last one */
 				if((last == BYT) && (length == 1)) { liste[1][i] = BYT; }
@@ -171,10 +171,10 @@ void textprocess(int *chainemc, int *mclength, char chaine[], int start, int len
 {
 	int j, indexlistet, curtable, listet[2][5000], chainet[5000], wnet;
 	char codeascii;
-	
+
 	codeascii = 0;
 	wnet = 0;
-	
+
 	for(j = 0; j < 1000; j++) {
 		listet[0][j] = 0;
 	}
@@ -203,7 +203,7 @@ void textprocess(int *chainemc, int *mclength, char chaine[], int start, int len
 			} else {
 				if(!(listet[0][j] & listet[0][j + 1])) { flag = TRUE; }
 			}
-						
+
 			if (flag) { /* we change only one character - look for temporary switch */
 				if((listet[0][j] & 1) && (curtable == 2)) { /* T_UPP */
 					chainet[wnet] = 27;
@@ -220,11 +220,11 @@ void textprocess(int *chainemc, int *mclength, char chaine[], int start, int len
 					flag = FALSE;
 				}
 			}
-						
+
 			/* 599 */
 			if (!(flag)) {
 				int newtable;
-							
+
 				if(j == (length - 1)) {
 					newtable = listet[0][j];
 				} else {
@@ -234,7 +234,7 @@ void textprocess(int *chainemc, int *mclength, char chaine[], int start, int len
 						newtable = listet[0][j] & listet[0][j + 1];
 					}
 				}
-							
+
 				/* Maintain the first if several tables are possible */
 				switch (newtable) {
 					case 3:
@@ -252,16 +252,16 @@ void textprocess(int *chainemc, int *mclength, char chaine[], int start, int len
 					case 12:
 						newtable = 4; break;
 				}
-							
+
 				/* 619 - select the switch */
 				switch (curtable) {
-					case 1: 
+					case 1:
 						switch (newtable) {
 							case 2: chainet[wnet] = 27; wnet++; break;
 							case 4: chainet[wnet] = 28; wnet++; break;
 							case 8: chainet[wnet] = 28; wnet++; chainet[wnet] = 25; wnet++;  break;
 						} break;
-					case 2: 
+					case 2:
 						switch (newtable) {
 							case 1: chainet[wnet] = 28; wnet++; chainet[wnet] = 28; wnet++;  break;
 							case 4: chainet[wnet] = 28; wnet++;  break;
@@ -287,7 +287,7 @@ void textprocess(int *chainemc, int *mclength, char chaine[], int start, int len
 			}
 		}
 	}
-	
+
 	/* 663 */
 	if (wnet & 1) {
 		chainet[wnet] = 29;
@@ -296,14 +296,14 @@ void textprocess(int *chainemc, int *mclength, char chaine[], int start, int len
 	/* Now translate the string chainet into codewords */
 	chainemc[*(mclength)] = 900;
 	*(mclength) = *(mclength) + 1;
-	
+
 	for(j = 0; j < wnet; j+= 2) {
 		int cw_number;
-		
+
 		cw_number = (30 * chainet[j]) + chainet[j + 1];
 		chainemc[*(mclength)] = cw_number;
 		*(mclength) = *(mclength) + 1;
-		
+
 	}
 }
 
@@ -315,7 +315,7 @@ void byteprocess(int *chainemc, int *mclength, unsigned char chaine[], int start
 	unsigned int	chunkLen  = 0;
 	uint64_t	mantisa   = 0ULL;
 	uint64_t	total     = 0ULL;
-	
+
 	if(debug) printf("\nEntering byte mode at position %d\n", start);
 
 	if(length == 1) {
@@ -331,7 +331,7 @@ void byteprocess(int *chainemc, int *mclength, unsigned char chaine[], int start
 			chainemc[(*mclength)++] = 901;
 			if(debug) printf("901 ");
 		}
-		
+
 		while (len < length)
 		{
 			chunkLen = length - len;
@@ -373,12 +373,12 @@ void numbprocess(int *chainemc, int *mclength, char chaine[], int start, int len
 {
 	int j, loop, longueur, dummy[100], dumlength, diviseur, nombre;
 	char chainemod[50], chainemult[100], temp;
-	
+
 	strcpy(chainemod, "");
 	for(loop = 0; loop <= 50; loop++) {
 		dummy[loop] = 0;
 	}
-	
+
 	chainemc[*(mclength)] = 902;
 	*(mclength) = *(mclength) + 1;
 
@@ -395,7 +395,7 @@ void numbprocess(int *chainemc, int *mclength, char chaine[], int start, int len
 		chainemod[longueur + 1] = '\0';
 		do {
 			diviseur = 900;
-			
+
 			/* 877 - gosub Modulo */
 			strcpy(chainemult, "");
 			nombre = 0;
@@ -416,7 +416,7 @@ void numbprocess(int *chainemc, int *mclength, char chaine[], int start, int len
 			}
 			diviseur = nombre;
 			/* return to 723 */
-			
+
 			for(loop = dumlength; loop > 0; loop--) {
 				dummy[loop] = dummy[loop - 1];
 			}
@@ -445,13 +445,13 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
 	/* 456 */
 	indexliste = 0;
 	indexchaine = 0;
-	
+
 	mode = quelmode(chaine[indexchaine]);
-	
+
 	for(i = 0; i < 1000; i++) {
 		liste[0][i] = 0;
 	}
-	
+
 	/* 463 */
 	do {
 		liste[1][indexliste] = mode;
@@ -462,7 +462,7 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
 		}
 		indexliste++;
 	} while (indexchaine < length);
-	
+
 	/* 474 */
 	pdfsmooth(&indexliste);
 
@@ -478,7 +478,7 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
 			}
 		}
 	}
-	
+
 	/* 541 - now compress the data */
 	indexchaine = 0;
 	mclength = 0;
@@ -531,16 +531,16 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
 		/* stop the symbol from becoming too high */
 		symbol->option_2 = symbol->option_2 + 1;
 	}
-	
+
 	if(longueur + k > 928) {
 		/* Enforce maximum codeword limit */
 		return 2;
 	}
-	
+
 	if(((longueur + k) / symbol->option_2) > 90) {
 		return 4;
 	}
-	
+
 	/* 781 - Padding calculation */
 	longueur = mclength + 1 + k;
 	i = 0;
@@ -587,17 +587,17 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
 		}
 		mccorrection[0] = (929 - (total * coefrs[offset + j]) % 929) % 929;
 	}
-	
+
 	/* we add these codes to the string */
 	for(i = k - 1; i >= 0; i--) {
 		chainemc[mclength++] = mccorrection[i] ? 929 - mccorrection[i] : 0;
 	}
-	
+
 	/* 818 - The CW string is finished */
 	c1 = (mclength / symbol->option_2 - 1) / 3;
 	c2 = symbol->option_1 * 3 + (mclength / symbol->option_2 - 1) % 3;
 	c3 = symbol->option_2 - 1;
-	
+
 	/* we now encode each row */
 	for(i = 0; i <= (mclength / symbol->option_2) - 1; i++) {
 		for(j = 0; j < symbol->option_2 ; j++) {
@@ -605,7 +605,7 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
 		}
 		k = (i / 3) * 30;
 		switch(i % 3) {
-				/* follows this pattern from US Patent 5,243,655: 
+				/* follows this pattern from US Patent 5,243,655:
 			Row 0: L0 (row #, # of rows)         R0 (row #, # of columns)
 			Row 1: L1 (row #, security level)    R1 (row #, # of rows)
 			Row 2: L2 (row #, # of columns)      R2 (row #, security level)
@@ -649,7 +649,7 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
 			}
 			concat(codebarre, "-");
 		}
-		
+
 		strcpy(pattern, "");
 		for(loop = 0; loop < strlen(codebarre); loop++) {
 			lookup(BRSET, PDFttf, codebarre[loop], pattern);
@@ -663,7 +663,7 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
 	}
 	symbol->rows = (mclength / symbol->option_2);
 	symbol->width = strlen(pattern);
-	
+
 	/* 843 */
 	return codeerr;
 }
@@ -674,7 +674,7 @@ int pdf417enc(struct zint_symbol *symbol, unsigned char source[], int length)
 	int codeerr, error_number;
 
 	error_number = 0;
-	
+
 	if((symbol->option_1 < -1) || (symbol->option_1 > 8)) {
 		strcpy(symbol->errtxt, "Security value out of range");
 		symbol->option_1 = -1;
@@ -688,7 +688,7 @@ int pdf417enc(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	/* 349 */
 	codeerr = pdf417(symbol, source, length);
-	
+
 	/* 352 */
 	if(codeerr != 0) {
 		switch(codeerr) {
@@ -714,7 +714,7 @@ int pdf417enc(struct zint_symbol *symbol, unsigned char source[], int length)
 				break;
 		}
 	}
-	
+
 	/* 364 */
 	return error_number;
 }
@@ -722,27 +722,27 @@ int pdf417enc(struct zint_symbol *symbol, unsigned char source[], int length)
 
 int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
 { /* like PDF417 only much smaller! */
-	
+
 	int i, k, j, indexchaine, indexliste, mode, longueur, mccorrection[50], offset;
 	int total, chainemc[2700], mclength, dummy[5], codeerr;
 	char codebarre[100], pattern[580];
 	int variant, LeftRAPStart, CentreRAPStart, RightRAPStart, StartCluster;
 	int LeftRAP, CentreRAP, RightRAP, Cluster, writer, flip, loop;
 	int debug = 0;
-	
+
 	/* Encoding starts out the same as PDF417, so use the same code */
 	codeerr = 0;
-	
+
 	/* 456 */
 	indexliste = 0;
 	indexchaine = 0;
-	
+
 	mode = quelmode(chaine[indexchaine]);
-	
+
 	for(i = 0; i < 1000; i++) {
 		liste[0][i] = 0;
 	}
-	
+
 	/* 463 */
 	do {
 		liste[1][indexliste] = mode;
@@ -769,7 +769,7 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
 			}
 		}
 	}
-	
+
 	/* 541 - now compress the data */
 	indexchaine = 0;
 	mclength = 0;
@@ -793,7 +793,7 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
 	}
 
 	/* This is where it all changes! */
-	
+
 	if(mclength > 126) {
 		strcpy(symbol->errtxt, "Input data too long");
 		return ERROR_TOO_LONG;
@@ -811,32 +811,32 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
 		}
 		printf("\n");
 	}
-	
+
 	/* Now figure out which variant of the symbol to use and load values accordingly */
-	
+
 	variant = 0;
-	
+
 	if((symbol->option_2 == 1) && (mclength > 20)) {
 		/* the user specified 1 column but the data doesn't fit - go to automatic */
 		symbol->option_2 = 0;
 		strcpy(symbol->errtxt, "Specified symbol size too small for data");
 		codeerr = WARN_INVALID_OPTION;
 	}
-	
+
 	if((symbol->option_2 == 2) && (mclength > 37)) {
 		/* the user specified 2 columns but the data doesn't fit - go to automatic */
 		symbol->option_2 = 0;
 		strcpy(symbol->errtxt, "Specified symbol size too small for data");
 		codeerr = WARN_INVALID_OPTION;
 	}
-	
+
 	if((symbol->option_2 == 3) && (mclength > 82)) {
 		/* the user specified 3 columns but the data doesn't fit - go to automatic */
 		symbol->option_2 = 0;
 		strcpy(symbol->errtxt, "Specified symbol size too small for data");
 		codeerr = WARN_INVALID_OPTION;
 	}
-	
+
 	if(symbol->option_2 == 1) {
 		/* the user specified 1 column and the data does fit */
 		variant = 6;
@@ -890,7 +890,7 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
 	if(variant == 0) {
 		/* Zint can choose automatically from all available variations */
 		for(i = 27; i >= 0; i--) {
-			
+
 			if(MicroAutosize[i] >= mclength) {
 				variant = MicroAutosize[i + 28];
 			}
@@ -919,7 +919,7 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
 		mclength++;
 		i--;
 	}
-	
+
 	/* Reed-Solomon error correction */
 	longueur = mclength;
 	for(loop = 0; loop < 50; loop++) {
@@ -936,7 +936,7 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
 			}
 		}
 	}
-	
+
 	for(j = 0; j < k; j++) {
 		if(mccorrection[j] != 0) { mccorrection[j] = 929 - mccorrection[j]; }
 	}
@@ -953,20 +953,20 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
 		}
 		printf("\n");
 	}
-	
+
 	/* Now get the RAP (Row Address Pattern) start values */
 	LeftRAPStart = RAPTable[variant];
 	CentreRAPStart = RAPTable[variant + 34];
 	RightRAPStart = RAPTable[variant + 68];
 	StartCluster = RAPTable[variant + 102] / 3;
-	
+
 	/* That's all values loaded, get on with the encoding */
-	
+
 	LeftRAP = LeftRAPStart;
 	CentreRAP = CentreRAPStart;
 	RightRAP = RightRAPStart;
 	Cluster = StartCluster; /* Cluster can be 0, 1 or 2 for Cluster(0), Cluster(3) and Cluster(6) */
-	
+
 	if(debug) printf("\nInternal row representation:\n");
 	for(i = 0; i < symbol->rows; i++) {
 		if(debug) printf("row %d: ", i);
@@ -979,7 +979,7 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
 			dummy[j + 1] = chainemc[i * symbol->option_2 + j];
 			if(debug) printf("[%d] ", dummy[j + 1]);
 		}
-		
+
 		/* Copy the data into codebarre */
 		concat(codebarre, RAPLR[LeftRAP]);
 		concat(codebarre, "1");
@@ -1009,9 +1009,9 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
 		concat(codebarre, RAPLR[RightRAP]);
 		concat(codebarre, "1"); /* stop */
 		if(debug) printf("%s\n", codebarre);
-		
+
 		/* Now codebarre is a mixture of letters and numbers */
-		
+
 		writer = 0;
 		flip = 1;
 		strcpy(pattern, "");
@@ -1037,19 +1037,19 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
 			}
 		}
 		symbol->width = writer;
-		
+
 		/* so now pattern[] holds the string of '1's and '0's. - copy this to the symbol */
 		for(loop = 0; loop < strlen(pattern); loop++) {
 			if(pattern[loop] == '1') { set_module(symbol, i, loop); }
 		}
 		symbol->row_height[i] = 2;
-	
+
 		/* Set up RAPs and Cluster for next row */
 		LeftRAP++;
 		CentreRAP++;
 		RightRAP++;
 		Cluster++;
-		
+
 		if(LeftRAP == 53) {
 			LeftRAP = 1;
 		}
@@ -1063,7 +1063,7 @@ int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
 			Cluster = 0;
 		}
 	}
-	
+
 	return codeerr;
 }
 

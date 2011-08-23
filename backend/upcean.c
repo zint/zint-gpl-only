@@ -205,7 +205,7 @@ void upce(struct zint_symbol *symbol, unsigned char source[], char dest[])
 
 	/* stop character */
 	concat (dest, "111111");
-	
+
 	hrt[7] = check_digit;
 	hrt[8] = '\0';
 	ustrcpy(symbol->text, (unsigned char*)hrt);
@@ -308,7 +308,7 @@ void ean13(struct zint_symbol *symbol, unsigned char source[], char dest[])
 
 	strcpy(parity, "");
 	strcpy(gtin, (char*)source);
-	
+
 	/* Add the appropriate check digit */
 	length = strlen(gtin);
 	gtin[length] = ean_check(gtin);
@@ -344,7 +344,7 @@ void ean13(struct zint_symbol *symbol, unsigned char source[], char dest[])
 
 	/* stop character */
 	concat (dest, "111");
-	
+
 	ustrcpy(symbol->text, (unsigned char*)gtin);
 }
 
@@ -407,7 +407,7 @@ int isbn(struct zint_symbol *symbol, unsigned char source[], const unsigned int 
 {
 	int i, error_number;
 	char check_digit;
-	
+
 	to_upper(source);
 	error_number = is_sane("0123456789X", source, src_len);
 	if(error_number == ERROR_INVALID_DATA) {
@@ -491,7 +491,7 @@ int isbn(struct zint_symbol *symbol, unsigned char source[], const unsigned int 
 
 		ean13(symbol, source, dest);
 	}
-	
+
 	return 0;
 }
 
@@ -500,7 +500,7 @@ void ean_leading_zeroes(struct zint_symbol *symbol, unsigned char source[], unsi
 	unsigned char first_part[20], second_part[20], zfirst_part[20], zsecond_part[20];
 	int with_addon = 0;
 	int first_len = 0, second_len = 0, zfirst_len = 0, zsecond_len = 0, i, h;
-	
+
 	h = ustrlen(source);
 	for(i = 0; i < h; i++) {
 		if(source[i] == '+') {
@@ -513,23 +513,23 @@ void ean_leading_zeroes(struct zint_symbol *symbol, unsigned char source[], unsi
 			}
 		}
 	}
-	
+
 	ustrcpy(first_part, (unsigned char *)"");
 	ustrcpy(second_part, (unsigned char *)"");
 	ustrcpy(zfirst_part, (unsigned char *)"");
 	ustrcpy(zsecond_part, (unsigned char *)"");
-	
+
 	/* Split input into two strings */
 	for(i = 0; i < first_len; i++) {
 		first_part[i] = source[i];
 		first_part[i + 1] = '\0';
 	}
-	
+
 	for(i = 0; i < second_len; i++) {
 		second_part[i] = source[i + first_len + 1];
 		second_part[i + 1] = '\0';
 	}
-	
+
 	/* Calculate target lengths */
 	if(second_len <= 5) { zsecond_len = 5; }
 	if(second_len <= 2) { zsecond_len = 2; }
@@ -558,7 +558,7 @@ void ean_leading_zeroes(struct zint_symbol *symbol, unsigned char source[], unsi
 			break;
 	}
 
-	
+
 	/* Add leading zeroes */
 	for(i = 0; i < (zfirst_len - first_len); i++) {
 		uconcat(zfirst_part, (unsigned char *)"0");
@@ -568,7 +568,7 @@ void ean_leading_zeroes(struct zint_symbol *symbol, unsigned char source[], unsi
 		uconcat(zsecond_part, (unsigned char *)"0");
 	}
 	uconcat(zsecond_part, second_part);
-	
+
 	/* Copy adjusted data back to local_source */
 	uconcat(local_source, zfirst_part);
 	if(zsecond_len != 0) {
@@ -584,7 +584,7 @@ int eanx(struct zint_symbol *symbol, unsigned char source[], int src_len)
 	unsigned char local_source[20] = { 0 };
 	unsigned int latch, reader, writer, with_addon;
 	int error_number, i;
-	
+
 
 	with_addon = FALSE;
 	latch = FALSE;
@@ -615,9 +615,9 @@ int eanx(struct zint_symbol *symbol, unsigned char source[], int src_len)
 	if(symbol->symbology == BARCODE_ISBNX) {
 		to_upper(local_source);
 	}
-	
+
 	ean_leading_zeroes(symbol, source, local_source);
-	
+
 	for(reader = 0; reader <= ustrlen(local_source); reader++)
 	{
 		if(source[reader] == '+') { with_addon = TRUE; }
@@ -765,7 +765,7 @@ int eanx(struct zint_symbol *symbol, unsigned char source[], int src_len)
 			return ERROR_TOO_LONG;
 			break;
 	}
-	
+
 	expand(symbol, (char*)dest);
 
 	switch(symbol->symbology) {
@@ -785,7 +785,7 @@ int eanx(struct zint_symbol *symbol, unsigned char source[], int src_len)
 			break;
 	}
 
-	
+
 	if((symbol->errtxt[0] == 'w') && (error_number == 0)) {
 		error_number = 1; /* flag UPC-E warnings */
 	}

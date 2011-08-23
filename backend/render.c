@@ -1,5 +1,5 @@
-/* 
- * render.c - Generic Rendered Format 
+/*
+ * render.c - Generic Rendered Format
  *
  * Initiall written by Sam Lown for use in gLabels. Converts encoded
  * data into a generic internal structure of lines and characters
@@ -92,7 +92,7 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 	addon_width_x = 0;
 
   /*
-   * Determine if there will be any addon texts and text height 
+   * Determine if there will be any addon texts and text height
    */
 	latch = 0;
 	r = 0;
@@ -109,7 +109,7 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 		}
 	}
 	addon[r] = '\0';
-	
+
 	if((!symbol->show_hrt) || (ustrlen(symbol->text) == 0)) {
 		hide_text = 1;
 		text_height = text_offset = 0.0;
@@ -123,7 +123,7 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
    * Calculate the width of the barcode, especially if there are any extra
    * borders or white space to add.
    */
-	
+
 	while(!(module_is_set(symbol, symbol->rows - 1, symbol_lead_in))) {
 		symbol_lead_in++;
 	}
@@ -184,7 +184,7 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 				break;
 		}
 	}
-	
+
 	if (((symbol->symbology == BARCODE_UPCE) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_UPCE_CC)) {
 		upceanflag = 6;
 		if(symbol->whitespace_width == 0) {
@@ -202,7 +202,7 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 				break;
 		}
 	}
-	
+
 	total_symbol_width_x = main_symbol_width_x + addon_width_x;
 	total_area_width_x = total_symbol_width_x + (2 * (symbol->border_width + symbol->whitespace_width));
 
@@ -237,7 +237,7 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 	} else {
 		scaler = width / (total_symbol_width_x + (2 * xoffset));
 		symbol->height = (height / scaler) - ((2 * yoffset) + text_offset + text_height);
-		
+
 		render->width = width;
 		render->height = height;
 	}
@@ -251,7 +251,7 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 
 	x_dimension = render->width / total_area_width_x;
 	x_dimension /= GL_CONST;
-	
+
 	/* Set minimum size of symbol */
 	/* Barcode must be at least 2mm high by 2mm across */
 	if(render->height < ((x_dimension * ((2 * symbol->border_width) + text_offset + text_height)) + 2.0) * GL_CONST) {
@@ -260,7 +260,7 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 	if(render->width < (2.0 * GL_CONST)) {
 		render->width = (2.0 * GL_CONST);
 	}
-	
+
 	if(symbol->symbology == BARCODE_CODABAR) {
 		/* The minimum X-dimension of Codabar is 0.191mm. The minimum bar height is 5mm */
 		if(x_dimension < 0.191) {
@@ -270,7 +270,7 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 			render->height = ((x_dimension * ((2 * symbol->border_width) + text_offset + text_height)) + 5.0) * GL_CONST;
 		}
 	}
-	
+
 	if(symbol->symbology == BARCODE_CODE49) {
 		/* The minimum X-dimension of Code 49 is 0.191mm */
 		if(x_dimension < 0.191) {
@@ -278,7 +278,7 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 			render->height = render->width / symbol_aspect;
 		}
 	}
-	
+
 	if(upceanflag != 0) {
 		/* The X-dimension of UPC/EAN symbols is fixed at 0.330mm */
 		/* NOTE: This code will need adjustment before it correctly deals with composite symbols */
@@ -303,13 +303,13 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 				render->height = ((0.330 * ((2 * symbol->border_width) + text_offset + text_height)) + 21.10) * GL_CONST;
 		}
 	}
-	
+
 	if(symbol->symbology == BARCODE_ONECODE) {
 		/* The size of USPS Intelligent Mail barcode is fixed */
 		render->width = 0.508 * GL_CONST * total_area_width_x;
 		render->height = 4.064 * GL_CONST;
 	}
-	
+
 	if((symbol->symbology == BARCODE_POSTNET) || (symbol->symbology == BARCODE_PLANET)) {
 		/* The size of PostNet and PLANET are fized */
 		render->width = 0.508 * GL_CONST * total_area_width_x;
@@ -322,19 +322,19 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 		render->width = 0.508 * GL_CONST * total_area_width_x;
 		render->height = 4.064 * GL_CONST;
 	}
-	
+
 	if((symbol->symbology == BARCODE_RM4SCC) || (symbol->symbology == BARCODE_KIX)) {
 		/* Royal Mail and KIX Code uses 22 bars per inch */
 		render->width = 0.577 * GL_CONST * total_area_width_x;
 		render->height = 5.22 * GL_CONST;
 	}
-	
+
 	if(symbol->symbology == BARCODE_MAXICODE) {
 		/* Maxicode is a fixed size */
 		scaler = GL_CONST; /* Converts from millimeters to the scale used by glabels */
 		render->width = 28.16 * scaler;
 		render->height = 26.86 * scaler;
-		
+
 		/* Central bullseye pattern */
 		ring = render_plot_create_ring(13.64 * scaler, 13.43 * scaler, 0.85 * scaler, 0.67 * scaler);
 		render_plot_add_ring(symbol, ring, &last_ring);
@@ -342,7 +342,7 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 		render_plot_add_ring(symbol, ring, &last_ring);
 		ring = render_plot_create_ring(13.64 * scaler, 13.43 * scaler, 3.54 * scaler, 0.67 * scaler);
 		render_plot_add_ring(symbol, ring, &last_ring);
-		
+
 		/* Hexagons */
 		for(r = 0; r < symbol->rows; r++) {
 			for(i = 0; i < symbol->width; i++) {
@@ -352,12 +352,12 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 				}
 			}
 		}
-	
+
 	} else {
 		/* everything else uses rectangles (or squares) */
 		/* Works from the bottom of the symbol up */
 		int addon_latch = 0;
-		
+
 		for(r = 0; r < symbol->rows; r++) {
 			this_row = r;
 			if(symbol->row_height[this_row] == 0) {
@@ -374,7 +374,7 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 				}
 			}
 			row_posn += yoffset;
-			
+
 			i = 0;
 			if(module_is_set(symbol, this_row, 0)) {
 				latch = 1;
@@ -390,7 +390,7 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 				if((addon_latch == 0) && (r == (symbol->rows - 1)) && (i > main_symbol_width_x)) {
 					addon_text_posn = row_posn * scaler;
 					addon_latch = 1;
-				} 
+				}
 				if(latch == 1) {
 					/* a bar */
 					if(addon_latch == 0) {
@@ -399,14 +399,14 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 						line = render_plot_create_line((i + xoffset) * scaler, (row_posn + 10.0) * scaler, block_width * scaler, (row_height - 5.0) * scaler);
 					}
 					latch = 0;
-					
+
 					render_plot_add_line(symbol, line, &last_line);
 				} else {
 					/* a space */
 					latch = 1;
 				}
 				i += block_width;
-				
+
 			} while (i < symbol->width);
 		}
 	}
@@ -440,7 +440,7 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 			}
 			textpart[4] = '\0';
 			textpos = 17;
-			textwidth = 4.0 * 8.5; 
+			textwidth = 4.0 * 8.5;
 			render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn, 11.0 * scaler, textwidth * scaler, &last_string);
 			for(i = 0; i < 4; i++) {
 				textpart[i] = symbol->text[i + 4];
@@ -450,7 +450,7 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 			render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn, 11.0 * scaler, textwidth * scaler, &last_string);
 			textdone = 1;
 			switch(strlen(addon)) {
-				case 2:	
+				case 2:
 					textpos = xoffset + 86;
 					textwidth = 2.0 * 8.5;
 					render_plot_add_string(symbol, (unsigned char *) addon, textpos * scaler, addon_text_posn * scaler, 11.0 * scaler, textwidth * scaler, &last_string);
@@ -463,7 +463,7 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 			}
 
 		}
-		
+
 		if(upceanflag == 13) {
 			/* guard bar extensions and text formatting for EAN-13 */
 			i = 0;
@@ -502,7 +502,7 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 			render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn, 11.0 * scaler, textwidth * scaler, &last_string);
 			textdone = 1;
 			switch(strlen(addon)) {
-				case 2:	
+				case 2:
 					textpos = xoffset + 114;
 					textwidth = 2.0 * 8.5;
 					render_plot_add_string(symbol, (unsigned char *) addon, textpos * scaler, addon_text_posn * scaler, 11.0 * scaler, textwidth * scaler, &last_string);
@@ -514,7 +514,7 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 					break;
 			}
 		}
-		
+
 		if (upceanflag == 12) {
 			/* guard bar extensions and text formatting for UPCA */
 			i = 0;
@@ -535,7 +535,7 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 				}
 				i++;
 			}
-			
+
 			textpart[0] = symbol->text[0];
 			textpart[1] = '\0';
 			textpos = -5;
@@ -560,7 +560,7 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 			render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn + (2.0 * scaler), 8.0 * scaler, textwidth * scaler, &last_string);
 			textdone = 1;
 			switch(strlen(addon)) {
-				case 2:	
+				case 2:
 					textpos = xoffset + 116;
 					textwidth = 2.0 * 8.5;
 					render_plot_add_string(symbol, (unsigned char *) addon, textpos * scaler, addon_text_posn * scaler, 11.0 * scaler, textwidth * scaler, &last_string);
@@ -572,7 +572,7 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 					break;
 			}
 		}
-		
+
 		if (upceanflag == 6) {
 			/* guard bar extensions and text formatting for UPCE */
 			i = 0;
@@ -588,7 +588,7 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 				}
 				i++;
 			}
-			
+
 			textpart[0] = symbol->text[0];
 			textpart[1] = '\0';
 			textpos = -5;
@@ -608,7 +608,7 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 			render_plot_add_string(symbol, (unsigned char *) textpart, (textpos + xoffset) * scaler, default_text_posn + (2.0 * scaler), 8.0 * scaler, textwidth * scaler, &last_string);
 			textdone = 1;
 			switch(strlen(addon)) {
-				case 2:	
+				case 2:
 					textpos = xoffset + 70;
 					textwidth = 2.0 * 8.5;
 					render_plot_add_string(symbol, (unsigned char *) addon, textpos * scaler, addon_text_posn * scaler, 11.0 * scaler, textwidth * scaler, &last_string);
@@ -624,10 +624,10 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 		/* Put normal human readable text at the bottom (and centered) */
 		if (textdone == 0) {
 			// caculate start xoffset to center text
-			render_plot_add_string(symbol, symbol->text, ((symbol->width / 2.0) + xoffset) * scaler, default_text_posn, 9.0 * scaler, 0.0, &last_string); 
+			render_plot_add_string(symbol, symbol->text, ((symbol->width / 2.0) + xoffset) * scaler, default_text_posn, 9.0 * scaler, 0.0, &last_string);
 		}
 	}
-	
+
 	switch(symbol->symbology) {
 		case BARCODE_MAXICODE:
 			/* Do nothing! */
@@ -666,7 +666,7 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 
 
 /*
- * Create a new line with its memory allocated ready for adding to the 
+ * Create a new line with its memory allocated ready for adding to the
  * rendered structure.
  *
  * This is much quicker than writing out each line manually (in some cases!)
@@ -674,7 +674,7 @@ int render_plot(struct zint_symbol *symbol, float width, float height)
 struct zint_render_line *render_plot_create_line(float x, float y, float width, float length)
 {
 	struct zint_render_line *line;
-	
+
 #ifndef _MSC_VER
 	line = malloc(sizeof(struct zint_render_line));
 #else
@@ -684,13 +684,13 @@ struct zint_render_line *render_plot_create_line(float x, float y, float width, 
 	line->x = x;
 	line->y = y;
 	line->width = width;
-	line->length = length;	
+	line->length = length;
 
 	return line;
 }
 
 /*
- * Add the line to the current rendering and update the last line's 
+ * Add the line to the current rendering and update the last line's
  * next value.
  */
 int render_plot_add_line(struct zint_symbol *symbol, struct zint_render_line *line, struct zint_render_line **last_line)
@@ -707,7 +707,7 @@ int render_plot_add_line(struct zint_symbol *symbol, struct zint_render_line *li
 struct zint_render_ring *render_plot_create_ring(float x, float y, float radius, float line_width)
 {
 	struct zint_render_ring *ring;
-	
+
 #ifndef _MSC_VER
 	ring = malloc(sizeof(struct zint_render_ring));
 #else
@@ -718,7 +718,7 @@ struct zint_render_ring *render_plot_create_ring(float x, float y, float radius,
 	ring->y = y;
 	ring->radius = radius;
 	ring->line_width = line_width;
-	
+
 	return ring;
 }
 
@@ -728,7 +728,7 @@ int render_plot_add_ring(struct zint_symbol *symbol, struct zint_render_ring *ri
 		(*last_ring)->next = ring;
 	else
 		symbol->rendered->rings = ring; // first ring
-		
+
 	*last_ring = ring;
 	return 1;
 }
@@ -736,7 +736,7 @@ int render_plot_add_ring(struct zint_symbol *symbol, struct zint_render_ring *ri
 struct zint_render_hexagon *render_plot_create_hexagon(float x, float y)
 {
 	struct zint_render_hexagon *hexagon;
-	
+
 #ifndef _MSC_VER
 	hexagon = malloc(sizeof(struct zint_render_hexagon));
 #else
@@ -745,7 +745,7 @@ struct zint_render_hexagon *render_plot_create_hexagon(float x, float y)
 	hexagon->next = NULL;
 	hexagon->x = x;
 	hexagon->y = y;
-	
+
 	return hexagon;
 }
 
@@ -755,7 +755,7 @@ int render_plot_add_hexagon(struct zint_symbol *symbol, struct zint_render_hexag
 		(*last_hexagon)->next = hexagon;
 	else
 		symbol->rendered->hexagons = hexagon; // first hexagon
-		
+
 	*last_hexagon = hexagon;
 	return 1;
 }
@@ -778,7 +778,7 @@ int render_plot_add_string(struct zint_symbol *symbol,
 	string->next = NULL;
 	string->x = x;
 	string->y = y;
-	string->width = width; 
+	string->width = width;
 	string->fsize = fsize;
 	string->length = ustrlen(text);
 #ifndef _MSC_VER

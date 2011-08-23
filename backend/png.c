@@ -29,7 +29,7 @@
 #include "common.h"
 
 #ifdef _MSC_VER
-#include <malloc.h> 
+#include <malloc.h>
 #endif /* _MSC_VER */
 
 #ifndef NO_PNG
@@ -73,7 +73,7 @@ int png_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 {
 	struct mainprog_info_type wpng_info;
 	struct mainprog_info_type *graphic;
-	
+
 #ifndef _MSC_VER
 	unsigned char outdata[image_width * 3];
 #else
@@ -86,7 +86,7 @@ int png_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 	unsigned char *image_data;
 	int i, row, column, errno;
 	int fgred, fggrn, fgblu, bgred, bggrn, bgblu;
-	
+
 	switch(rotate_angle) {
 		case 0:
 		case 180:
@@ -99,11 +99,11 @@ int png_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 			graphic->height = image_width;
 			break;
 	}
-	
+
 	/* sort out colour options */
 	to_upper((unsigned char*)symbol->fgcolour);
 	to_upper((unsigned char*)symbol->bgcolour);
-	
+
 	if(strlen(symbol->fgcolour) != 6) {
 		strcpy(symbol->errtxt, "Malformed foreground colour target");
 		return ERROR_INVALID_OPTION;
@@ -122,14 +122,14 @@ int png_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 		strcpy(symbol->errtxt, "Malformed background colour target");
 		return ERROR_INVALID_OPTION;
 	}
-	
+
 	fgred = (16 * ctoi(symbol->fgcolour[0])) + ctoi(symbol->fgcolour[1]);
 	fggrn = (16 * ctoi(symbol->fgcolour[2])) + ctoi(symbol->fgcolour[3]);
 	fgblu = (16 * ctoi(symbol->fgcolour[4])) + ctoi(symbol->fgcolour[5]);
 	bgred = (16 * ctoi(symbol->bgcolour[0])) + ctoi(symbol->bgcolour[1]);
 	bggrn = (16 * ctoi(symbol->bgcolour[2])) + ctoi(symbol->bgcolour[3]);
 	bgblu = (16 * ctoi(symbol->bgcolour[4])) + ctoi(symbol->bgcolour[5]);
-	
+
 	/* Open output file in binary mode */
 	if((symbol->output_options & BARCODE_STDOUT) != 0) {
 #ifdef _MSC_VER
@@ -145,7 +145,7 @@ int png_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 			return ERROR_FILE_ACCESS;
 		}
 	}
-	
+
 	/* Set up error handling routine as proc() above */
 	png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, graphic, writepng_error_handler, NULL);
 	if (!png_ptr) {
@@ -207,7 +207,7 @@ int png_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 							outdata[i + 1] = bggrn;
 							outdata[i + 2] = bgblu;
 							break;
-				
+
 					}
 				}
 				/* write row contents to file */
@@ -231,10 +231,10 @@ int png_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 							outdata[i + 1] = bggrn;
 							outdata[i + 2] = bgblu;
 							break;
-			
+
 					}
 				}
-		
+
 				/* write row contents to file */
 				image_data = outdata;
 				png_write_row(png_ptr, image_data);
@@ -256,10 +256,10 @@ int png_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 							outdata[i + 1] = bggrn;
 							outdata[i + 2] = bgblu;
 							break;
-			
+
 					}
 				}
-		
+
 				/* write row contents to file */
 				image_data = outdata;
 				png_write_row(png_ptr, image_data);
@@ -281,7 +281,7 @@ int png_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 							outdata[i + 1] = bggrn;
 							outdata[i + 2] = bgblu;
 							break;
-	
+
 					}
 				}
 
@@ -307,7 +307,7 @@ int bmp_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 	unsigned long rowbytes;
 	int i, row, column, errno;
 	int fgred, fggrn, fgblu, bgred, bggrn, bgblu;
-	
+
 	switch(rotate_angle) {
 		case 0:
 		case 180:
@@ -315,22 +315,22 @@ int bmp_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 			symbol->bitmap_height = image_height;
 			break;
 		case 90:
-		case 270:			
+		case 270:
 			symbol->bitmap_width = image_height;
 			symbol->bitmap_height = image_width;
 			break;
 	}
-	
+
 	if (symbol->bitmap != NULL)
 		free(symbol->bitmap);
 
     symbol->bitmap = (char *) malloc(image_width * image_height * 3);
 
-	
+
 	/* sort out colour options */
 	to_upper((unsigned char*)symbol->fgcolour);
 	to_upper((unsigned char*)symbol->bgcolour);
-	
+
 	if(strlen(symbol->fgcolour) != 6) {
 		strcpy(symbol->errtxt, "Malformed foreground colour target");
 		return ERROR_INVALID_OPTION;
@@ -349,7 +349,7 @@ int bmp_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 		strcpy(symbol->errtxt, "Malformed background colour target");
 		return ERROR_INVALID_OPTION;
 	}
-	
+
 	fgred = (16 * ctoi(symbol->fgcolour[0])) + ctoi(symbol->fgcolour[1]);
 	fggrn = (16 * ctoi(symbol->fgcolour[2])) + ctoi(symbol->fgcolour[3]);
 	fgblu = (16 * ctoi(symbol->fgcolour[4])) + ctoi(symbol->fgcolour[5]);
@@ -361,7 +361,7 @@ int bmp_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 	rowbytes = symbol->bitmap_width * 3;
 
 	/* Pixel Plotting */
-	i = 0;	
+	i = 0;
 	switch(rotate_angle) {
 		case 0: /* Plot the right way up */
 			for(row = 0; row < image_height; row++) {
@@ -378,12 +378,12 @@ int bmp_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 							symbol->bitmap[i++] = bggrn;
 							symbol->bitmap[i++] = bgblu;
 							break;
-				
+
 					}
 				}
 			}
 			break;
-		case 90: /* Plot 90 degrees clockwise */			
+		case 90: /* Plot 90 degrees clockwise */
 			for(row = 0; row < image_width; row++) {
 				for(column = 0; column < image_height; column++) {
 					switch(*(pixelbuf + (image_width * (image_height - column - 1)) + row))
@@ -398,7 +398,7 @@ int bmp_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 							symbol->bitmap[i++] = bggrn;
 							symbol->bitmap[i++] = bgblu;
 							break;
-			
+
 					}
 				}
 			}
@@ -418,7 +418,7 @@ int bmp_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 							symbol->bitmap[i++] = bggrn;
 							symbol->bitmap[i++] = bgblu;
 							break;
-			
+
 					}
 				}
 			}
@@ -438,7 +438,7 @@ int bmp_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 							symbol->bitmap[i++] = bggrn;
 							symbol->bitmap[i++] = bgblu;
 							break;
-	
+
 					}
 				}
 			}
@@ -455,11 +455,11 @@ int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, c
 	char *scaled_pixelbuf;
 	int horiz, vert, i;
 	int scale_width, scale_height;
-	
+
 	if(scaler == 0) { scaler = 0.5; }
 	scale_width = image_width * scaler;
 	scale_height = image_height * scaler;
-	
+
 	/* Apply scale options by creating another pixel buffer */
 	if (!(scaled_pixelbuf = (char *) malloc(scale_width * scale_height))) {
 		printf("Insufficient memory for pixel buffer");
@@ -469,13 +469,13 @@ int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, c
 			*(scaled_pixelbuf + i) = '0';
 		}
 	}
-	
+
 	for(vert = 0; vert < scale_height; vert++) {
 		for(horiz = 0; horiz < scale_width; horiz++) {
 			*(scaled_pixelbuf + (vert * scale_width) + horiz) = *(pixelbuf + ((int)(vert / scaler) * image_width) + (int)(horiz / scaler));
 		}
 	}
-	
+
 	if(image_type == PNG_DATA) {
 #ifndef NO_PNG
 		error_number = png_pixel_plot(symbol, scale_height, scale_width, scaled_pixelbuf, rotate_angle);
@@ -485,9 +485,9 @@ int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, c
 	} else {
 		error_number = bmp_pixel_plot(symbol, scale_height, scale_width, scaled_pixelbuf, rotate_angle);
 	}
-	
+
 	free(scaled_pixelbuf);
-	
+
 	return error_number;
 }
 
@@ -495,11 +495,11 @@ void draw_bar(char *pixelbuf, int xpos, int xlen, int ypos, int ylen, int image_
 {
 	/* Draw a rectangle */
 	int i, j, png_ypos;
-	
+
 	png_ypos = image_height - ypos - ylen;
 	/* This fudge is needed because EPS measures height from the bottom up but
 	PNG measures y position from the top down */
-	
+
 	for(i = (xpos); i < (xpos + xlen); i++) {
 		for( j = (png_ypos); j < (png_ypos + ylen); j++) {
 			*(pixelbuf + (image_width * j) + i) = '1';
@@ -509,11 +509,11 @@ void draw_bar(char *pixelbuf, int xpos, int xlen, int ypos, int ylen, int image_
 
 int bullseye_pixel(int row, int col) {
 	int block_val, block_pos, return_val;
-	
+
 	block_val = bullseye_compressed[(row * 12) + (col / 8)];
 	return_val = 0;
 	block_pos = col % 8;
-	
+
 	switch(block_pos) {
 		case 0: if((block_val & 0x80) != 0) { return_val = 1; } break;
 		case 1: if((block_val & 0x40) != 0) { return_val = 1; } break;
@@ -524,7 +524,7 @@ int bullseye_pixel(int row, int col) {
 		case 6: if((block_val & 0x02) != 0) { return_val = 1; } break;
 		case 7: if((block_val & 0x01) != 0) { return_val = 1; } break;
 	}
-	
+
 	return return_val;
 }
 
@@ -532,7 +532,7 @@ void draw_bullseye(char *pixelbuf, int image_width, int xoffset, int yoffset)
 {
 	/* Central bullseye in Maxicode symbols */
 	int i, j;
-	
+
 	for(j = 103; j < 196; j++) {
 		for(i = 0; i < 93; i++) {
 			if(bullseye_pixel(j - 103, i)) {
@@ -547,7 +547,7 @@ void draw_hexagon(char *pixelbuf, int image_width, int xposn, int yposn)
 {
 	/* Put a hexagon into the pixel buffer */
 	int i, j;
-	
+
 	for(i = 0; i < 12; i++) {
 		for(j = 0; j < 10; j++) {
 			if(hexagon[(i * 10) + j] == 1) {
@@ -561,13 +561,13 @@ void draw_letter(char *pixelbuf, unsigned char letter, int xposn, int yposn, int
 {
 	/* Put a letter into a position */
 	int skip, i, j, glyph_no, alphabet;
-	
+
 	skip = 0;
 	alphabet = 0;
-	
+
 	if(letter < 33) { skip = 1; }
 	if((letter > 127) && (letter < 161)) { skip = 1; }
-	
+
 	if(skip == 0) {
 		if(letter > 128) {
 			alphabet = 1;
@@ -575,7 +575,7 @@ void draw_letter(char *pixelbuf, unsigned char letter, int xposn, int yposn, int
 		} else {
 			glyph_no = letter - 33;
 		}
-		
+
 		if(smalltext) {
 			for(i = 0; i <= 8; i++) {
 				for(j = 0; j < 5; j++) {
@@ -612,14 +612,14 @@ void draw_string(char *pixbuf, char input_string[], int xposn, int yposn, int sm
 {
 	/* Plot a string into the pixel buffer */
 	int i, string_length, string_left_hand;
-	
+
 	string_length = strlen(input_string);
 	string_left_hand = xposn - ((7 * string_length) / 2);
-	
+
 	for(i = 0; i < string_length; i++) {
 		draw_letter(pixbuf, input_string[i], string_left_hand + (i * 7), yposn, smalltext, image_width, image_height);
 	}
-	
+
 }
 
 int maxi_png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
@@ -634,7 +634,7 @@ int maxi_png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 	yoffset = symbol->border_width;
 	image_width = 300 + (2 * xoffset * 2);
 	image_height = 300 + (2 * yoffset * 2);
-	
+
 	if (!(pixelbuf = (char *) malloc(image_width * image_height))) {
 		printf("Insifficient memory for pixel buffer");
 		return ERROR_ENCODING_PROBLEM;
@@ -643,9 +643,9 @@ int maxi_png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 			*(pixelbuf + i) = '0';
 		}
 	}
-	
+
 	draw_bullseye(pixelbuf, image_width, (2 * xoffset), (2 * yoffset));
-	
+
 	for(row = 0; row < symbol->rows; row++) {
 		yposn = row * 9;
 		for(column = 0; column < symbol->width; column++) {
@@ -668,13 +668,13 @@ int maxi_png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 		draw_bar(pixelbuf, 0, image_width, 0, symbol->border_width * 2, image_width, image_height);
 		draw_bar(pixelbuf, 0, image_width, 300 + (symbol->border_width * 2), symbol->border_width * 2, image_width, image_height);
 	}
-	
+
 	if((symbol->output_options & BARCODE_BOX) != 0) {
 		/* side bars */
 		draw_bar(pixelbuf, 0, symbol->border_width * 2, 0, image_height, image_width, image_height);
 		draw_bar(pixelbuf, 300 + ((symbol->border_width + symbol->whitespace_width + symbol->whitespace_width) * 2), symbol->border_width * 2, 0, image_height, image_width, image_height);
 	}
-	
+
 	error_number=png_to_file(symbol, image_height, image_width, pixelbuf, rotate_angle, data_type);
 	free(pixelbuf);
 	return error_number;
@@ -683,9 +683,9 @@ int maxi_png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 void to_latin1(unsigned char source[], unsigned char preprocessed[])
 {
 	int j, i, input_length;
-	
+
 	input_length = ustrlen(source);
-	
+
 	j = 0;
 	i = 0;
 	do {
@@ -707,7 +707,7 @@ void to_latin1(unsigned char source[], unsigned char preprocessed[])
 		}
 	} while (i < input_length);
 	preprocessed[j] = '\0';
-	
+
 	return;
 }
 
@@ -765,7 +765,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 	} else {
 		large_bar_height = (symbol->height - preset_height) / large_bar_count;
 	}
-	
+
 	while(!(module_is_set(symbol, symbol->rows - 1, comp_offset))) {
 		comp_offset++;
 	}
@@ -793,14 +793,14 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 			main_width = 96 + comp_offset;
 		}
 	}
-	
+
 	if (((symbol->symbology == BARCODE_UPCE) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_UPCE_CC)) {
 		if(symbol->whitespace_width == 0) {
 			symbol->whitespace_width = 10;
 			main_width = 51 + comp_offset;
 		}
 	}
-	
+
 	latch = 0;
 	r = 0;
 	/* Isolate add-on text */
@@ -826,7 +826,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 	yoffset = symbol->border_width;
 	image_width = 2 * (symbol->width + xoffset + xoffset);
 	image_height = 2 * (symbol->height + textoffset + yoffset + yoffset);
-	
+
 	if (!(pixelbuf = (char *) malloc(image_width * image_height))) {
 		printf("Insufficient memory for pixel buffer");
 		return ERROR_ENCODING_PROBLEM;
@@ -858,14 +858,14 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 		}
 		next_yposn = (int)(row_posn + row_height);
 		plot_height = next_yposn - plot_yposn;
-		
+
 		i = 0;
 		if(module_is_set(symbol, this_row, 0)) {
 			latch = 1;
 		} else {
 			latch = 0;
 		}
-			
+
 		do {
 			block_width = 0;
 			do {
@@ -876,8 +876,8 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 				plot_yposn = (int)(row_posn - 5.0);
 				addon_text_posn = row_posn + row_height - 8.0;
 				addon_latch = 1;
-			} 
-			if(latch == 1) { 
+			}
+			if(latch == 1) {
 				/* a bar */
 				draw_bar(pixelbuf, (i + xoffset) * 2, block_width * 2, plot_yposn * 2, plot_height * 2, image_width, image_height);
 				latch = 0;
@@ -886,10 +886,10 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 				latch = 1;
 			}
 			i += block_width;
-				
+
 		} while (i < symbol->width);
 	}
-	
+
 	xoffset += comp_offset;
 
 	if ((((symbol->symbology == BARCODE_EANX) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_EANX_CC)) || (symbol->symbology == BARCODE_ISBNX)) {
@@ -909,7 +909,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 				}
 				textpart[4] = '\0';
 				textpos = 2 * (17 + xoffset);
-				
+
 				draw_string(pixelbuf, textpart, textpos, default_text_posn, smalltext, image_width, image_height);
 				for(i = 0; i < 4; i++) {
 					textpart[i] = symbol->text[i + 4];
@@ -919,7 +919,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 				draw_string(pixelbuf, textpart, textpos, default_text_posn, smalltext, image_width, image_height);
 				textdone = 1;
 				switch(strlen(addon)) {
-					case 2:	
+					case 2:
 						textpos = 2 * (xoffset + 86);
 						draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, smalltext, image_width, image_height);
 						break;
@@ -958,7 +958,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 				draw_string(pixelbuf, textpart, textpos, default_text_posn, smalltext, image_width, image_height);
 				textdone = 1;
 				switch(strlen(addon)) {
-					case 2:	
+					case 2:
 						textpos = 2 * (xoffset + 114);
 						draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, smalltext, image_width, image_height);
 						break;
@@ -970,12 +970,12 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 				break;
 
 		}
-	}	
+	}
 
 	if (((symbol->symbology == BARCODE_UPCA) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_UPCA_CC)) {
 		/* guard bar extensions and text formatting for UPCA */
 		latch = 1;
-		
+
 		i = 0 + comp_offset;
 		do {
 			block_width = 0;
@@ -1033,7 +1033,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 		draw_string(pixelbuf, textpart, textpos, default_text_posn, smalltext, image_width, image_height);
 		textdone = 1;
 		switch(strlen(addon)) {
-			case 2:	
+			case 2:
 				textpos = 2 * (xoffset + 116);
 				draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, smalltext, image_width, image_height);
 				break;
@@ -1043,7 +1043,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 				break;
 		}
 
-	}	
+	}
 
 	if (((symbol->symbology == BARCODE_UPCE) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_UPCE_CC)) {
 		/* guard bar extensions and text formatting for UPCE */
@@ -1069,7 +1069,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 		draw_string(pixelbuf, textpart, textpos, default_text_posn, smalltext, image_width, image_height);
 		textdone = 1;
 		switch(strlen(addon)) {
-			case 2:	
+			case 2:
 				textpos = 2 * (xoffset + 70);
 				draw_string(pixelbuf, addon, textpos, image_height - (addon_text_posn * 2) - 13, smalltext, image_width, image_height);
 				break;
@@ -1082,7 +1082,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 	}
 
 	xoffset -= comp_offset;
-	
+
 	/* Put boundary bars or box around symbol */
 	if(((symbol->output_options & BARCODE_BOX) != 0) || ((symbol->output_options & BARCODE_BIND) != 0)) {
 		/* boundary bars */
@@ -1097,13 +1097,13 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 			}
 		}
 	}
-	
+
 	if((symbol->output_options & BARCODE_BOX) != 0) {
 		/* side bars */
 		draw_bar(pixelbuf, 0, symbol->border_width * 2, textoffset * 2, (symbol->height + (2 * symbol->border_width)) * 2, image_width, image_height);
 		draw_bar(pixelbuf, (symbol->width + xoffset + xoffset - symbol->border_width) * 2, symbol->border_width * 2, textoffset * 2, (symbol->height + (2 * symbol->border_width)) * 2, image_width, image_height);
 	}
-	
+
 	/* Put the human readable text at the bottom */
 	if((textdone == 0) && (ustrlen(local_text) != 0)) {
 		textpos = (image_width / 2);
@@ -1119,14 +1119,14 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 int png_handle(struct zint_symbol *symbol, int rotate_angle)
 {
 	int error;
-	
+
 	if(symbol->symbology == BARCODE_MAXICODE) {
 		error = maxi_png_plot(symbol, rotate_angle, PNG_DATA);
 	} else {
 
 		error = png_plot(symbol, rotate_angle, PNG_DATA);
 	}
-	
+
 	return error;
 }
 #endif /* NO_PNG */
@@ -1134,13 +1134,13 @@ int png_handle(struct zint_symbol *symbol, int rotate_angle)
 int bmp_handle(struct zint_symbol *symbol, int rotate_angle)
 {
 	int error;
-	
+
 	if(symbol->symbology == BARCODE_MAXICODE) {
 		error = maxi_png_plot(symbol, rotate_angle, BMP_DATA);
 	} else {
 		error = png_plot(symbol, rotate_angle, BMP_DATA);
 	}
-	
+
 	return error;
 }
 
