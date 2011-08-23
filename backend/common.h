@@ -63,6 +63,14 @@ extern float froundup(float input);
 extern int parunmodd(unsigned char llyth);
 extern int latin1_process(struct zint_symbol *symbol, unsigned char source[], unsigned char preprocessed[], int *length);
 extern int utf8toutf16(struct zint_symbol *symbol, unsigned char source[], int vals[], int *length);
+
+static inline void bscan(char *binary, int data, int h)
+{
+	for (; h; h>>=1) {
+		concat(binary, data & h ? "1" : "0");
+	}
+}
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
