@@ -107,13 +107,26 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[], int lengt
 		/* Format control code (FCC) */
 		switch(length)
 		{
-			case 8: strcpy(fcc, "11"); break;
-			case 13: strcpy(fcc, "59"); break;
-			case 16: strcpy(fcc, "59"); error_number = is_sane(NEON, source, length); break;
-			case 18: strcpy(fcc, "62"); break;
-			case 23: strcpy(fcc, "62"); error_number = is_sane(NEON, source, length); break;
-			default: strcpy(symbol->errtxt, "Auspost input is wrong length");
-			return ERROR_TOO_LONG;
+			case 8:
+				strcpy(fcc, "11");
+				break;
+			case 13:
+				strcpy(fcc, "59");
+				break;
+			case 16:
+				strcpy(fcc, "59");
+				error_number = is_sane(NEON, source, length);
+				break;
+			case 18:
+				strcpy(fcc, "62");
+				break;
+			case 23:
+				strcpy(fcc, "62");
+				error_number = is_sane(NEON, source, length);
+				break;
+			default:
+				strcpy(symbol->errtxt, "Auspost input is wrong length");
+				return ERROR_TOO_LONG;
 				break;
 		}
 		if(error_number == ERROR_INVALID_DATA) {
