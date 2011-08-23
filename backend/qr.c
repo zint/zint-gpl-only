@@ -157,13 +157,6 @@ int estimate_binary_length(char mode[], int length, int gs1)
 	return count;
 }
 
-static inline void qr_bscan(char *binary, int data, int h)
-{
-	for (; h; h>>=1) {
-		concat(binary, data & h ? "1" : "0");
-	}
-}
-
 void qr_binary(int datastream[], int version, int target_binlen, char mode[], int jisdata[], int length, int gs1, int est_binlen)
 {
 	/* Convert input data to a binary stream and add padding */
@@ -215,7 +208,7 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 				concat(binary, "1000");
 				
 				/* Character count indicator */
-				qr_bscan(binary, short_data_block_length, 0x20 << (scheme*2)); /* scheme = 1..3 */
+				bscan(binary, short_data_block_length, 0x20 << (scheme*2)); /* scheme = 1..3 */
 				
 				if(debug) { printf("Kanji block (length %d)\n\t", short_data_block_length); }
 				
@@ -229,8 +222,8 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 					lsb = (jis & 0xff);
 					prod = (msb * 0xc0) + lsb;
 				
-					qr_bscan(binary, prod, 0x1000);
 					
+					bscan(binary, prod, 0x1000);
 					if(debug) { printf("0x%4X ", prod); }
 				}
 				
@@ -243,7 +236,7 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 				concat(binary, "0100");
 				
 				/* Character count indicator */
-				qr_bscan(binary, short_data_block_length, scheme > 1 ? 0x8000 : 0x80); /* scheme = 1..3 */
+				bscan(binary, short_data_block_length, scheme > 1 ? 0x8000 : 0x80); /* scheme = 1..3 */
 				
 				if(debug) { printf("Byte block (length %d)\n\t", short_data_block_length); }
 				
@@ -255,8 +248,8 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 						byte = 0x1d; /* FNC1 */
 					}
 					
-					qr_bscan(binary, byte, 0x80);
 					
+					bscan(binary, byte, 0x80);
 					if(debug) { printf("0x%2X(%d) ", byte, byte); }
 				}
 				
@@ -269,7 +262,7 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 				concat(binary, "0010");
 				
 				/* Character count indicator */
-				qr_bscan(binary, short_data_block_length, 0x40 << (2 * scheme)); /* scheme = 1..3 */
+				bscan(binary, short_data_block_length, 0x40 << (2 * scheme)); /* scheme = 1..3 */
 				
 				if(debug) { printf("Alpha block (length %d)\n\t", short_data_block_length); }
 				
@@ -340,7 +333,7 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 						}
 					}
 
-					qr_bscan(binary, prod, count == 2 ? 0x400 : 0x20); /* count = 1..2 */
+					bscan(binary, prod, count == 2 ? 0x400 : 0x20); /* count = 1..2 */
 					
 					if(debug) { printf("0x%4X ", prod); }
 				};
@@ -354,7 +347,7 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 				concat(binary, "0001");
 				
 				/* Character count indicator */
-				qr_bscan(binary, short_data_block_length, 0x80 << (2 * scheme)); /* scheme = 1..3 */
+				bscan(binary, short_data_block_length, 0x80 << (2 * scheme)); /* scheme = 1..3 */
 				
 				if(debug) { printf("Number block (length %d)\n\t", short_data_block_length); }
 				
@@ -380,8 +373,8 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 						}
 					}
 					
-					qr_bscan(binary, prod, 1 << (3 * count)); /* count = 1..3 */
 					
+					bscan(binary, prod, 1 << (3 * count)); /* count = 1..3 */
 					if(debug) { printf("0x%4X (%d)", prod, prod); }
 					
 					i += count;
@@ -1213,8 +1206,8 @@ int micro_qr_intermediate(char binary[], int jisdata[], char mode[], int length,
 					lsb = (jis & 0xff);
 					prod = (msb * 0xc0) + lsb;
 				
-					qr_bscan(binary, prod, 0x1000);
 					
+					bscan(binary, prod, 0x1000);
 					if(debug) { printf("0x%4X ", prod); }
 					
 					if(strlen(binary) > 128) {
@@ -1242,8 +1235,8 @@ int micro_qr_intermediate(char binary[], int jisdata[], char mode[], int length,
 				for(i = 0; i < short_data_block_length; i++) {
 					int byte = jisdata[position + i];
 					
-					qr_bscan(binary, byte, 0x80);
 					
+					bscan(binary, byte, 0x80);
 					if(debug) { printf("0x%4X ", byte); }
 					
 					if(strlen(binary) > 128) {
@@ -1283,8 +1276,8 @@ int micro_qr_intermediate(char binary[], int jisdata[], char mode[], int length,
 						prod = (first * 45) + second;
 					}
 				
-					qr_bscan(binary, prod, 1 << (5 * count)); /* count = 1..2 */
 					
+					bscan(binary, prod, 1 << (5 * count)); /* count = 1..2 */
 					if(debug) { printf("0x%4X ", prod); }
 					
 					if(strlen(binary) > 128) {
@@ -1331,8 +1324,8 @@ int micro_qr_intermediate(char binary[], int jisdata[], char mode[], int length,
 						prod = (prod * 10) + third;
 					}
 				
-					qr_bscan(binary, prod, 1 << (3 * count)); /* count = 1..3 */
 					
+					bscan(binary, prod, 1 << (3 * count)); /* count = 1..3 */
 					if(debug) { printf("0x%4X (%d)", prod, prod); }
 					
 					if(strlen(binary) > 128) {
@@ -1421,7 +1414,7 @@ void microqr_expand_binary(char binary_stream[], char full_stream[], int version
 				}
 				
 				/* Character count indicator */
-				qr_bscan(full_stream, binary_stream[i + 1], 4 << version); /* version = 0..3 */
+				bscan(full_stream, binary_stream[i + 1], 4 << version); /* version = 0..3 */
 				
 				i += 2;
 				break;
@@ -1435,7 +1428,7 @@ void microqr_expand_binary(char binary_stream[], char full_stream[], int version
 				}
 				
 				/* Character count indicator */
-				qr_bscan(full_stream, binary_stream[i + 1], 2 << version); /* version = 1..3 */
+				bscan(full_stream, binary_stream[i + 1], 2 << version); /* version = 1..3 */
 				
 				i += 2;
 				break;
@@ -1448,7 +1441,7 @@ void microqr_expand_binary(char binary_stream[], char full_stream[], int version
 				}
 				
 				/* Character count indicator */
-				qr_bscan(full_stream, binary_stream[i + 1], 2 << version); /* version = 2..3 */
+				bscan(full_stream, binary_stream[i + 1], 2 << version); /* version = 2..3 */
 				
 				i += 2;
 				break;
@@ -1461,7 +1454,7 @@ void microqr_expand_binary(char binary_stream[], char full_stream[], int version
 				}
 				
 				/* Character count indicator */
-				qr_bscan(full_stream, binary_stream[i + 1], 1 << version); /* version = 2..3 */
+				bscan(full_stream, binary_stream[i + 1], 1 << version); /* version = 2..3 */
 				
 				i += 2;
 				break;
@@ -1550,7 +1543,7 @@ void micro_qr_m1(char binary_data[])
 	
 	/* Add Reed-Solomon codewords to binary data */
 	for(i = 0; i < ecc_codewords; i++) {
-		qr_bscan(binary_data, ecc_blocks[ecc_codewords - i - 1], 0x80);
+		bscan(binary_data, ecc_blocks[ecc_codewords - i - 1], 0x80);
 	}
 }
 
@@ -1617,7 +1610,7 @@ void micro_qr_m2(char binary_data[], int ecc_mode)
 	
 	/* Add Reed-Solomon codewords to binary data */
 	for(i = 0; i < ecc_codewords; i++) {
-		qr_bscan(binary_data, ecc_blocks[ecc_codewords - i - 1], 0x80);
+		bscan(binary_data, ecc_blocks[ecc_codewords - i - 1], 0x80);
 	}
 	
 	return;
@@ -1716,7 +1709,7 @@ void micro_qr_m3(char binary_data[], int ecc_mode)
 	
 	/* Add Reed-Solomon codewords to binary data */
 	for(i = 0; i < ecc_codewords; i++) {
-		qr_bscan(binary_data, ecc_blocks[ecc_codewords - i - 1], 0x80);
+		bscan(binary_data, ecc_blocks[ecc_codewords - i - 1], 0x80);
 	}
 	
 	return;
@@ -1787,7 +1780,7 @@ void micro_qr_m4(char binary_data[], int ecc_mode)
 	
 	/* Add Reed-Solomon codewords to binary data */
 	for(i = 0; i < ecc_codewords; i++) {
-		qr_bscan(binary_data, ecc_blocks[ecc_codewords - i - 1], 0x80);
+		bscan(binary_data, ecc_blocks[ecc_codewords - i - 1], 0x80);
 	}
 }
 
