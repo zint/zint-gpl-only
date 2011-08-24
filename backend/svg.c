@@ -32,8 +32,6 @@ int svg_plot(struct zint_symbol *symbol)
 	int i, block_width, latch, r, this_row;
 	float textpos, large_bar_height, preset_height, row_height, row_posn = 0.0;
 	FILE *fsvg;
-	int fgred, fggrn, fgblu, bgred, bggrn, bgblu;
-	float red_ink, green_ink, blue_ink, red_paper, green_paper, blue_paper;
 	int error_number = 0;
 	int textoffset, xoffset, yoffset, textdone, main_width;
 	char textpart[10], addon[6];
@@ -84,19 +82,6 @@ int svg_plot(struct zint_symbol *symbol)
 		return ERROR_INVALID_OPTION;
 	}
 	locale = setlocale(LC_ALL, "C");
-
-	fgred = (16 * ctoi(symbol->fgcolour[0])) + ctoi(symbol->fgcolour[1]);
-	fggrn = (16 * ctoi(symbol->fgcolour[2])) + ctoi(symbol->fgcolour[3]);
-	fgblu = (16 * ctoi(symbol->fgcolour[4])) + ctoi(symbol->fgcolour[5]);
-	bgred = (16 * ctoi(symbol->bgcolour[0])) + ctoi(symbol->bgcolour[1]);
-	bggrn = (16 * ctoi(symbol->bgcolour[2])) + ctoi(symbol->bgcolour[3]);
-	bgblu = (16 * ctoi(symbol->bgcolour[4])) + ctoi(symbol->bgcolour[5]);
-	red_ink = fgred / 256.0;
-	green_ink = fggrn / 256.0;
-	blue_ink = fgblu / 256.0;
-	red_paper = bgred / 256.0;
-	green_paper = bggrn / 256.0;
-	blue_paper = bgblu / 256.0;
 
 	if (symbol->height == 0) {
 		symbol->height = 50;

@@ -190,9 +190,9 @@ void c128_set_c(unsigned char source_a, unsigned char source_b, char dest[], int
 
 int code_128(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* Handle Code 128 and NVE-18 */
-	int i, j, k, e_count, values[170] = { 0 }, bar_characters, read, total_sum, nve_check;
+	int i, j, k, values[170] = { 0 }, bar_characters, read, total_sum;
 	int error_number, indexchaine, indexliste, sourcelen, f_state;
-	char set[170] = { ' ' }, fset[170] = { ' ' }, mode, last_set, last_fset, current_set = ' ';
+	char set[170] = { ' ' }, fset[170] = { ' ' }, mode, last_set, current_set = ' ';
 	float glyph_count;
 	char dest[1000];
 
@@ -202,9 +202,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[], int length)
 	sourcelen = length;
 
 	j = 0;
-	e_count = 0;
 	bar_characters = 0;
-	nve_check = 0;
 	f_state = 0;
 
 	if(sourcelen > 160) {
@@ -343,7 +341,6 @@ int code_128(struct zint_symbol *symbol, unsigned char source[], int length)
 	/* Now we can calculate how long the barcode is going to be - and stop it from
 	   being too long */
 	last_set = ' ';
-	last_fset = ' ';
 	glyph_count = 0.0;
 	for(i = 0; i < sourcelen; i++) {
 		if((set[i] == 'a') || (set[i] == 'b')) {
@@ -360,16 +357,13 @@ int code_128(struct zint_symbol *symbol, unsigned char source[], int length)
 		}
 		if(i == 0) {
 			if(fset[i] == 'F') {
-				last_fset = 'F';
 				glyph_count = glyph_count + 2.0;
 			}
 		} else {
 			if((fset[i] == 'F') && (fset[i - 1] != 'F')) {
-				last_fset = 'F';
 				glyph_count = glyph_count + 2.0;
 			}
 			if((fset[i] != 'F') && (fset[i - 1] == 'F')) {
-				last_fset = ' ';
 				glyph_count = glyph_count + 2.0;
 			}
 		}
@@ -589,7 +583,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[], int length)
 
 int ean_128(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* Handle EAN-128 (Now known as GS1-128) */
-	int i, j, e_count, values[170], bar_characters, read, total_sum;
+	int i, j, values[170], bar_characters, read, total_sum;
 	int error_number, indexchaine, indexliste;
 	char set[170], mode, last_set;
 	float glyph_count;
@@ -601,7 +595,6 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[], int length)
 	linkage_flag = 0;
 
 	j = 0;
-	e_count = 0;
 	bar_characters = 0;
 	separator_row = 0;
 

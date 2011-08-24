@@ -674,13 +674,12 @@ int gm_encode(int gbdata[], int length, char binary[], int reader)
 
 void gm_add_ecc(char binary[], int data_posn, int layers, int ecc_level, int word[])
 {
-	int total_cw, data_cw, i, j, wp;
+	int data_cw, i, j, wp;
 	int n1, b1, n2, b2, e1, b3, e2;
-	int block_size, data_size, ecc_size, toggle;
+	int block_size, data_size, ecc_size;
 	int data[1320], block[130];
 	unsigned char data_block[115], ecc_block[70];
 
-	total_cw = gm_total_cw[(layers - 1)];
 	data_cw = gm_data_codewords[((layers - 1) * 5) + (ecc_level - 1)];
 
 	for(i = 0; i < 1320; i++) {
@@ -703,10 +702,8 @@ void gm_add_ecc(char binary[], int data_posn, int layers, int ecc_level, int wor
 	for(i = (data_posn + 1); i < data_cw; i++) {
 		if(i & 1) {
 			data[i] = 0x7e;
-			toggle = 1;
 		} else {
 			data[i] = 0x00;
-			toggle = 0;
 		}
 	}
 
