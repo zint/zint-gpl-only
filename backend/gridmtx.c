@@ -295,15 +295,8 @@ int seek_forward(int gbdata[], int length, int position, int current_mode)
 void add_byte_count(char binary[], int byte_count_posn, int byte_count)
 {
 	/* Add the length indicator for byte encoded blocks */
-	if(byte_count & 0x100) { binary[byte_count_posn] = '0'; } else { binary[byte_count_posn] = '1'; }
-	if(byte_count & 0x80) { binary[byte_count_posn + 1] = '0'; } else { binary[byte_count_posn + 1] = '1'; }
-	if(byte_count & 0x40) { binary[byte_count_posn + 2] = '0'; } else { binary[byte_count_posn + 2] = '1'; }
-	if(byte_count & 0x20) { binary[byte_count_posn + 3] = '0'; } else { binary[byte_count_posn + 3] = '1'; }
-	if(byte_count & 0x10) { binary[byte_count_posn + 4] = '0'; } else { binary[byte_count_posn + 4] = '1'; }
-	if(byte_count & 0x08) { binary[byte_count_posn + 5] = '0'; } else { binary[byte_count_posn + 5] = '1'; }
-	if(byte_count & 0x04) { binary[byte_count_posn + 6] = '0'; } else { binary[byte_count_posn + 6] = '1'; }
-	if(byte_count & 0x02) { binary[byte_count_posn + 7] = '0'; } else { binary[byte_count_posn + 7] = '1'; }
-	if(byte_count & 0x01) { binary[byte_count_posn + 8] = '0'; } else { binary[byte_count_posn + 8] = '1'; }
+	for (int v = 0x100; v; v >>= 1)
+		binary[byte_count_posn++] = (byte_count & v) ? '0' : '1';
 }
 
 void add_shift_char(char binary[], int shifty)
@@ -438,7 +431,7 @@ int gm_encode(int gbdata[], int length, char binary[], int reader)
 				done = 0;
 				if(gbdata[sp] > 0xff) {
 					/* GB2312 character */
-					c1 = (gbdata[sp] & 0xff00) >> 8;
+					c1 = (gbdata[sp] >> 8) & 0xff;
 					c2 = gbdata[sp] & 0xff;
 
 					if((c1 >= 0xa0) && (c1 <= 0xa9)) {
