@@ -56,15 +56,13 @@ void rs_error(char data_pattern[])
 	char triple[31], inv_triple[31];
 	unsigned char result[5];
 
-	for(reader = 2; reader < strlen(data_pattern); reader += 3, triple_writer++)
-	{
+	for(reader = 2; reader < strlen(data_pattern); reader += 3, triple_writer++) {
 		triple[triple_writer] = convert_pattern(data_pattern[reader], 4)
 			+ convert_pattern(data_pattern[reader + 1], 2)
 			+ convert_pattern(data_pattern[reader + 2], 0);
 	}
 
-	for(reader = 0; reader < triple_writer; reader++)
-	{
+	for(reader = 0; reader < triple_writer; reader++) {
 		inv_triple[reader] = triple[(triple_writer - 1) - reader];
 	}
 
@@ -72,8 +70,7 @@ void rs_error(char data_pattern[])
 	rs_init_code(4, 1);
 	rs_encode(triple_writer, (unsigned char*) inv_triple, result);
 
-	for(reader = 4; reader > 0; reader--)
-	{
+	for(reader = 4; reader > 0; reader--) {
 		concat(data_pattern, AusBarTable[(int)result[reader - 1]]);
 	}
 	rs_free();
@@ -105,8 +102,7 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[], int lengt
 	/* Do all of the length checking first to avoid stack smashing */
 	if(symbol->symbology == BARCODE_AUSPOST) {
 		/* Format control code (FCC) */
-		switch(length)
-		{
+		switch(length) {
 			case 8:
 				strcpy(fcc, "11");
 				break;
@@ -130,14 +126,20 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[], int lengt
 			return error_number;
 		}
 	} else {
-		if(length > 8) {
+		if (length > 8) {
 			strcpy(symbol->errtxt, "Auspost input is too long");
 			return ERROR_TOO_LONG;
 		}
-		switch(symbol->symbology) {
-			case BARCODE_AUSREPLY: strcpy(fcc, "45"); break;
-			case BARCODE_AUSROUTE: strcpy(fcc, "87"); break;
-			case BARCODE_AUSREDIRECT: strcpy(fcc, "92"); break;
+		switch (symbol->symbology) {
+			case BARCODE_AUSREPLY:
+				strcpy(fcc, "45");
+				break;
+			case BARCODE_AUSROUTE:
+				strcpy(fcc, "87");
+				break;
+			case BARCODE_AUSREDIRECT:
+				strcpy(fcc, "92");
+				break;
 		}
 
 		/* Add leading zeros as required */
@@ -167,28 +169,24 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[], int lengt
 	strcpy(data_pattern, "13");
 
 	/* Encode the FCC */
-	for(reader = 0; reader < 2; reader++)
-	{
+	for(reader = 0; reader < 2; reader++) {
 		lookup(NEON, AusNTable, fcc[reader], data_pattern);
 	}
 
 	/* printf("AUSPOST FCC: %s  ", fcc); */
 
 	/* Delivery Point Identifier (DPID) */
-	for(reader = 0; reader < 8; reader++)
-	{
+	for(reader = 0; reader < 8; reader++) {
 		lookup(NEON, AusNTable, dpid[reader], data_pattern);
 	}
 
 	/* Customer Information */
-	if(h > 8)
-	{
-		if((h == 13) || (h == 18)) {
+	if (h > 8) {
+		if ((h == 13) || (h == 18)) {
 			for(reader = 8; reader < h; reader++) {
 				lookup(GDSET, AusCTable, localstr[reader], data_pattern);
 			}
-		}
-		else if((h == 16) || (h == 23)) {
+		} else if ((h == 16) || (h == 23)) {
 			for(reader = 8; reader < h; reader++) {
 				lookup(NEON, AusNTable, localstr[reader], data_pattern);
 			}
@@ -197,13 +195,10 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[], int lengt
 
 	/* Filler bar */
 	h = strlen(data_pattern);
-	if(h == 22) {
-		concat(data_pattern, "3");
-	}
-	else if(h == 37) {
-		concat(data_pattern, "3");
-	}
-	else if(h == 52) {
+	switch (h) {
+	case 22:
+	case 37:
+	case 52:
 		concat(data_pattern, "3");
 	}
 
@@ -216,15 +211,12 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[], int lengt
 	/* Turn the symbol into a bar pattern ready for plotting */
 	writer = 0;
 	h = strlen(data_pattern);
-	for(loopey = 0; loopey < h; loopey++)
-	{
-		if((data_pattern[loopey] == '1') || (data_pattern[loopey] == '0'))
-		{
+	for(loopey = 0; loopey < h; loopey++) {
+		if((data_pattern[loopey] == '1') || (data_pattern[loopey] == '0')) {
 			set_module(symbol, 0, writer);
 		}
 		set_module(symbol, 1, writer);
-		if((data_pattern[loopey] == '2') || (data_pattern[loopey] == '0'))
-		{
+		if((data_pattern[loopey] == '2') || (data_pattern[loopey] == '0')) {
 			set_module(symbol, 2, writer);
 		}
 		writer += 2;
@@ -239,4 +231,3 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[], int lengt
 
 	return error_number;
 }
-

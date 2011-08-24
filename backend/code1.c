@@ -65,14 +65,12 @@ void central_finder(struct zint_symbol *symbol, int start_row, int row_count, in
 
 void vert(struct zint_symbol *symbol, int column, int height, int top)
 {
-	int i;
-
 	if(top) {
-		for (i = 0; i < height; i++) {
+		for (int i = 0; i < height; i++) {
 			set_module(symbol, i, column);
 		}
 	} else {
-		for (i = 0; i < height; i++) {
+		for (int i = 0; i < height; i++) {
 			set_module(symbol, symbol->rows - i - 1, column);
 		}
 	}
@@ -80,27 +78,19 @@ void vert(struct zint_symbol *symbol, int column, int height, int top)
 
 void spigot(struct zint_symbol *symbol, int row_no)
 {
-	int i;
-
-	for(i = symbol->width - 1; i > 0; i--) {
-		if(module_is_set(symbol, row_no, i - 1)) {
+	for (int i = symbol->width - 1; i > 0; i--) {
+		if(module_is_set(symbol, row_no, i - 1))
 			set_module(symbol, row_no, i);
-		}
 	}
 }
 
 int isedi(unsigned char input)
 {
-	int result = 0;
+	if (input == 13 || input == '*' || input == '>' || input == ' ' ||
+	    ((input >= '0') && (input <= '9')) || ((input >= 'A') && (input <= 'Z')))
+		return 1;
 
-	if(input == 13) { result = 1; }
-	if(input == '*') { result = 1; }
-	if(input == '>') { result = 1; }
-	if(input == ' ') { result = 1; }
-	if((input >= '0') && (input <= '9')) { result = 1; }
-	if((input >= 'A') && (input <= 'Z')) { result = 1; }
-
-	return result;
+	return 0;
 }
 
 int dq4bi(unsigned char source[], int sourcelen, int position)
@@ -280,7 +270,7 @@ int c1_look_ahead_test(unsigned char source[], int sourcelen, int position, int 
 int c1_encode(struct zint_symbol *symbol, unsigned char source[], unsigned int target[], int length)
 {
 	int current_mode, next_mode;
-	int sp, tp, gs1, i, j, latch;
+	int sp, tp, gs1, latch;
 	int c40_buffer[6], c40_p;
 	int text_buffer[6], text_p;
 	int edi_buffer[6], edi_p;
@@ -316,16 +306,18 @@ int c1_encode(struct zint_symbol *symbol, unsigned char source[], unsigned int t
 			}
 		}
 
-		if((current_mode != C1_BYTE) && (next_mode == C1_BYTE)) { byte_start = tp; }
+		if (current_mode != C1_BYTE && next_mode == C1_BYTE)
+			byte_start = tp;
+
 		current_mode = next_mode;
 
 		if(current_mode == C1_ASCII) { /* Step B - ASCII encodation */
 			next_mode = C1_ASCII;
 
-			if((length - sp) >= 21) { /* Step B1 */
-				j = 0;
+			if (length - sp >= 21) { /* Step B1 */
+				int j = 0;
 
-				for(i = 0; i < 21; i++) {
+				for(int i = 0; i < 21; i++) {
 					if((source[sp + i] >= '0') && (source[sp + i] <= '9')) { j++; }
 				}
 
@@ -335,20 +327,21 @@ int c1_encode(struct zint_symbol *symbol, unsigned char source[], unsigned int t
 				}
 			}
 
-			if((next_mode == C1_ASCII) && ((length - sp) >= 13)) { /* Step B2 */
-				j = 0;
+			if(next_mode == C1_ASCII && length - sp >= 13) { /* Step B2 */
+				int j = 0;
 
-				for(i = 0; i < 13; i++) {
-					if((source[sp + i] >= '0') && (source[sp + i] <= '9')) { j++; }
+				for(int i = 0; i < 13; i++) {
+					if (source[sp + i] >= '0' && source[sp + i] <= '9')
+						j++;
 				}
 
 				if (j == 13) {
 					latch = 0;
-					for(i = sp + 13; i < length; i++) {
+					for (int i = sp + 13; i < length; i++) {
 						if(!((source[sp + i] >= '0') && (source[sp + i] <= '9'))) { latch = 1; }
 					}
 
-					if(!(latch)) {
+					if (!latch) {
 						next_mode = C1_DECIMAL;
 						strcpy(decimal_binary, "1111");
 					}
@@ -361,12 +354,13 @@ int c1_encode(struct zint_symbol *symbol, unsigned char source[], unsigned int t
 					tp++;
 					sp += 2;
 				} else {
-					if((gs1) && (source[sp] == '[')) {
-						if((length - sp) >= 15) { /* Step B4 */
-							j = 0;
+					if (gs1 && source[sp] == '[') {
+						if (length - sp >= 15) { /* Step B4 */
+							int j = 0;
 
-							for(i = 0; i < 15; i++) {
-								if((source[sp + i] >= '0') && (source[sp + i] <= '9')) { j++; }
+							for(int i = 0; i < 15; i++) {
+								if (source[sp + i] >= '0' && source[sp + i] <= '9')
+									j++;
 							}
 
 							if (j == 15) {
@@ -376,20 +370,22 @@ int c1_encode(struct zint_symbol *symbol, unsigned char source[], unsigned int t
 							}
 						}
 
-						if((length - sp) >= 7) { /* Step B5 */
-							j = 0;
+						if(length - sp >= 7) { /* Step B5 */
+							int j = 0;
 
-							for(i = 0; i < 7; i++) {
-								if((source[sp + i] >= '0') && (source[sp + i] <= '9')) { j++; }
+							for(int i = 0; i < 7; i++) {
+								if (source[sp + i] >= '0' && source[sp + i] <= '9')
+									j++;
 							}
 
 							if (j == 7) {
 								latch = 0;
-								for(i = sp + 7; i < length; i++) {
-									if(!((source[sp + i] >= '0') && (source[sp + i] <= '9'))) { latch = 1; }
+								for (int i = sp + 7; i < length; i++) {
+									if(!(source[sp + i] >= '0' && source[sp + i] <= '9'))
+										latch = 1;
 								}
 
-								if(!(latch)) {
+								if(!latch) {
 									target[tp] = 236; /* FNC1 and change to Decimal */
 									tp++; sp++;
 									next_mode = C1_DECIMAL;
@@ -398,8 +394,7 @@ int c1_encode(struct zint_symbol *symbol, unsigned char source[], unsigned int t
 						}
 					}
 
-					if(next_mode == C1_ASCII) {
-
+					if (next_mode == C1_ASCII) {
 						/* Step B6 */
 						next_mode = c1_look_ahead_test(source, length, sp, current_mode, gs1);
 
@@ -427,11 +422,12 @@ int c1_encode(struct zint_symbol *symbol, unsigned char source[], unsigned int t
 
 			next_mode = C1_C40;
 			if(c40_p == 0) {
-				if((length - sp) >= 12) {
-					j = 0;
+				if(length - sp >= 12) {
+					int j = 0;
 
-					for(i = 0; i < 12; i++) {
-						if((source[sp + i] >= '0') && (source[sp + i] <= '9')) { j++; }
+					for(int i = 0; i < 12; i++) {
+						if (source[sp + i] >= '0' && source[sp + i] <= '9')
+							j++;
 					}
 
 					if (j == 12) {
@@ -439,19 +435,21 @@ int c1_encode(struct zint_symbol *symbol, unsigned char source[], unsigned int t
 					}
 				}
 
-				if((length - sp) >= 8) {
-					j = 0;
+				if(length - sp >= 8) {
+					int j = 0;
 
-					for(i = 0; i < 8; i++) {
-						if((source[sp + i] >= '0') && (source[sp + i] <= '9')) { j++; }
+					for (int i = 0; i < 8; i++) {
+						if(source[sp + i] >= '0' && source[sp + i] <= '9')
+							j++;
 					}
 
-					if((length - sp) == 8) {
+					if (length - sp == 8) {
 						latch = 1;
 					} else {
 						latch = 1;
 						for(j = sp + 8; j < length; j++) {
-							if((source[j] <= '0') || (source[j] >= '9')) { latch = 0; }
+							if (source[j] <= '0' || source[j] >= '9')
+								latch = 0;
 						}
 					}
 
@@ -511,12 +509,13 @@ int c1_encode(struct zint_symbol *symbol, unsigned char source[], unsigned int t
 			int shift_set, value, done = 0, latch = 0;
 
 			next_mode = C1_TEXT;
-			if(text_p == 0) {
-				if((length - sp) >= 12) {
-					j = 0;
+			if (text_p == 0) {
+				if (length - sp >= 12) {
+					int j = 0;
 
-					for(i = 0; i < 12; i++) {
-						if((source[sp + i] >= '0') && (source[sp + i] <= '9')) { j++; }
+					for(int i = 0; i < 12; i++) {
+						if (source[sp + i] >= '0' && source[sp + i] <= '9')
+							j++;
 					}
 
 					if (j == 12) {
@@ -524,14 +523,15 @@ int c1_encode(struct zint_symbol *symbol, unsigned char source[], unsigned int t
 					}
 				}
 
-				if((length - sp) >= 8) {
-					j = 0;
+				if (length - sp >= 8) {
+					int j = 0;
 
-					for(i = 0; i < 8; i++) {
-						if((source[sp + i] >= '0') && (source[sp + i] <= '9')) { j++; }
+					for (int i = 0; i < 8; i++) {
+						if (source[sp + i] >= '0' && source[sp + i] <= '9')
+							j++;
 					}
 
-					if((length - sp) == 8) {
+					if(length - sp == 8) {
 						latch = 1;
 					} else {
 						latch = 1;
@@ -540,7 +540,7 @@ int c1_encode(struct zint_symbol *symbol, unsigned char source[], unsigned int t
 						}
 					}
 
-					if ((j == 8) && latch) {
+					if (j == 8 && latch) {
 						next_mode = C1_ASCII; done = 1;
 					}
 				}
@@ -593,40 +593,43 @@ int c1_encode(struct zint_symbol *symbol, unsigned char source[], unsigned int t
 		}
 
 		if(current_mode == C1_EDI) { /* Step E - EDI Encodation */
-			int value = 0, done = 0, latch = 0;
+			int value = 0, latch = 0;
 
 			next_mode = C1_EDI;
-			if(edi_p == 0) {
-				if((length - sp) >= 12) {
-					j = 0;
+			if (edi_p == 0) {
+				if (length - sp >= 12) {
+					int j = 0;
 
-					for(i = 0; i < 12; i++) {
-						if((source[sp + i] >= '0') && (source[sp + i] <= '9')) { j++; }
+					for (int i = 0; i < 12; i++) {
+						if (source[sp + i] >= '0' && source[sp + i] <= '9')
+							j++;
 					}
 
 					if (j == 12) {
-						next_mode = C1_ASCII; done = 1;
+						next_mode = C1_ASCII;
 					}
 				}
 
-				if((length - sp) >= 8) {
-					j = 0;
+				if (length - sp >= 8) {
+					int j = 0;
 
-					for(i = 0; i < 8; i++) {
-						if((source[sp + i] >= '0') && (source[sp + i] <= '9')) { j++; }
+					for(int i = 0; i < 8; i++) {
+						if (source[sp + i] >= '0' && source[sp + i] <= '9')
+							j++;
 					}
 
-					if((length - sp) == 8) {
+					if (length - sp == 8) {
 						latch = 1;
 					} else {
 						latch = 1;
-						for(j = sp + 8; j < length; j++) {
-							if((source[j] <= '0') || (source[j] >= '9')) { latch = 0; }
+						for (j = sp + 8; j < length; j++) {
+							if (source[j] <= '0' || source[j] >= '9')
+								latch = 0;
 						}
 					}
 
-					if ((j == 8) && latch) {
-						next_mode = C1_ASCII; done = 1;
+					if (j == 8 && latch) {
+						next_mode = C1_ASCII;
 					}
 				}
 
@@ -674,17 +677,20 @@ int c1_encode(struct zint_symbol *symbol, unsigned char source[], unsigned int t
 			data_left = length - sp;
 			decimal_count = 0;
 
-			if(data_left >= 1) {
-				if((source[sp] >= '0') && (source[sp] <= '9')) { decimal_count = 1; }
+			if (data_left >= 1) {
+				if (source[sp] >= '0' && source[sp] <= '9')
+					decimal_count = 1;
 			}
-			if(data_left >= 2) {
-				if((decimal_count == 1) && ((source[sp + 1] >= '0') && (source[sp + 1] <= '9'))) { decimal_count = 2; }
+			if (data_left >= 2) {
+				if (decimal_count == 1 && source[sp + 1] >= '0' && source[sp + 1] <= '9')
+					decimal_count = 2;
 			}
-			if(data_left >= 3) {
-				if((decimal_count == 2) && ((source[sp + 2] >= '0') && (source[sp + 2] <= '9'))) { decimal_count = 3; }
+			if (data_left >= 3) {
+				if (decimal_count == 2 && source[sp + 2] >= '0' && source[sp + 2] <= '9')
+					decimal_count = 3;
 			}
 
-			if(decimal_count != 3) {
+			if (decimal_count != 3) {
 				int bits_left_in_byte, target_count;
 				int sub_target;
 				/* Finish Decimal mode and go back to ASCII */
@@ -692,19 +698,20 @@ int c1_encode(struct zint_symbol *symbol, unsigned char source[], unsigned int t
 				concat(decimal_binary, "111111"); /* Unlatch */
 
 				target_count = 3;
-				if(strlen(decimal_binary) <= 16) { target_count = 2; }
-				if(strlen(decimal_binary) <= 8) { target_count = 1; }
-				bits_left_in_byte = (8 * target_count) - strlen(decimal_binary);
-				if(bits_left_in_byte == 8) { bits_left_in_byte = 0; }
+				if (strlen(decimal_binary) <= 16)
+					target_count = 2;
+				if (strlen(decimal_binary) <= 8)
+					target_count = 1;
+				bits_left_in_byte = 8 * target_count - strlen(decimal_binary);
+				if (bits_left_in_byte == 8)
+					bits_left_in_byte = 0;
 
-				if(bits_left_in_byte == 2) {
+				if(bits_left_in_byte == 2)
 					concat(decimal_binary, "01");
-				}
 
 				if((bits_left_in_byte == 4) || (bits_left_in_byte == 6)) {
 					if(decimal_count >= 1) {
 						int sub_value = ctoi(source[sp]) + 1;
-
 						bscan(decimal_binary, sub_value, 0x08);
 						sp++;
 					} else {
@@ -798,7 +805,7 @@ int c1_encode(struct zint_symbol *symbol, unsigned char source[], unsigned int t
 
 				strcpy(temp_binary, "");
 				if(strlen(decimal_binary) > 24) {
-					for(i = 0; i <= (strlen(decimal_binary) - 24); i++) {
+					for(int i = 0; i <= (strlen(decimal_binary) - 24); i++) {
 						temp_binary[i] = decimal_binary[i + 24];
 					}
 					strcpy(decimal_binary, temp_binary);
@@ -820,13 +827,13 @@ int c1_encode(struct zint_symbol *symbol, unsigned char source[], unsigned int t
 			if(next_mode != C1_BYTE) {
 				/* Insert byte field length */
 				if((tp - byte_start) <= 249) {
-					for(i = tp; i >= byte_start; i--) {
+					for (int i = tp; i >= byte_start; i--) {
 						target[i + 1] = target[i];
 					}
 					target[byte_start] = (tp - byte_start);
 					tp++;
 				} else {
-					for(i = tp; i >= byte_start; i--) {
+					for (int i = tp; i >= byte_start; i--) {
 						target[i + 2] = target[i];
 					}
 					target[byte_start] = 249 + ((tp - byte_start) / 250);
@@ -954,13 +961,13 @@ int c1_encode(struct zint_symbol *symbol, unsigned char source[], unsigned int t
 	if(current_mode == C1_BYTE) {
 		/* Insert byte field length */
 		if((tp - byte_start) <= 249) {
-			for(i = tp; i >= byte_start; i--) {
+			for(int i = tp; i >= byte_start; i--) {
 				target[i + 1] = target[i];
 			}
 			target[byte_start] = (tp - byte_start);
 			tp++;
 		} else {
-			for(i = tp; i >= byte_start; i--) {
+			for(int i = tp; i >= byte_start; i--) {
 				target[i + 2] = target[i];
 			}
 			target[byte_start] = 249 + ((tp - byte_start) / 250);
@@ -986,10 +993,8 @@ int c1_encode(struct zint_symbol *symbol, unsigned char source[], unsigned int t
 }
 
 void block_copy(struct zint_symbol *symbol, char grid[][120], int start_row, int start_col, int height, int width, int row_offset, int col_offset) {
-	int i, j;
-
-	for(i = start_row; i < (start_row + height); i++) {
-		for(j = start_col; j < (start_col + width); j++) {
+	for(int i = start_row; i < (start_row + height); i++) {
+		for(int j = start_col; j < (start_col + width); j++) {
 			if(grid[i][j] == '1') {
 				set_module(symbol, i + row_offset, j + col_offset);
 			}
@@ -999,10 +1004,9 @@ void block_copy(struct zint_symbol *symbol, char grid[][120], int start_row, int
 
 int code_one(struct zint_symbol *symbol, unsigned char source[], int length)
 {
-	int size = 1, i, j, data_blocks;
+	int size = 1, data_blocks;
 
 	char datagrid[136][120];
-	int row, col;
 	int sub_version = 0;
 
 	if((symbol->option_2 < 0) || (symbol->option_2 > 10)) {
@@ -1034,12 +1038,12 @@ int code_one(struct zint_symbol *symbol, unsigned char source[], int length)
 		binary_load(elreg, (char *)source, length);
 		hex_dump(elreg);
 
-		for(i = 0; i < 15; i++) {
+		for(int i = 0; i < 15; i++) {
 			data[i] = 0;
 			ecc[i] = 0;
 		}
 
-		for(i = 0; i < codewords; i++) {
+		for(int i = 0; i < codewords; i++) {
 			data[codewords - i - 1] += 1 * elreg[(i * 5)];
 			data[codewords - i - 1] += 2 * elreg[(i * 5) + 1];
 			data[codewords - i - 1] += 4 * elreg[(i * 5) + 2];
@@ -1052,30 +1056,37 @@ int code_one(struct zint_symbol *symbol, unsigned char source[], int length)
 		rs_encode_long(codewords, data, ecc);
 		rs_free();
 
-		for(i = 0; i < codewords; i++) {
+		for(int i = 0; i < codewords; i++) {
 			stream[i] = data[i];
 			stream[i + codewords] = ecc[codewords - i - 1];
 		}
 
-		for(i = 0; i < 136; i++) {
-			for(j = 0; j < 120; j++) {
+		for(int i = 0; i < 136; i++)
+			for(int j = 0; j < 120; j++)
 				datagrid[i][j] = '0';
-			}
-		}
 
-		i = 0;
-		for(row = 0; row < 2; row++) {
-			for(col = 0; col < block_width; col++) {
-				if(stream[i] & 0x10) { datagrid[row * 2][col * 5] = '1'; }
-				if(stream[i] & 0x08) { datagrid[row * 2][(col * 5) + 1] = '1'; }
-				if(stream[i] & 0x04) { datagrid[row * 2][(col * 5) + 2] = '1'; }
-				if(stream[i] & 0x02) { datagrid[(row * 2) + 1][col * 5] = '1'; }
-				if(stream[i] & 0x01) { datagrid[(row * 2) + 1][(col * 5) + 1] = '1'; }
-				if(stream[i + 1] & 0x10) { datagrid[row * 2][(col * 5) + 3] = '1'; }
-				if(stream[i + 1] & 0x08) { datagrid[row * 2][(col * 5) + 4] = '1'; }
-				if(stream[i + 1] & 0x04) { datagrid[(row * 2) + 1][(col * 5) + 2] = '1'; }
-				if(stream[i + 1] & 0x02) { datagrid[(row * 2) + 1][(col * 5) + 3] = '1'; }
-				if(stream[i + 1] & 0x01) { datagrid[(row * 2) + 1][(col * 5) + 4] = '1'; }
+		for(int i = 0, row = 0; row < 2; row++) {
+			for(int col = 0; col < block_width; col++) {
+				if(stream[i] & 0x10)
+					datagrid[row * 2][col * 5] = '1';
+				if(stream[i] & 0x08)
+					datagrid[row * 2][(col * 5) + 1] = '1';
+				if(stream[i] & 0x04)
+					datagrid[row * 2][(col * 5) + 2] = '1';
+				if(stream[i] & 0x02)
+					datagrid[(row * 2) + 1][col * 5] = '1';
+				if(stream[i] & 0x01)
+					datagrid[(row * 2) + 1][(col * 5) + 1] = '1';
+				if(stream[i + 1] & 0x10)
+					datagrid[row * 2][(col * 5) + 3] = '1';
+				if(stream[i + 1] & 0x08)
+					datagrid[row * 2][(col * 5) + 4] = '1';
+				if(stream[i + 1] & 0x04)
+					datagrid[(row * 2) + 1][(col * 5) + 2] = '1';
+				if(stream[i + 1] & 0x02)
+					datagrid[(row * 2) + 1][(col * 5) + 3] = '1';
+				if(stream[i + 1] & 0x01)
+					datagrid[(row * 2) + 1][(col * 5) + 4] = '1';
 				i += 2;
 			}
 		}
@@ -1092,7 +1103,9 @@ int code_one(struct zint_symbol *symbol, unsigned char source[], int length)
 		int data_length;
 		int data_cw, ecc_cw, block_width;
 
-		for(i = 0; i < 40; i++) { data[i] = 0; }
+		for(int i = 0; i < 40; i++)
+			data[i] = 0;
+
 		data_length = c1_encode(symbol, source, data, length);
 
 		if(data_length == 0) {
@@ -1109,7 +1122,7 @@ int code_one(struct zint_symbol *symbol, unsigned char source[], int length)
 		if(data_length <= 24) { sub_version = 2; data_cw = 24; ecc_cw = 16; block_width = 8; }
 		if(data_length <= 10) { sub_version = 1; data_cw = 10; ecc_cw = 10; block_width = 4; }
 
-		for(i = data_length; i < data_cw; i++) {
+		for(int i = data_length; i < data_cw; i++) {
 			data[i] = 129; /* Pad */
 		}
 
@@ -1120,30 +1133,34 @@ int code_one(struct zint_symbol *symbol, unsigned char source[], int length)
 		rs_free();
 
 		/* "Stream" combines data and error correction data */
-		for(i = 0; i < data_cw; i++) {
+		for(int i = 0; i < data_cw; i++)
 			stream[i] = data[i];
-		}
-		for(i = 0; i < ecc_cw; i++) {
+
+		for(int i = 0; i < ecc_cw; i++)
 			stream[data_cw + i] = ecc[ecc_cw - i - 1];
-		}
 
-		for(i = 0; i < 136; i++) {
-			for(j = 0; j < 120; j++) {
+		for (int i = 0; i < 136; i++)
+			for (int j = 0; j < 120; j++)
 				datagrid[i][j] = '0';
-			}
-		}
 
-		i = 0;
-		for(row = 0; row < 5; row++) {
-			for(col = 0; col < block_width; col++) {
-				if(stream[i] & 0x80) { datagrid[row * 2][col * 4] = '1'; }
-				if(stream[i] & 0x40) { datagrid[row * 2][(col * 4) + 1] = '1'; }
-				if(stream[i] & 0x20) { datagrid[row * 2][(col * 4) + 2] = '1'; }
-				if(stream[i] & 0x10) { datagrid[row * 2][(col * 4) + 3] = '1'; }
-				if(stream[i] & 0x08) { datagrid[(row * 2) + 1][col * 4] = '1'; }
-				if(stream[i] & 0x04) { datagrid[(row * 2) + 1][(col * 4) + 1] = '1'; }
-				if(stream[i] & 0x02) { datagrid[(row * 2) + 1][(col * 4) + 2] = '1'; }
-				if(stream[i] & 0x01) { datagrid[(row * 2) + 1][(col * 4) + 3] = '1'; }
+		for (int i = 0, row = 0; row < 5; row++) {
+			for(int col = 0; col < block_width; col++) {
+				if(stream[i] & 0x80)
+					datagrid[row * 2][col * 4] = '1';
+				if(stream[i] & 0x40)
+					datagrid[row * 2][(col * 4) + 1] = '1';
+				if(stream[i] & 0x20)
+					datagrid[row * 2][(col * 4) + 2] = '1';
+				if(stream[i] & 0x10)
+					datagrid[row * 2][(col * 4) + 3] = '1';
+				if(stream[i] & 0x08)
+					datagrid[(row * 2) + 1][col * 4] = '1';
+				if(stream[i] & 0x04)
+					datagrid[(row * 2) + 1][(col * 4) + 1] = '1';
+				if(stream[i] & 0x02)
+					datagrid[(row * 2) + 1][(col * 4) + 2] = '1';
+				if(stream[i] & 0x01)
+					datagrid[(row * 2) + 1][(col * 4) + 3] = '1';
 				i++;
 			}
 		}
@@ -1159,84 +1176,86 @@ int code_one(struct zint_symbol *symbol, unsigned char source[], int length)
 		unsigned int stream[2100];
 		int data_length;
 
-		for(i = 0; i < 1500; i++) { data[i] = 0; }
+		for (int i = 0; i < 1500; i++)
+			data[i] = 0;
+
 		data_length = c1_encode(symbol, source, data, length);
 
-		if(data_length == 0) {
+		if (data_length == 0) {
 			return ERROR_TOO_LONG;
 		}
 
-		for(i = 7; i >= 0; i--) {
+		for (int i = 7; i >= 0; i--) {
 			if(c1_data_length[i] >= data_length) {
 				size = i + 1;
 			}
 		}
 
-		if(symbol->option_2 > size) {
+		if (symbol->option_2 > size) {
 			size = symbol->option_2;
 		}
 
-		for(i = data_length; i < c1_data_length[size - 1]; i++) {
+		for (int i = data_length; i < c1_data_length[size - 1]; i++) {
 			data[i] = 129; /* Pad */
 		}
 
 		/* Calculate error correction data */
 		data_length = c1_data_length[size - 1];
-		for(i = 0; i < 190; i++) { sub_data[i] = 0; }
-		for(i = 0; i < 75; i++) { sub_ecc[i] = 0; }
+		for (int i = 0; i < 190; i++)
+			sub_data[i] = 0;
+
+		for (int i = 0; i < 75; i++)
+			sub_ecc[i] = 0;
 
 		data_blocks = c1_blocks[size - 1];
 
 		rs_init_gf(0x12d);
 		rs_init_code(c1_ecc_blocks[size - 1], 0);
 
-		for(i = 0; i < data_blocks; i++) {
-			for(j = 0; j < c1_data_blocks[size - 1]; j++) {
+		for(int i = 0; i < data_blocks; i++) {
+			for(int j = 0; j < c1_data_blocks[size - 1]; j++) {
 
 				sub_data[j] = data[j * data_blocks + i];
 			}
 			rs_encode_long(c1_data_blocks[size - 1], sub_data, sub_ecc);
-			for(j = 0; j < c1_ecc_blocks[size - 1]; j++) {
+			for(int j = 0; j < c1_ecc_blocks[size - 1]; j++) {
 				ecc[c1_ecc_length[size - 1] - (j * data_blocks + i) - 1] = sub_ecc[j];
 			}
 		}
 		rs_free();
 
 		/* "Stream" combines data and error correction data */
-		for(i = 0; i < data_length; i++) {
+		for(int i = 0; i < data_length; i++)
 			stream[i] = data[i];
-		}
-		for(i = 0; i < c1_ecc_length[size - 1]; i++) {
+
+		for(int i = 0; i < c1_ecc_length[size - 1]; i++)
 			stream[data_length + i] = ecc[i];
-		}
 
-		for(i = 0; i < 136; i++) {
-			for(j = 0; j < 120; j++) {
+		for(int i = 0; i < 136; i++)
+			for(int j = 0; j < 120; j++)
 				datagrid[i][j] = '0';
-			}
-		}
 
-		i = 0;
-		for(row = 0; row < c1_grid_height[size - 1]; row++) {
-			for(col = 0; col < c1_grid_width[size - 1]; col++) {
-				if(stream[i] & 0x80) { datagrid[row * 2][col * 4] = '1'; }
-				if(stream[i] & 0x40) { datagrid[row * 2][(col * 4) + 1] = '1'; }
-				if(stream[i] & 0x20) { datagrid[row * 2][(col * 4) + 2] = '1'; }
-				if(stream[i] & 0x10) { datagrid[row * 2][(col * 4) + 3] = '1'; }
-				if(stream[i] & 0x08) { datagrid[(row * 2) + 1][col * 4] = '1'; }
-				if(stream[i] & 0x04) { datagrid[(row * 2) + 1][(col * 4) + 1] = '1'; }
-				if(stream[i] & 0x02) { datagrid[(row * 2) + 1][(col * 4) + 2] = '1'; }
-				if(stream[i] & 0x01) { datagrid[(row * 2) + 1][(col * 4) + 3] = '1'; }
+		for(int i = 0, row = 0; row < c1_grid_height[size - 1]; row++) {
+			for(int col = 0; col < c1_grid_width[size - 1]; col++) {
+				if(stream[i] & 0x80)
+					datagrid[row * 2][col * 4] = '1';
+				if(stream[i] & 0x40)
+					datagrid[row * 2][(col * 4) + 1] = '1';
+				if(stream[i] & 0x20)
+					datagrid[row * 2][(col * 4) + 2] = '1';
+				if(stream[i] & 0x10)
+					datagrid[row * 2][(col * 4) + 3] = '1';
+				if(stream[i] & 0x08)
+					datagrid[(row * 2) + 1][col * 4] = '1';
+				if(stream[i] & 0x04)
+					datagrid[(row * 2) + 1][(col * 4) + 1] = '1';
+				if(stream[i] & 0x02)
+					datagrid[(row * 2) + 1][(col * 4) + 2] = '1';
+				if(stream[i] & 0x01)
+					datagrid[(row * 2) + 1][(col * 4) + 3] = '1';
 				i++;
 			}
 		}
-
-		/* for(i = 0; i < (c1_grid_height[size - 1] * 2); i++) {
-			for(j = 0; j < (c1_grid_width[size - 1] * 4); j++) {
-				printf("%c", datagrid[i][j]);
-			}
-			printf("\n");
-		} */
 
 		symbol->rows = c1_height[size - 1];
 		symbol->width = c1_width[size - 1];
@@ -1495,7 +1514,7 @@ int code_one(struct zint_symbol *symbol, unsigned char source[], int length)
 			break;
 	}
 
-	for(i = 0; i < symbol->rows; i++) {
+	for(int i = 0; i < symbol->rows; i++) {
 		symbol->row_height[i] = 1;
 	}
 

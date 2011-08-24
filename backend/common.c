@@ -69,38 +69,40 @@ int ctoi(char source)
 	return(source - 'A' + 10);
 }
 
+/** Converts an integer value to its hexadecimal character */
 char itoc(int source)
-{ /* Converts an integer value to its hexadecimal character */
+{
 	if ((source >= 0) && (source <= 9)) {
 		return ('0' + source); }
 	else {
 		return ('A' + (source - 10)); }
 }
 
+/** Converts lower case characters to upper case in a string source[] */
 void to_upper(unsigned char source[])
-{ /* Converts lower case characters to upper case in a string source[] */
-	unsigned int i, src_len = ustrlen(source);
+{
+	unsigned int src_len = ustrlen(source);
 
-	for (i = 0; i < src_len; i++) {
+	for (unsigned int i = 0; i < src_len; i++) {
 		if ((source[i] >= 'a') && (source[i] <= 'z')) {
-			source [i] = (source[i] - 'a') + 'A'; }
+			source[i] = (source[i] - 'a') + 'A'; }
 	}
 }
 
 int is_sane(char test_string[], unsigned char source[], int length)
 { /* Verifies that a string only uses valid characters */
-	unsigned int i, j, latch;
+	unsigned int latch;
 	unsigned int lt = strlen(test_string);
 
-	for(i = 0; i < length; i++) {
+	for(unsigned int i = 0; i < length; i++) {
 		latch = FALSE;
-		for(j = 0; j < lt; j++) {
+		for(unsigned int j = 0; j < lt; j++) {
 			if (source[i] == test_string[j]) {
 				latch = TRUE;
 				break;
 			}
 		}
-		if (!(latch)) {
+		if (!latch) {
 			return ERROR_INVALID_DATA;
 		}
 	}
@@ -110,94 +112,51 @@ int is_sane(char test_string[], unsigned char source[], int length)
 
 int posn(char set_string[], char data)
 { /* Returns the position of data in set_string */
-	unsigned int i, n = strlen(set_string);
+	unsigned int n = strlen(set_string);
 
-	for(i = 0; i < n; i++) {
-		if (data == set_string[i]) { return i; } }
+	for(unsigned int i = 0; i < n; i++)
+		if (data == set_string[i])
+			return i;
 	return 0;
 }
 
+/** Replaces huge switch statements for looking up in tables */
 void lookup(char set_string[], char *table[], char data, char dest[])
-{ /* Replaces huge switch statements for looking up in tables */
-	unsigned int i, n = strlen(set_string);
+{
+	unsigned int n = strlen(set_string);
 
-	for(i = 0; i < n; i++) {
-		if (data == set_string[i]) { concat(dest, table[i]); } }
+	for(unsigned int i = 0; i < n; i++)
+		if (data == set_string[i])
+			concat(dest, table[i]);
 }
 
 int module_is_set(struct zint_symbol *symbol, int y_coord, int x_coord)
 {
 	return (symbol->encoded_data[y_coord][x_coord / 7] >> (x_coord % 7)) & 1;
-#if 0
-	switch(x_sub) {
-		case 0: if((symbol->encoded_data[y_coord][x_char] & 0x01) != 0) { result = 1; } break;
-		case 1: if((symbol->encoded_data[y_coord][x_char] & 0x02) != 0) { result = 1; } break;
-		case 2: if((symbol->encoded_data[y_coord][x_char] & 0x04) != 0) { result = 1; } break;
-		case 3: if((symbol->encoded_data[y_coord][x_char] & 0x08) != 0) { result = 1; } break;
-		case 4: if((symbol->encoded_data[y_coord][x_char] & 0x10) != 0) { result = 1; } break;
-		case 5: if((symbol->encoded_data[y_coord][x_char] & 0x20) != 0) { result = 1; } break;
-		case 6: if((symbol->encoded_data[y_coord][x_char] & 0x40) != 0) { result = 1; } break;
-	}
-
-	return result;
-#endif
 }
 
 void set_module(struct zint_symbol *symbol, int y_coord, int x_coord)
 {
 	symbol->encoded_data[y_coord][x_coord / 7] |= 1 << (x_coord % 7);
-#if 0
-	int x_char, x_sub;
-
-
-	x_char = x_coord / 7;
-	x_sub = x_coord % 7;
-
-	switch(x_sub) {
-		case 0: symbol->encoded_data[y_coord][x_char] += 0x01; break;
-		case 1: symbol->encoded_data[y_coord][x_char] += 0x02; break;
-		case 2: symbol->encoded_data[y_coord][x_char] += 0x04; break;
-		case 3: symbol->encoded_data[y_coord][x_char] += 0x08; break;
-		case 4: symbol->encoded_data[y_coord][x_char] += 0x10; break;
-		case 5: symbol->encoded_data[y_coord][x_char] += 0x20; break;
-		case 6: symbol->encoded_data[y_coord][x_char] += 0x40; break;
-	} /* The last binary digit is reserved for colour barcodes */
-#endif
 }
 
 void unset_module(struct zint_symbol *symbol, int y_coord, int x_coord)
 {
 	symbol->encoded_data[y_coord][x_coord / 7] &= ~(1 << (x_coord % 7));
-#if 0
-	int x_char, x_sub;
-
-	x_char = x_coord / 7;
-	x_sub = x_coord % 7;
-
-	switch(x_sub) {
-		case 0: symbol->encoded_data[y_coord][x_char] -= 0x01; break;
-		case 1: symbol->encoded_data[y_coord][x_char] -= 0x02; break;
-		case 2: symbol->encoded_data[y_coord][x_char] -= 0x04; break;
-		case 3: symbol->encoded_data[y_coord][x_char] -= 0x08; break;
-		case 4: symbol->encoded_data[y_coord][x_char] -= 0x10; break;
-		case 5: symbol->encoded_data[y_coord][x_char] -= 0x20; break;
-		case 6: symbol->encoded_data[y_coord][x_char] -= 0x40; break;
-	} /* The last binary digit is reserved for colour barcodes */
-#endif
 }
 
 void expand(struct zint_symbol *symbol, char data[])
 { /* Expands from a width pattern to a bit pattern */
 
 	unsigned int reader, n = strlen(data);
-	int writer, i;
+	int writer;
 	char latch;
 
 	writer = 0;
 	latch = '1';
 
 	for(reader = 0; reader < n; reader++) {
-		for(i = 0; i < ctoi(data[reader]); i++) {
+		for(int i = 0; i < ctoi(data[reader]); i++) {
 			if(latch == '1') { set_module(symbol, symbol->rows, writer); }
 			writer++;
 		}
@@ -285,11 +244,9 @@ float froundup(float input)
 
 int latin1_process(struct zint_symbol *symbol, unsigned char source[], unsigned char preprocessed[], int *length)
 {
-	int j, i, next;
+	int j = 0, i = 0, next;
 
 	/* Convert Unicode to Latin-1 for those symbologies which only support Latin-1 */
-	j = 0;
-	i = 0;
 	do {
 		next = -1;
 		if(source[i] < 128) {
