@@ -67,67 +67,96 @@ static int C16KStopValues[16] = {0, 1, 2, 3, 4, 5, 6, 7, 4, 5, 6, 7, 0, 1, 2, 3}
 
 void grwp16(int *indexliste)
 {
-	int i, j;
-
 	/* bring together same type blocks */
 	if(*(indexliste) > 1) {
-		i = 1;
-		while(i < *(indexliste)) {
+		for (int i = 1; i < *indexliste; i++) {
 			if(list[1][i - 1] == list[1][i]) {
 				/* bring together */
 				list[0][i - 1] = list[0][i - 1] + list[0][i];
-				j = i + 1;
 
 				/* decreace the list */
-				while(j < *(indexliste)) {
+				for (int j = i + 1 ;j < *indexliste; j++) {
 					list[0][j - 1] = list[0][j];
 					list[1][j - 1] = list[1][j];
-					j++;
 				}
-				*(indexliste) = *(indexliste) - 1;
+				(*indexliste)--;
 				i--;
 			}
-			i++;
 		}
 	}
 }
 
 void dxsmooth16(int *indexliste)
 { /* Implements rules from ISO 15417 Annex E */
-	int i, current, last, next, length;
+	int current, last, next, length;
 
-	for(i = 0; i < *(indexliste); i++) {
+	for(int i = 0; i < *indexliste; i++) {
 		current = list[1][i];
 		length = list[0][i];
-		if(i != 0) { last = list[1][i - 1]; } else { last = FALSE; }
-		if(i != *(indexliste) - 1) { next = list[1][i + 1]; } else { next = FALSE; }
+
+		if (i != 0)
+			last = list[1][i - 1];
+		else
+			last = FALSE;
+
+		if (i != *indexliste - 1)
+			next = list[1][i + 1];
+		else
+			next = FALSE;
 
 		if(i == 0) { /* first block */
-			if((*(indexliste) == 1) && ((length == 2) && (current == ABORC))) { /* Rule 1a */ list[1][i] = LATCHC; }
-			if(current == ABORC) {
-				if(length >= 4) {/* Rule 1b */ list[1][i] = LATCHC; } else { list[1][i] = AORB; current = AORB; }
+			if ((*(indexliste) == 1) && ((length == 2) && (current == ABORC)))
+				/* Rule 1a */
+				list[1][i] = LATCHC;
+			if (current == ABORC) {
+				if(length >= 4)
+					/* Rule 1b */
+					list[1][i] = LATCHC;
+				else
+					list[1][i] = current = AORB;
 			}
-			if(current == SHIFTA) { /* Rule 1c */ list[1][i] = LATCHA; }
-			if((current == AORB) && (next == SHIFTA)) { /* Rule 1c */ list[1][i] = LATCHA; current = LATCHA; }
-			if(current == AORB) { /* Rule 1d */ list[1][i] = LATCHB; }
+			if (current == SHIFTA)
+				/* Rule 1c */
+				list[1][i] = LATCHA;
+			if ((current == AORB) && (next == SHIFTA))
+				/* Rule 1c */
+				list[1][i] = current = LATCHA;
+			if (current == AORB)
+				/* Rule 1d */
+				list[1][i] = LATCHB;
 		} else {
-			if((current == ABORC) && (length >= 4)) { /* Rule 3 */ list[1][i] = LATCHC; current = LATCHC; }
-			if(current == ABORC) { list[1][i] = AORB; current = AORB; }
-			if((current == AORB) && (last == LATCHA)) { list[1][i] = LATCHA; current = LATCHA; }
-			if((current == AORB) && (last == LATCHB)) { list[1][i] = LATCHB; current = LATCHB; }
-			if((current == AORB) && (next == SHIFTA)) { list[1][i] = LATCHA; current = LATCHA; }
-			if((current == AORB) && (next == SHIFTB)) { list[1][i] = LATCHB; current = LATCHB; }
-			if(current == AORB) { list[1][i] = LATCHB; current = LATCHB; }
-			if((current == SHIFTA) && (length > 1)) { /* Rule 4 */ list[1][i] = LATCHA; current = LATCHA; }
-			if((current == SHIFTB) && (length > 1)) { /* Rule 5 */ list[1][i] = LATCHB; current = LATCHB; }
-			if((current == SHIFTA) && (last == LATCHA)) { list[1][i] = LATCHA; current = LATCHA; }
-			if((current == SHIFTB) && (last == LATCHB)) { list[1][i] = LATCHB; current = LATCHB; }
-			if((current == SHIFTA) && (last == LATCHC)) { list[1][i] = LATCHA; current = LATCHA; }
-			if((current == SHIFTB) && (last == LATCHC)) { list[1][i] = LATCHB; current = LATCHB; }
+			if ((current == ABORC) && (length >= 4))
+				/* Rule 3 */
+				list[1][i] = current = LATCHC;
+			if (current == ABORC)
+				list[1][i] = current = AORB;
+			if ((current == AORB) && (last == LATCHA))
+				list[1][i] = current = LATCHA;
+			if ((current == AORB) && (last == LATCHB))
+				list[1][i] = current = LATCHB;
+			if ((current == AORB) && (next == SHIFTA))
+				list[1][i] = current = LATCHA;
+			if((current == AORB) && (next == SHIFTB))
+				list[1][i] = current = LATCHB;
+			if (current == AORB)
+				list[1][i] = current = LATCHB;
+			if ((current == SHIFTA) && (length > 1))
+				/* Rule 4 */
+				list[1][i] = current = LATCHA;
+			if ((current == SHIFTB) && (length > 1))
+				/* Rule 5 */
+				list[1][i] = current = LATCHB;
+			if ((current == SHIFTA) && (last == LATCHA))
+				list[1][i] = current = LATCHA;
+			if ((current == SHIFTB) && (last == LATCHB))
+				list[1][i] = current = LATCHB;
+			if ((current == SHIFTA) && (last == LATCHC))
+				list[1][i] = current = LATCHA;
+			if ((current == SHIFTB) && (last == LATCHC))
+				list[1][i] = current = LATCHB;
 		} /* Rule 2 is implimented elsewhere, Rule 6 is implied */
 	}
 	grwp16(indexliste);
-
 }
 
 void c16k_set_a(unsigned char source, unsigned int values[], unsigned int *bar_chars)
@@ -163,8 +192,7 @@ void c16k_set_c(unsigned char source_a, unsigned char source_b, unsigned int val
 	int weight;
 
 	weight = (10 * ctoi(source_a)) + ctoi(source_b);
-	values[(*bar_chars)] = weight;
-	(*bar_chars)++;
+	values[(*bar_chars)++] = weight;
 }
 
 int code16k(struct zint_symbol *symbol, unsigned char source[], int length)

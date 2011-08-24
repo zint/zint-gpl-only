@@ -561,11 +561,11 @@ void place_align(unsigned char grid[], int size, int x, int y)
 
 void setup_grid(unsigned char* grid, int size, int version)
 {
-	int i, toggle = 1;
+	int toggle = 1;
 	int loopsize, x, y, xcoord, ycoord;
 
 	/* Add timing patterns */
-	for(i = 0; i < size; i++) {
+	for(int i = 0; i < size; i++) {
 		if(toggle == 1) {
 			grid[(6 * size) + i] = 0x21;
 			grid[(i * size) + 6] = 0x21;
@@ -583,7 +583,7 @@ void setup_grid(unsigned char* grid, int size, int version)
 	place_finder(grid, size, size - 7, 0);
 
 	/* Add separators */
-	for(i = 0; i < 7; i++) {
+	for(int i = 0; i < 7; i++) {
 		grid[(7 * size) + i] = 0x10;
 		grid[(i * size) + 7] = 0x10;
 		grid[(7 * size) + (size - 1 - i)] = 0x10;
@@ -613,7 +613,7 @@ void setup_grid(unsigned char* grid, int size, int version)
 	}
 
 	/* Reserve space for format information */
-	for(i = 0; i < 8; i++) {
+	for(int i = 0; i < 8; i++) {
 		grid[(8 * size) + i] += 0x20;
 		grid[(i * size) + 8] += 0x20;
 		grid[(8 * size) + (size - 1 - i)] = 0x20;
@@ -623,8 +623,8 @@ void setup_grid(unsigned char* grid, int size, int version)
 	grid[((size - 1 - 7) * size) + 8] = 0x21; /* Dark Module from Figure 25 */
 
 	/* Reserve space for version information */
-	if(version >= 7) {
-		for(i = 0; i < 6; i++) {
+	if (version >= 7) {
+		for (int i = 0; i < 6; i++) {
 			grid[((size - 9) * size) + i] = 0x20;
 			grid[((size - 10) * size) + i] = 0x20;
 			grid[((size - 11) * size) + i] = 0x20;
@@ -965,7 +965,7 @@ void add_version_info(unsigned char *grid, int size, int version)
 
 int qr_code(struct zint_symbol *symbol, unsigned char source[], int length)
 {
-	int error_number, i, j, glyph, est_binlen;
+	int error_number, glyph, est_binlen;
 	int ecc_level, autosize, version, max_cw, target_binlen, blocks, size;
 	int bitmask, gs1;
 
@@ -977,7 +977,7 @@ int qr_code(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	switch(symbol->input_mode) {
 		case DATA_MODE:
-			for(i = 0; i < length; i++) {
+			for(int i = 0; i < length; i++) {
 				jisdata[i] = (int)source[i];
 			}
 			break;
@@ -986,11 +986,11 @@ int qr_code(struct zint_symbol *symbol, unsigned char source[], int length)
 			error_number = utf8toutf16(symbol, source, utfdata, &length);
 			if(error_number != 0) { return error_number; }
 
-			for(i = 0; i < length; i++) {
+			for(int i = 0; i < length; i++) {
 				if(utfdata[i] <= 0xff) {
 					jisdata[i] = utfdata[i];
 				} else {
-					j = 0;
+					int j = 0;
 					glyph = 0;
 					do {
 						if(sjis_lookup[j * 2] == utfdata[i]) {
@@ -1028,7 +1028,7 @@ int qr_code(struct zint_symbol *symbol, unsigned char source[], int length)
 	}
 
 	autosize = 40;
-	for(i = 39; i >= 0; i--) {
+	for(int i = 39; i >= 0; i--) {
 		switch(ecc_level) {
 			case LEVEL_L:
 				if ((8 * qr_data_codewords_L[i]) >= est_binlen) {
@@ -1084,8 +1084,8 @@ int qr_code(struct zint_symbol *symbol, unsigned char source[], int length)
 	size = qr_sizes[version - 1];
 	unsigned char grid[size * size];
 
-	for(i = 0; i < size; i++) {
-		for(j = 0; j < size; j++) {
+	for (int i = 0; i < size; i++) {
+		for(int j = 0; j < size; j++) {
 			grid[(i * size) + j] = 0;
 		}
 	}
@@ -1094,16 +1094,16 @@ int qr_code(struct zint_symbol *symbol, unsigned char source[], int length)
 	populate_grid(grid, size, fullstream, qr_total_codewords[version - 1]);
 	bitmask = apply_bitmask(grid, size);
 	add_format_info(grid, size, ecc_level, bitmask);
-	if(version >= 7) {
+	if (version >= 7) {
 		add_version_info(grid, size, version);
 	}
 
 	symbol->width = size;
 	symbol->rows = size;
 
-	for(i = 0; i < size; i++) {
-		for(j = 0; j < size; j++) {
-			if(grid[(i * size) + j] & 0x01) {
+	for (int i = 0; i < size; i++) {
+		for (int j = 0; j < size; j++) {
+			if (grid[(i * size) + j] & 0x01) {
 				set_module(symbol, i, j);
 			}
 		}
@@ -1938,7 +1938,7 @@ int micro_apply_bitmask(unsigned char *grid, int size)
 
 int microqr(struct zint_symbol *symbol, unsigned char source[], int length)
 {
-	int i, j, glyph, size;
+	int glyph, size;
 	char binary_stream[200];
 	char full_stream[200];
 	int utfdata[40];
@@ -1955,13 +1955,13 @@ int microqr(struct zint_symbol *symbol, unsigned char source[], int length)
 		return ERROR_TOO_LONG;
 	}
 
-	for(i = 0; i < 4; i++) {
+	for(int i = 0; i < 4; i++) {
 		version_valid[i] = 1;
 	}
 
 	switch(symbol->input_mode) {
 		case DATA_MODE:
-			for(i = 0; i < length; i++) {
+			for(int i = 0; i < length; i++) {
 				jisdata[i] = (int)source[i];
 			}
 			break;
@@ -1970,11 +1970,11 @@ int microqr(struct zint_symbol *symbol, unsigned char source[], int length)
 			error_number = utf8toutf16(symbol, source, utfdata, &length);
 			if(error_number != 0) { return error_number; }
 
-			for(i = 0; i < length; i++) {
+			for(int i = 0; i < length; i++) {
 				if(utfdata[i] <= 0xff) {
 					jisdata[i] = utfdata[i];
 				} else {
-					j = 0;
+					int j = 0;
 					glyph = 0;
 					do {
 						if(sjis_lookup[j * 2] == utfdata[i]) {
@@ -1996,27 +1996,27 @@ int microqr(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	n_count = 0;
 	a_count = 0;
-	for(i = 0; i < length; i++) {
+	for (int i = 0; i < length; i++) {
 		if((jisdata[i] >= '0') && (jisdata[i] <= '9')) { n_count++; }
 		if(in_alpha(jisdata[i])) { a_count++; }
 	}
 
-	if(a_count == length) {
+	if (a_count == length) {
 		/* All data can be encoded in Alphanumeric mode */
-		for(i = 0; i < length; i++) {
+		for (int i = 0; i < length; i++) {
 			mode[i] = 'A';
 		}
 	}
 
-	if(n_count == length) {
+	if (n_count == length) {
 		/* All data can be encoded in Numeric mode */
-		for(i = 0; i < length; i++) {
+		for (int i = 0; i < length; i++) {
 			mode[i] = 'N';
 		}
 	}
 
 	error_number = micro_qr_intermediate(binary_stream, jisdata, mode, length, &kanji_used, &alphanum_used, &byte_used);
-	if(error_number != 0) {
+	if (error_number != 0) {
 		strcpy(symbol->errtxt, "Input data too long");
 		return error_number;
 	}
@@ -2024,16 +2024,16 @@ int microqr(struct zint_symbol *symbol, unsigned char source[], int length)
 	get_bitlength(binary_count, binary_stream);
 
 	/* Eliminate possivle versions depending on type of content */
-	if(byte_used) {
+	if (byte_used) {
 		version_valid[0] = 0;
 		version_valid[1] = 0;
 	}
 
-	if(alphanum_used) {
+	if (alphanum_used) {
 		version_valid[0] = 0;
 	}
 
-	if(kanji_used) {
+	if (kanji_used) {
 		version_valid[0] = 0;
 		version_valid[1] = 0;
 	}
@@ -2118,8 +2118,8 @@ int microqr(struct zint_symbol *symbol, unsigned char source[], int length)
 	size = micro_qr_sizes[version];
 	unsigned char grid[size * size];
 
-	for(i = 0; i < size; i++) {
-		for(j = 0; j < size; j++) {
+	for (int i = 0; i < size; i++) {
+		for (int j = 0; j < size; j++) {
 			grid[(i * size) + j] = 0;
 		}
 	}
@@ -2170,9 +2170,9 @@ int microqr(struct zint_symbol *symbol, unsigned char source[], int length)
 	symbol->width = size;
 	symbol->rows = size;
 
-	for(i = 0; i < size; i++) {
-		for(j = 0; j < size; j++) {
-			if(grid[(i * size) + j] & 0x01) {
+	for (int i = 0; i < size; i++) {
+		for (int j = 0; j < size; j++) {
+			if (grid[(i * size) + j] & 0x01) {
 				set_module(symbol, i, j);
 			}
 		}

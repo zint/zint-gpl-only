@@ -43,7 +43,7 @@ static inline char check_digit(unsigned int count)
 int matrix_two_of_five(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* Code 2 of 5 Standard (Code 2 of 5 Matrix) */
 
-	int i, error_number;
+	int error_number;
 	char dest[512]; /* 6 + 80 * 6 + 6 + 1 ~ 512*/
 
 	error_number = 0;
@@ -61,7 +61,7 @@ int matrix_two_of_five(struct zint_symbol *symbol, unsigned char source[], int l
 	/* start character */
 	strcpy(dest, "411111");
 
-	for(i = 0; i < length; i++) {
+	for(int i = 0; i < length; i++) {
 		lookup(NEON, C25MatrixTable, source[i], dest);
 	}
 
@@ -76,7 +76,7 @@ int matrix_two_of_five(struct zint_symbol *symbol, unsigned char source[], int l
 int industrial_two_of_five(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* Code 2 of 5 Industrial */
 
-	int i, error_number;
+	int error_number;
 	char dest[512]; /* 6 + 40 * 10 + 6 + 1 */
 
 	error_number = 0;
@@ -94,7 +94,7 @@ int industrial_two_of_five(struct zint_symbol *symbol, unsigned char source[], i
 	/* start character */
 	strcpy(dest, "313111");
 
-	for(i = 0; i < length; i++) {
+	for(int i = 0; i < length; i++) {
 		lookup(NEON, C25IndustTable, source[i], dest);
 	}
 
@@ -108,7 +108,7 @@ int industrial_two_of_five(struct zint_symbol *symbol, unsigned char source[], i
 
 int iata_two_of_five(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* Code 2 of 5 IATA */
-	int i, error_number;
+	int error_number;
 	char dest[512]; /* 4 + 45 * 10 + 3 + 1 */
 
 	error_number = 0;
@@ -126,7 +126,7 @@ int iata_two_of_five(struct zint_symbol *symbol, unsigned char source[], int len
 	/* start */
 	strcpy(dest, "1111");
 
-	for(i = 0; i < length; i++) {
+	for(int i = 0; i < length; i++) {
 		lookup(NEON, C25IndustTable, source[i], dest);
 	}
 
@@ -141,7 +141,7 @@ int iata_two_of_five(struct zint_symbol *symbol, unsigned char source[], int len
 int logic_two_of_five(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* Code 2 of 5 Data Logic */
 
-	int i, error_number;
+	int error_number;
 	char dest[512]; /* 4 + 80 * 6 + 3 + 1 */
 
 	error_number = 0;
@@ -159,7 +159,7 @@ int logic_two_of_five(struct zint_symbol *symbol, unsigned char source[], int le
 	/* start character */
 	strcpy(dest, "1111");
 
-	for(i = 0; i < length; i++) {
+	for(int i = 0; i < length; i++) {
 		lookup(NEON, C25MatrixTable, source[i], dest);
 	}
 
@@ -174,7 +174,7 @@ int logic_two_of_five(struct zint_symbol *symbol, unsigned char source[], int le
 int interleaved_two_of_five(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* Code 2 of 5 Interleaved */
 
-	int i, j, k, error_number;
+	int error_number;
 	char bars[7], spaces[7], mixed[14], dest[1000];
 	unsigned char temp[length + 2];
 
@@ -193,8 +193,7 @@ int interleaved_two_of_five(struct zint_symbol *symbol, unsigned char source[], 
 	ustrcpy(temp, (unsigned char *) "");
 	/* Input must be an even number of characters for Interlaced 2 of 5 to work:
 	   if an odd number of characters has been entered then add a leading zero */
-	if (length & 1)
-	{
+	if (length & 1) {
 		ustrcpy(temp, (unsigned char *) "0");
 		length++;
 	}
@@ -203,8 +202,7 @@ int interleaved_two_of_five(struct zint_symbol *symbol, unsigned char source[], 
 	/* start character */
 	strcpy(dest, "1111");
 
-	for(i = 0; i < length; i+=2 )
-	{
+	for(int i = 0; i < length; i+=2) {
 		/* look up the bars and the spaces and put them in two strings */
 		strcpy(bars, "");
 		lookup(NEON, C25InterTable, temp[i], bars);
@@ -212,8 +210,8 @@ int interleaved_two_of_five(struct zint_symbol *symbol, unsigned char source[], 
 		lookup(NEON, C25InterTable, temp[i + 1], spaces);
 
 		/* then merge (interlace) the strings together */
-		k = 0;
-		for(j = 0; j <= 4; j++)
+		int k = 0;
+		for(int j = 0; j <= 4; j++)
 		{
 			mixed[k] = bars[j]; k++;
 			mixed[k] = spaces[j]; k++;
@@ -233,7 +231,7 @@ int interleaved_two_of_five(struct zint_symbol *symbol, unsigned char source[], 
 
 int itf14(struct zint_symbol *symbol, unsigned char source[], int length)
 {
-	int i, error_number, zeroes;
+	int error_number, zeroes;
 	unsigned int count;
 	char localstr[16];
 
@@ -254,14 +252,14 @@ int itf14(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	/* Add leading zeros as required */
 	zeroes = 13 - length;
-	for(i = 0; i < zeroes; i++) {
+	for(int i = 0; i < zeroes; i++) {
 		localstr[i] = '0';
 	}
 	strcpy(localstr + zeroes, (char *)source);
 
 	/* Calculate the check digit - the same method used for EAN-13 */
 
-	for (i = 12; i >= 0; i--) {
+	for (int i = 12; i >= 0; i--) {
 		count += ctoi(localstr[i]);
 
 		if (!(i & 1)) {
@@ -278,7 +276,7 @@ int itf14(struct zint_symbol *symbol, unsigned char source[], int length)
 
 int dpleit(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* Deutshe Post Leitcode */
-	int i, error_number;
+	int error_number;
 	unsigned int count;
 	char localstr[16];
 	int zeroes;
@@ -296,11 +294,11 @@ int dpleit(struct zint_symbol *symbol, unsigned char source[], int length)
 	}
 
 	zeroes = 13 - length;
-	for(i = 0; i < zeroes; i++)
+	for(int i = 0; i < zeroes; i++)
 		localstr[i] = '0';
 	strcpy(localstr + zeroes, (char *)source);
 
-	for (i = 12; i >= 0; i--)
+	for (int i = 12; i >= 0; i--)
 	{
 		count += 4 * ctoi(localstr[i]);
 
@@ -318,27 +316,28 @@ int dpleit(struct zint_symbol *symbol, unsigned char source[], int length)
 
 int dpident(struct zint_symbol *symbol, unsigned char source[], int length)
 { /* Deutsche Post Identcode */
-	int i, error_number, zeroes;
+	int error_number, zeroes;
 	unsigned int count;
 	char localstr[16];
 
 	count = 0;
-	if(length > 11) {
+	if (length > 11) {
 		strcpy(symbol->errtxt, "Input wrong length");
 		return ERROR_TOO_LONG;
 	}
+
 	error_number = is_sane(NEON, source, length);
-	if(error_number == ERROR_INVALID_DATA) {
+	if (error_number == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
 
 	zeroes = 11 - length;
-	for(i = 0; i < zeroes; i++)
+	for (int i = 0; i < zeroes; i++)
 		localstr[i] = '0';
 	strcpy(localstr + zeroes, (char *)source);
 
-	for (i = 10; i >= 0; i--)
+	for (int i = 10; i >= 0; i--)
 	{
 		count += 4 * ctoi(localstr[i]);
 
