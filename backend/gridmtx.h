@@ -38,7 +38,6 @@ static char shift_set[] = {
 
 static int gm_recommend_cw[] = { 9, 30, 59, 114, 170, 237, 315, 405, 506, 618, 741, 875, 1021 };
 static int gm_max_cw[] = { 11, 40, 79, 146, 218, 305, 405, 521, 650, 794, 953, 1125, 1313 };
-static int gm_total_cw[] = { 18, 50, 98, 162, 242, 338, 450, 578, 722, 882, 1058, 1250, 1458 };
 
 static int gm_data_codewords[] = {
 	0, 15, 13, 11, 9,

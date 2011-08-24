@@ -172,8 +172,8 @@ int code16k(struct zint_symbol *symbol, unsigned char source[], int length)
 	char width_pattern[100];
 	int current_row, rows_needed, flip_flop, looper, first_check, second_check;
 	int indexliste, indexchaine, pads_needed, f_state;
-	char set[160] = { ' ' }, fset[160] = { ' ' }, mode, last_set, last_fset, current_set;
-	unsigned int i, j, k, m, e_count, read, mx_reader, writer;
+	char set[160] = { ' ' }, fset[160] = { ' ' }, mode, last_set, current_set;
+	unsigned int i, j, k, m, read, mx_reader, writer;
 	unsigned int values[160] = { 0 };
 	unsigned int bar_characters;
 	float glyph_count;
@@ -192,7 +192,6 @@ int code16k(struct zint_symbol *symbol, unsigned char source[], int length)
 		return ERROR_TOO_LONG;
 	}
 
-	e_count = 0;
 	bar_characters = 0;
 
 	/* Detect extended ASCII characters */
@@ -331,7 +330,6 @@ int code16k(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	/* Make sure the data will fit in the symbol */
 	last_set = ' ';
-	last_fset = ' ';
 	glyph_count = 0.0;
 	for(i = 0; i < input_length; i++) {
 		if((set[i] == 'a') || (set[i] == 'b')) {
@@ -356,16 +354,13 @@ int code16k(struct zint_symbol *symbol, unsigned char source[], int length)
 				}
 			}
 			if(fset[i] == 'F') {
-				last_fset = 'F';
 				glyph_count = glyph_count + 2.0;
 			}
 		} else {
 			if((fset[i] == 'F') && (fset[i - 1] != 'F')) {
-				last_fset = 'F';
 				glyph_count = glyph_count + 2.0;
 			}
 			if((fset[i] != 'F') && (fset[i - 1] == 'F')) {
-				last_fset = ' ';
 				glyph_count = glyph_count + 2.0;
 			}
 		}

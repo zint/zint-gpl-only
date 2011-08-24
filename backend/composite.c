@@ -699,7 +699,7 @@ int cc_c(struct zint_symbol *symbol, char source[], int cc_width, int ecc_level)
 int cc_binary_string(struct zint_symbol *symbol, const char source[], char binary_string[], int cc_mode, int *cc_width, int *ecc, int lin_width)
 { /* Handles all data encodation from section 5 of ISO/IEC 24723 */
 	int encoding_method, read_posn, d1, d2, value, alpha_pad;
-	int i, j, mask, ai_crop, ai_crop_posn, fnc1_latch;
+	int i, j, mask, ai_crop, fnc1_latch;
 	long int group_val;
 	int ai90_mode, latch, remainder, binary_length;
 	char date_str[4];
@@ -709,7 +709,6 @@ int cc_binary_string(struct zint_symbol *symbol, const char source[], char binar
 	encoding_method = 1;
 	read_posn = 0;
 	ai_crop = 0;
-	ai_crop_posn = -1;
 	fnc1_latch = 0;
 	alpha_pad = 0;
 	ai90_mode = 0;
@@ -890,13 +889,11 @@ int cc_binary_string(struct zint_symbol *symbol, const char source[], char binar
 				if((source[next_ai_posn + 1] == '2') && (source[next_ai_posn + 2] == '1')) {
 					/* AI 21 follows */
 					ai_crop = 1;
-					ai_crop_posn = next_ai_posn + 1;
 				}
 
 				if((source[next_ai_posn + 1] == '8') && (source[next_ai_posn + 2] == '0') && (source[next_ai_posn + 3] == '0') && (source[next_ai_posn + 4] == '4')) {
 					/* AI 8004 follows */
 					ai_crop = 2;
-					ai_crop_posn = next_ai_posn + 1;
 				}
 			}
 
@@ -1720,7 +1717,7 @@ void add_leading_zeroes(struct zint_symbol *symbol)
 int composite(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	int error_number, cc_mode, cc_width, ecc_level;
-	int j, i, k, separator_row;
+	int j, i, k;
 	unsigned int rs = length + 1;
 	unsigned int bs = 20 * rs;
 	unsigned int pri_len;
@@ -1730,7 +1727,6 @@ int composite(struct zint_symbol *symbol, unsigned char source[], int length)
 	int top_shift, bottom_shift;
 
 	error_number = 0;
-	separator_row = 0;
 	pri_len = strlen(symbol->primary);
 	if(pri_len == 0) {
 		strcpy(symbol->errtxt, "No primary (linear) message in 2D composite");

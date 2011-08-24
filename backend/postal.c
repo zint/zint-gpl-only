@@ -310,7 +310,7 @@ char rm4scc(char source[], unsigned char dest[], int length)
 int royal_plot(struct zint_symbol *symbol, unsigned char source[], int length)
 {
 	/* Puts RM4SCC into the data matrix */
-	char height_pattern[200], check;
+	char height_pattern[200];
 	unsigned int loopey, h;
 	int writer;
 	int error_number;
@@ -328,7 +328,6 @@ int royal_plot(struct zint_symbol *symbol, unsigned char source[], int length)
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
-	check = rm4scc((char*)source, (unsigned char*)height_pattern, length);
 
 	writer = 0;
 	h = strlen(height_pattern);
