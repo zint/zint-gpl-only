@@ -636,22 +636,10 @@ void setup_grid(unsigned char* grid, int size, int version)
 }
 
 int cwbit(int* datastream, int i) {
-	int word = i / 8;
-	int bit = i % 8;
-	int resultant = 0;
+	int word = i >> 3;
+	int bit = 7 - (i & 7);
 
-	switch(bit) {
-		case 0: if(datastream[word] & 0x80) { resultant = 1; } else { resultant = 0; } break;
-		case 1: if(datastream[word] & 0x40) { resultant = 1; } else { resultant = 0; } break;
-		case 2: if(datastream[word] & 0x20) { resultant = 1; } else { resultant = 0; } break;
-		case 3: if(datastream[word] & 0x10) { resultant = 1; } else { resultant = 0; } break;
-		case 4: if(datastream[word] & 0x08) { resultant = 1; } else { resultant = 0; } break;
-		case 5: if(datastream[word] & 0x04) { resultant = 1; } else { resultant = 0; } break;
-		case 6: if(datastream[word] & 0x02) { resultant = 1; } else { resultant = 0; } break;
-		case 7: if(datastream[word] & 0x01) { resultant = 1; } else { resultant = 0; } break;
-	}
-
-	return resultant;
+	return (datastream[word] >> bit) & 1;
 }
 
 void populate_grid(unsigned char* grid, int size, int* datastream, int cw)
