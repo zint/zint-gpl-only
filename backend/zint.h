@@ -201,7 +201,7 @@ struct zint_symbol {
 #define ERROR_FILE_ACCESS	10
 #define ERROR_MEMORY		11
 
-#if defined(__WIN32__) || defined(_WIN32) || defined(WIN32) || defined(_MSC_VER)
+#if defined(__WIN32__) || defined(_WIN32) || defined(WIN32)
 #  if defined (DLL_EXPORT) || defined(PIC) || defined(_USRDLL)
 # 	 define ZINT_EXTERN __declspec(dllexport)
 #  elif defined(ZINT_DLL)
@@ -210,7 +210,7 @@ struct zint_symbol {
 #    define ZINT_EXTERN extern
 #  endif
 #else
-#  define ZINT_EXTERN extern	
+#  define ZINT_EXTERN extern
 #endif
 
 ZINT_EXTERN struct zint_symbol *ZBarcode_Create(void);

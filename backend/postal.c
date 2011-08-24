@@ -22,9 +22,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#ifdef _MSC_VER
-#include <malloc.h>
-#endif
 #include "common.h"
 
 #define DAFTSET	"DAFT"
@@ -506,11 +503,7 @@ int japan_post(struct zint_symbol *symbol, unsigned char source[], int length)
 	char check_char;
 	char inter[23];
 
-#ifndef _MSC_VER
         char local_source[length + 1];
-#else
-        char* local_source = (char*)_alloca(length + 1);
-#endif
 
 	inter_posn = 0;
 	error_number = 0;

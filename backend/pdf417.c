@@ -36,12 +36,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
-#ifndef _MSC_VER
 #include <stdint.h>
-#else
-#include <malloc.h>
-#include "ms_stdint.h"
-#endif
 #include "pdf417.h"
 #include "common.h"
 #include "large.h"

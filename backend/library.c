@@ -22,9 +22,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#ifdef _MSC_VER
-#include <malloc.h>
-#endif
 #include "common.h"
 #include "gs1.h"
 
@@ -461,11 +458,7 @@ int reduced_charset(struct zint_symbol *symbol, unsigned char *source, int lengt
 	/* These are the "norm" standards which only support Latin-1 at most */
 	int error_number = 0;
 
-#ifndef _MSC_VER
 	unsigned char preprocessed[length + 1];
-#else
-        unsigned char* preprocessed = (unsigned char*)_alloca(length + 1);
-#endif
 
 	if(symbol->symbology == BARCODE_CODE16K) {
 		symbol->whitespace_width = 16;
@@ -593,12 +586,8 @@ int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *source, int lengt
 	if(strcmp(symbol->outfile, "") == 0) {
 		strcpy(symbol->outfile, "out.png");
 	}
-	
-#ifndef _MSC_VER
+
         unsigned char local_source[length + 1];
-#else
-        unsigned char* local_source = (unsigned char*)_alloca(length + 1);
-#endif
 
 	/* First check the symbology field */
 	if(symbol->symbology < 1) { strcpy(symbol->errtxt, "Symbology out of range, using Code 128"); symbol->symbology = BARCODE_CODE128; error_number = WARN_INVALID_OPTION; }

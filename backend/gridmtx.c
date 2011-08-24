@@ -24,9 +24,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#ifdef _MSC_VER
-#include <malloc.h>
-#endif
 #include "common.h"
 #include "reedsol.h"
 #include "gridmtx.h"
@@ -801,13 +798,8 @@ void place_layer_id(char* grid, int size, int layers, int modules, int ecc_level
 
 	int i, j, layer, start, stop;
 
-#ifndef _MSC_VER
 	int layerid[layers + 1];
 	int id[modules * modules];
-#else
-	int* layerid = (int *)_alloca((layers + 1) * sizeof(int));
-	int* id = (int *)_alloca((modules * modules) * sizeof(int));
-#endif
 
 	/* Calculate Layer IDs */
 	for(i = 0; i <= layers; i++) {
@@ -860,13 +852,8 @@ int grid_matrix(struct zint_symbol *symbol, unsigned char source[], int length)
 	int data_cw, input_latch = 0;
 	int word[1460], data_max, reader = 0;
 
-#ifndef _MSC_VER
 	int utfdata[length + 1];
 	int gbdata[length + 1];
-#else
-	int* utfdata = (int *)_alloca((length + 1) * sizeof(int));
-	int* gbdata = (int *)_alloca((length + 1) * sizeof(int));
-#endif
 
 	for(i = 0; i < 1460; i++) {
 		word[i] = 0;
@@ -984,11 +971,7 @@ int grid_matrix(struct zint_symbol *symbol, unsigned char source[], int length)
 	size = 6 + (layers * 12);
 	modules = 1 + (layers * 2);
 
-#ifndef _MSC_VER
 	char grid[size * size];
-#else
-	char* grid = (char *)_alloca((size * size) * sizeof(char));
-#endif
 
 	for(x = 0; x < size; x++) {
 		for(y = 0; y < size; y++) {
