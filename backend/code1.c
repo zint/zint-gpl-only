@@ -705,10 +705,7 @@ int c1_encode(struct zint_symbol *symbol, unsigned char source[], unsigned int t
 					if(decimal_count >= 1) {
 						int sub_value = ctoi(source[sp]) + 1;
 
-						if(sub_value & 0x08) { concat(decimal_binary, "1"); } else { concat(decimal_binary, "0"); }
-						if(sub_value & 0x04) { concat(decimal_binary, "1"); } else { concat(decimal_binary, "0"); }
-						if(sub_value & 0x02) { concat(decimal_binary, "1"); } else { concat(decimal_binary, "0"); }
-						if(sub_value & 0x01) { concat(decimal_binary, "1"); } else { concat(decimal_binary, "0"); }
+						bscan(decimal_binary, sub_value, 0x08);
 						sp++;
 					} else {
 						concat(decimal_binary, "1111");
@@ -762,17 +759,7 @@ int c1_encode(struct zint_symbol *symbol, unsigned char source[], unsigned int t
 				/* There are three digits - convert the value to binary */
 				value = (100 * ctoi(source[sp])) + (10 * ctoi(source[sp + 1])) + ctoi(source[sp + 2]) + 1;
 
-				if(value & 0x200) { concat(decimal_binary, "1"); } else { concat(decimal_binary, "0"); }
-				if(value & 0x100) { concat(decimal_binary, "1"); } else { concat(decimal_binary, "0"); }
-				if(value & 0x80) { concat(decimal_binary, "1"); } else { concat(decimal_binary, "0"); }
-				if(value & 0x40) { concat(decimal_binary, "1"); } else { concat(decimal_binary, "0"); }
-				if(value & 0x20) { concat(decimal_binary, "1"); } else { concat(decimal_binary, "0"); }
-				if(value & 0x10) { concat(decimal_binary, "1"); } else { concat(decimal_binary, "0"); }
-				if(value & 0x08) { concat(decimal_binary, "1"); } else { concat(decimal_binary, "0"); }
-				if(value & 0x04) { concat(decimal_binary, "1"); } else { concat(decimal_binary, "0"); }
-				if(value & 0x02) { concat(decimal_binary, "1"); } else { concat(decimal_binary, "0"); }
-				if(value & 0x01) { concat(decimal_binary, "1"); } else { concat(decimal_binary, "0"); }
-
+				bscan(decimal_binary, value, 0x200);
 				sp+= 3;
 			}
 
