@@ -42,9 +42,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#ifdef _MSC_VER
-#include <malloc.h>
-#endif
 #include "common.h"
 #include "large.h"
 #include "rss.h"
@@ -1060,12 +1057,7 @@ int general_rules(char field[], char type[])
 int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_string[])
 { /* Handles all data encodation from section 7.2.5 of ISO/IEC 24724 */
 	int encoding_method, i, mask, j, read_posn, latch, debug = 0, last_mode = ISOIEC;
-#ifndef _MSC_VER
 	char general_field[strlen(source)], general_field_type[strlen(source)];
-#else
-	char* general_field = (char*)_alloca(strlen(source));
-        char* general_field_type = (char*)_alloca(strlen(source));
-#endif
 	int remainder, d1, d2, value;
 	char padstring[40];
 
@@ -1858,12 +1850,7 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int src_len)
 	int row, elements_in_sub, special_case_row, left_to_right;
 	int codeblocks, sub_elements[235], stack_rows, current_row, current_block;
 	int separator_row;
-#ifndef _MSC_VER
 	char reduced[src_len], binary_string[7 * src_len];
-#else
-        char* reduced = (char*)_alloca(src_len);
-        char* binary_string = (char*)_alloca(7 * src_len);
-#endif
 
 	separator_row = 0;
 	reader=0;

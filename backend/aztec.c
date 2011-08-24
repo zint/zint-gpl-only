@@ -22,9 +22,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#ifdef _MSC_VER
-#include <malloc.h>
-#endif
 #include "common.h"
 #include "aztec.h"
 #include "reedsol.h"
@@ -51,16 +48,8 @@ int aztec_text_process(unsigned char source[], const unsigned int src_len, char 
 { /* Encode input data into a binary string */
 	int i, j, k, bytes;
 	int curtable, newtable, lasttable, chartype, maplength, blocks, debug;
-#ifndef _MSC_VER
 	int charmap[src_len * 2], typemap[src_len * 2];
 	int blockmap[2][src_len];
-#else
-        int* charmap = (int*)_alloca(src_len * 2 * sizeof(int));
-        int* typemap = (int*)_alloca(src_len * 2 * sizeof(int));
-        int* blockmap[2];
-        blockmap[0] = (int*)_alloca(src_len * sizeof(int));
-        blockmap[1] = (int*)_alloca(src_len * sizeof(int));
-#endif
 	/* Lookup input string in encoding table */
 	maplength = 0;
 	debug = 0;
@@ -637,11 +626,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
 	int debug = 0, reader = 0;
 	int comp_loop = 4;
 
-#ifndef _MSC_VER
         unsigned char local_source[length + 1];
-#else
-        unsigned char* local_source = (unsigned char*)_alloca(length + 1);
-#endif
 
 	memset(binary_string,0,20000);
 	memset(adjusted_string,0,20000);
@@ -973,12 +958,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
 		printf("    (%d data words, %d ecc words)\n", data_blocks, ecc_blocks);
 	}
 
-#ifndef _MSC_VER
 	unsigned int data_part[data_blocks + 3], ecc_part[ecc_blocks + 3];
-#else
-	unsigned int* data_part = (unsigned int*)_alloca((data_blocks + 3) * sizeof(unsigned int));
-	unsigned int* ecc_part = (unsigned int*)_alloca((ecc_blocks + 3) * sizeof(unsigned int));
-#endif
 	/* Copy across data into separate integers */
 	memset(data_part,0,(data_blocks + 2)*sizeof(int));
 	memset(ecc_part,0,(ecc_blocks + 2)*sizeof(int));

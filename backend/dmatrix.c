@@ -31,9 +31,6 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#ifdef _MSC_VER
-#include <malloc.h>
-#endif
 #include "reedsol.h"
 #include "common.h"
 #include "dmatrix.h"
@@ -340,11 +337,7 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 	int x12_buffer[6], x12_p;
 	int edifact_buffer[8], edifact_p;
 	int debug = 0;
-#ifndef _MSC_VER
         char binary[2 * inputlen];
-#else
-        char* binary = (char*)_alloca(2 * inputlen);
-#endif
 
 	sp = 0;
 	tp = 0;

@@ -22,18 +22,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#ifndef _MSC_VER
 #include <getopt.h>
 #include <zint.h>
-#else
-#include "getopt.h"
-#include "zint.h"
-#endif
 #define NESET "0123456789"
-
-#ifdef _MSC_VER
-#include <malloc.h> 
-#endif
 
 
 void types(void) {
@@ -119,7 +110,7 @@ int validator(char test_string[], char source[])
 			if (!(latch)) { 
 				return ERROR_INVALID_DATA; }
 	}
-	
+
 	return 0;
 }
 
@@ -127,16 +118,11 @@ int escape_char_process(struct zint_symbol *my_symbol, unsigned char input_strin
 {
 	int error_number;
 	int i, j;
-	
-#ifndef _MSC_VER
 	unsigned char escaped_string[length + 1];
-#else
-	unsigned char* escaped_string = (unsigned char*)_alloca(length + 1);
-#endif
 
 	i = 0;
 	j = 0;
-	
+
 	do {
 		if(input_string[i] == '\\') {
 			switch(input_string[i + 1]) {

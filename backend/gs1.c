@@ -22,9 +22,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#ifdef _MSC_VER
-#include <malloc.h>
-#endif
 #include "common.h"
 #include "gs1.h"
 
@@ -292,11 +289,7 @@ int gs1_verify(struct zint_symbol *symbol, unsigned char source[], const unsigne
 int ugs1_verify(struct zint_symbol *symbol, unsigned char source[], const unsigned int src_len, unsigned char reduced[])
 {
 	/* Only to keep the compiler happy */
-#ifndef _MSC_VER
 	char temp[src_len + 5];
-#else
-        char* temp = (char*)_alloca(src_len + 5);
-#endif
 	int error_number;
 
 	error_number = gs1_verify(symbol, source, src_len, temp);

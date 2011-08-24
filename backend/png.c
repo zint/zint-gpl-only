@@ -20,17 +20,9 @@
 */
 
 #include <stdio.h>
-#ifdef _MSC_VER
-#include <fcntl.h>
-#include <io.h>
-#endif
 #include <stdlib.h>
 #include <string.h>
 #include "common.h"
-
-#ifdef _MSC_VER
-#include <malloc.h>
-#endif /* _MSC_VER */
 
 #ifndef NO_PNG
 #include "png.h"        /* libpng header; includes zlib.h and setjmp.h */
@@ -74,11 +66,7 @@ int png_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 	struct mainprog_info_type wpng_info;
 	struct mainprog_info_type *graphic;
 
-#ifndef _MSC_VER
 	unsigned char outdata[image_width * 3];
-#else
-	unsigned char* outdata = (unsigned char*)_alloca(image_width * 3);
-#endif
 	png_structp  png_ptr;
 	png_infop  info_ptr;
 	graphic = &wpng_info;
@@ -132,12 +120,6 @@ int png_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 
 	/* Open output file in binary mode */
 	if((symbol->output_options & BARCODE_STDOUT) != 0) {
-#ifdef _MSC_VER
-		if (-1 == _setmode(_fileno(stdout), _O_BINARY)) {
-			strcpy(symbol->errtxt, "Can't open output file");
-			return ERROR_FILE_ACCESS;
-		}
-#endif
 		graphic->outfile = stdout;
 	} else {
 		if (!(graphic->outfile = fopen(symbol->outfile, "wb"))) {
@@ -724,11 +706,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 	int error_number;
 	int default_text_posn;
 	int next_yposn;
-#ifndef _MSC_VER
 	unsigned char local_text[ustrlen(symbol->text) + 1];
-#else
-	unsigned char* local_text = (unsigned char*)_alloca(ustrlen(symbol->text) + 1);
-#endif
 
 	if(symbol->show_hrt != 0) {
 		to_latin1(symbol->text, local_text);

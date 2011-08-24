@@ -20,9 +20,6 @@
 */
 
 #include <string.h>
-#ifdef _MSC_VER
-#include <malloc.h>
-#endif
 #include "common.h"
 #include <stdio.h>
 #include "sjis.h"
@@ -166,11 +163,7 @@ void qr_binary(int datastream[], int version, int target_binlen, char mode[], in
 	int current_binlen, current_bytes;
 	int toggle, percent;
 
-#ifndef _MSC_VER
 	char binary[est_binlen + 12];
-#else
-	char* binary = (char *)_alloca(est_binlen + 12);
-#endif
 	strcpy(binary, "");
 
 	if(gs1) {
@@ -446,17 +439,10 @@ void add_ecc(int fullstream[], int datastream[], int version, int data_cw, int b
 	int i, j, length_this_block, posn, debug = 0;
 
 
-#ifndef _MSC_VER
 	unsigned char data_block[short_data_block_length + 2];
 	unsigned char ecc_block[ecc_block_length + 2];
 	int interleaved_data[data_cw + 2];
 	int interleaved_ecc[ecc_cw + 2];
-#else
-	unsigned char* data_block = (unsigned char *)_alloca(short_data_block_length + 2);
-	unsigned char* ecc_block = (unsigned char *)_alloca(ecc_block_length + 2);
-	int* interleaved_data = (int *)_alloca((data_cw + 2) * sizeof(int));
-	int* interleaved_ecc = (int *)_alloca((ecc_cw + 2) * sizeof(int));
-#endif
 
 	posn = 0;
 
@@ -728,11 +714,7 @@ int evaluate(unsigned char *grid, int size, int pattern)
 	int dark_mods;
 	int percentage, k;
 
-#ifndef _MSC_VER
 	char local[size * size];
-#else
-	char* local = (char *)_alloca((size * size) * sizeof(char));
-#endif
 
 	for(x = 0; x < size; x++) {
 		for(y = 0; y < size; y++) {
@@ -857,13 +839,8 @@ int apply_bitmask(unsigned char *grid, int size)
 	int best_val, best_pattern;
 	int bit;
 
-#ifndef _MSC_VER
 	unsigned char mask[size * size];
 	unsigned char eval[size * size];
-#else
-	unsigned char* mask = (unsigned char *)_alloca((size * size) * sizeof(unsigned char));
-	unsigned char* eval = (unsigned char *)_alloca((size * size) * sizeof(unsigned char));
-#endif
 
 	/* Perform data masking */
 	for(x = 0; x < size; x++) {
@@ -992,15 +969,9 @@ int qr_code(struct zint_symbol *symbol, unsigned char source[], int length)
 	int ecc_level, autosize, version, max_cw, target_binlen, blocks, size;
 	int bitmask, gs1;
 
-#ifndef _MSC_VER
 	int utfdata[length + 1];
 	int jisdata[length + 1];
 	char mode[length + 1];
-#else
-	int* utfdata = (int *)_alloca((length + 1) * sizeof(int));
-	int* jisdata = (int *)_alloca((length + 1) * sizeof(int));
-	char* mode = (char *)_alloca(length + 1);
-#endif
 
 	gs1 = (symbol->input_mode == GS1_MODE);
 
@@ -1104,23 +1075,14 @@ int qr_code(struct zint_symbol *symbol, unsigned char source[], int length)
 		case LEVEL_H: target_binlen = qr_data_codewords_H[version - 1]; blocks = qr_blocks_H[version - 1]; break;
 	}
 
-#ifndef _MSC_VER
 	int datastream[target_binlen + 1];
 	int fullstream[qr_total_codewords[version - 1] + 1];
-#else
-	int* datastream = (int *)_alloca((target_binlen + 1) * sizeof(int));
-	int* fullstream = (int *)_alloca((qr_total_codewords[version - 1] + 1) * sizeof(int));
-#endif
 
 	qr_binary(datastream, version, target_binlen, mode, jisdata, length, gs1, est_binlen);
 	add_ecc(fullstream, datastream, version, target_binlen, blocks);
 
 	size = qr_sizes[version - 1];
-#ifndef _MSC_VER
 	unsigned char grid[size * size];
-#else
-	unsigned char* grid = (unsigned char *)_alloca((size * size) * sizeof(unsigned char));
-#endif
 
 	for(i = 0; i < size; i++) {
 		for(j = 0; j < size; j++) {
@@ -1900,13 +1862,8 @@ int micro_apply_bitmask(unsigned char *grid, int size)
 	int best_val, best_pattern;
 	int bit;
 
-#ifndef _MSC_VER
 	unsigned char mask[size * size];
 	unsigned char eval[size * size];
-#else
-	unsigned char* mask = (unsigned char *)_alloca((size * size) * sizeof(unsigned char));
-	unsigned char* eval = (unsigned char *)_alloca((size * size) * sizeof(unsigned char));
-#endif
 
 	/* Perform data masking */
 	for(x = 0; x < size; x++) {
@@ -2159,11 +2116,7 @@ int microqr(struct zint_symbol *symbol, unsigned char source[], int length)
 	}
 
 	size = micro_qr_sizes[version];
-#ifndef _MSC_VER
 	unsigned char grid[size * size];
-#else
-	unsigned char* grid = (unsigned char *)_alloca((size * size) * sizeof(unsigned char));
-#endif
 
 	for(i = 0; i < size; i++) {
 		for(j = 0; j < size; j++) {
