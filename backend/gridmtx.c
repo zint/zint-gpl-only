@@ -323,12 +323,7 @@ void add_shift_char(char binary[], int shifty)
 
 	if(debug) { printf("SHIFT [%d] ", glyph); }
 
-	if(glyph & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
-	if(glyph & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
-	if(glyph & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
-	if(glyph & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
-	if(glyph & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
-	if(glyph & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
+	bscan(binary, glyph, 0x20);
 }
 
 int gm_encode(int gbdata[], int length, char binary[], int reader)
@@ -484,19 +479,7 @@ int gm_encode(int gbdata[], int length, char binary[], int reader)
 
 				if(debug) { printf("[%d] ", glyph); }
 
-				if(glyph & 0x1000) { concat(binary, "1"); } else { concat(binary, "0"); }
-				if(glyph & 0x800) { concat(binary, "1"); } else { concat(binary, "0"); }
-				if(glyph & 0x400) { concat(binary, "1"); } else { concat(binary, "0"); }
-				if(glyph & 0x200) { concat(binary, "1"); } else { concat(binary, "0"); }
-				if(glyph & 0x100) { concat(binary, "1"); } else { concat(binary, "0"); }
-				if(glyph & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
-				if(glyph & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
-				if(glyph & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
-				if(glyph & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
-				if(glyph & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
-				if(glyph & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
-				if(glyph & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
-				if(glyph & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
+				bscan(binary, glyph, 0x1000);
 				sp++;
 				break;
 
@@ -556,31 +539,13 @@ int gm_encode(int gbdata[], int length, char binary[], int reader)
 
 					if(debug) { printf("[%d] ", glyph); }
 
-					if(glyph & 0x200) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(glyph & 0x100) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(glyph & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(glyph & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(glyph & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(glyph & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(glyph & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(glyph & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(glyph & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(glyph & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
+					bscan(binary, glyph, 0x200);
 				}
 
 				glyph = (100 * (numbuf[0] - '0')) + (10 * (numbuf[1] - '0')) + (numbuf[2] - '0');
 				if(debug) { printf("[%d] ", glyph); }
 
-				if(glyph & 0x200) { concat(binary, "1"); } else { concat(binary, "0"); }
-				if(glyph & 0x100) { concat(binary, "1"); } else { concat(binary, "0"); }
-				if(glyph & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
-				if(glyph & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
-				if(glyph & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
-				if(glyph & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
-				if(glyph & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
-				if(glyph & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
-				if(glyph & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
-				if(glyph & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
+				bscan(binary, glyph, 0x200);
 				break;
 
 			case GM_BYTE:
@@ -600,14 +565,7 @@ int gm_encode(int gbdata[], int length, char binary[], int reader)
 
 				glyph = gbdata[sp];
 				if(debug) { printf("[%d] ", glyph); }
-				if(glyph & 0x80) { concat(binary, "1"); } else { concat(binary, "0"); }
-				if(glyph & 0x40) { concat(binary, "1"); } else { concat(binary, "0"); }
-				if(glyph & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
-				if(glyph & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
-				if(glyph & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
-				if(glyph & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
-				if(glyph & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
-				if(glyph & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
+				bscan(binary, glyph, 0x80);
 				sp++;
 				byte_count++;
 				break;
@@ -624,12 +582,7 @@ int gm_encode(int gbdata[], int length, char binary[], int reader)
 					glyph = posn(EUROPIUM, gbdata[sp]);
 					if(debug) { printf("[%d] ", glyph); }
 
-					if(glyph & 0x20) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(glyph & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(glyph & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(glyph & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(glyph & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(glyph & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
+					bscan(binary, glyph, 0x20);
 				} else {
 					/* Shift Mode character */
 					concat(binary, "1111110110"); /* 1014 - shift indicator */
@@ -649,11 +602,7 @@ int gm_encode(int gbdata[], int length, char binary[], int reader)
 					glyph = posn("ABCDEFGHIJKLMNOPQRSTUVWXYZ ", gbdata[sp]);
 					if(debug) { printf("[%d] ", glyph); }
 
-					if(glyph & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(glyph & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(glyph & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(glyph & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(glyph & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
+					bscan(binary, glyph, 0x10);
 				} else {
 					/* Shift Mode character */
 					concat(binary, "1111101"); /* 127 - shift indicator */
@@ -673,11 +622,7 @@ int gm_encode(int gbdata[], int length, char binary[], int reader)
 					glyph = posn("abcdefghijklmnopqrstuvwxyz ", gbdata[sp]);
 					if(debug) { printf("[%d] ", glyph); }
 
-					if(glyph & 0x10) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(glyph & 0x08) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(glyph & 0x04) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(glyph & 0x02) { concat(binary, "1"); } else { concat(binary, "0"); }
-					if(glyph & 0x01) { concat(binary, "1"); } else { concat(binary, "0"); }
+					bscan(binary, glyph, 0x10);
 				} else {
 					/* Shift Mode character */
 					concat(binary, "1111101"); /* 127 - shift indicator */

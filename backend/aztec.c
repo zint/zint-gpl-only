@@ -576,23 +576,9 @@ int aztec_text_process(unsigned char source[], const unsigned int src_len, char 
 
 							adjusted = bytes - 31;
 							concat(binary_string, "00000");
-							if(adjusted & 0x400) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-							if(adjusted & 0x200) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-							if(adjusted & 0x100) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-							if(adjusted & 0x80) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-							if(adjusted & 0x40) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-							if(adjusted & 0x20) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-							if(adjusted & 0x10) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-							if(adjusted & 0x08) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-							if(adjusted & 0x04) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-							if(adjusted & 0x02) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-							if(adjusted & 0x01) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
+							bscan(binary_string, adjusted, 0x400);
 						} else { /* Put 5-bit number of bytes */
-							if(bytes & 0x10) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-							if(bytes & 0x08) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-							if(bytes & 0x04) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-							if(bytes & 0x02) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-							if(bytes & 0x01) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
+							bscan(binary_string, bytes, 0x10);
 						}
 						if(debug) printf("(%d bytes) ", bytes);
 
@@ -623,15 +609,9 @@ int aztec_text_process(unsigned char source[], const unsigned int src_len, char 
 				if(debug) printf("%d ",charmap[i]);
 				break;
 			case BINARY:
-				if(charmap[i] & 0x80) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-				if(charmap[i] & 0x40) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-				if(charmap[i] & 0x20) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-				if(charmap[i] & 0x10) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-				if(charmap[i] & 0x08) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-				if(charmap[i] & 0x04) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-				if(charmap[i] & 0x02) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-				if(charmap[i] & 0x01) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-				if(debug) printf("%d ",charmap[i]);
+				bscan(binary_string, charmap[i], 0x80);
+				if (debug)
+					printf("%d ",charmap[i]);
 				break;
 		}
 
@@ -1017,13 +997,8 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
 			rs_init_gf(0x43);
 			rs_init_code(ecc_blocks, 1);
 			rs_encode_long(data_blocks, data_part, ecc_part);
-			for(i = (ecc_blocks - 1); i >= 0; i--) {
-				if(ecc_part[i] & 0x20) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x10) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x08) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x04) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x02) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x01) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
+			for (i = (ecc_blocks - 1); i >= 0; i--) {
+				bscan(adjusted_string, ecc_part[i], 0x20);
 			}
 			rs_free();
 			break;
@@ -1041,15 +1016,8 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
 			rs_init_gf(0x12d);
 			rs_init_code(ecc_blocks, 1);
 			rs_encode_long(data_blocks, data_part, ecc_part);
-			for(i = (ecc_blocks - 1); i >= 0; i--) {
-				if(ecc_part[i] & 0x80) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x40) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x20) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x10) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x08) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x04) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x02) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x01) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
+			for (i = (ecc_blocks - 1); i >= 0; i--) {
+				bscan(adjusted_string, ecc_part[i], 0x80);
 			}
 			rs_free();
 			break;
@@ -1070,16 +1038,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
 			rs_init_code(ecc_blocks, 1);
 			rs_encode_long(data_blocks, data_part, ecc_part);
 			for(i = (ecc_blocks - 1); i >= 0; i--) {
-				if(ecc_part[i] & 0x200) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x100) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x80) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x40) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x20) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x10) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x08) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x04) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x02) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x01) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
+				bscan(adjusted_string, ecc_part[i], 0x200);
 			}
 			rs_free();
 			break;
@@ -1102,18 +1061,7 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
 			rs_init_code(ecc_blocks, 1);
 			rs_encode_long(data_blocks, data_part, ecc_part);
 			for(i = (ecc_blocks - 1); i >= 0; i--) {
-				if(ecc_part[i] & 0x800) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x400) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x200) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x100) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x80) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x40) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x20) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x10) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x08) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x04) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x02) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
-				if(ecc_part[i] & 0x01) { concat(adjusted_string, "1"); } else { concat(adjusted_string, "0"); }
+				bscan(adjusted_string, ecc_part[i], 0x800);
 			}
 			rs_free();
 			break;
@@ -1293,14 +1241,7 @@ int aztec_runes(struct zint_symbol *symbol, unsigned char source[], int length)
 	}
 
 	strcpy(binary_string, "");
-	if(input_value & 0x80) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-	if(input_value & 0x40) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-	if(input_value & 0x20) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-	if(input_value & 0x10) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-	if(input_value & 0x08) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-	if(input_value & 0x04) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-	if(input_value & 0x02) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
-	if(input_value & 0x01) { concat(binary_string, "1"); } else { concat(binary_string, "0"); }
+	bscan(binary_string, input_value, 0x80);
 
 	data_codewords[0] = 0;
 	data_codewords[1] = 0;
