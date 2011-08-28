@@ -37,4 +37,6 @@ extern void hex_dump(short int input_buffer[]);
 }
 #endif /* __cplusplus */
 
+extern const short int BCD[40];
+
 #endif /* __LARGE_H */

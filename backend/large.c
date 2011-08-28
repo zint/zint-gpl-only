@@ -24,7 +24,7 @@
 #include "common.h"
 #include "large.h"
 
-static short int BCD[40] = {
+const short int BCD[40] = {
 	0, 0, 0, 0,
 	1, 0, 0, 0,
 	0, 1, 0, 0,
@@ -34,7 +34,8 @@ static short int BCD[40] = {
 	0, 1, 1, 0,
 	1, 1, 1, 0,
 	0, 0, 0, 1,
-	1, 0, 0, 1 };
+	1, 0, 0, 1
+};
 
 void binary_add(short int accumulator[], short int input_buffer[])
 { /* Binary addition */

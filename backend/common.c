@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #include "common.h"
 
-int ustrlen(unsigned char data[]) {
+int ustrlen(const unsigned char data[]) {
 	/* Local replacement for strlen() with unsigned char strings */
 	int i;
 	for (i=0;data[i];i++);
@@ -31,7 +31,7 @@ int ustrlen(unsigned char data[]) {
 	return i;
 }
 
-void ustrcpy(unsigned char target[], unsigned char source[]) {
+void ustrcpy(unsigned char target[], const unsigned char source[]) {
 	/* Local replacement for strcpy() with unsigned char strings */
 	int i, len;
 
@@ -42,7 +42,7 @@ void ustrcpy(unsigned char target[], unsigned char source[]) {
 	target[i] = '\0';
 }
 
-void concat(char dest[], char source[])
+void concat(char dest[], const char source[])
 { /* Concatinates dest[] with the contents of source[], copying /0 as well */
 	unsigned int i, j, n;
 
@@ -52,7 +52,7 @@ void concat(char dest[], char source[])
 		dest[i + j] = source[i]; }
 }
 
-void uconcat(unsigned char dest[], unsigned char source[])
+void uconcat(unsigned char dest[], const unsigned char source[])
 { /* Concatinates dest[] with the contents of source[], copying /0 as well */
 	unsigned int i, j;
 
@@ -121,7 +121,7 @@ int posn(char set_string[], char data)
 }
 
 /** Replaces huge switch statements for looking up in tables */
-void lookup(char set_string[], char *table[], char data, char dest[])
+void lookup(char set_string[], const char *table[], char data, char dest[])
 {
 	unsigned int n = strlen(set_string);
 
