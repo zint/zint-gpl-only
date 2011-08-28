@@ -148,9 +148,9 @@ int escape_char_process(struct zint_symbol *my_symbol, unsigned char input_strin
 		j++;
 	} while (i < length);
 	escaped_string[j] = '\0';
-	
+
 	error_number = ZBarcode_Encode(my_symbol, escaped_string, j);
-	
+
 	return error_number;
 }
 
@@ -162,14 +162,14 @@ char itoc(int source)
 		return ('A' + (source - 10)); }
 }
 
-void concat(char dest[], char source[])
+void concat(char dest[], const char source[])
 { /* Concatinates dest[] with the contents of source[], copying /0 as well */
 	unsigned int i, j, n;
 
 	j = strlen(dest);
 	n = strlen(source);
-	for(i = 0; i <= n; i++) {
-		dest[i + j] = source[i]; }
+	for (i = 0; i <= n; i++)
+		dest[i + j] = source[i];
 }
 
 int batch_process(struct zint_symbol *symbol, char *filename)

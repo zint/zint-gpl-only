@@ -31,28 +31,28 @@
 #define SHKASUTSET "1234567890-ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 /* PostNet number encoding table - In this table L is long as S is short */
-static char *PNTable[10] = {"LLSSS", "SSSLL", "SSLSL", "SSLLS", "SLSSL", "SLSLS", "SLLSS", "LSSSL",
+const char *PNTable[10] = {"LLSSS", "SSSLL", "SSLSL", "SSLLS", "SLSSL", "SLSLS", "SLLSS", "LSSSL",
 	"LSSLS", "LSLSS"};
-static char *PLTable[10] = {"SSLLL", "LLLSS", "LLSLS", "LLSSL", "LSLLS", "LSLSL", "LSSLL", "SLLLS",
+const char *PLTable[10] = {"SSLLL", "LLLSS", "LLSLS", "LLSSL", "LSLLS", "LSLSL", "LSSLL", "SLLLS",
 	"SLLSL", "SLSLL"};
 
-static char *RoyalValues[36] = {"11", "12", "13", "14", "15", "10", "21", "22", "23", "24", "25",
+const char *RoyalValues[36] = {"11", "12", "13", "14", "15", "10", "21", "22", "23", "24", "25",
 	"20", "31", "32", "33", "34", "35", "30", "41", "42", "43", "44", "45", "40", "51", "52",
 	"53", "54", "55", "50", "01", "02", "03", "04", "05", "00"};
 
 /* 0 = Full, 1 = Ascender, 2 = Descender, 3 = Tracker */
-static char *RoyalTable[36] = {"3300", "3210", "3201", "2310", "2301", "2211", "3120", "3030", "3021",
+const char *RoyalTable[36] = {"3300", "3210", "3201", "2310", "2301", "2211", "3120", "3030", "3021",
 	"2130", "2121", "2031", "3102", "3012", "3003", "2112", "2103", "2013", "1320", "1230",
 	"1221", "0330", "0321", "0231", "1302", "1212", "1203", "0312", "0303", "0213", "1122",
 	"1032", "1023", "0132", "0123", "0033"};
 
-static char *FlatTable[10] = {"0504", "18", "0117", "0216", "0315", "0414", "0513", "0612", "0711",
+const char *FlatTable[10] = {"0504", "18", "0117", "0216", "0315", "0414", "0513", "0612", "0711",
 	"0810"};
 
-static char *KoreaTable[10] = {"1313150613", "0713131313", "0417131313", "1506131313",
+const char *KoreaTable[10] = {"1313150613", "0713131313", "0417131313", "1506131313",
 	"0413171313", "17171313", "1315061313", "0413131713", "17131713", "13171713"};
 
-static char *JapanTable[19] = {"114", "132", "312", "123", "141", "321", "213", "231", "411", "144",
+const char *JapanTable[19] = {"114", "132", "312", "123", "141", "321", "213", "231", "411", "144",
 	"414", "324", "342", "234", "432", "243", "423", "441", "111"};
 
 int postnet(struct zint_symbol *symbol, unsigned char source[], char dest[], int length)

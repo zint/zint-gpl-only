@@ -22,7 +22,7 @@
 /* This file contains the pixel-by-pixel representation of the "Misc Fixed" font
    at 10 point size processed by the Gimp */
 
-static int ascii_font[9310] = {
+const int ascii_font[9310] = {
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -613,7 +613,7 @@ static int ascii_font[9310] = {
 	0,0,0,0,0,0,0,0,0
 };
 
-static int ascii_ext_font[9310] = {
+const int ascii_ext_font[9310] = {
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -1204,7 +1204,7 @@ static int ascii_ext_font[9310] = {
 	0,0,1,1,0,0,0,0,0
 };
 
-static int small_font[] = {
+const int small_font[] = {
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -1447,7 +1447,7 @@ static int small_font[] = {
 	0,0,0,0,0,0,0,0,0,0,0
 };
 
-static int small_font_extended[] = {
+const int small_font_extended[] = {
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

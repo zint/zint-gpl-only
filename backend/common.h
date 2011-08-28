@@ -41,15 +41,15 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-extern int ustrlen(unsigned char source[]);
-extern void ustrcpy(unsigned char target[], unsigned char source[]);
-extern void concat(char dest[], char source[]);
-extern void uconcat(unsigned char dest[], unsigned char source[]);
+extern int ustrlen(const unsigned char source[]);
+extern void ustrcpy(unsigned char target[], const unsigned char source[]);
+extern void concat(char dest[], const char source[]);
+extern void uconcat(unsigned char dest[], const unsigned char source[]);
 extern int ctoi(char source);
 extern char itoc(int source);
 extern void to_upper(unsigned char source[]);
 extern int is_sane(char test_string[], unsigned char source[], int length);
-extern void lookup(char set_string[], char *table[], char data, char dest[]);
+extern void lookup(char set_string[], const char *table[], char data, char dest[]);
 extern int posn(char set_string[], char data);
 extern void expand(struct zint_symbol *symbol, char data[]);
 extern int is_stackable(int symbology);
