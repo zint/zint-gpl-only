@@ -161,30 +161,18 @@ void dxsmooth16(int *indexliste)
 
 void c16k_set_a(unsigned char source, unsigned int values[], unsigned int *bar_chars)
 {
-	if(source > 127) {
-		if(source < 160) {
-			values[(*bar_chars)] = source + 64 - 128;
-		} else {
-			values[(*bar_chars)] = source - 32 - 128;
-		}
-	} else {
-		if(source < 32) {
-			values[(*bar_chars)] = source + 64;
-		} else {
-			values[(*bar_chars)] = source - 32;
-		}
-	}
-	(*bar_chars)++;
+	source &= 127; /* limit the range to 0-127 */
+	if(source < 32)
+		source += 64;
+	else
+		source -= 32;
+	values[(*bar_chars)++] = source;
 }
 
 void c16k_set_b(unsigned char source, unsigned int values[], unsigned int *bar_chars)
 {
-	if(source > 127) {
-		values[(*bar_chars)] = source - 32 - 128;
-	} else {
-		values[(*bar_chars)] = source - 32;
-	}
-	(*bar_chars)++;
+	source &= 127; /* limit the range to 0-127 */
+	values[(*bar_chars)++] = source - 32;
 }
 
 void c16k_set_c(unsigned char source_a, unsigned char source_b, unsigned int values[], unsigned int *bar_chars)
