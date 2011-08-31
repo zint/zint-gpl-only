@@ -33,17 +33,11 @@
 
 void horiz(struct zint_symbol *symbol, int row_no, int full)
 {
-	int i;
+	int i = !full;
+	int lim = symbol->width - i;
 
-	if(full) {
-		for(i = 0; i < symbol->width; i++) {
-			set_module(symbol, row_no, i);
-		}
-	} else {
-		for(i = 1; i < symbol->width - 1; i++) {
-			set_module(symbol, row_no, i);
-		}
-	}
+	while (i < lim)
+		set_module(symbol, row_no, i++);
 }
 
 void central_finder(struct zint_symbol *symbol, int start_row, int row_count, int full_rows)
