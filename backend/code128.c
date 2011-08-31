@@ -187,25 +187,16 @@ void dxsmooth(int *indexliste)
  */
 void c128_set_a(unsigned char source, char dest[], int values[], int *bar_chars)
 {
+	/* limit the range to 0-127 */
+	source &= 127;
 
-	if(source > 127) {
-		if(source < 160) {
-			concat(dest, C128Table[(source - 128) + 64]);
-			values[(*bar_chars)] = (source - 128) + 64;
-		} else {
-			concat(dest, C128Table[(source - 128) - 32]);
-			values[(*bar_chars)] = (source - 128) - 32;
-		}
-	} else {
-		if(source < 32) {
-			concat(dest, C128Table[source + 64]);
-			values[(*bar_chars)] = source + 64;
-		} else {
-			concat(dest, C128Table[source - 32]);
-			values[(*bar_chars)] = source - 32;
-		}
-	}
-	(*bar_chars)++;
+	if (source < 32)
+		source += 64;
+	else
+		source -= 32;
+
+	concat(dest, C128Table[source]);
+	values[(*bar_chars)++] = source;
 }
 
 /**
@@ -215,15 +206,12 @@ void c128_set_a(unsigned char source, char dest[], int values[], int *bar_chars)
  */
 void c128_set_b(unsigned char source, char dest[], int values[], int *bar_chars)
 {
+	/* limit the range to 0-127 */
+	source &= 127;
+	source -= 32;
 
-	if(source > 127) {
-		concat(dest, C128Table[source - 32 - 128]);
-		values[(*bar_chars)] = source - 32 - 128;
-	} else {
-		concat(dest, C128Table[source - 32]);
-		values[(*bar_chars)] = source - 32;
-	}
-	(*bar_chars)++;
+	concat(dest, C128Table[source]);
+	values[(*bar_chars)++] = source;
 }
 
 /**
