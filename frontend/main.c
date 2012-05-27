@@ -110,7 +110,7 @@ int validator(char test_string[], char source[])
 		for(j = 0; j < strlen(test_string); j++) {
 			if (source[i] == test_string[j]) { latch = 1; } }
 			if (!(latch)) { 
-				return ERROR_INVALID_DATA; }
+				return ZERROR_INVALID_DATA; }
 	}
 
 	return 0;
@@ -195,7 +195,7 @@ int batch_process(struct zint_symbol *symbol, char *filename)
 			strcpy(format_string, symbol->outfile);
 		} else {
 			strcpy(symbol->errtxt, "Format string too long");
-			return ERROR_INVALID_DATA;
+			return ZERROR_INVALID_DATA;
 		}
 	}
 	memset(adjusted, 0, sizeof(char) * 2);
@@ -206,7 +206,7 @@ int batch_process(struct zint_symbol *symbol, char *filename)
 		file = fopen(filename, "rb");
 		if (!file) {
 			strcpy(symbol->errtxt, "Unable to read input file");
-			return ERROR_INVALID_DATA;
+			return ZERROR_INVALID_DATA;
 		}
 	}
 	
@@ -429,7 +429,7 @@ int main(int argc, char **argv)
 				}
 				if(!strcmp(long_options[option_index].name, "border")) {
 					error_number = validator(NESET, optarg);
-					if(error_number == ERROR_INVALID_DATA)
+					if(error_number == ZERROR_INVALID_DATA)
 						die("Invalid border width\n");
 					if((atoi(optarg) >= 0) && (atoi(optarg) <= 1000)) {
 						my_symbol->border_width = atoi(optarg);
@@ -439,7 +439,7 @@ int main(int argc, char **argv)
 				}
 				if(!strcmp(long_options[option_index].name, "height")) {
 					error_number = validator(NESET, optarg);
-					if(error_number == ERROR_INVALID_DATA)
+					if(error_number == ZERROR_INVALID_DATA)
 						die("Invalid symbol height\n");
 					if((atoi(optarg) >= 1) && (atoi(optarg) <= 1000)) {
 						my_symbol->height = atoi(optarg);
@@ -486,7 +486,7 @@ int main(int argc, char **argv)
 				if(!strcmp(long_options[option_index].name, "rotate")) {
 					/* Only certain inputs allowed */
 					error_number = validator(NESET, optarg);
-					if(error_number == ERROR_INVALID_DATA)
+					if(error_number == ZERROR_INVALID_DATA)
 						die("Invalid rotation parameter\n");
 					switch(atoi(optarg)) {
 						case 90: rotate_angle = 90; break;
@@ -509,14 +509,14 @@ int main(int argc, char **argv)
 				
 			case 'b':
 				error_number = validator(NESET, optarg);
-				if (error_number == ERROR_INVALID_DATA)
+				if (error_number == ZERROR_INVALID_DATA)
 					die("Invalid barcode type\n");
 				my_symbol->symbology = atoi(optarg);
 				break;
 				
 			case 'w':
 				error_number = validator(NESET, optarg);
-				if (error_number == ERROR_INVALID_DATA)
+				if (error_number == ZERROR_INVALID_DATA)
 					die("Invalid whitespace value\n");
 				if((atoi(optarg) >= 0) && (atoi(optarg) <= 1000)) {
 					my_symbol->whitespace_width = atoi(optarg);

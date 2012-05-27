@@ -128,7 +128,7 @@ int maxi_text_process(int mode, unsigned char source[], int length)
 	int set[144], character[144], i, j, done, count, current_set;
 
 	if(length > 138) {
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 
 	for(i = 0; i < 144; i++) {
@@ -452,15 +452,15 @@ int maxi_text_process(int mode, unsigned char source[], int length)
 	} while (i <= 143);
 
 	if(((mode ==2) || (mode == 3)) && (length > 84)) {
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 
 	if(((mode == 4) || (mode == 6)) && (length > 93)) {
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 
 	if((mode == 5) && (length > 77)) {
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 
 
@@ -594,7 +594,7 @@ int maxicode(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	if((mode < 2) || (mode > 6)) { /* Only codes 2 to 6 supported */
 		strcpy(symbol->errtxt, "Invalid Maxicode Mode");
-		return ERROR_INVALID_OPTION;
+		return ZERROR_INVALID_OPTION;
 	}
 
 	if((mode == 2) || (mode == 3)) { /* Modes 2 and 3 need data in symbol->primary */
@@ -603,13 +603,13 @@ int maxicode(struct zint_symbol *symbol, unsigned char source[], int length)
 		}
 		if(lp != 15) {
 			strcpy(symbol->errtxt, "Invalid Primary String");
-			return ERROR_INVALID_DATA;
+			return ZERROR_INVALID_DATA;
 		}
 
 		for(i = 9; i < 15; i++) { /* check that country code and service are numeric */
 			if((symbol->primary[i] < '0') || (symbol->primary[i] > '9')) {
 				strcpy(symbol->errtxt, "Invalid Primary String");
-				return ERROR_INVALID_DATA;
+				return ZERROR_INVALID_DATA;
 			}
 		}
 
@@ -645,7 +645,7 @@ int maxicode(struct zint_symbol *symbol, unsigned char source[], int length)
 	}
 
 	i = maxi_text_process(mode, local_source, length);
-	if(i == ERROR_TOO_LONG ) {
+	if(i == ZERROR_TOO_LONG ) {
 		strcpy(symbol->errtxt, "Input data too long");
 		return i;
 	}

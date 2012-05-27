@@ -832,7 +832,7 @@ int cc_binary_string(struct zint_symbol *symbol, const char source[], char binar
 				if((ninety[i] != '*') && (ninety[i] != ',') && (ninety[i] != '-') && (ninety[i] != '.') && (ninety[i] != '/')) {
 					/* An Invalid AI 90 character */
 					strcpy(symbol->errtxt, "Invalid AI 90 data");
-					return ERROR_INVALID_DATA;
+					return ZERROR_INVALID_DATA;
 				}
 			}
 		}
@@ -1155,7 +1155,7 @@ int cc_binary_string(struct zint_symbol *symbol, const char source[], char binar
 	if(latch == 1) {
 		/* Invalid characters in input data */
 		strcpy(symbol->errtxt, "Invalid characters in input data");
-		return ERROR_INVALID_DATA;
+		return ZERROR_INVALID_DATA;
 	}
 
 	for(i = 0; i < strlen(general_field); i++) {
@@ -1351,7 +1351,7 @@ int cc_binary_string(struct zint_symbol *symbol, const char source[], char binar
 		/* CC-A 2D component - calculate remaining space */
 		switch(*(cc_width)) {
 			case 2:
-				if(binary_length > 167) { return ERROR_TOO_LONG; }
+				if(binary_length > 167) { return ZERROR_TOO_LONG; }
 				if(binary_length <= 167) { target_bitsize = 167; }
 				if(binary_length <= 138) { target_bitsize = 138; }
 				if(binary_length <= 118) { target_bitsize = 118; }
@@ -1361,7 +1361,7 @@ int cc_binary_string(struct zint_symbol *symbol, const char source[], char binar
 				if(binary_length <= 59) { target_bitsize = 59; }
 				break;
 			case 3:
-				if(binary_length > 167) { return ERROR_TOO_LONG; }
+				if(binary_length > 167) { return ZERROR_TOO_LONG; }
 				if(binary_length <= 167) { target_bitsize = 167; }
 				if(binary_length <= 138) { target_bitsize = 138; }
 				if(binary_length <= 118) { target_bitsize = 118; }
@@ -1369,7 +1369,7 @@ int cc_binary_string(struct zint_symbol *symbol, const char source[], char binar
 				if(binary_length <= 78) { target_bitsize = 78; }
 				break;
 			case 4:
-				if(binary_length > 197) { return ERROR_TOO_LONG; }
+				if(binary_length > 197) { return ZERROR_TOO_LONG; }
 				if(binary_length <= 197) { target_bitsize = 197; }
 				if(binary_length <= 167) { target_bitsize = 167; }
 				if(binary_length <= 138) { target_bitsize = 138; }
@@ -1383,7 +1383,7 @@ int cc_binary_string(struct zint_symbol *symbol, const char source[], char binar
 		/* CC-B 2D component - calculated from ISO/IEC 24728 Table 1  */
 		switch(*(cc_width)) {
 			case 2:
-				if(binary_length > 336) { return ERROR_TOO_LONG; }
+				if(binary_length > 336) { return ZERROR_TOO_LONG; }
 				if(binary_length <= 336) { target_bitsize = 336; }
 				if(binary_length <= 296) { target_bitsize = 296; }
 				if(binary_length <= 256) { target_bitsize = 256; }
@@ -1393,7 +1393,7 @@ int cc_binary_string(struct zint_symbol *symbol, const char source[], char binar
 				if(binary_length <= 56) { target_bitsize = 56; }
 				break;
 			case 3:
-				if(binary_length > 768) { return ERROR_TOO_LONG; }
+				if(binary_length > 768) { return ZERROR_TOO_LONG; }
 				if(binary_length <= 768) { target_bitsize = 768; }
 				if(binary_length <= 648) { target_bitsize = 648; }
 				if(binary_length <= 536) { target_bitsize = 536; }
@@ -1406,7 +1406,7 @@ int cc_binary_string(struct zint_symbol *symbol, const char source[], char binar
 				if(binary_length <= 32) { target_bitsize = 32; }
 				break;
 			case 4:
-				if(binary_length > 1184) { return ERROR_TOO_LONG; }
+				if(binary_length > 1184) { return ZERROR_TOO_LONG; }
 				if(binary_length <= 1184) { target_bitsize = 1184; }
 				if(binary_length <= 1016) { target_bitsize = 1016; }
 				if(binary_length <= 840) { target_bitsize = 840; }
@@ -1449,7 +1449,7 @@ int cc_binary_string(struct zint_symbol *symbol, const char source[], char binar
 		codewords_used += 3;
 
 		if(codewords_used > symbol->option_3) {
-			return ERROR_TOO_LONG;
+			return ZERROR_TOO_LONG;
 		}
 		/* *(cc_width) = 0.5 + sqrt((codewords_used) / 3); */
 		*(cc_width) = (lin_width - 62) / 17;
@@ -1514,7 +1514,7 @@ int cc_binary_string(struct zint_symbol *symbol, const char source[], char binar
 
 	if(strlen(binary_string) > 11805) { /* (2361 * 5) */
 		strcpy(symbol->errtxt, "Input too long");
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 
 	/* all the code below is repeated from above - it needs to be calculated again because the
@@ -1525,7 +1525,7 @@ int cc_binary_string(struct zint_symbol *symbol, const char source[], char binar
 		/* CC-A 2D component - calculate padding required */
 		switch(*(cc_width)) {
 			case 2:
-				if(binary_length > 167) { return ERROR_TOO_LONG; }
+				if(binary_length > 167) { return ZERROR_TOO_LONG; }
 				if(binary_length <= 167) { target_bitsize = 167; }
 				if(binary_length <= 138) { target_bitsize = 138; }
 				if(binary_length <= 118) { target_bitsize = 118; }
@@ -1535,7 +1535,7 @@ int cc_binary_string(struct zint_symbol *symbol, const char source[], char binar
 				if(binary_length <= 59) { target_bitsize = 59; }
 				break;
 			case 3:
-				if(binary_length > 167) { return ERROR_TOO_LONG; }
+				if(binary_length > 167) { return ZERROR_TOO_LONG; }
 				if(binary_length <= 167) { target_bitsize = 167; }
 				if(binary_length <= 138) { target_bitsize = 138; }
 				if(binary_length <= 118) { target_bitsize = 118; }
@@ -1543,7 +1543,7 @@ int cc_binary_string(struct zint_symbol *symbol, const char source[], char binar
 				if(binary_length <= 78) { target_bitsize = 78; }
 				break;
 			case 4:
-				if(binary_length > 197) { return ERROR_TOO_LONG; }
+				if(binary_length > 197) { return ZERROR_TOO_LONG; }
 				if(binary_length <= 197) { target_bitsize = 197; }
 				if(binary_length <= 167) { target_bitsize = 167; }
 				if(binary_length <= 138) { target_bitsize = 138; }
@@ -1557,7 +1557,7 @@ int cc_binary_string(struct zint_symbol *symbol, const char source[], char binar
 		/* CC-B 2D component */
 		switch(*(cc_width)) {
 			case 2:
-				if(binary_length > 336) { return ERROR_TOO_LONG; }
+				if(binary_length > 336) { return ZERROR_TOO_LONG; }
 				if(binary_length <= 336) { target_bitsize = 336; }
 				if(binary_length <= 296) { target_bitsize = 296; }
 				if(binary_length <= 256) { target_bitsize = 256; }
@@ -1567,7 +1567,7 @@ int cc_binary_string(struct zint_symbol *symbol, const char source[], char binar
 				if(binary_length <= 56) { target_bitsize = 56; }
 				break;
 			case 3:
-				if(binary_length > 768) { return ERROR_TOO_LONG; }
+				if(binary_length > 768) { return ZERROR_TOO_LONG; }
 				if(binary_length <= 768) { target_bitsize = 768; }
 				if(binary_length <= 648) { target_bitsize = 648; }
 				if(binary_length <= 536) { target_bitsize = 536; }
@@ -1580,7 +1580,7 @@ int cc_binary_string(struct zint_symbol *symbol, const char source[], char binar
 				if(binary_length <= 32) { target_bitsize = 32; }
 				break;
 			case 4:
-				if(binary_length > 1184) { return ERROR_TOO_LONG; }
+				if(binary_length > 1184) { return ZERROR_TOO_LONG; }
 				if(binary_length <= 1184) { target_bitsize = 1184; }
 				if(binary_length <= 1016) { target_bitsize = 1016; }
 				if(binary_length <= 840) { target_bitsize = 840; }
@@ -1623,7 +1623,7 @@ int cc_binary_string(struct zint_symbol *symbol, const char source[], char binar
 		codewords_used += 3;
 
 		if(codewords_used > symbol->option_3) {
-			return ERROR_TOO_LONG;
+			return ZERROR_TOO_LONG;
 		}
 		/* *(cc_width) = 0.5 + sqrt((codewords_used) / 3); */
 		*(cc_width) = (lin_width - 62) / 17;
@@ -1730,12 +1730,12 @@ int composite(struct zint_symbol *symbol, unsigned char source[], int length)
 	pri_len = strlen(symbol->primary);
 	if(pri_len == 0) {
 		strcpy(symbol->errtxt, "No primary (linear) message in 2D composite");
-		return ERROR_INVALID_OPTION;
+		return ZERROR_INVALID_OPTION;
 	}
 
 	if(length > 2990) {
 		strcpy(symbol->errtxt, "2D component input data too long");
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 
 	linear = ZBarcode_Create(); /* Symbol contains the 2D component and Linear contains the rest */
@@ -1748,7 +1748,7 @@ int composite(struct zint_symbol *symbol, unsigned char source[], int length)
 	if((cc_mode == 3) && (symbol->symbology != BARCODE_EAN128_CC)) {
 		/* CC-C can only be used with a GS1-128 linear part */
 		strcpy(symbol->errtxt, "Invalid mode (CC-C only valid with GS1-128 linear component)");
-		return ERROR_INVALID_OPTION;
+		return ZERROR_INVALID_OPTION;
 	}
 
 	linear->symbology = symbol->symbology;
@@ -1813,16 +1813,16 @@ int composite(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	if(cc_mode == 1) {
 		i = cc_binary_string(symbol, reduced, binary_string, cc_mode, &cc_width, &ecc_level, linear->width);
-		if (i == ERROR_TOO_LONG) {
+		if (i == ZERROR_TOO_LONG) {
 			cc_mode = 2;
 		}
 	}
 
 	if(cc_mode == 2) { /* If the data didn't fit into CC-A it is recalculated for CC-B */
 		i = cc_binary_string(symbol, reduced, binary_string, cc_mode, &cc_width, &ecc_level, linear->width);
-		if (i == ERROR_TOO_LONG) {
+		if (i == ZERROR_TOO_LONG) {
 			if(symbol->symbology != BARCODE_EAN128_CC) {
-				return ERROR_TOO_LONG;
+				return ZERROR_TOO_LONG;
 			} else {
 				cc_mode = 3;
 			}
@@ -1832,8 +1832,8 @@ int composite(struct zint_symbol *symbol, unsigned char source[], int length)
 	if(cc_mode == 3) { /* If the data didn't fit in CC-B (and linear part is GS1-128) it is recalculated
 				for CC-C */
 		i = cc_binary_string(symbol, reduced, binary_string, cc_mode, &cc_width, &ecc_level, linear->width);
-		if (i == ERROR_TOO_LONG) {
-			return ERROR_TOO_LONG;
+		if (i == ZERROR_TOO_LONG) {
+			return ZERROR_TOO_LONG;
 		}
 	}
 
@@ -1844,7 +1844,7 @@ int composite(struct zint_symbol *symbol, unsigned char source[], int length)
 	}
 
 	if(error_number != 0) {
-		return ERROR_ENCODING_PROBLEM;
+		return ZERROR_ENCODING_PROBLEM;
 	}
 
 	/* Merge the linear component with the 2D component */

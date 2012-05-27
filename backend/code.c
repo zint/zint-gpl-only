@@ -97,10 +97,10 @@ int code_11(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	if(length > 121) {
 		strcpy(symbol->errtxt, "Input too long");
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 	error_number = is_sane(SODIUM, source, length);
-	if(error_number == ERROR_INVALID_DATA) {
+	if(error_number == ZERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
@@ -181,14 +181,14 @@ int c39(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	if((symbol->symbology == BARCODE_LOGMARS) && (length > 59)) {
 			strcpy(symbol->errtxt, "Input too long");
-			return ERROR_TOO_LONG;
+			return ZERROR_TOO_LONG;
 	} else if(length > 74) {
 			strcpy(symbol->errtxt, "Input too long");
-			return ERROR_TOO_LONG;
+			return ZERROR_TOO_LONG;
 	}
 	to_upper(source);
 	error_number = is_sane(SILVER , source, length);
-	if(error_number == ERROR_INVALID_DATA) {
+	if(error_number == ZERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
@@ -272,10 +272,10 @@ int pharmazentral(struct zint_symbol *symbol, unsigned char source[], int length
 	count = 0;
 	if(length > 6) {
 		strcpy(symbol->errtxt, "Input wrong length");
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 	error_number = is_sane(NEON, source, length);
-	if(error_number == ERROR_INVALID_DATA) {
+	if(error_number == ZERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
@@ -296,7 +296,7 @@ int pharmazentral(struct zint_symbol *symbol, unsigned char source[], int length
 	localstr[8] = '\0';
 	if(localstr[7] == 'A') {
 		strcpy(symbol->errtxt, "Invalid PZN Data");
-		return ERROR_INVALID_DATA;
+		return ZERROR_INVALID_DATA;
 	}
 	error_number = c39(symbol, (unsigned char *)localstr, strlen(localstr));
 	ustrcpy(symbol->text, (unsigned char *)"PZN");
@@ -318,7 +318,7 @@ int ec39(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	if(length > 74) {
 		strcpy(symbol->errtxt, "Input too long");
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 
 	/* Creates a buffer string and places control characters into it */
@@ -326,7 +326,7 @@ int ec39(struct zint_symbol *symbol, unsigned char source[], int length)
 		if(source[i] > 127) {
 			/* Cannot encode extended ASCII */
 			strcpy(symbol->errtxt, "Invalid characters in input data");
-			return ERROR_INVALID_DATA;
+			return ZERROR_INVALID_DATA;
 		}
 		concat((char*)buffer, EC39Ctrl[source[i]]);
 	}
@@ -361,7 +361,7 @@ int c93(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	if(length > 107) {
 		strcpy(symbol->errtxt, "Input too long");
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 
 	/* Message Content */
@@ -369,7 +369,7 @@ int c93(struct zint_symbol *symbol, unsigned char source[], int length)
 		if (source[i] > 127) {
 			/* Cannot encode extended ASCII */
 			strcpy(symbol->errtxt, "Invalid characters in input data");
-			return ERROR_INVALID_DATA;
+			return ZERROR_INVALID_DATA;
 		}
 		concat(buffer, C93Ctrl[source[i]]);
 		symbol->text[i] = source[i] ? source[i] : ' ';
@@ -379,7 +379,7 @@ int c93(struct zint_symbol *symbol, unsigned char source[], int length)
 	h = strlen(buffer);
 	if (h > 107) {
 		strcpy(symbol->errtxt, "Input too long");
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 
 	for (i = 0; i < h; i++) {
@@ -494,10 +494,10 @@ int channel_code(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	if(length > 7) {
 		strcpy(symbol->errtxt, "Input too long");
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 	error_number = is_sane(NEON, source, length);
-	if(error_number == ERROR_INVALID_DATA) {
+	if(error_number == ZERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
@@ -521,7 +521,7 @@ int channel_code(struct zint_symbol *symbol, unsigned char source[], int length)
 	}
 	if(range) {
 		strcpy(symbol->errtxt, "Value out of range");
-		return ERROR_INVALID_DATA;
+		return ZERROR_INVALID_DATA;
 	}
 
 	for(i = 0; i < 11; i++) { B[i] = 0; S[i] = 0; }

@@ -47,10 +47,10 @@ int plessey(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	if(length > 65) {
 		strcpy(symbol->errtxt, "Input too long");
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 	error_number = is_sane(SSET, source, length);
-	if(error_number == ERROR_INVALID_DATA) {
+	if(error_number == ZERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
@@ -105,7 +105,7 @@ int msi_plessey(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	if(length > 55) {
 		strcpy(symbol->errtxt, "Input too long");
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 
 	/* start character */
@@ -137,7 +137,7 @@ int msi_plessey_mod10(struct zint_symbol *symbol, unsigned char source[], int le
 
 	if(length > 18) {
 		strcpy(symbol->errtxt, "Input too long");
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 
 	/* start character */
@@ -208,7 +208,7 @@ int msi_plessey_mod1010(struct zint_symbol *symbol, unsigned char source[], cons
 
 	if(src_len > 18) { /* No Entry Stack Smashers! limit because of str->number conversion*/
 		strcpy(symbol->errtxt, "Input too long");
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 
 	/* start character */
@@ -321,7 +321,7 @@ int msi_plessey_mod11(struct zint_symbol *symbol, unsigned char source[], const 
 
 	if(src_len > 55) {
 		strcpy(symbol->errtxt, "Input too long");
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 
 	/* start character */
@@ -385,7 +385,7 @@ int msi_plessey_mod1110(struct zint_symbol *symbol, unsigned char source[], cons
 
 	if(src_len > 18) {
 		strcpy(symbol->errtxt, "Input too long");
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 
 	/* start character */
@@ -476,7 +476,7 @@ int msi_handle(struct zint_symbol *symbol, unsigned char source[], int length) {
 	error_number = is_sane(NEON, source, length);
 	if(error_number != 0) {
 		strcpy(symbol->errtxt, "Invalid characters in input data");
-		return ERROR_INVALID_DATA;
+		return ZERROR_INVALID_DATA;
 	}
 
 

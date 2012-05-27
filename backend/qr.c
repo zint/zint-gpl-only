@@ -988,7 +988,7 @@ int qr_code(struct zint_symbol *symbol, unsigned char source[], int length)
 					} while ((j < 6843) && (glyph == 0));
 					if(glyph == 0) {
 						strcpy(symbol->errtxt, "Invalid character in input data");
-						return ERROR_INVALID_DATA;
+						return ZERROR_INVALID_DATA;
 					}
 					jisdata[i] = glyph;
 				}
@@ -1012,7 +1012,7 @@ int qr_code(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	if(est_binlen > (8 * max_cw)) {
 		strcpy(symbol->errtxt, "Input too long for selected error correction level");
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 
 	autosize = 40;
@@ -1123,7 +1123,7 @@ int micro_qr_intermediate(char binary[], int jisdata[], char mode[], int length,
 
 	do {
 		if(strlen(binary) > 128) {
-			return ERROR_TOO_LONG;
+			return ZERROR_TOO_LONG;
 		}
 
 		data_block = mode[position];
@@ -1161,7 +1161,7 @@ int micro_qr_intermediate(char binary[], int jisdata[], char mode[], int length,
 					if(debug) { printf("0x%4X ", prod); }
 
 					if(strlen(binary) > 128) {
-						return ERROR_TOO_LONG;
+						return ZERROR_TOO_LONG;
 					}
 				}
 
@@ -1190,7 +1190,7 @@ int micro_qr_intermediate(char binary[], int jisdata[], char mode[], int length,
 					if(debug) { printf("0x%4X ", byte); }
 
 					if(strlen(binary) > 128) {
-						return ERROR_TOO_LONG;
+						return ZERROR_TOO_LONG;
 					}
 				}
 
@@ -1231,7 +1231,7 @@ int micro_qr_intermediate(char binary[], int jisdata[], char mode[], int length,
 					if(debug) { printf("0x%4X ", prod); }
 
 					if(strlen(binary) > 128) {
-						return ERROR_TOO_LONG;
+						return ZERROR_TOO_LONG;
 					}
 
 					i += 2;
@@ -1279,7 +1279,7 @@ int micro_qr_intermediate(char binary[], int jisdata[], char mode[], int length,
 					if(debug) { printf("0x%4X (%d)", prod, prod); }
 
 					if(strlen(binary) > 128) {
-						return ERROR_TOO_LONG;
+						return ZERROR_TOO_LONG;
 					}
 
 					i += 3;
@@ -1940,7 +1940,7 @@ int microqr(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	if(length > 35) {
 		strcpy(symbol->errtxt, "Input data too long");
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 
 	for(int i = 0; i < 4; i++) {
@@ -1972,7 +1972,7 @@ int microqr(struct zint_symbol *symbol, unsigned char source[], int length)
 					} while ((j < 6843) && (glyph == 0));
 					if(glyph == 0) {
 						strcpy(symbol->errtxt, "Invalid character in input data");
-						return ERROR_INVALID_DATA;
+						return ZERROR_INVALID_DATA;
 					}
 					jisdata[i] = glyph;
 				}
@@ -2032,7 +2032,7 @@ int microqr(struct zint_symbol *symbol, unsigned char source[], int length)
 	if(binary_count[2] > 84) { version_valid[2] = 0; }
 	if(binary_count[3] > 128) {
 		strcpy(symbol->errtxt, "Input data too long");
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 
 	/* Eliminate possible versions depending on error correction level specified */
@@ -2043,7 +2043,7 @@ int microqr(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	if(ecc_level == LEVEL_H) {
 		strcpy(symbol->errtxt, "Error correction level H not available");
-		return ERROR_INVALID_OPTION;
+		return ZERROR_INVALID_OPTION;
 	}
 
 	if(ecc_level == LEVEL_Q) {
@@ -2052,7 +2052,7 @@ int microqr(struct zint_symbol *symbol, unsigned char source[], int length)
 		version_valid[2] = 0;
 		if(binary_count[3] > 80) {
 			strcpy(symbol->errtxt, "Input data too long");
-			return ERROR_TOO_LONG;
+			return ZERROR_TOO_LONG;
 		}
 	}
 
@@ -2062,7 +2062,7 @@ int microqr(struct zint_symbol *symbol, unsigned char source[], int length)
 		if(binary_count[2] > 68) { version_valid[2] = 0; }
 		if(binary_count[3] > 112) {
 			strcpy(symbol->errtxt, "Input data too long");
-			return ERROR_TOO_LONG;
+			return ZERROR_TOO_LONG;
 		}
 	}
 

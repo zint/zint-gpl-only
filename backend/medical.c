@@ -56,10 +56,10 @@ int pharma_one(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	if(length > 6) {
 		strcpy(symbol->errtxt, "Input too long");
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 	error_number = is_sane(NEON, source, length);
-	if(error_number == ERROR_INVALID_DATA) {
+	if(error_number == ZERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
@@ -68,7 +68,7 @@ int pharma_one(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	if((tester < 3) || (tester > 131070)) {
 		strcpy(symbol->errtxt, "Data out of range");
-		return ERROR_INVALID_DATA;
+		return ZERROR_INVALID_DATA;
 	}
 
 	do
@@ -115,7 +115,7 @@ int pharma_two_calc(struct zint_symbol *symbol, unsigned char source[], char des
 	if((tester < 4) || (tester > 64570080))
 	{
 		strcpy(symbol->errtxt, "Data out of range");
-		return ERROR_INVALID_DATA;
+		return ZERROR_INVALID_DATA;
 	}
 	error_number = 0;
 	strcpy(inter, "");
@@ -159,10 +159,10 @@ int pharma_two(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	if(length > 8) {
 		strcpy(symbol->errtxt, "Input too long");
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 	error_number = is_sane(NEON, source, length);
-	if(error_number == ERROR_INVALID_DATA) {
+	if(error_number == ZERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
@@ -203,11 +203,11 @@ int codabar(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	if(length > 60) { /* No stack smashing please */
 		strcpy(symbol->errtxt, "Input too long");
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 	to_upper(source);
 	error_number = is_sane(CALCIUM, source, length);
-	if(error_number == ERROR_INVALID_DATA) {
+	if(error_number == ZERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
@@ -215,14 +215,14 @@ int codabar(struct zint_symbol *symbol, unsigned char source[], int length)
 	if((source[0] != 'A') && (source[0] != 'B') && (source[0] != 'C') && (source[0] != 'D'))
 	{
 		strcpy(symbol->errtxt, "Invalid characters in data");
-		return ERROR_INVALID_DATA;
+		return ZERROR_INVALID_DATA;
 	}
 
 	if((source[length - 1] != 'A') && (source[length - 1] != 'B') &&
 		    (source[length - 1] != 'C') && (source[length - 1] != 'D'))
 	{
 		strcpy(symbol->errtxt, "Invalid characters in data");
-		return ERROR_INVALID_DATA;
+		return ZERROR_INVALID_DATA;
 	}
 
 	for(i = 0; i < length; i++)
@@ -246,10 +246,10 @@ int code32(struct zint_symbol *symbol, unsigned char source[], int length)
 	/* Validate the input */
 	if(length > 8) {
 		strcpy(symbol->errtxt, "Input too long");
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 	error_number = is_sane(NEON, source, length);
-	if(error_number == ERROR_INVALID_DATA) {
+	if(error_number == ZERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}

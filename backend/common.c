@@ -103,7 +103,7 @@ int is_sane(char test_string[], unsigned char source[], int length)
 			}
 		}
 		if (!latch) {
-			return ERROR_INVALID_DATA;
+			return ZERROR_INVALID_DATA; 
 		}
 	}
 
@@ -267,7 +267,7 @@ int latin1_process(struct zint_symbol *symbol, unsigned char source[], unsigned 
 		}
 		if(next == -1) {
 			strcpy(symbol->errtxt, "error: Invalid character in input string (only Latin-1 characters supported)");
-			return ERROR_INVALID_DATA;
+			return ZERROR_INVALID_DATA;
 		}
 		i = next;
 	} while(i < *length);
@@ -296,11 +296,11 @@ int utf8toutf16(struct zint_symbol *symbol, unsigned char source[], int vals[], 
 		} else {
 			if((source[bpos] >= 0x80) && (source[bpos] <= 0xbf)) {
 				strcpy(symbol->errtxt, "Corrupt Unicode data");
-				return ERROR_INVALID_DATA;
+				return ZERROR_INVALID_DATA;
 			}
 			if((source[bpos] >= 0xc0) && (source[bpos] <= 0xc1)) {
 				strcpy(symbol->errtxt, "Overlong encoding not supported");
-				return ERROR_INVALID_DATA;
+				return ZERROR_INVALID_DATA;
 			}
 
 			if((source[bpos] >= 0xc2) && (source[bpos] <= 0xdf)) {
@@ -317,7 +317,7 @@ int utf8toutf16(struct zint_symbol *symbol, unsigned char source[], int vals[], 
 			} else
 			if(source[bpos] >= 0xf0) {
 				strcpy(symbol->errtxt, "Unicode sequences of more than 3 bytes not supported");
-				return ERROR_INVALID_DATA;
+				return ZERROR_INVALID_DATA;
 			}
 		}
 

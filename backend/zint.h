@@ -25,6 +25,8 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#include <stdio.h>
+
 struct zint_render_line {
 	float x, y, length, width;
 	struct zint_render_line *next;      /* Pointer to next line */
@@ -64,7 +66,7 @@ struct zint_symbol {
 	int output_options;
 	char fgcolour[10];
 	char bgcolour[10];
-	char outfile[256];
+	char outfile[FILENAME_MAX];
 	float scale;
 	int option_1;
 	int option_2;
@@ -75,9 +77,11 @@ struct zint_symbol {
 	int rows;
 	int width;
 	char primary[128];
-	unsigned char encoded_data[178][143];
-	int row_height[178]; /* Largest symbol is 177x177 QR Code */
 	char errtxt[100];
+#define ZINT_ROWS_MAX  178
+#define ZINT_COLS_MAX  178
+	unsigned char encoded_data[ZINT_ROWS_MAX][ZINT_COLS_MAX];
+	int row_height[ZINT_ROWS_MAX]; /* Largest symbol is 177x177 QR Code */
 	char *bitmap;
 	int bitmap_width;
 	int bitmap_height;
@@ -192,14 +196,14 @@ struct zint_symbol {
 
 #define DM_SQUARE	100
 
-#define WARN_INVALID_OPTION	2
-#define ERROR_TOO_LONG		5
-#define ERROR_INVALID_DATA	6
-#define ERROR_INVALID_CHECK	7
-#define ERROR_INVALID_OPTION	8
-#define ERROR_ENCODING_PROBLEM	9
-#define ERROR_FILE_ACCESS	10
-#define ERROR_MEMORY		11
+#define ZWARN_INVALID_OPTION	2
+#define ZERROR_TOO_LONG		    5
+#define ZERROR_INVALID_DATA	    6
+#define ZERROR_INVALID_CHECK	7
+#define ZERROR_INVALID_OPTION	8
+#define ZERROR_ENCODING_PROBLEM	9
+#define ZERROR_FILE_ACCESS	    10
+#define ZERROR_MEMORY		    11
 
 #if defined(__WIN32__) || defined(_WIN32) || defined(WIN32)
 #  if defined (DLL_EXPORT) || defined(PIC) || defined(_USRDLL)

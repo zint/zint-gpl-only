@@ -1005,7 +1005,7 @@ int code_one(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	if((symbol->option_2 < 0) || (symbol->option_2 > 10)) {
 		strcpy(symbol->errtxt, "Invalid symbol size");
-		return ERROR_INVALID_OPTION;
+		return ZERROR_INVALID_OPTION;
 	}
 
 	if(symbol->option_2 == 9) {
@@ -1018,11 +1018,11 @@ int code_one(struct zint_symbol *symbol, unsigned char source[], int length)
 
 		if(length > 18) {
 			strcpy(symbol->errtxt, "Input data too long");
-			return ERROR_TOO_LONG;
+			return ZERROR_TOO_LONG;
 		}
-		if(is_sane(NEON, source, length) == ERROR_INVALID_DATA) {
+		if(is_sane(NEON, source, length) == ZERROR_INVALID_DATA) {
 			strcpy(symbol->errtxt, "Invalid input data (Version S encodes numeric input only)");
-			return ERROR_INVALID_DATA;
+			return ZERROR_INVALID_DATA;
 		}
 
 		sub_version = 3; codewords = 12; block_width = 6; /* Version S-30 */
@@ -1103,12 +1103,12 @@ int code_one(struct zint_symbol *symbol, unsigned char source[], int length)
 		data_length = c1_encode(symbol, source, data, length);
 
 		if(data_length == 0) {
-			return ERROR_TOO_LONG;
+			return ZERROR_TOO_LONG;
 		}
 
 		if(data_length > 38) {
 			strcpy(symbol->errtxt, "Input data too long");
-			return ERROR_TOO_LONG;
+			return ZERROR_TOO_LONG;
 		}
 
 		size = 10;
@@ -1176,7 +1176,7 @@ int code_one(struct zint_symbol *symbol, unsigned char source[], int length)
 		data_length = c1_encode(symbol, source, data, length);
 
 		if (data_length == 0) {
-			return ERROR_TOO_LONG;
+			return ZERROR_TOO_LONG;
 		}
 
 		for (int i = 7; i >= 0; i--) {

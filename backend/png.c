@@ -93,21 +93,21 @@ int png_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 
 	if(strlen(symbol->fgcolour) != 6) {
 		strcpy(symbol->errtxt, "Malformed foreground colour target");
-		return ERROR_INVALID_OPTION;
+		return ZERROR_INVALID_OPTION;
 	}
 	if(strlen(symbol->bgcolour) != 6) {
 		strcpy(symbol->errtxt, "Malformed background colour target");
-		return ERROR_INVALID_OPTION;
+		return ZERROR_INVALID_OPTION;
 	}
 	errn = is_sane(SSET, (unsigned char*)symbol->fgcolour, strlen(symbol->fgcolour));
-	if (errn == ERROR_INVALID_DATA) {
+	if (errn == ZERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Malformed foreground colour target");
-		return ERROR_INVALID_OPTION;
+		return ZERROR_INVALID_OPTION;
 	}
 	errn = is_sane(SSET, (unsigned char*)symbol->bgcolour, strlen(symbol->bgcolour));
-	if (errn == ERROR_INVALID_DATA) {
+	if (errn == ZERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Malformed background colour target");
-		return ERROR_INVALID_OPTION;
+		return ZERROR_INVALID_OPTION;
 	}
 
 	fgred = (16 * ctoi(symbol->fgcolour[0])) + ctoi(symbol->fgcolour[1]);
@@ -123,7 +123,7 @@ int png_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 	} else {
 		if (!(graphic->outfile = fopen(symbol->outfile, "wb"))) {
 			strcpy(symbol->errtxt, "Can't open output file");
-			return ERROR_FILE_ACCESS;
+			return ZERROR_FILE_ACCESS;
 		}
 	}
 
@@ -131,21 +131,21 @@ int png_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 	png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, graphic, writepng_error_handler, NULL);
 	if (!png_ptr) {
 		strcpy(symbol->errtxt, "Out of memory");
-		return ERROR_MEMORY;
+		return ZERROR_MEMORY;
 	}
 
 	info_ptr = png_create_info_struct(png_ptr);
 	if (!info_ptr) {
 		png_destroy_write_struct(&png_ptr, NULL);
 		strcpy(symbol->errtxt, "Out of memory");
-		return ERROR_MEMORY;
+		return ZERROR_MEMORY;
 	}
 
 	/* catch jumping here */
 	if (setjmp(graphic->jmpbuf)) {
 		png_destroy_write_struct(&png_ptr, &info_ptr);
 		strcpy(symbol->errtxt, "libpng error occurred");
-		return ERROR_MEMORY;
+		return ZERROR_MEMORY;
 	}
 
 	/* open output file with libpng */
@@ -310,21 +310,21 @@ int bmp_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 
 	if(strlen(symbol->fgcolour) != 6) {
 		strcpy(symbol->errtxt, "Malformed foreground colour target");
-		return ERROR_INVALID_OPTION;
+		return ZERROR_INVALID_OPTION;
 	}
 	if(strlen(symbol->bgcolour) != 6) {
 		strcpy(symbol->errtxt, "Malformed background colour target");
-		return ERROR_INVALID_OPTION;
+		return ZERROR_INVALID_OPTION;
 	}
 	errn = is_sane(SSET, (unsigned char*)symbol->fgcolour, strlen(symbol->fgcolour));
-	if (errn == ERROR_INVALID_DATA) {
+	if (errn == ZERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Malformed foreground colour target");
-		return ERROR_INVALID_OPTION;
+		return ZERROR_INVALID_OPTION;
 	}
 	errn = is_sane(SSET, (unsigned char*)symbol->bgcolour, strlen(symbol->fgcolour));
-	if (errn == ERROR_INVALID_DATA) {
+	if (errn == ZERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Malformed background colour target");
-		return ERROR_INVALID_OPTION;
+		return ZERROR_INVALID_OPTION;
 	}
 
 	fgred = (16 * ctoi(symbol->fgcolour[0])) + ctoi(symbol->fgcolour[1]);
@@ -437,7 +437,7 @@ int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, c
 	/* Apply scale options by creating another pixel buffer */
 	if (!(scaled_pixelbuf = (char *) malloc(scale_width * scale_height))) {
 		printf("Insufficient memory for pixel buffer");
-		return ERROR_ENCODING_PROBLEM;
+		return ZERROR_ENCODING_PROBLEM;
 	} else {
 		for(i = 0; i < (scale_width * scale_height); i++) {
 			*(scaled_pixelbuf + i) = '0';
@@ -454,7 +454,7 @@ int png_to_file(struct zint_symbol *symbol, int image_height, int image_width, c
 #ifndef NO_PNG
 		error_number = png_pixel_plot(symbol, scale_height, scale_width, scaled_pixelbuf, rotate_angle);
 #else
-		return ERROR_INVALID_OPTION;
+		return ZERROR_INVALID_OPTION;
 #endif
 	} else {
 		error_number = bmp_pixel_plot(symbol, scale_height, scale_width, scaled_pixelbuf, rotate_angle);
@@ -611,7 +611,7 @@ int maxi_png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 
 	if (!(pixelbuf = (char *) malloc(image_width * image_height))) {
 		printf("Insifficient memory for pixel buffer");
-		return ERROR_ENCODING_PROBLEM;
+		return ZERROR_ENCODING_PROBLEM;
 	} else {
 		for(i = 0; i < (image_width * image_height); i++) {
 			*(pixelbuf + i) = '0';
@@ -799,7 +799,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 
 	if (!(pixelbuf = (char *) malloc(image_width * image_height))) {
 		printf("Insufficient memory for pixel buffer");
-		return ERROR_ENCODING_PROBLEM;
+		return ZERROR_ENCODING_PROBLEM;
 	} else {
 		for(i = 0; i < (image_width * image_height); i++) {
 			*(pixelbuf + i) = '0';

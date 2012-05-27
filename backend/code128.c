@@ -250,7 +250,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[], int length)
 		/* This only blocks rediculously long input - the actual length of the
 		   resulting barcode depends on the type of data, so this is trapped later */
 		strcpy(symbol->errtxt, "Input too long");
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 
 	/* Detect extended ASCII characters */
@@ -417,7 +417,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[], int length)
 	}
 	if(glyph_count > 80.0) {
 		strcpy(symbol->errtxt, "Input too long");
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 
 	/* So now we know what start character to use - we can get on with it! */
@@ -641,14 +641,14 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[], int length)
 		/* This only blocks rediculously long input - the actual length of the
 		resulting barcode depends on the type of data, so this is trapped later */
 		strcpy(symbol->errtxt, "Input too long");
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 
 	for (int i = 0; i < length; i++) {
 		if(source[i] == '\0') {
 			/* Null characters not allowed! */
 			strcpy(symbol->errtxt, "NULL character in input data");
-			return ERROR_INVALID_DATA;
+			return ZERROR_INVALID_DATA;
 		}
 	}
 
@@ -779,7 +779,7 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[], int length)
 	}
 	if(glyph_count > 80.0) {
 		strcpy(symbol->errtxt, "Input too long");
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 
 	/* So now we know what start character to use - we can get on with it! */
@@ -945,11 +945,11 @@ int nve_18(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	if(sourcelen > 17) {
 		strcpy(symbol->errtxt, "Input too long");
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 
 	error_number = is_sane(NEON, source, length);
-	if(error_number == ERROR_INVALID_DATA) {
+	if(error_number == ZERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
 	}
@@ -985,11 +985,11 @@ int ean_14(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	if(length > 13) {
 		strcpy(symbol->errtxt, "Input wrong length");
-		return ERROR_TOO_LONG;
+		return ZERROR_TOO_LONG;
 	}
 
 	error_number = is_sane(NEON, source, length);
-	if(error_number == ERROR_INVALID_DATA) {
+	if(error_number == ZERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid character in data");
 		return error_number;
 	}
