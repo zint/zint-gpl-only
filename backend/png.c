@@ -71,7 +71,7 @@ int png_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 	png_infop  info_ptr;
 	graphic = &wpng_info;
 	unsigned char *image_data;
-	int i, row, column, errno;
+	int i, row, column, errn;
 	int fgred, fggrn, fgblu, bgred, bggrn, bgblu;
 
 	switch(rotate_angle) {
@@ -99,13 +99,13 @@ int png_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 		strcpy(symbol->errtxt, "Malformed background colour target");
 		return ERROR_INVALID_OPTION;
 	}
-	errno = is_sane(SSET, (unsigned char*)symbol->fgcolour, strlen(symbol->fgcolour));
-	if (errno == ERROR_INVALID_DATA) {
+	errn = is_sane(SSET, (unsigned char*)symbol->fgcolour, strlen(symbol->fgcolour));
+	if (errn == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Malformed foreground colour target");
 		return ERROR_INVALID_OPTION;
 	}
-	errno = is_sane(SSET, (unsigned char*)symbol->bgcolour, strlen(symbol->bgcolour));
-	if (errno == ERROR_INVALID_DATA) {
+	errn = is_sane(SSET, (unsigned char*)symbol->bgcolour, strlen(symbol->bgcolour));
+	if (errn == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Malformed background colour target");
 		return ERROR_INVALID_OPTION;
 	}
@@ -282,7 +282,7 @@ int png_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 
 int bmp_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width, char *pixelbuf, int rotate_angle)
 {
-	int i, row, column, errno;
+	int i, row, column, errn;
 	int fgred, fggrn, fgblu, bgred, bggrn, bgblu;
 
 	switch(rotate_angle) {
@@ -316,13 +316,13 @@ int bmp_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 		strcpy(symbol->errtxt, "Malformed background colour target");
 		return ERROR_INVALID_OPTION;
 	}
-	errno = is_sane(SSET, (unsigned char*)symbol->fgcolour, strlen(symbol->fgcolour));
-	if (errno == ERROR_INVALID_DATA) {
+	errn = is_sane(SSET, (unsigned char*)symbol->fgcolour, strlen(symbol->fgcolour));
+	if (errn == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Malformed foreground colour target");
 		return ERROR_INVALID_OPTION;
 	}
-	errno = is_sane(SSET, (unsigned char*)symbol->bgcolour, strlen(symbol->fgcolour));
-	if (errno == ERROR_INVALID_DATA) {
+	errn = is_sane(SSET, (unsigned char*)symbol->bgcolour, strlen(symbol->fgcolour));
+	if (errn == ERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Malformed background colour target");
 		return ERROR_INVALID_OPTION;
 	}
