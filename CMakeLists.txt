@@ -26,12 +26,13 @@ if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
     if (CXX_COMPILER_FLAG_WALL)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
     endif (CXX_COMPILER_FLAG_WALL)
+
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
 endif (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
 
-
 IF(APPLE)
-    IF (UNIVERSAL) # TODO: make univeral binary 
-        IF(NOT ZINT_HAS_BEEN_RUN_BEFORE and UNIVERAL) 
+    IF (UNIVERSAL) # TODO: make univeral binary
+        IF(NOT ZINT_HAS_BEEN_RUN_BEFORE and UNIVERAL)
             IF(EXISTS /Developer/SDKs/MacOSX10.5.sdk OR EXISTS /SDKs/MacOSX10.5.sdk)
                 SET(CMAKE_OSX_ARCHITECTURES "ppc;i386;ppc64;x86_64" CACHE STRING "Build architectures for OSX" FORCE)
                 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility-inlines-hidden -Wl -single_module " CACHE STRING "Flags used by the compiler during all build types." FORCE)
