@@ -26,78 +26,80 @@
 #include <zint.h>
 #define NESET "0123456789"
 
+inline static void die(const char *s) __attribute__((noreturn));
 
-void types(void) {
-	printf( 	" 1: Code 11           51: Pharma One-Track         90: KIX Code\n"
-			" 2: Standard 2of5     52: PZN                      92: Aztec Code\n"
-			" 3: Interleaved 2of5  53: Pharma Two-Track         93: DAFT Code\n"
-			" 4: IATA 2of5         55: PDF417                   97: Micro QR Code\n"
-			" 6: Data Logic        56: PDF417 Trunc             98: HIBC Code 128\n"
-			" 7: Industrial 2of5   57: Maxicode                 99: HIBC Code 39\n"
-			" 8: Code 39           58: QR Code                 102: HIBC Data Matrix\n"
-			" 9: Extended Code 39  60: Code 128-B              104: HIBC QR Code\n"
-			"13: EAN               63: AP Standard Customer    106: HIBC PDF417\n"
-			"16: GS1-128           66: AP Reply Paid           108: HIBC MicroPDF417\n"
-			"18: Codabar           67: AP Routing              112: HIBC Aztec Code\n"
-			"20: Code 128          68: AP Redirection          128: Aztec Runes\n"
-			"21: Leitcode          69: ISBN                    129: Code 23\n"
-			"22: Identcode         70: RM4SCC                  130: Comp EAN\n"
-			"23: Code 16k          71: Data Matrix             131: Comp GS1-128\n"
-			"24: Code 49           72: EAN-14                  132: Comp Databar-14\n"
-			"25: Code 93           75: NVE-18                  133: Comp Databar Ltd\n"
-			"28: Flattermarken     76: Japanese Post           134: Comp Databar Ext\n"
-			"29: Databar-14        77: Korea Post              135: Comp UPC-A\n"
-			"30: Databar Limited   79: Databar-14 Stack        136: Comp UPC-E\n"
-			"31: Databar Extended  80: Databar-14 Stack Omni   137: Comp Databar-14 Stack\n"
-			"32: Telepen Alpha     81: Databar Extended Stack  138: Comp Databar Stack Omni\n"
-			"34: UPC-A             82: Planet                  139: Comp Databar Ext Stack\n"
-			"37: UPC-E             84: MicroPDF                140: Channel Code\n"
-			"40: Postnet           85: USPS OneCode            141: Code One\n"
-			"47: MSI Plessey       86: UK Plessey              142: Grid Matrix\n"
-			"49: FIM               87: Telepen Numeric\n"
-			"50: Logmars           89: ITF-14\n"
-	);
-}
-
-void usage(void)
+void die(const char *s)
 {
-	printf(
-		"Zint version %s\n"
-		"Encode input data in a barcode and save as a PNG, EPS or SVG file.\n\n"
-		"  -h, --help            Display this message.\n"
-		"  -t, --types           Display table of barcode types\n"
-		"  -i, --input=FILE      Read data from FILE.\n"
-		"  -o, --output=FILE     Write image to FILE. (default is out.png)\n"
-		"  -d, --data=DATA       Barcode content.\n"
-		"  -b, --barcode=NUMBER  Number of barcode type (default is 20 (=Code128)).\n"
-		"  --height=NUMBER       Height of symbol in multiples of x-dimension.\n"
-		"  -w, --whitesp=NUMBER  Width of whitespace in multiples of x-dimension.\n"
-		"  --border=NUMBER       Width of border in multiples of x-dimension.\n"
-		"  --box                 Add a box.\n"
-		"  --bind                Add boundary bars.\n"
-		"  -r, --reverse         Reverse colours (white on black).\n"
-		"  --fg=COLOUR           Specify a foreground colour.\n"
-		"  --bg=COLOUR           Specify a background colour.\n"
-		"  --scale=NUMBER        Adjust size of output image.\n"
-		"  --directpng           Send PNG output to stdout\n"
-		"  --directeps           Send EPS output to stdout\n"
-		"  --directsvg           Send SVG output to stdout\n"
-		"  --dump                Dump binary data to stdout\n"
-		"  --rotate=NUMBER       Rotate symbol (PNG output only).\n"
-		"  --cols=NUMBER         (PDF417) Number of columns.\n"
-		"  --vers=NUMBER         (QR Code) Version\n"
-		"  --secure=NUMBER       (PDF417 and QR Code) Error correction level.\n"
-		"  --primary=STRING      (Maxicode and Composite) Structured primary message.\n"
-		"  --mode=NUMBER         (Maxicode and Composite) Set encoding mode.\n"
-		"  --gs1                 Treat input as GS1 data\n"
-		"  --binary              Treat input as Binary data\n"
-		"  --notext              Remove human readable text\n"
-		"  --square              Force Data Matrix symbols to be square\n"
-		"  --init                Create reader initialisation symbol (Code 128)\n"
-		"  --smalltext           Use half-size text in PNG images\n"
-		"  --batch               Treat each line of input as a separate data set\n"
-		, ZINT_VERSION);
+	fputs(s, stderr);
+	exit(1);
 }
+
+const char help_types[] =
+	" 1: Code 11           51: Pharma One-Track         90: KIX Code\n"
+	" 2: Standard 2of5     52: PZN                      92: Aztec Code\n"
+	" 3: Interleaved 2of5  53: Pharma Two-Track         93: DAFT Code\n"
+	" 4: IATA 2of5         55: PDF417                   97: Micro QR Code\n"
+	" 6: Data Logic        56: PDF417 Trunc             98: HIBC Code 128\n"
+	" 7: Industrial 2of5   57: Maxicode                 99: HIBC Code 39\n"
+	" 8: Code 39           58: QR Code                 102: HIBC Data Matrix\n"
+	" 9: Extended Code 39  60: Code 128-B              104: HIBC QR Code\n"
+	"13: EAN               63: AP Standard Customer    106: HIBC PDF417\n"
+	"16: GS1-128           66: AP Reply Paid           108: HIBC MicroPDF417\n"
+	"18: Codabar           67: AP Routing              112: HIBC Aztec Code\n"
+	"20: Code 128          68: AP Redirection          128: Aztec Runes\n"
+	"21: Leitcode          69: ISBN                    129: Code 23\n"
+	"22: Identcode         70: RM4SCC                  130: Comp EAN\n"
+	"23: Code 16k          71: Data Matrix             131: Comp GS1-128\n"
+	"24: Code 49           72: EAN-14                  132: Comp Databar-14\n"
+	"25: Code 93           75: NVE-18                  133: Comp Databar Ltd\n"
+	"28: Flattermarken     76: Japanese Post           134: Comp Databar Ext\n"
+	"29: Databar-14        77: Korea Post              135: Comp UPC-A\n"
+	"30: Databar Limited   79: Databar-14 Stack        136: Comp UPC-E\n"
+	"31: Databar Extended  80: Databar-14 Stack Omni   137: Comp Databar-14 Stack\n"
+	"32: Telepen Alpha     81: Databar Extended Stack  138: Comp Databar Stack Omni\n"
+	"34: UPC-A             82: Planet                  139: Comp Databar Ext Stack\n"
+	"37: UPC-E             84: MicroPDF                140: Channel Code\n"
+	"40: Postnet           85: USPS OneCode            141: Code One\n"
+	"47: MSI Plessey       86: UK Plessey              142: Grid Matrix\n"
+	"49: FIM               87: Telepen Numeric\n"
+	"50: Logmars           89: ITF-14\n";
+
+const char help_usage[] =
+	"Zint version " ZINT_VERSION "\n"
+	"Encode input data in a barcode and save as a PNG, EPS or SVG file.\n"
+	"\n"
+	"  -h, --help            Display this message.\n"
+	"  -t, --types           Display table of barcode types\n"
+	"  -i, --input=FILE      Read data from FILE.\n"
+	"  -o, --output=FILE     Write image to FILE. (default is out.png)\n"
+	"  -d, --data=DATA       Barcode content.\n"
+	"  -b, --barcode=NUMBER  Number of barcode type (default is 20 (=Code128)).\n"
+	"  --height=NUMBER       Height of symbol in multiples of x-dimension.\n"
+	"  -w, --whitesp=NUMBER  Width of whitespace in multiples of x-dimension.\n"
+	"  --border=NUMBER       Width of border in multiples of x-dimension.\n"
+	"  --box                 Add a box.\n"
+	"  --bind                Add boundary bars.\n"
+	"  -r, --reverse         Reverse colours (white on black).\n"
+	"  --fg=COLOUR           Specify a foreground colour.\n"
+	"  --bg=COLOUR           Specify a background colour.\n"
+	"  --scale=NUMBER        Adjust size of output image.\n"
+	"  --directpng           Send PNG output to stdout\n"
+	"  --directeps           Send EPS output to stdout\n"
+	"  --directsvg           Send SVG output to stdout\n"
+	"  --dump                Dump binary data to stdout\n"
+	"  --rotate=NUMBER       Rotate symbol (PNG output only).\n"
+	"  --cols=NUMBER         (PDF417) Number of columns.\n"
+	"  --vers=NUMBER         (QR Code) Version\n"
+	"  --secure=NUMBER       (PDF417 and QR Code) Error correction level.\n"
+	"  --primary=STRING      (Maxicode and Composite) Structured primary message.\n"
+	"  --mode=NUMBER         (Maxicode and Composite) Set encoding mode.\n"
+	"  --gs1                 Treat input as GS1 data\n"
+	"  --binary              Treat input as Binary data\n"
+	"  --notext              Remove human readable text\n"
+	"  --square              Force Data Matrix symbols to be square\n"
+	"  --init                Create reader initialisation symbol (Code 128)\n"
+	"  --smalltext           Use half-size text in PNG images\n"
+	"  --batch               Treat each line of input as a separate data set\n";
 
 int validator(char test_string[], char source[])
 { /* Verifies that a string only uses valid characters */
@@ -318,10 +320,8 @@ int main(int argc, char **argv)
 	my_symbol->input_mode = UNICODE_MODE;
 	batch_mode = 0;
 
-	if(argc == 1) {
-		usage();
-		exit(1);
-	}
+	if(argc == 1)
+		die(help_usage);
 
 	while(1) {
 		int option_index = 0;
@@ -429,10 +429,8 @@ int main(int argc, char **argv)
 				}
 				if(!strcmp(long_options[option_index].name, "border")) {
 					error_number = validator(NESET, optarg);
-					if(error_number == ERROR_INVALID_DATA) {
-						fprintf(stderr, "Invalid border width\n");
-						exit(1);
-					}
+					if(error_number == ERROR_INVALID_DATA)
+						die("Invalid border width\n");
 					if((atoi(optarg) >= 0) && (atoi(optarg) <= 1000)) {
 						my_symbol->border_width = atoi(optarg);
 					} else {
@@ -441,10 +439,8 @@ int main(int argc, char **argv)
 				}
 				if(!strcmp(long_options[option_index].name, "height")) {
 					error_number = validator(NESET, optarg);
-					if(error_number == ERROR_INVALID_DATA) {
-						fprintf(stderr, "Invalid symbol height\n");
-						exit(1);
-					}
+					if(error_number == ERROR_INVALID_DATA)
+						die("Invalid symbol height\n");
 					if((atoi(optarg) >= 1) && (atoi(optarg) <= 1000)) {
 						my_symbol->height = atoi(optarg);
 					} else {
@@ -490,10 +486,8 @@ int main(int argc, char **argv)
 				if(!strcmp(long_options[option_index].name, "rotate")) {
 					/* Only certain inputs allowed */
 					error_number = validator(NESET, optarg);
-					if(error_number == ERROR_INVALID_DATA) {
-						fprintf(stderr, "Invalid rotation parameter\n");
-						exit(1);
-					}
+					if(error_number == ERROR_INVALID_DATA)
+						die("Invalid rotation parameter\n");
 					switch(atoi(optarg)) {
 						case 90: rotate_angle = 90; break;
 						case 180: rotate_angle = 180; break;
@@ -508,28 +502,22 @@ int main(int argc, char **argv)
 				break;
 				
 			case 'h':
-				usage();
-				break;
+				die(help_usage);
 				
 			case 't':
-				types();
-				break;
+				die(help_types);
 				
 			case 'b':
 				error_number = validator(NESET, optarg);
-				if(error_number == ERROR_INVALID_DATA) {
-					fprintf(stderr, "Invalid barcode type\n");
-					exit(1);
-				}
+				if (error_number == ERROR_INVALID_DATA)
+					die("Invalid barcode type\n");
 				my_symbol->symbology = atoi(optarg);
 				break;
 				
 			case 'w':
 				error_number = validator(NESET, optarg);
-				if(error_number == ERROR_INVALID_DATA) {
-					fprintf(stderr, "Invalid whitespace value\n");
-					exit(1);
-				}
+				if (error_number == ERROR_INVALID_DATA)
+					die("Invalid whitespace value\n");
 				if((atoi(optarg) >= 0) && (atoi(optarg) <= 1000)) {
 					my_symbol->whitespace_width = atoi(optarg);
 				} else {
@@ -595,7 +583,7 @@ int main(int argc, char **argv)
 		} 
 	}
 	
-		if (optind < argc) {
+	if (optind < argc) {
 		fprintf(stderr, "Invalid option ");
 		while (optind < argc)
 			fprintf(stderr, "%s", argv[optind++]);
