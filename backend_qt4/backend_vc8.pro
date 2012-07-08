@@ -22,7 +22,6 @@ HEADERS +=  ../backend/aztec.h \
             ../backend/code49.h \
             ../backend/common.h \
             ../backend/composite.h \
-            ../backend/dm200.h \
             ../backend/dmatrix.h \
             ../backend/font.h \
             ../backend/gb2312.h \
@@ -43,7 +42,6 @@ HEADERS +=  ../backend/aztec.h \
 SOURCES += ../backend/2of5.c \
            ../backend/auspost.c \
            ../backend/aztec.c \
-           ../backend/blockf.c \
            ../backend/code.c \
            ../backend/code1.c \
            ../backend/code128.c \
@@ -51,7 +49,6 @@ SOURCES += ../backend/2of5.c \
            ../backend/code49.c \
            ../backend/common.c \
            ../backend/composite.c \
-           ../backend/dm200.c \
            ../backend/dmatrix.c \
            ../backend/gridmtx.c \
            ../backend/gs1.c \
@@ -66,6 +63,7 @@ SOURCES += ../backend/2of5.c \
            ../backend/ps.c \
            ../backend/qr.c \
            ../backend/reedsol.c \
+           ../backend/render.c \
            ../backend/rss.c \
            ../backend/svg.c \
            ../backend/telepen.c \
