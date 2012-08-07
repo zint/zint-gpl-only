@@ -114,7 +114,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%doc COPYING readme
+%doc COPYING README
 %{_bindir}/%{name}
 %{_libdir}/libzint.so.*
 
