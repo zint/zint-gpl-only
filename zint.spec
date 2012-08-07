@@ -1,10 +1,10 @@
 Name:      zint
-Version:   2.3.1
+Version:   2.4.2
 Release:   2%{?dist}
 Summary:   A barcode generator and library
 License:   GPLv3+
 URL:       http://www.zint.org.uk
-Source:    http://downloads.sourceforge.net/project/%{name}/%{name}/%{version}/%{name}-%{version}.src.tar.gz
+Source:    https://github.com/downloads/zint/zint/%{name}-%{version}.src.tar.gz
 Group:     Applications/Engineering
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
