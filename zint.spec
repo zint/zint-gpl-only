@@ -8,12 +8,6 @@ Source:    https://github.com/downloads/zint/zint/%{name}-%{version}.src.tar.gz
 Group:     Applications/Engineering
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
-# Reset locales to "C" when exporting to EPS or SVG in order to force
-# decimal points in all language environments. 
-# This issue has been reported upstream:
-# http://sourceforge.net/mailarchive/forum.php?thread_name=4BF78012.7090508%40uos.de&forum_name=zint-barcode
-Patch0:    zint-locale.patch
-
 BuildRequires: cmake
 BuildRequires: libpng-devel
 BuildRequires: zlib-devel
@@ -70,7 +64,6 @@ C library and header files needed to develop applications using %{name}-qt.
 
 %prep
 %setup -q
-%patch0 -p1
 
 # remove BSD-licensed file required for Windows only (just to ensure that this package is plain GPLv3+)
 rm -f backend/ms_stdint.h
@@ -135,8 +128,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/qzint.h
 %{_libdir}/libQZint.so
 
-
 %changelog
+* Tue august 7 2012 Dominique Ribaut
+- update to reflect use of github, see https://github.com/zint/zint for up to date chagelog
+
 * Sat May 22 2010 Martin Gieseking <martin.gieseking@uos.de> - 2.3.1-2
 - Added patch to fix export issue
 
