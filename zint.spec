@@ -129,7 +129,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libQZint.so
 
 %changelog
-* Tue august 7 2012 Dominique Ribaut
+* Tue Aug 7 2012 Dominique Ribaut - 2.4.2
 - update to reflect use of github, see https://github.com/zint/zint for up to date chagelog
 
 * Sat May 22 2010 Martin Gieseking <martin.gieseking@uos.de> - 2.3.1-2
