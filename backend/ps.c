@@ -753,7 +753,10 @@ int ps_plot(struct zint_symbol *symbol)
 
 	if(symbol->output_options ^ BARCODE_STDOUT) {
 		fclose(feps);
-	}
+    }
+    else {
+        fflush(feps);
+    }
 
 	if (locale)
 		setlocale(LC_ALL, locale);

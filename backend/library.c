@@ -226,6 +226,9 @@ int dump_plot(struct zint_symbol *symbol)
 	if(symbol->output_options ^ BARCODE_STDOUT) {
 		fclose(f);
 	}
+    else {
+        fflush(f);
+    }
 
 	return 0;
 }
