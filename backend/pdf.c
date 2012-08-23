@@ -23,6 +23,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdarg.h>
 #include "common.h"
 
 #define SSET	"0123456789ABCDEF"
@@ -30,7 +31,14 @@
 /* This file has expanded quite a bit since version 1.5 in order to accomodate
    the formatting rules for EAN and UPC symbols as set out in EN 797:1995 - the
    down side of this support is that the code is now vertually unreadable! */
-
+int vprinttopdf(FILE *file,char *str,va_list arglist){
+    vfprintf(file,str,arglist);
+}
+int printtopdf(FILE *file,char *str,...){
+    va_list arglist;
+    va_start(arglist,str);
+    vprinttopdf(file,str,arglist);
+}
 int pdf_plot(struct zint_symbol *symbol)
 {
 	int i, block_width, latch, r, this_row;
