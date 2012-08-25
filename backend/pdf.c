@@ -385,6 +385,23 @@ int pdf_plot(struct zint_symbol *symbol)
 			break;
 	}
 
+	/* Put the human readable text at the bottom */
+	if(plot_text && (textdone == 0)) {
+//		fprintf(feps, "TE\n");
+		print_stream(pdffile, "%.2f %.2f %.2f rg\n", red_ink, green_ink, blue_ink);
+/*		fprintf(feps, "matrix currentmatrix\n");
+		fprintf(feps, "/Helvetica findfont\n");
+		fprintf(feps, "%.2f scalefont setfont\n", 8.0 * scaler);
+		textpos = symbol->width / 2.0;
+		fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, default_text_posn);
+		fprintf(feps, " (%s) stringwidth\n", symbol->text);
+		fprintf(feps, "pop\n");
+		fprintf(feps, "-2 div 0 rmoveto\n");
+		fprintf(feps, " (%s) show\n", symbol->text);
+		fprintf(feps, "setmatrix\n");*/
+                textpos=symbol->width/2.0;
+                print_stream(pdffile,"BT /F1 %.2f Tf %.2f %.2f Td (%s)Tj ET\n",8.0*scaler,(textpos+xoffset)*scaler,default_text_posn,symbol->text);
+	}
 
 
 
