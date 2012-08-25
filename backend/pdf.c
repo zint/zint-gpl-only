@@ -63,21 +63,22 @@ int print_stream(struct pdf_file* pdffile,char *str,...){
 }
 void init_pdf(struct pdf_file* pdffile){
     printtopdf(pdffile,"%%PDF-1.6\n");
+    printtopdf(pdffile,"%%\xe2\xe3\xcf\xd3\n");
 
     // Catalog object    
-    printnewobj(pdffile,"1 0 obj<</Type /Catalog /Pages 2 0 R>>\nendobj\n");
+    printnewobj(pdffile,"1 0 obj\n<<\n/Type /Catalog\n/Pages 2 0 R\n>>\nendobj\n");
 
     // Pages Object
-    printnewobj(pdffile,"2 0 obj <</Type /Pages /Kids [3 0 R]  /Count 1 /MediaBox [0 0 500 800]>>\nendobj\n");
+    printnewobj(pdffile,"2 0 obj\n<<\n/Type /Pages\n/Kids [3 0 R]\n/Count 1\n/MediaBox [0 0 500 800]\n>>\nendobj\n");
 
     //Page 1
-    printnewobj(pdffile,"3 0 obj<</Type /Page /Parent 2 0 R /Contents 6 0 R /Resources 5 0 R>>\nendobj\n");
+    printnewobj(pdffile,"3 0 obj\n<<\n/Type /Page\n/Parent 2 0 R\n/Contents 6 0 R\n/Resources 5 0 R\n/MediaBox [0 0 500 800]\n>>\nendobj\n");
 
     //write font obj
-    printnewobj(pdffile,"4 0 obj<</Type /Font /Subtype /Type1 /BaseFont /Helvetica>>\nendobj\n");
+    printnewobj(pdffile,"4 0 obj\n<<\n/Type /Font\n/Subtype /Type1\n/BaseFont /Helvetica\n>>\nendobj\n");
 
     //write resources obj
-    printnewobj(pdffile,"5 0 obj<</Font <</F1 4 0 R>>>>\nendobj\n");
+    printnewobj(pdffile,"5 0 obj\n<<\n/Font <</F1 4 0 R>>\n>>\nendobj\n");
    
     
 
@@ -86,9 +87,9 @@ void finishPDF(struct pdf_file* pdffile){
     fprintf(pdffile->file_handle,"xref\n");
     fprintf(pdffile->file_handle,"0 %d\n0000000000 65535 f \n",pdffile->num_objects);
     for(int i=0;i<pdffile->num_objects;i++){
-        fprintf(pdffile->file_handle,"%010d 0000 n \n",pdffile->xref_tbl[i]);
+        fprintf(pdffile->file_handle,"%010d 00000 n \n",pdffile->xref_tbl[i]);
     }
-    fprintf(pdffile->file_handle,"trailer <</Size %d/Root 1 0 R /Info 8 0 R>>\nstartxref\n%d\n",pdffile->num_objects,pdffile->obj_offset);
+    fprintf(pdffile->file_handle,"trailer <<\n/Size %d\n/Root 1 0 R\n/Info 8 0 R\n>>\nstartxref\n%d\n",pdffile->num_objects,pdffile->obj_offset);
     fprintf(pdffile->file_handle,"%%%%EOF");
     
 }
@@ -267,7 +268,7 @@ int pdf_plot(struct zint_symbol *symbol)
         // h close path
         // f = fill
         // S = stroke
-        printnewobj(pdffile,"6 0 obj\n<</Length 7 0 R>>\nstream\n");
+        printnewobj(pdffile,"6 0 obj\n<<\n/Length 7 0 R\n>>\nstream\n");
 
 //	fprintf(fpdf, "/TL { w m l S } bind def\n");
 //	fprintf(fpdf, "/TC { m 0 360 arc 360 0 arcn f } bind def\n");
@@ -352,17 +353,48 @@ int pdf_plot(struct zint_symbol *symbol)
 	}
 	/* That's done the actual data area, everything else is human-friendly */
 
+//bind box support
+	switch(symbol->symbology) {
+		case BARCODE_MAXICODE:
+			/* Do nothing! (It's already been done) */
+			break;
+		default:
+			if((symbol->output_options & BARCODE_BIND) != 0) {
+				if((symbol->rows > 1) && (is_stackable(symbol->symbology) == 1)) {
+					/* row binding */
+					//fprintf(feps, "TE\n");
+					print_stream(pdffile, "%.2f %.2f %.2f rg\n", red_ink, green_ink, blue_ink);
+					for(r = 1; r < symbol->rows; r++) {
+						print_stream(pdffile, "%.2f %.2f %.2f %.2f re f\n", xoffset * scaler,2.0 * scaler,   symbol->width * scaler, ((r * row_height) + textoffset + yoffset - 1) * scaler);
+					}
+				}
+			}
+			if (((symbol->output_options & BARCODE_BOX) != 0) || ((symbol->output_options & BARCODE_BIND) != 0)) {
+				//print_stream(feps, "TE\n");
+				print_stream(pdffile, "%.2f %.2f %.2f rg\n", red_ink, green_ink, blue_ink);
+				print_stream(pdffile, "%.2f %.2f %.2f %.2f re f\n", 0.0, textoffset * scaler,  (symbol->width + xoffset + xoffset) * scaler, symbol->border_width * scaler);
+				print_stream(pdffile, "%.2f %.2f %.2f %.2f re f\n", 0.0, (textoffset + symbol->height + symbol->border_width) * scaler,  (symbol->width + xoffset + xoffset) * scaler, symbol->border_width * scaler );
+			}
+			if((symbol->output_options & BARCODE_BOX) != 0) {
+				/* side bars */
+				//fprintf(feps, "TE\n");
+				print_stream(pdffile, "%.2f %.2f %.2f rg\n", red_ink, green_ink, blue_ink);
+			        print_stream(pdffile, "%.2f %.2f %.2f %.2f re f\n", 0.0, textoffset * scaler,  symbol->border_width * scaler, (symbol->height + (2 * symbol->border_width)) * scaler);
+				print_stream(pdffile, "%.2f %.2f %.2f %.2f re f\n", (symbol->width + xoffset + xoffset - symbol->border_width) * scaler, textoffset * scaler,  symbol->border_width * scaler, (symbol->height + (2 * symbol->border_width)) * scaler);
+			}
+			break;
+	}
 
 
 
 
 // End content stream and pdf file
 
-        printtopdf(pdffile,"\nendstream\nendobj\n");
+        printtopdf(pdffile,"endstream\nendobj\n");
         printnewobj(pdffile,"7 0 obj\n%d\nendobj\n",pdffile->content_stream_len);
 
 // write info object
-  printnewobj(pdffile,"8 0 obj\n<</Creator (Zint %s) \n",ZINT_VERSION);
+  printnewobj(pdffile,"8 0 obj\n<<\n/Creator (Zint %s) \n",ZINT_VERSION);
          
 	if(ustrlen(symbol->text) != 0) {
 		printtopdf(pdffile, "/Title (%s)\n",symbol->text);
