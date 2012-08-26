@@ -352,6 +352,419 @@ int pdf_plot(struct zint_symbol *symbol)
 		}
 	}
 	/* That's done the actual data area, everything else is human-friendly */
+	xoffset += comp_offset;
+
+	if (plot_text) {
+		if ((((symbol->symbology == BARCODE_EANX) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_EANX_CC)) ||
+			(symbol->symbology == BARCODE_ISBNX)) {
+			/* guard bar extensions and text formatting for EAN8 and EAN13 */
+			switch(ustrlen(symbol->text)) {
+				case 8: /* EAN-8 */
+				case 11:
+				case 14:
+					//fprintf(feps, "TE\n");
+					print_stream(pdffile, "%.2f %.2f %.2f rg\n", red_ink, green_ink, blue_ink);
+//					fprintf(feps, "%.2f %.2f ",  );
+					print_stream(pdffile, " %.2f %.2f %.2f %.2f re f\n", (0 + xoffset) * scaler,(4.0 + yoffset) * scaler, 1 * scaler, 5.0 * scaler);
+					print_stream(pdffile, " %.2f %.2f %.2f %.2f re f\n", (2 + xoffset) * scaler,(4.0 + yoffset) * scaler, 1 * scaler, 5.0 * scaler);
+					print_stream(pdffile, " %.2f %.2f %.2f %.2f re f\n", (32 + xoffset) * scaler,(4.0 + yoffset) * scaler, 1 * scaler, 5.0 * scaler);
+				        print_stream(pdffile, " %.2f %.2f %.2f %.2f re f\n", (34 + xoffset) * scaler,(4.0 + yoffset) * scaler, 1 * scaler, 5.0 * scaler);
+					print_stream(pdffile, " %.2f %.2f %.2f %.2f re f\n", (64 + xoffset) * scaler,(4.0 + yoffset) * scaler, 1 * scaler, 5.0 * scaler);
+					print_stream(pdffile, " %.2f %.2f %.2f %.2f re f\n", (66 + xoffset) * scaler,(4.0 + yoffset) * scaler, 1 * scaler, 5.0 * scaler);
+					for(i = 0; i < 4; i++) {
+						textpart[i] = symbol->text[i];
+					}
+					textpart[4] = '\0';
+					//fprintf(feps, "TE\n");
+					print_stream(pdffile, "%.2f %.2f %.2f rg\n", red_ink, green_ink, blue_ink);
+					//fprintf(feps, "matrix currentmatrix\n");
+				/*	fprintf(feps, "/Helvetica findfont\n");
+					fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
+					textpos = 17;
+					fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, default_text_posn);
+					fprintf(feps, " (%s) stringwidth\n", textpart);
+					fprintf(feps, "pop\n");
+					fprintf(feps, "-2 div 0 rmoveto\n");
+					fprintf(feps, " (%s) show\n", textpart);
+					fprintf(feps, "setmatrix\n");*/
+                                        textpos = 17;
+                                        print_stream(pdffile,"BT /F1 %.2f Tf %.2f %.2f Td (%s)Tj ET\n",(11.0*scaler),(textpos+xoffset)*scaler,default_text_posn,textpart); 
+					for(i = 0; i < 4; i++) {
+						textpart[i] = symbol->text[i + 4];
+					}
+					textpart[4] = '\0';
+				/*	fprintf(feps, "matrix currentmatrix\n");
+					fprintf(feps, "/Helvetica findfont\n");
+					fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
+					textpos = 50;
+					fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, default_text_posn);
+					fprintf(feps, " (%s) stringwidth\n", textpart);
+					fprintf(feps, "pop\n");
+					fprintf(feps, "-2 div 0 rmoveto\n");
+					fprintf(feps, " (%s) show\n", textpart);
+					fprintf(feps, "setmatrix\n");*/
+                                        textpos=50;
+                                        print_stream(pdffile,"BT /F1 %.2f Tf %.2f %.2f Td (%s)Tj ET\n",(11.0*scaler),(textpos+xoffset)*scaler,default_text_posn,textpart); 
+					textdone = 1;
+					switch(strlen(addon)) {
+						case 2:
+						/*	fprintf(feps, "matrix currentmatrix\n");
+							fprintf(feps, "/Helvetica findfont\n");
+							fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
+							textpos = xoffset + 86;
+							fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
+							fprintf(feps, " (%s) stringwidth\n", addon);
+							fprintf(feps, "pop\n");
+							fprintf(feps, "-2 div 0 rmoveto\n");
+							fprintf(feps, " (%s) show\n", addon);
+							fprintf(feps, "setmatrix\n");*/
+                                                        textpos = xoffset + 86;
+                                                        print_stream(pdffile,"BT /F1 %.2f Tf %.2f %.2f Td (%s)Tj ET\n",(11.0*scaler),textpos*scaler,addon_text_posn*scaler,addon); 
+							break;
+						case 5:
+							/*fprintf(feps, "matrix currentmatrix\n");
+							fprintf(feps, "/Helvetica findfont\n");
+							fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
+							textpos = xoffset + 100;
+							fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
+							fprintf(feps, " (%s) stringwidth\n", addon);
+							fprintf(feps, "pop\n");
+							fprintf(feps, "-2 div 0 rmoveto\n");
+							fprintf(feps, " (%s) show\n", addon);
+							fprintf(feps, "setmatrix\n"); */
+                                                        textpos = xoffset + 100;
+                                                        print_stream(pdffile,"BT /F1 %.2f Tf %.2f %.2f Td (%s)Tj ET\n",(11.0*scaler),textpos*scaler,addon_text_posn*scaler,addon); 
+							break;
+					}
+
+					break;
+				case 13: /* EAN 13 */
+				case 16:
+				case 19:
+					//fprintf(feps, "TE\n");
+					print_stream(pdffile, "%.2f %.2f %.2f rg\n", red_ink, green_ink, blue_ink);
+					//fprintf(feps, "%.2f %.2f ",  );
+					print_stream(pdffile, " %.2f %.2f %.2f %.2f re f \n", (0 + xoffset) * scaler,(4.0 + yoffset) * scaler, 1 * scaler, 5.0 * scaler);
+					print_stream(pdffile, " %.2f %.2f %.2f %.2f re f\n", (2 + xoffset) * scaler,(4.0 + yoffset) * scaler, 1 * scaler, 5.0 * scaler);
+					print_stream(pdffile, " %.2f %.2f %.2f %.2f re f\n", (46 + xoffset) * scaler,(4.0 + yoffset) * scaler, 1 * scaler, 5.0 * scaler);
+					print_stream(pdffile, " %.2f %.2f %.2f %.2f re f\n", (48 + xoffset) * scaler,(4.0 + yoffset) * scaler, 1 * scaler, 5.0 * scaler);
+					print_stream(pdffile, " %.2f %.2f %.2f %.2f re f\n", (92 + xoffset) * scaler,(4.0 + yoffset) * scaler, 1 * scaler, 5.0 * scaler);
+					print_stream(pdffile, " %.2f %.2f %.2f %.2f re f\n", (94 + xoffset) * scaler,(4.0 + yoffset) * scaler, 1 * scaler, 5.0 * scaler);
+					textpart[0] = symbol->text[0];
+					textpart[1] = '\0';
+				//	fprintf(feps, "TE\n");
+					print_stream(pdffile, "%.2f %.2f %.2f rg\n", red_ink, green_ink, blue_ink);
+				/*	fprintf(feps, "matrix currentmatrix\n");
+					fprintf(feps, "/Helvetica findfont\n");
+					fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
+					textpos = -7;
+					fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, default_text_posn);
+					fprintf(feps, " (%s) stringwidth\n", textpart);
+					fprintf(feps, "pop\n");
+					fprintf(feps, "-2 div 0 rmoveto\n");
+					fprintf(feps, " (%s) show\n", textpart);
+					fprintf(feps, "setmatrix\n");*/
+                                        textpos = -7;
+                                        print_stream(pdffile,"BT /F1 %.2f Tf %.2f %.2f Td (%s)Tj ET\n",(11.0*scaler),(textpos+xoffset)*scaler,default_text_posn,textpart); 
+					for(i = 0; i < 6; i++) {
+						textpart[i] = symbol->text[i + 1];
+					}
+					textpart[6] = '\0';
+					/*fprintf(feps, "matrix currentmatrix\n");
+					fprintf(feps, "/Helvetica findfont\n");
+					fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
+					textpos = 24;
+					fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, default_text_posn);
+					fprintf(feps, " (%s) stringwidth\n", textpart);
+					fprintf(feps, "pop\n");
+					fprintf(feps, "-2 div 0 rmoveto\n");
+					fprintf(feps, " (%s) show\n", textpart);
+					fprintf(feps, "setmatrix\n");*/
+                                        textpos = 24;
+                                        print_stream(pdffile,"BT /F1 %.2f Tf %.2f %.2f Td (%s)Tj ET\n",(11.0*scaler),(textpos+xoffset)*scaler,default_text_posn,textpart); 
+					for(i = 0; i < 6; i++) {
+						textpart[i] = symbol->text[i + 7];
+					}
+					textpart[6] = '\0';
+					/*fprintf(feps, "matrix currentmatrix\n");
+					fprintf(feps, "/Helvetica findfont\n");
+					fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
+					textpos = 71;
+					fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, default_text_posn);
+					fprintf(feps, " (%s) stringwidth\n", textpart);
+					fprintf(feps, "pop\n");
+					fprintf(feps, "-2 div 0 rmoveto\n");
+					fprintf(feps, " (%s) show\n", textpart);
+					fprintf(feps, "setmatrix\n");*/
+                                        textpos = 71;
+                                        print_stream(pdffile,"BT /F1 %.2f Tf %.2f %.2f Td (%s)Tj ET\n",(11.0*scaler),(textpos+xoffset)*scaler,default_text_posn,textpart); 
+					textdone = 1;
+					switch(strlen(addon)) {
+						case 2:
+						/*	fprintf(feps, "matrix currentmatrix\n");
+							fprintf(feps, "/Helvetica findfont\n");
+							fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
+							textpos = xoffset + 114;
+							fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
+							fprintf(feps, " (%s) stringwidth\n", addon);
+							fprintf(feps, "pop\n");
+							fprintf(feps, "-2 div 0 rmoveto\n");
+							fprintf(feps, " (%s) show\n", addon);
+							fprintf(feps, "setmatrix\n");*/
+                                                        textpos = xoffset + 114;
+                                                        print_stream(pdffile,"BT /F1 %.2f Tf %.2f %.2f Td (%s)Tj ET\n",(11.0*scaler),textpos*scaler,addon_text_posn*scaler,addon); 
+							break;
+						case 5:
+							/*fprintf(feps, "matrix currentmatrix\n");
+							fprintf(feps, "/Helvetica findfont\n");
+							fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
+							textpos = xoffset + 128;
+							fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
+							fprintf(feps, " (%s) stringwidth\n", addon);
+							fprintf(feps, "pop\n");
+							fprintf(feps, "-2 div 0 rmoveto\n");
+							fprintf(feps, " (%s) show\n", addon);
+							fprintf(feps, "setmatrix\n");*/
+                                                        textpos = xoffset + 128;
+                                                        print_stream(pdffile,"BT /F1 %.2f Tf %.2f %.2f Td (%s)Tj ET\n",(11.0*scaler),textpos*scaler,addon_text_posn*scaler,addon); 
+							break;
+					}
+					break;
+
+			}
+		}
+
+		if (((symbol->symbology == BARCODE_UPCA) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_UPCA_CC)) {
+			/* guard bar extensions and text formatting for UPCA */
+			//fprintf(feps, "TE\n");
+			print_stream(pdffile, "%.2f %.2f %.2f rg\n", red_ink, green_ink, blue_ink);
+			//fprintf(feps, "%.2f %.2f ", 5.0 * scaler, (4.0 + yoffset) * scaler);
+                        float yheight=5.0*scaler,ypos=(4.0+yoffset)*scaler;
+			latch = 1;
+
+			i = 0 + comp_offset;
+			do {
+				block_width = 0;
+				do {
+					block_width++;
+				} while (module_is_set(symbol, symbol->rows - 1, i + block_width) == module_is_set(symbol, symbol->rows - 1, i));
+				if(latch == 1) {
+					/* a bar */
+					print_stream(pdffile, " %.2f %.2f %.2f %.2f re f\n", (i + xoffset - comp_offset) * scaler,ypos, block_width * scaler,yheight);
+					latch = 0;
+				} else {
+					/* a space */
+					latch = 1;
+				}
+				i += block_width;
+			} while (i < 11 + comp_offset);
+			print_stream(pdffile, " %.2f %.2f %.2f %.2f re f\n", (46 + xoffset) * scaler,ypos, 1 * scaler,yheight);
+			print_stream(pdffile, " %.2f %.2f %.2f %.2f re f\n", (48 + xoffset) * scaler,ypos, 1 * scaler,yheight);
+			latch = 1;
+			i = 85 + comp_offset;
+			do {
+				block_width = 0;
+				do {
+					block_width++;
+				} while (module_is_set(symbol, symbol->rows - 1, i + block_width) == module_is_set(symbol, symbol->rows - 1, i));
+				if(latch == 1) {
+					/* a bar */
+					print_stream(pdffile, " %.2f %.2f %.2f %.2f re f\n", (i + xoffset - comp_offset) * scaler,ypos, block_width * scaler,yheight);
+					latch = 0;
+				} else {
+					/* a space */
+					latch = 1;
+				}
+				i += block_width;
+			} while (i < 96 + comp_offset);
+			textpart[0] = symbol->text[0];
+			textpart[1] = '\0';
+		//	fprintf(feps, "TE\n");
+			print_stream(pdffile, "%.2f %.2f %.2f rg\n", red_ink, green_ink, blue_ink);
+		/*	fprintf(feps, "matrix currentmatrix\n");
+			fprintf(feps, "/Helvetica findfont\n");
+			fprintf(feps, "%.2f scalefont setfont\n", 8.0 * scaler);
+			textpos = -5;
+			fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, default_text_posn);
+			fprintf(feps, " (%s) stringwidth\n", textpart);
+			fprintf(feps, "pop\n");
+			fprintf(feps, "-2 div 0 rmoveto\n");
+			fprintf(feps, " (%s) show\n", textpart);
+			fprintf(feps, "setmatrix\n");*/
+                        textpos = -5;
+                        print_stream(pdffile,"BT /F1 %.2f Tf %.2f %.2f Td (%s)Tj ET\n",(8.0*scaler),(textpos+xoffset)*scaler,default_text_posn,textpart); 
+			for(i = 0; i < 5; i++) {
+				textpart[i] = symbol->text[i + 1];
+			}
+			textpart[5] = '\0';
+		/*	fprintf(feps, "matrix currentmatrix\n");
+			fprintf(feps, "/Helvetica findfont\n");
+			fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
+			textpos = 27;
+			fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, default_text_posn);
+			fprintf(feps, " (%s) stringwidth\n", textpart);
+			fprintf(feps, "pop\n");
+			fprintf(feps, "-2 div 0 rmoveto\n");
+			fprintf(feps, " (%s) show\n", textpart);
+			fprintf(feps, "setmatrix\n");*/
+                        textpos = 27;
+                        print_stream(pdffile,"BT /F1 %.2f Tf %.2f %.2f Td (%s)Tj ET\n",(11.0*scaler),(textpos+xoffset)*scaler,default_text_posn,textpart); 
+			for(i = 0; i < 5; i++) {
+				textpart[i] = symbol->text[i + 6];
+			}
+			textpart[6] = '\0';
+		/*	fprintf(feps, "matrix currentmatrix\n");
+			fprintf(feps, "/Helvetica findfont\n");
+			fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
+			textpos = 68;
+			fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, default_text_posn);
+			fprintf(feps, " (%s) stringwidth\n", textpart);
+			fprintf(feps, "pop\n");
+			fprintf(feps, "-2 div 0 rmoveto\n");
+			fprintf(feps, " (%s) show\n", textpart);
+			fprintf(feps, "setmatrix\n");*/
+                        textpos = 68;
+                        print_stream(pdffile,"BT /F1 %.2f Tf %.2f %.2f Td (%s)Tj ET\n",(11.0*scaler),(textpos+xoffset)*scaler,default_text_posn,textpart); 
+			textpart[0] = symbol->text[11];
+			textpart[1] = '\0';
+			/*fprintf(feps, "matrix currentmatrix\n");
+			fprintf(feps, "/Helvetica findfont\n");
+			fprintf(feps, "%.2f scalefont setfont\n", 8.0 * scaler);
+			textpos = 100;
+			fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, default_text_posn);
+			fprintf(feps, " (%s) stringwidth\n", textpart);
+			fprintf(feps, "pop\n");
+			fprintf(feps, "-2 div 0 rmoveto\n");
+			fprintf(feps, " (%s) show\n", textpart);
+			fprintf(feps, "setmatrix\n");*/
+                        textpos = 100;
+                        print_stream(pdffile,"BT /F1 %.2f Tf %.2f %.2f Td (%s)Tj ET\n",(8.0*scaler),(textpos+xoffset)*scaler,default_text_posn,textpart); 
+			textdone = 1;
+			switch(strlen(addon)) {
+				case 2:
+				/*	fprintf(feps, "matrix currentmatrix\n");
+					fprintf(feps, "/Helvetica findfont\n");
+					fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
+					textpos = xoffset + 116;
+					fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
+					fprintf(feps, " (%s) stringwidth\n", addon);
+					fprintf(feps, "pop\n");
+					fprintf(feps, "-2 div 0 rmoveto\n");
+					fprintf(feps, " (%s) show\n", addon);
+					fprintf(feps, "setmatrix\n"); */
+                                        textpos = xoffset + 116;                 
+                                        print_stream(pdffile,"BT /F1 %.2f Tf %.2f %.2f Td (%s)Tj ET\n",(11.0*scaler),textpos*scaler,addon_text_posn*scaler,addon); 
+					break;
+				case 5:
+					/*fprintf(feps, "matrix currentmatrix\n");
+					fprintf(feps, "/Helvetica findfont\n");
+					fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
+					textpos = xoffset + 130;
+					fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
+					fprintf(feps, " (%s) stringwidth\n", addon);
+					fprintf(feps, "pop\n");
+					fprintf(feps, "-2 div 0 rmoveto\n");
+					fprintf(feps, " (%s) show\n", addon);
+					fprintf(feps, "setmatrix\n"); */
+                                        textpos = xoffset + 130;                 
+                                        print_stream(pdffile,"BT /F1 %.2f Tf %.2f %.2f Td (%s)Tj ET\n",(11.0*scaler),textpos*scaler,addon_text_posn*scaler,addon); 
+					break;
+			}
+
+		}
+
+		if (((symbol->symbology == BARCODE_UPCE) && (symbol->rows == 1)) || (symbol->symbology == BARCODE_UPCE_CC)) {
+			/* guard bar extensions and text formatting for UPCE */
+			//fprintf(feps, "TE\n");
+			print_stream(pdffile, "%.2f %.2f %.2f rg\n", red_ink, green_ink, blue_ink);
+			//fprintf(feps, "%.2f %.2f ",  );
+			print_stream(pdffile, " %.2f %.2f %.2f %.2f re f\n", (0 + xoffset) * scaler, (4.0 + yoffset) * scaler,1 * scaler, 5.0 * scaler);
+			print_stream(pdffile, " %.2f %.2f %.2f %.2f re f\n", (2 + xoffset) * scaler, (4.0 + yoffset) * scaler,1 * scaler, 5.0 * scaler);
+			print_stream(pdffile, " %.2f %.2f %.2f %.2f re f\n", (46 + xoffset) * scaler, (4.0 + yoffset) * scaler,1 * scaler, 5.0 * scaler);
+		        print_stream(pdffile, " %.2f %.2f %.2f %.2f re f\n", (48 + xoffset) * scaler, (4.0 + yoffset) * scaler,1 * scaler, 5.0 * scaler);
+			print_stream(pdffile, " %.2f %.2f %.2f %.2f re f\n", (50 + xoffset) * scaler, (4.0 + yoffset) * scaler,1 * scaler, 5.0 * scaler);
+			textpart[0] = symbol->text[0];
+			textpart[1] = '\0';
+		//	fprintf(feps, "TE\n");
+			print_stream(pdffile, "%.2f %.2f %.2f rg\n", red_ink, green_ink, blue_ink);
+		/*	fprintf(feps, "matrix currentmatrix\n");
+			fprintf(feps, "/Helvetica findfont\n");
+			fprintf(feps, "%.2f scalefont setfont\n", 8.0 * scaler);
+			textpos = -5;
+			fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, default_text_posn);
+			fprintf(feps, " (%s) stringwidth\n", textpart);
+			fprintf(feps, "pop\n");
+			fprintf(feps, "-2 div 0 rmoveto\n");
+			fprintf(feps, " (%s) show\n", textpart);
+			fprintf(feps, "setmatrix\n");*/
+                        textpos = -5;
+                        print_stream(pdffile,"BT /F1 %.2f Tf %.2f %.2f Td (%s)Tj ET\n",(8.0*scaler),(textpos+xoffset)*scaler,default_text_posn,textpart); 
+			for(i = 0; i < 6; i++) {
+				textpart[i] = symbol->text[i + 1];
+			}
+			textpart[6] = '\0';
+			/*fprintf(feps, "matrix currentmatrix\n");
+			fprintf(feps, "/Helvetica findfont\n");
+			fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
+			textpos = 24;
+			fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, default_text_posn);
+			fprintf(feps, " (%s) stringwidth\n", textpart);
+			fprintf(feps, "pop\n");
+			fprintf(feps, "-2 div 0 rmoveto\n");
+			fprintf(feps, " (%s) show\n", textpart);
+			fprintf(feps, "setmatrix\n");*/
+                        textpos = 24;
+                        print_stream(pdffile,"BT /F1 %.2f Tf %.2f %.2f Td (%s)Tj ET\n",(8.0*scaler),(textpos+xoffset)*scaler,default_text_posn,textpart); 
+			textpart[0] = symbol->text[7];
+			textpart[1] = '\0';
+			/*fprintf(feps, "matrix currentmatrix\n");
+			fprintf(feps, "/Helvetica findfont\n");
+			fprintf(feps, "%.2f scalefont setfont\n", 8.0 * scaler);
+			textpos = 55;
+			fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", (textpos + xoffset) * scaler, default_text_posn);
+			fprintf(feps, " (%s) stringwidth\n", textpart);
+			fprintf(feps, "pop\n");
+			fprintf(feps, "-2 div 0 rmoveto\n");
+			fprintf(feps, " (%s) show\n", textpart);
+			fprintf(feps, "setmatrix\n");*/
+                        textpos = 55;
+                        print_stream(pdffile,"BT /F1 %.2f Tf %.2f %.2f Td (%s)Tj ET\n",(8.0*scaler),(textpos+xoffset)*scaler,default_text_posn,textpart); 
+			textdone = 1;
+			switch(strlen(addon)) {
+				case 2:
+				/*	fprintf(feps, "matrix currentmatrix\n");
+					fprintf(feps, "/Helvetica findfont\n");
+					fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
+					textpos = xoffset + 70;
+					fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
+					fprintf(feps, " (%s) stringwidth\n", addon);
+					fprintf(feps, "pop\n");
+					fprintf(feps, "-2 div 0 rmoveto\n");
+					fprintf(feps, " (%s) show\n", addon);
+					fprintf(feps, "setmatrix\n");*/
+                                        textpos = xoffset + 70;                 
+                                        print_stream(pdffile,"BT /F1 %.2f Tf %.2f %.2f Td (%s)Tj ET\n",(11.0*scaler),textpos*scaler,addon_text_posn*scaler,addon); 
+					break;
+				case 5:
+			/*		fprintf(feps, "matrix currentmatrix\n");
+					fprintf(feps, "/Helvetica findfont\n");
+					fprintf(feps, "%.2f scalefont setfont\n", 11.0 * scaler);
+					textpos = xoffset + 84;
+					fprintf(feps, " 0 0 moveto %.2f %.2f translate 0.00 rotate 0 0 moveto\n", textpos * scaler, addon_text_posn * scaler);
+					fprintf(feps, " (%s) stringwidth\n", addon);
+					fprintf(feps, "pop\n");
+					fprintf(feps, "-2 div 0 rmoveto\n");
+					fprintf(feps, " (%s) show\n", addon);
+					fprintf(feps, "setmatrix\n"); */
+                                        textpos = xoffset + 84;                 
+                                        print_stream(pdffile,"BT /F1 %.2f Tf %.2f %.2f Td (%s)Tj ET\n",(11.0*scaler),textpos*scaler,addon_text_posn*scaler,addon); 
+					break;
+			}
+
+		}
+	} /* if (plot_text) */
+
+	xoffset -= comp_offset;
 
 //bind box support
 	switch(symbol->symbology) {
