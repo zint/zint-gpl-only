@@ -28,6 +28,7 @@
 
 #define SSET	"0123456789ABCDEF"
 
+const float MAGIC_NUM=0.5522847498;// (4/3)*(sqrt(2)-1)
 /* This file has expanded quite a bit since version 1.5 in order to accomodate
    the formatting rules for EAN and UPC symbols as set out in EN 797:1995 - the
    down side of this support is that the code is now vertually unreadable! */
@@ -92,6 +93,37 @@ void finishPDF(struct pdf_file* pdffile){
     fprintf(pdffile->file_handle,"trailer <<\n/Size %d\n/Root 1 0 R\n/Info 8 0 R\n>>\nstartxref\n%d\n",pdffile->num_objects,pdffile->obj_offset);
     fprintf(pdffile->file_handle,"%%%%EOF");
     
+}
+void print_arc(struct pdf_file* pdffile, float x1,float y1,float x2,float y2,float x3, float y3){
+	print_stream(pdffile,"%.2f %.2f %.2f %.2f %.2f %.2f c\n",x1,y1,x2,y2,x3,y3);      
+}
+void print_ring(struct pdf_file* pdffile,float r1,float r2){
+	float r,l;
+		
+	r = r1;
+	l = r*MAGIC_NUM;
+	print_stream(pdffile,"%.2f 0 m\n",r);
+	print_arc(pdffile,r,l,l,r,0,r);
+	print_arc(pdffile,-1*l,r,-1*r,l,-1*r,0);
+	print_arc(pdffile,-1*r,-1*l,-1*l,-1*r,0,-1*r);
+	print_arc(pdffile,l,-1*r,r,-1*l,r,0);
+	r = r2;
+	l = r*MAGIC_NUM;
+	print_stream(pdffile,"%.2f 0 l\n",r);
+	print_arc(pdffile,r,-1*l,l,-1*r,0,-1*r);
+	print_arc(pdffile,-1*l,-1*r,-1*r,-1*l,-1*r,0);
+	print_arc(pdffile,-1*r,l,-1*l,r,0,r);
+	print_arc(pdffile,l,r,r,l,r,0);
+
+	print_stream(pdffile," f\n");
+}
+void print_bullseye(struct pdf_file* pdffile,float x,float y,float scaler){
+    print_stream(pdffile,"q\n");
+    print_stream(pdffile,"1 0 0 1 %.2f %.2f cm\n",x*scaler,y*scaler);
+    print_ring(pdffile,8.97*scaler,10.85*scaler);
+    print_ring(pdffile,5.22*scaler,7.10*scaler);
+    print_ring(pdffile,1.43*scaler,3.31*scaler);
+    print_stream(pdffile," Q\n");
 }
 int pdf_plot(struct zint_symbol *symbol)
 {
@@ -289,6 +321,67 @@ int pdf_plot(struct zint_symbol *symbol)
 		default_text_posn = 0.5 * scaler;
 	} else {
 		default_text_posn = (symbol->border_width + 0.5) * scaler;
+	}
+
+	if(symbol->symbology == BARCODE_MAXICODE) {
+		/* Maxicode uses hexagons */
+		float ax, ay, bx, by, cx, cy, dx, dy, ex, ey, fx, fy, mx, my;
+
+
+		textoffset = 0.0;
+		if (((symbol->output_options & BARCODE_BOX) != 0) || ((symbol->output_options & BARCODE_BIND) != 0)) {
+			//fprintf(feps, "TE\n");
+			print_stream(pdffile, "%.2f %.2f %.2f rg\n", red_ink, green_ink, blue_ink);
+			print_stream(pdffile, "%.2f %.2f %.2f %.2f re f\n", 0.0, textoffset * scaler,  (74.0 + xoffset + xoffset) * scaler, symbol->border_width * scaler);
+			print_stream(pdffile, "%.2f %.2f %.2f %.2f re f\n", 0.0, (textoffset + 72.0 + symbol->border_width) * scaler,  (74.0 + xoffset + xoffset) * scaler, symbol->border_width * scaler);
+		}
+		if((symbol->output_options & BARCODE_BOX) != 0) {
+			/* side bars */
+			//fprintf(feps, "TE\n");
+			print_stream(pdffile, "%.2f %.2f %.2f rg\n", red_ink, green_ink, blue_ink);
+			print_stream(pdffile, "%.2f %.2f %.2f %.2f re f\n", 0.0, textoffset * scaler,  symbol->border_width * scaler, (72.0 + (2 * symbol->border_width)) * scaler);
+			print_stream(pdffile, "%.2f %.2f %.2f %.2f re f\n", (74.0 + xoffset + xoffset - symbol->border_width) * scaler, textoffset * scaler,  symbol->border_width * scaler, (72.0 + (2 * symbol->border_width)) * scaler);
+		}
+
+		//fprintf(feps, "TE\n");
+		print_stream(pdffile, "%.2f %.2f %.2f rg\n", red_ink, green_ink, blue_ink);
+		print_stream(pdffile, "%.2f %.2f %.2f rg\n", red_ink, green_ink, blue_ink);
+                print_bullseye(pdffile,35.76+xoffset,35.60+yoffset,scaler);
+	/*	fprintf(feps, "%.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f TC\n", (35.76 + xoffset) * scaler, (35.60 + yoffset) * scaler, 10.85 * scaler, (35.76 + xoffset) * scaler, (35.60 + yoffset) * scaler, 8.97 * scaler, (44.73 + xoffset) * scaler, (35.60 + yoffset) * scaler);
+		fprintf(feps, "%.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f TC\n", (35.76 + xoffset) * scaler, (35.60 + yoffset) * scaler, 7.10 * scaler, (35.76 + xoffset) * scaler, (35.60 + yoffset) * scaler, 5.22 * scaler, (40.98 + xoffset) * scaler, (35.60 + yoffset) * scaler);
+		fprintf(feps, "%.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f TC\n", (35.76 + xoffset) * scaler, (35.60 + yoffset) * scaler, 3.31 * scaler, (35.76 + xoffset) * scaler, (35.60 + yoffset) * scaler, 1.43 * scaler, (37.19 + xoffset) * scaler, (35.60 + yoffset) * scaler); */
+		for(r = 0; r < symbol->rows; r++) {
+			for(i = 0; i < symbol->width; i++) {
+				if(module_is_set(symbol, r, i)) {
+					/* Dump a hexagon */
+					my = ((symbol->rows - r - 1)) * 2.135 + 1.43;
+					ay = my + 1.0 + yoffset;
+					by = my + 0.5 + yoffset;
+					cy = my - 0.5 + yoffset;
+					dy = my - 1.0 + yoffset;
+					ey = my - 0.5 + yoffset;
+					fy = my + 0.5 + yoffset;
+
+					mx = 2.46 * i + 1.23 + (r & 1 ? 1.23 : 0);
+
+					ax = mx + xoffset;
+					bx = mx + 0.86 + xoffset;
+					cx = mx + 0.86 + xoffset;
+					dx = mx + xoffset;
+					ex = mx - 0.86 + xoffset;
+					fx = mx - 0.86 + xoffset;
+//					print_stream(pdffile, " %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f %.2f m l l l l l h f\n", ax * scaler, ay * scaler, bx * scaler, by * scaler, cx * scaler, cy * scaler, dx * scaler, dy * scaler, ex * scaler, ey * scaler, fx * scaler, fy * scaler);
+                                        print_stream(pdffile," 0 w \n");
+                                        print_stream(pdffile," %.2f %.2f m\n",fx*scaler,fy*scaler);
+                                        print_stream(pdffile," %.2f %.2f l\n",ex*scaler,ey*scaler);
+                                        print_stream(pdffile," %.2f %.2f l\n",dx*scaler,dy*scaler);
+                                        print_stream(pdffile," %.2f %.2f l\n",cx*scaler,cy*scaler);
+                                        print_stream(pdffile," %.2f %.2f l\n",bx*scaler,by*scaler);
+                                        print_stream(pdffile," %.2f %.2f l\n",ax*scaler,ay*scaler);
+                                        print_stream(pdffile," h f\n");
+				}
+			}
+		}
 	}
 
 
