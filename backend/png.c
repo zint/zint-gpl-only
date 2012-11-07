@@ -277,11 +277,11 @@ int png_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 
 	/* make sure we have disengaged */
 	if (png_ptr && info_ptr) png_destroy_write_struct(&png_ptr, &info_ptr);
-	if(symbol->output_options ^ BARCODE_STDOUT) {
-		fclose(wpng_info.outfile);
+	if(symbol->output_options & BARCODE_STDOUT) {
+		fflush(wpng_info.outfile);
     }
     else {
-        fflush(wpng_info.outfile);
+        fclose(wpng_info.outfile);
     }
 	return 0;
 }

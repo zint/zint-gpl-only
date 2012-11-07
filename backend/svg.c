@@ -589,11 +589,11 @@ int svg_plot(struct zint_symbol *symbol)
 	fprintf(fsvg, "   </g>\n");
 	fprintf(fsvg, "</svg>\n");
 
-	if(symbol->output_options ^ BARCODE_STDOUT) {
-		fclose(fsvg);
+	if(symbol->output_options & BARCODE_STDOUT) {
+		fflush(fsvg);
 	}
     else {
-        fflush(fsvg);
+        fclose(fsvg);
     }
 
 	if (locale)
