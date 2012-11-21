@@ -988,6 +988,7 @@ int general_rules(char field[], char type[])
 
 		if(current == ALPHA_OR_ISO) {
 			block[1][i] = ALPHA;
+			current = ALPHA;
 		}
 
 		if((current == ALPHA) && (i != (block_count - 1))) {
