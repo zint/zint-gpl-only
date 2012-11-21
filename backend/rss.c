@@ -1849,7 +1849,7 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int src_len)
 	int char_widths[21][8], checksum, check_widths[8], c_group;
 	int check_char, c_odd, c_even, elements[235], pattern_width, reader, writer;
 	int row, elements_in_sub, special_case_row, left_to_right;
-	int codeblocks, sub_elements[235], stack_rows, current_row, current_block;
+	int codeblocks, sub_elements[235], stack_rows, current_row, current_block, current_block_size;
 	int separator_row;
 	char reduced[src_len], binary_string[7 * src_len];
 
@@ -2055,7 +2055,7 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int src_len)
 	} else {
 		/* RSS Expanded Stacked */
 
-		codeblocks = (data_chars + 1) / 2;
+		codeblocks = (data_chars + 2) / 2;
 
 		if((symbol->option_2 < 1) || (symbol->option_2 > 10)) {
 			symbol->option_2 = 2;
@@ -2087,13 +2087,15 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int src_len)
 			/* Row Data */
 			reader = 0;
 			do {
+				current_block_size = (current_block == codeblocks - 1 && !(data_chars & 1)) ? 13 : 21;
 				if(((symbol->option_2 & 1) || (current_row & 1)) ||
 					((current_row == stack_rows) && (codeblocks != (current_row * symbol->option_2)) &&
 					(((current_row * symbol->option_2) - codeblocks) & 1))) {
 					/* left to right */
 					left_to_right = 1;
 					i = 2 + (current_block * 21);
-					for(j = 0; j < 21; j++) {
+
+					for(j = 0; j < current_block_size; j++) {
 						sub_elements[j + (reader * 21) + 2] = elements[i + j];
 						elements_in_sub++;
 					}
@@ -2103,7 +2105,7 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int src_len)
 					if((current_row * symbol->option_2) < codeblocks) {
 						/* a full row */
 						i = 2 + (((current_row * symbol->option_2) - reader - 1) * 21);
-						for(j = 0; j < 21; j++) {
+						for(j = 0; j < current_block_size; j++) {
 							sub_elements[(20 - j) + (reader * 21) + 2] = elements[i + j];
 							elements_in_sub++;
 						}
@@ -2112,7 +2114,7 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int src_len)
 						k = ((current_row * symbol->option_2) - codeblocks);
 						l = (current_row * symbol->option_2) - reader - 1;
 						i = 2 + ((l - k) * 21);
-						for(j = 0; j < 21; j++) {
+						for(j = 0; j < current_block_size; j++) {
 							sub_elements[(20 - j) + (reader * 21) + 2] = elements[i + j];
 							elements_in_sub++;
 						}
@@ -2130,7 +2132,7 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int src_len)
 			latch = current_row & 1 ? '0' : '1';
 
 			if ((current_row == stack_rows) && (codeblocks != (current_row * symbol->option_2)) &&
-				(((current_row * symbol->option_2) - codeblocks) & 1) ) {
+				!((symbol->option_2 % codeblocks) & 1) ) {
 				/* Special case bottom row */
 				special_case_row = 1;
 				sub_elements[0] = 2;
