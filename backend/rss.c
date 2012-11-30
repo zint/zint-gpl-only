@@ -1963,7 +1963,8 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int src_len)
 	check_widths[7] = widths[3];
 
 	/* Initialise element array */
-	pattern_width = ((((data_chars + 1) / 2) + ((data_chars + 1) & 1)) * 5) + ((data_chars + 1) * 8) + 4;
+	codeblocks = (data_chars + 2) / 2;
+	pattern_width = (codeblocks * 5) + ((data_chars + 1) * 8) + 4;
 	for(i = 0; i < pattern_width; i++) {
 		elements[i] = 0;
 	}
@@ -1974,8 +1975,8 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int src_len)
 	elements[pattern_width - 1] = 1;
 
 	/* Put finder patterns in element array */
-	for(i = 0; i < (((data_chars + 1) / 2) + ((data_chars + 1) & 1)); i++) {
-		k = ((((((data_chars + 1) - 2) / 2) + ((data_chars + 1) & 1)) - 1) * 11) + i;
+	for(i = 0; i < codeblocks; i++) {
+		k = ((codeblocks - 2) * 11) + i;
 		for(j = 0; j < 5; j++) {
 			elements[(21 * i) + j + 10] = finder_pattern_exp[((finder_sequence[k] - 1) * 5) + j];
 		}
