@@ -25,7 +25,9 @@
 #include "common.h"
 
 #ifndef NO_PNG
-#include "png.h"        /* libpng header; includes zlib.h and setjmp.h */
+#include <png.h>
+#include <zlib.h>
+#include <setjmp.h>
 #endif /* NO_PNG */
 #include "maxipng.h"	/* Maxicode shapes */
 
@@ -275,7 +277,12 @@ int png_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 
 	/* make sure we have disengaged */
 	if (png_ptr && info_ptr) png_destroy_write_struct(&png_ptr, &info_ptr);
-	fclose(wpng_info.outfile);
+	if(symbol->output_options & BARCODE_STDOUT) {
+		fflush(wpng_info.outfile);
+    }
+    else {
+        fclose(wpng_info.outfile);
+    }
 	return 0;
 }
 #endif /* NO_PNG */
