@@ -2119,10 +2119,10 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int src_len)
 
 						k = ((current_row * symbol->option_2) - codeblocks);
 						l = (current_row * symbol->option_2) - reader - 1;
-						j = (data_chars & 1) ? 0 : 8;
-						i = 2 + ((l - k) * 21) - j;
+						i = 2 + ((l - k) * 21);
 						for(j = 0; j < current_block_size; j++) {
-							sub_elements[(20 - j) + (reader * 21) + 2] = elements[i + j];
+							k = (data_chars & 1) ? 0 : 8; /* Correction if even number of data chars */
+							sub_elements[(20 - j) + (reader * 21) + 2 - k] = elements[i + j];
 							elements_in_sub++;
 						}
 					}
