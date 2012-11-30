@@ -2138,8 +2138,9 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int src_len)
 
 			latch = current_row & 1 ? '0' : '1';
 
-			if ((current_row == stack_rows) && (codeblocks != (current_row * symbol->option_2)) &&
-				!((symbol->option_2 % codeblocks) & 1) ) {
+			if ((current_row == stack_rows) && (codeblocks < (current_row * symbol->option_2)) &&
+				!(symbol->option_2 & 1) &&
+				((codeblocks - ((current_row - 1) * symbol->option_2)) & 1)) {
 				/* Special case bottom row */
 				special_case_row = 1;
 				sub_elements[0] = 2;
