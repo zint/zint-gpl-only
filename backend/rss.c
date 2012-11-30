@@ -2087,13 +2087,14 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int src_len)
 			/* Row Data */
 			reader = 0;
 			do {
-				current_block_size = (current_block == codeblocks - 1 && !(data_chars & 1)) ? 13 : 21;
 				if(((symbol->option_2 & 1) || (current_row & 1)) ||
 					((current_row == stack_rows) && (codeblocks != (current_row * symbol->option_2)) &&
 					(((current_row * symbol->option_2) - codeblocks) & 1))) {
 					/* left to right */
 					left_to_right = 1;
 					i = 2 + (current_block * 21);
+					/* Last block may be just finder + data character */
+					current_block_size = (current_block == codeblocks - 1 && !(data_chars & 1)) ? 13 : 21;
 
 					for(j = 0; j < current_block_size; j++) {
 						sub_elements[j + (reader * 21) + 2] = elements[i + j];
@@ -2104,6 +2105,7 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int src_len)
 					left_to_right = 0;
 					if((current_row * symbol->option_2) < codeblocks) {
 						/* a full row */
+						current_block_size = 21;
 						i = 2 + (((current_row * symbol->option_2) - reader - 1) * 21);
 						for(j = 0; j < current_block_size; j++) {
 							sub_elements[(20 - j) + (reader * 21) + 2] = elements[i + j];
@@ -2111,9 +2113,13 @@ int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int src_len)
 						}
 					} else {
 						/* a partial row */
+						/* Last block (first on row) may be just finder + data character */
+						current_block_size = (reader == 0 && !(data_chars & 1)) ? 13 : 21;
+
 						k = ((current_row * symbol->option_2) - codeblocks);
 						l = (current_row * symbol->option_2) - reader - 1;
-						i = 2 + ((l - k) * 21);
+						j = (data_chars & 1) ? 0 : 8;
+						i = 2 + ((l - k) * 21) - j;
 						for(j = 0; j < current_block_size; j++) {
 							sub_elements[(20 - j) + (reader * 21) + 2] = elements[i + j];
 							elements_in_sub++;
