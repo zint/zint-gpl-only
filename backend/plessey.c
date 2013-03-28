@@ -374,7 +374,8 @@ int msi_plessey_mod1110(struct zint_symbol *symbol, unsigned char source[], cons
 	/* Verified against http://www.bokai.com/BarcodeJSP/applet/BarcodeSampleApplet.htm */
 	/* Weighted using the IBM system */
 
-	unsigned long i, weight, x, check, wright, dau, pedwar, pump, h;
+	long i;
+    unsigned long weight, x, check, wright, dau, pedwar, pump, h;
 	char un[16], tri[16];
 	int error_number;
 	char dest[1000];
