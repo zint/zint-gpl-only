@@ -117,7 +117,8 @@ void maxi_bump(int set[], int character[], int bump_posn)
 	}
 }
 
-int maxi_text_process(int mode, unsigned char source[], int length)
+static int
+maxi_text_process(int mode, unsigned char source[], int length)
 {
 	/* Format text according to Appendix A */
 
@@ -125,18 +126,18 @@ int maxi_text_process(int mode, unsigned char source[], int length)
 	and [Lock in E] and so is not always the most efficient at
 	compressing data, but should suffice for most applications */
 
-	int set[144], character[144], i, j, done, count, current_set;
+	int set[144], character[144];
 
-	if(length > 138) {
+	if (length > 138) {
 		return ZERROR_TOO_LONG;
 	}
 
-	for(i = 0; i < nitems(set); i++) {
+	for (int i = 0; i < nitems(set); i++) {
 		set[i] = -1;
 		character[i] = 0;
 	}
 
-	for (i = 0; i < length; i++) {
+	for (int i = 0; i < length; i++) {
 		/* Look up characters in table from Appendix A - this gives
 		 value and code set for most characters */
 		set[i] = maxiCodeSet[source[i]];
@@ -145,19 +146,18 @@ int maxi_text_process(int mode, unsigned char source[], int length)
 
 	/* If a character can be represented in more than one code set,
 	pick which version to use */
-	if(set[0] == 0) {
+	if (set[0] == 0) {
 		if(character[0] == 13) {
 			character[0] = 0;
 		}
 		set[0] = 1;
 	}
 
-	for(i = 1; i < length; i++) {
+	for (int i = 1; i < length; i++) {
 		if(set[i] == 0) {
-			done = 0;
 			/* Special character */
-			if(character[i] == 13) {
-				/* Carriage Return */
+			switch (character[i]) {
+			case 13: /* Carriage Return */
 				if(set[i - 1] == 5) {
 					character[i] = 13;
 					set[i] = 5;
@@ -170,32 +170,27 @@ int maxi_text_process(int mode, unsigned char source[], int length)
 						set[i] = 1;
 					}
 				}
-				done = 1;
-			}
+				break;
 
-			if((character[i] == 28) && (done == 0)) {
-				/* FS */
+			case 28: /* FS */
 				if(set[i - 1] == 5) {
 					character[i] = 32;
 					set[i] = 5;
 				} else {
 					set[i] = set[i - 1];
 				}
-				done = 1;
-			}
+				break;
 
-			if((character[i] == 29) && (done == 0)) {
-				/* GS */
+			case 29: /* GS */
 				if(set[i - 1] == 5) {
 					character[i] = 33;
 					set[i] = 5;
 				} else {
 					set[i] = set[i - 1];
 				}
-				done = 1;
-			}
+				break;
 
-			if((character[i] == 30) && (done == 0)) {
+			case 30:
 				/* RS */
 				if(set[i - 1] == 5) {
 					character[i] = 34;
@@ -203,30 +198,35 @@ int maxi_text_process(int mode, unsigned char source[], int length)
 				} else {
 					set[i] = set[i - 1];
 				}
-				done = 1;
-			}
+				break;
 
-			if((character[i] == 32) && (done == 0)) {
-				/* Space */
-				if(set[i - 1] == 1) {
+			case 32: /* Space */
+				switch (set[i - 1]) {
+				case 1:
 					character[i] = 32;
 					set[i] = 1;
-				}
-				if(set[i - 1] == 2) {
+					break;
+				case 2:
 					character[i] = 47;
 					set[i] = 2;
-				}
-				if(set[i - 1] >= 3) {
-					if(i != length - 1) {
-						if(set[i + 1] == 1) {
+					break;
+				default:
+					if (set[i - 1] < 3)
+						break;
+
+					if (i != length - 1) {
+						switch (set[i + 1]) {
+						case 1:
 							character[i] = 32;
 							set[i] = 1;
-						}
-						if(set[i + 1] == 2) {
+							break;
+						case 2:
 							character[i] = 47;
 							set[i] = 2;
-						}
-						if(set[i + 1] >= 3) {
+							break;
+						default:
+							if (set[i + 1] < 3)
+								break;
 							character[i] = 59;
 							set[i] = set[i - 1];
 						}
@@ -235,97 +235,85 @@ int maxi_text_process(int mode, unsigned char source[], int length)
 						set[i] = set[i - 1];
 					}
 				}
-				done = 1;
-			}
+				break;
 
-			if((character[i] == 44) && (done == 0)) {
-				/* Comma */
-				if(set[i - 1] == 2) {
+			case 44: /* Comma */
+				if (set[i - 1] == 2) {
 					character[i] = 48;
 					set[i] = 2;
 				} else {
-					if((i != length - 1) && (set[i + 1] == 2)) {
+					if (i != length - 1 && set[i + 1] == 2) {
 						character[i] = 48;
 						set[i] = 2;
 					} else {
 						set[i] = 1;
 					}
 				}
-				done = 1;
-			}
+				break;
 
-			if((character[i] == 46) && (done == 0)) {
-				/* Full Stop */
-				if(set[i - 1] == 2) {
+			case 46: /* Full Stop */
+				if (set[i - 1] == 2) {
 					character[i] = 49;
 					set[i] = 2;
 				} else {
-					if((i != length - 1) && (set[i + 1] == 2)) {
+					if (i != length - 1 && set[i + 1] == 2) {
 						character[i] = 49;
 						set[i] = 2;
 					} else {
 						set[i] = 1;
 					}
 				}
-				done = 1;
-			}
+				break;
 
-			if((character[i] == 47) && (done == 0)) {
-				/* Slash */
-				if(set[i - 1] == 2) {
+			case 47: /* Slash */
+				if (set[i - 1] == 2) {
 					character[i] = 50;
 					set[i] = 2;
 				} else {
-					if((i != length - 1) && (set[i + 1] == 2)) {
+					if (i != length - 1 && set[i + 1] == 2) {
 						character[i] = 50;
 						set[i] = 2;
 					} else {
 						set[i] = 1;
 					}
 				}
-				done = 1;
-			}
+				break;
 
-			if((character[i] == 58) && (done == 0)) {
-				/* Colon */
-				if(set[i - 1] == 2) {
+			case 58: /* Colon */
+				if (set[i - 1] == 2) {
 					character[i] = 51;
 					set[i] = 2;
 				} else {
-					if((i != length - 1) && (set[i + 1] == 2)) {
+					if (i != length - 1 && set[i + 1] == 2) {
 						character[i] = 51;
 						set[i] = 2;
 					} else {
 						set[i] = 1;
 					}
 				}
-				done = 1;
+				break;
 			}
 		}
 	}
 
-	for(i = length; i < nitems(set); i++) {
+	for (int i = length; i < nitems(set); i++) {
 		/* Add the padding */
-		if(set[length - 1] == 2) {
+		if (set[length - 1] == 2)
 			set[i] = 2;
-		} else {
+		else
 			set[i] = 1;
-		}
 		character[i] = 33;
 	}
 
 	/* Find candidates for number compression */
-	if((mode == 2) || (mode ==3)) { j = 0; } else { j = 9; }
-		/* Number compression not allowed in primary message */
-	count = 0;
-	for(i = j; i < nitems(set) - 1; i++) {
-		if((set[i] == 1) && ((character[i] >= 48) && (character[i] <= 57))) {
+	for (int count = 0, i = (mode == 2 || mode == 3) ? 0 : 9; i < nitems(set) - 1; i++) {
+		if (set[i] == 1 && character[i] >= 48 && character[i] <= 57) {
 			/* Character is a number */
 			count++;
 		} else {
 			count = 0;
 		}
-		if(count == 9) {
+		if (count == 9) {
 			/* Nine digits in a row can be compressed */
 			set[i] = 6;
 			set[i - 1] = 6;
@@ -341,11 +329,9 @@ int maxi_text_process(int mode, unsigned char source[], int length)
 	}
 
 	/* Add shift and latch characters */
-	current_set = 1;
-	i = 0;
-	do {
-		if(set[i] != current_set) {
-			switch(set[i]) {
+	for (int current_set = 1, i = 0; i < nitems(set);) {
+		if (set[i] != current_set) {
+			switch (set[i]) {
 				case 1:
 					if(set[i + 1] == 1) {
 						if(set[i + 2] == 1) {
@@ -416,17 +402,16 @@ int maxi_text_process(int mode, unsigned char source[], int length)
 			i++;
 		}
 		i++;
-	} while (i < nitems(set))
+	}
 
 	/* Number compression has not been forgotten! - It's handled below */
-	i = 0;
-	do {
+	for (int i = 0; i < nitems(set);) {
 		if (set[i] == 6) {
 			/* Number compression */
 			char substring[11];
 			int value;
 
-			for(j = 0; j < 10; j++) {
+			for (int j = 0; j < 10; j++) {
 				substring[j] = character[i + j];
 			}
 			substring[10] = '\0';
@@ -440,52 +425,45 @@ int maxi_text_process(int mode, unsigned char source[], int length)
 			character[i + 5] = (value & 0x3f);
 
 			i += 6;
-			for(j = i; j < 140; j++) {
+			for(int j = i; j < 140; j++) {
 				set[j] = set[j + 3];
 				character[j] = character[j + 3];
 			}
 			length -= 3;
-		} else {
+		} else
 			i++;
-		}
-	} while (i < nitems(set));
-
-	if(((mode ==2) || (mode == 3)) && (length > 84)) {
-		return ZERROR_TOO_LONG;
 	}
 
-	if(((mode == 4) || (mode == 6)) && (length > 93)) {
-		return ZERROR_TOO_LONG;
-	}
+	switch (mode) {
+	case 2:
+	case 3:
+		if (length > 84)
+			return ZERROR_TOO_LONG;
 
-	if((mode == 5) && (length > 77)) {
-		return ZERROR_TOO_LONG;
-	}
-
-
-	/* Copy the encoded text into the codeword array */
-	if((mode == 2) || (mode == 3)) {
-		for(i = 0; i < 84; i++) { /* secondary only */
+		/* Copy the encoded text into the codeword array */
+		for (int i = 0; i < 84; i++) /* secondary only */
 			maxi_codeword[i + 20] = character[i];
-		}
-	}
+		break;
+	case 4:
+	case 6:
+		if (length > 93)
+			return ZERROR_TOO_LONG;
 
-	if((mode == 4) || (mode == 6)) {
-		for(i = 0; i < 9; i++) { /* primary */
+		for (int i = 0; i < 9; i++) /* primary */
 			maxi_codeword[i + 1] = character[i];
-		}
-		for(i = 0; i < 84; i++) { /* secondary */
+		for (int i = 0; i < 84; i++) /* secondary */
 			maxi_codeword[i + 20] = character[i + 9];
-		}
-	}
+		break;
 
-	if(mode == 5) {
-		for(i = 0; i < 9; i++) { /* primary */
+
+	case 5:
+		if (length > 77)
+			return ZERROR_TOO_LONG;
+
+		for (int i = 0; i < 9; i++) /* primary */
 			maxi_codeword[i + 1] = character[i];
-		}
-		for(i = 0; i < 68; i++) { /* secondary */
+		for (int i = 0; i < 68; i++) /* secondary */
 			maxi_codeword[i + 20] = character[i + 9];
-		}
 	}
 
 	return 0;
