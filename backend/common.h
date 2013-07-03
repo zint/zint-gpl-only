@@ -71,6 +71,8 @@ static inline void bscan(char *binary, int data, int h)
 	}
 }
 
+#define nitems(a) (sizeof(a) / sizeof(a[0]))
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

@@ -131,7 +131,7 @@ int maxi_text_process(int mode, unsigned char source[], int length)
 		return ZERROR_TOO_LONG;
 	}
 
-	for(i = 0; i < 144; i++) {
+	for(i = 0; i < nitems(set); i++) {
 		set[i] = -1;
 		character[i] = 0;
 	}
@@ -304,7 +304,7 @@ int maxi_text_process(int mode, unsigned char source[], int length)
 		}
 	}
 
-	for(i = length; i < 144; i++) {
+	for(i = length; i < nitems(set); i++) {
 		/* Add the padding */
 		if(set[length - 1] == 2) {
 			set[i] = 2;
@@ -318,7 +318,7 @@ int maxi_text_process(int mode, unsigned char source[], int length)
 	if((mode == 2) || (mode ==3)) { j = 0; } else { j = 9; }
 		/* Number compression not allowed in primary message */
 	count = 0;
-	for(i = j; i < 143; i++) {
+	for(i = j; i < nitems(set) - 1; i++) {
 		if((set[i] == 1) && ((character[i] >= 48) && (character[i] <= 57))) {
 			/* Character is a number */
 			count++;
@@ -344,7 +344,6 @@ int maxi_text_process(int mode, unsigned char source[], int length)
 	current_set = 1;
 	i = 0;
 	do {
-
 		if(set[i] != current_set) {
 			switch(set[i]) {
 				case 1:
@@ -417,7 +416,7 @@ int maxi_text_process(int mode, unsigned char source[], int length)
 			i++;
 		}
 		i++;
-	} while(i < 145);
+	} while (i < nitems(set))
 
 	/* Number compression has not been forgotten! - It's handled below */
 	i = 0;
@@ -449,7 +448,7 @@ int maxi_text_process(int mode, unsigned char source[], int length)
 		} else {
 			i++;
 		}
-	} while (i <= 143);
+	} while (i < nitems(set));
 
 	if(((mode ==2) || (mode == 3)) && (length > 84)) {
 		return ZERROR_TOO_LONG;
