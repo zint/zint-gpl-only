@@ -472,9 +472,9 @@ maxi_text_process(int mode, unsigned char source[], int length)
 void maxi_do_primary_2(char postcode[], int country, int service)
 {
 	/* Format structured primary for Mode 2 */
-	int postcode_length, postcode_num, i;
+	int postcode_length, postcode_num;
 
-	for(i = 0; i < 10; i++) {
+	for(int i = 0; i < 10; i++) {
 		if((postcode[i] < '0') || (postcode[i] > '9')) {
 			postcode[i] = '\0';
 		}
