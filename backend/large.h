@@ -25,18 +25,18 @@
 extern "C" {
 #endif /* __cplusplus */
 
-extern void binary_load(short int reg[], char data[], const unsigned int src_len);
-extern void binary_add(short int accumulator[], short int input_buffer[]);
-extern void binary_subtract(short int accumulator[], short int input_buffer[]);
-extern void shiftdown(short int buffer[]);
-extern void shiftup(short int buffer[]);
-extern short int islarger(short int accum[], short int reg[]);
-extern void hex_dump(short int input_buffer[]);
+extern void binary_load(int16_t reg[], char data[], const unsigned int src_len);
+extern void binary_add(int16_t accumulator[], int16_t input_buffer[]);
+extern void binary_subtract(int16_t accumulator[], int16_t input_buffer[]);
+extern void shiftdown(int16_t buffer[]);
+extern void shiftup(int16_t buffer[]);
+extern int16_t islarger(int16_t accum[], int16_t reg[]);
+extern void hex_dump(int16_t input_buffer[]);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-extern const short int BCD[40];
+extern const int16_t BCD[40];
 
 #endif /* __LARGE_H */

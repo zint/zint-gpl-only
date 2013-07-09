@@ -45,7 +45,7 @@ const char *TeleTable[] =
 	"313111111111",		"1131131113",	"33131113",	"11113111111111","3111131113",	"113311111111", "131311111111", "111111131113",
 	"3113111113",		"11311111111111","331111111111","111113111113", "31111111111111","111311111113","131111111113"};
 
-int telepen(struct zint_symbol *symbol, unsigned char source[], int src_len)
+int telepen(struct zint_symbol *symbol, uint8_t source[], int src_len)
 {
 	unsigned int i, count, check_digit;
 	int error_number;
@@ -91,12 +91,12 @@ int telepen(struct zint_symbol *symbol, unsigned char source[], int src_len)
 	return error_number;
 }
 
-int telepen_num(struct zint_symbol *symbol, unsigned char source[], int src_len)
+int telepen_num(struct zint_symbol *symbol, uint8_t source[], int src_len)
 {
 	unsigned int i, count, check_digit, glyph;
 	int error_number, temp_length = src_len;
 	char dest[1024]; /* 14 + 60 * 14 + 14 + 14 + 1 ~ 1024 */
-	unsigned char temp[64];
+	uint8_t temp[64];
 
 	error_number = 0;
 	count = 0;

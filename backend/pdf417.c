@@ -708,7 +708,7 @@ void textprocess(int *chainemc, int *mclength, char chaine[], int start, int len
 }
 
 /* 671 */
-void byteprocess(int *chainemc, int *mclength, unsigned char chaine[], int start, int length, int block)
+void byteprocess(int *chainemc, int *mclength, uint8_t chaine[], int start, int length, int block)
 {
 	int		debug	  = 0;
 	int		len       = 0;
@@ -833,7 +833,7 @@ void numbprocess(int *chainemc, int *mclength, char chaine[], int start, int len
 }
 
 /* 366 */
-int pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
+int pdf417(struct zint_symbol *symbol, uint8_t chaine[], int length)
 {
 	int i, k, j, indexchaine, indexliste, mode, longueur, loop, mccorrection[520], offset;
 	int total, chainemc[2700], mclength, c1, c2, c3, dummy[35], codeerr;
@@ -1069,7 +1069,7 @@ int pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
 }
 
 /* 345 */
-int pdf417enc(struct zint_symbol *symbol, unsigned char source[], int length)
+int pdf417enc(struct zint_symbol *symbol, uint8_t source[], int length)
 {
 	int codeerr, error_number;
 
@@ -1120,7 +1120,7 @@ int pdf417enc(struct zint_symbol *symbol, unsigned char source[], int length)
 }
 
 
-int micro_pdf417(struct zint_symbol *symbol, unsigned char chaine[], int length)
+int micro_pdf417(struct zint_symbol *symbol, uint8_t chaine[], int length)
 { /* like PDF417 only much smaller! */
 
 	int i, k, j, indexchaine, indexliste, mode, longueur, mccorrection[50], offset;

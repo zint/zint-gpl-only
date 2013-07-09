@@ -28,7 +28,7 @@
 #define INSET	"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%!&*"
 /* "!" represents Shift 1 and "&" represents Shift 2, "*" represents FNC1 */
 
-int code_49(struct zint_symbol *symbol, unsigned char source[], int length)
+int code_49(struct zint_symbol *symbol, uint8_t source[], int length)
 {
 	int i, j, rows, M, x_count, y_count, z_count, posn_val, local_value, h;
 	char intermediate[170];

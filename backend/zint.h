@@ -26,6 +26,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 #include <stdio.h>
+#include <stdint.h>
 
 struct zint_render_line {
 	float x, y, length, width;
@@ -36,7 +37,7 @@ struct zint_render_string {
 	float x, y, fsize;
 	float width;                        /* Suggested string width, may be 0 if none recommended */
 	int length;
-	unsigned char *text;
+	uint8_t *text;
 	struct zint_render_string *next;    /* Pointer to next character */
 };
 
@@ -73,14 +74,14 @@ struct zint_symbol {
 	int option_3;
 	int show_hrt;
 	int input_mode;
-	unsigned char text[128];
+	uint8_t text[128];
 	int rows;
 	int width;
 	char primary[128];
 	char errtxt[100];
 #define ZINT_ROWS_MAX  178
 #define ZINT_COLS_MAX  178
-	unsigned char encoded_data[ZINT_ROWS_MAX][ZINT_COLS_MAX];
+	uint8_t encoded_data[ZINT_ROWS_MAX][ZINT_COLS_MAX];
 	int row_height[ZINT_ROWS_MAX]; /* Largest symbol is 177x177 QR Code */
 	char *bitmap;
 	int bitmap_width;
@@ -221,16 +222,16 @@ ZINT_EXTERN struct zint_symbol *ZBarcode_Create(void);
 ZINT_EXTERN void ZBarcode_Clear(struct zint_symbol *symbol);
 ZINT_EXTERN void ZBarcode_Delete(struct zint_symbol *symbol);
 
-ZINT_EXTERN int ZBarcode_Encode(struct zint_symbol *symbol, unsigned char *input, int length);
+ZINT_EXTERN int ZBarcode_Encode(struct zint_symbol *symbol, uint8_t *input, int length);
 ZINT_EXTERN int ZBarcode_Encode_File(struct zint_symbol *symbol, char *filename);
 ZINT_EXTERN int ZBarcode_Print(struct zint_symbol *symbol, int rotate_angle);
-ZINT_EXTERN int ZBarcode_Encode_and_Print(struct zint_symbol *symbol, unsigned char *input, int length, int rotate_angle);
+ZINT_EXTERN int ZBarcode_Encode_and_Print(struct zint_symbol *symbol, uint8_t *input, int length, int rotate_angle);
 ZINT_EXTERN int ZBarcode_Encode_File_and_Print(struct zint_symbol *symbol, char *filename, int rotate_angle);
 
 ZINT_EXTERN int ZBarcode_Render(struct zint_symbol *symbol, float width, float height);
 
 ZINT_EXTERN int ZBarcode_Buffer(struct zint_symbol *symbol, int rotate_angle);
-ZINT_EXTERN int ZBarcode_Encode_and_Buffer(struct zint_symbol *symbol, unsigned char *input, int length, int rotate_angle);
+ZINT_EXTERN int ZBarcode_Encode_and_Buffer(struct zint_symbol *symbol, uint8_t *input, int length, int rotate_angle);
 ZINT_EXTERN int ZBarcode_Encode_File_and_Buffer(struct zint_symbol *symbol, char *filename, int rotate_angle);
 
 ZINT_EXTERN int ZBarcode_ValidID(int symbol_id);

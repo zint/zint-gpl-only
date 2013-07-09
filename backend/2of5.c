@@ -40,7 +40,7 @@ static inline char check_digit(unsigned int count)
 }
 
 
-int matrix_two_of_five(struct zint_symbol *symbol, unsigned char source[], int length)
+int matrix_two_of_five(struct zint_symbol *symbol, uint8_t source[], int length)
 { /* Code 2 of 5 Standard (Code 2 of 5 Matrix) */
 
 	int error_number;
@@ -73,7 +73,7 @@ int matrix_two_of_five(struct zint_symbol *symbol, unsigned char source[], int l
 	return error_number;
 }
 
-int industrial_two_of_five(struct zint_symbol *symbol, unsigned char source[], int length)
+int industrial_two_of_five(struct zint_symbol *symbol, uint8_t source[], int length)
 { /* Code 2 of 5 Industrial */
 
 	int error_number;
@@ -106,7 +106,7 @@ int industrial_two_of_five(struct zint_symbol *symbol, unsigned char source[], i
 	return error_number;
 }
 
-int iata_two_of_five(struct zint_symbol *symbol, unsigned char source[], int length)
+int iata_two_of_five(struct zint_symbol *symbol, uint8_t source[], int length)
 { /* Code 2 of 5 IATA */
 	int error_number;
 	char dest[512]; /* 4 + 45 * 10 + 3 + 1 */
@@ -138,7 +138,7 @@ int iata_two_of_five(struct zint_symbol *symbol, unsigned char source[], int len
 	return error_number;
 }
 
-int logic_two_of_five(struct zint_symbol *symbol, unsigned char source[], int length)
+int logic_two_of_five(struct zint_symbol *symbol, uint8_t source[], int length)
 { /* Code 2 of 5 Data Logic */
 
 	int error_number;
@@ -171,12 +171,12 @@ int logic_two_of_five(struct zint_symbol *symbol, unsigned char source[], int le
 	return error_number;
 }
 
-int interleaved_two_of_five(struct zint_symbol *symbol, unsigned char source[], int length)
+int interleaved_two_of_five(struct zint_symbol *symbol, uint8_t source[], int length)
 { /* Code 2 of 5 Interleaved */
 
 	int error_number;
 	char bars[7], spaces[7], mixed[14], dest[1000];
-	unsigned char temp[length + 2];
+	uint8_t temp[length + 2];
 
 	error_number = 0;
 
@@ -190,11 +190,11 @@ int interleaved_two_of_five(struct zint_symbol *symbol, unsigned char source[], 
 		return error_number;
 	}
 
-	ustrcpy(temp, (unsigned char *) "");
+	ustrcpy(temp, (uint8_t *) "");
 	/* Input must be an even number of characters for Interlaced 2 of 5 to work:
 	   if an odd number of characters has been entered then add a leading zero */
 	if (length & 1) {
-		ustrcpy(temp, (unsigned char *) "0");
+		ustrcpy(temp, (uint8_t *) "0");
 		length++;
 	}
 	uconcat(temp, source);
@@ -229,7 +229,7 @@ int interleaved_two_of_five(struct zint_symbol *symbol, unsigned char source[], 
 
 }
 
-int itf14(struct zint_symbol *symbol, unsigned char source[], int length)
+int itf14(struct zint_symbol *symbol, uint8_t source[], int length)
 {
 	int error_number, zeroes;
 	unsigned int count;
@@ -269,12 +269,12 @@ int itf14(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	localstr[13] = check_digit(count);
 	localstr[14] = '\0';
-	error_number = interleaved_two_of_five(symbol, (unsigned char *)localstr, strlen(localstr));
-	ustrcpy(symbol->text, (unsigned char*)localstr);
+	error_number = interleaved_two_of_five(symbol, (uint8_t *)localstr, strlen(localstr));
+	ustrcpy(symbol->text, (uint8_t*)localstr);
 	return error_number;
 }
 
-int dpleit(struct zint_symbol *symbol, unsigned char source[], int length)
+int dpleit(struct zint_symbol *symbol, uint8_t source[], int length)
 { /* Deutshe Post Leitcode */
 	int error_number;
 	unsigned int count;
@@ -309,12 +309,12 @@ int dpleit(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	localstr[13] = check_digit(count);
 	localstr[14] = '\0';
-	error_number = interleaved_two_of_five(symbol, (unsigned char *)localstr, strlen(localstr));
-	ustrcpy(symbol->text, (unsigned char*)localstr);
+	error_number = interleaved_two_of_five(symbol, (uint8_t *)localstr, strlen(localstr));
+	ustrcpy(symbol->text, (uint8_t*)localstr);
 	return error_number;
 }
 
-int dpident(struct zint_symbol *symbol, unsigned char source[], int length)
+int dpident(struct zint_symbol *symbol, uint8_t source[], int length)
 { /* Deutsche Post Identcode */
 	int error_number, zeroes;
 	unsigned int count;
@@ -348,7 +348,7 @@ int dpident(struct zint_symbol *symbol, unsigned char source[], int length)
 
 	localstr[11] = check_digit(count);
 	localstr[12] = '\0';
-	error_number = interleaved_two_of_five(symbol, (unsigned char *)localstr, strlen(localstr));
-	ustrcpy(symbol->text, (unsigned char*)localstr);
+	error_number = interleaved_two_of_five(symbol, (uint8_t *)localstr, strlen(localstr));
+	ustrcpy(symbol->text, (uint8_t*)localstr);
 	return error_number;
 }

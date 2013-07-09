@@ -23,16 +23,16 @@
 #include <stdlib.h>
 #include "common.h"
 
-int ustrlen(const unsigned char data[]) {
-	/* Local replacement for strlen() with unsigned char strings */
+int ustrlen(const uint8_t data[]) {
+	/* Local replacement for strlen() with uint8_t strings */
 	int i;
 	for (i=0;data[i];i++);
 
 	return i;
 }
 
-void ustrcpy(unsigned char target[], const unsigned char source[]) {
-	/* Local replacement for strcpy() with unsigned char strings */
+void ustrcpy(uint8_t target[], const uint8_t source[]) {
+	/* Local replacement for strcpy() with uint8_t strings */
 	int i, len;
 
 	len = ustrlen(source);
@@ -52,7 +52,7 @@ void concat(char dest[], const char source[])
 		dest[i + j] = source[i]; }
 }
 
-void uconcat(unsigned char dest[], const unsigned char source[])
+void uconcat(uint8_t dest[], const uint8_t source[])
 { /* Concatinates dest[] with the contents of source[], copying /0 as well */
 	unsigned int i, j;
 
@@ -79,7 +79,7 @@ char itoc(int source)
 }
 
 /** Converts lower case characters to upper case in a string source[] */
-void to_upper(unsigned char source[])
+void to_upper(uint8_t source[])
 {
 	unsigned int src_len = ustrlen(source);
 
@@ -89,7 +89,7 @@ void to_upper(unsigned char source[])
 	}
 }
 
-int is_sane(char test_string[], unsigned char source[], int length)
+int is_sane(char test_string[], uint8_t source[], int length)
 { /* Verifies that a string only uses valid characters */
 	unsigned int latch;
 	unsigned int lt = strlen(test_string);
@@ -221,7 +221,7 @@ int roundup(float input)
 	return integer_part;
 }
 
-int istwodigits(unsigned char source[], int position)
+int istwodigits(uint8_t source[], int position)
 {
 	if((source[position] >= '0') && (source[position] <= '9')) {
 		if((source[position + 1] >= '0') && (source[position + 1] <= '9')) {
@@ -242,7 +242,7 @@ float froundup(float input)
 	return output;
 }
 
-int latin1_process(struct zint_symbol *symbol, unsigned char source[], unsigned char preprocessed[], int *length)
+int latin1_process(struct zint_symbol *symbol, uint8_t source[], uint8_t preprocessed[], int *length)
 {
 	int j = 0, i = 0, next;
 
@@ -277,7 +277,7 @@ int latin1_process(struct zint_symbol *symbol, unsigned char source[], unsigned 
 	return 0;
 }
 
-int utf8toutf16(struct zint_symbol *symbol, unsigned char source[], int vals[], int *length)
+int utf8toutf16(struct zint_symbol *symbol, uint8_t source[], int vals[], int *length)
 {
 	int bpos, jpos, error_number;
 	int next;

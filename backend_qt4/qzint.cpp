@@ -78,7 +78,7 @@ void QZint::encode()
 	QByteArray bstr=m_text.toUtf8();
 	QByteArray pstr=m_primaryMessage.left(99).toAscii();
 	strcpy(m_zintSymbol->primary,pstr.data());
-	int error = ZBarcode_Encode(m_zintSymbol, (unsigned char*)bstr.data(), bstr.length());
+	int error = ZBarcode_Encode(m_zintSymbol, (uint8_t*)bstr.data(), bstr.length());
 	if (error > ZWARN_INVALID_OPTION)
 		m_lastError=m_zintSymbol->errtxt;
 
@@ -281,7 +281,7 @@ bool QZint::save_to_file(QString filename)
 	QByteArray bgcol=bg_colour_hash.right(6).toAscii();
 	strcpy(m_zintSymbol->fgcolour,fgcol.data());
 	strcpy(m_zintSymbol->bgcolour,bgcol.data());
-	int error = ZBarcode_Encode(m_zintSymbol, (unsigned char*)bstr.data(), bstr.length());
+	int error = ZBarcode_Encode(m_zintSymbol, (uint8_t*)bstr.data(), bstr.length());
 	if (error > ZWARN_INVALID_OPTION)
 		m_lastError=m_zintSymbol->errtxt;
 	error = ZBarcode_Print(m_zintSymbol, 0);

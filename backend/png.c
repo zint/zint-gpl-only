@@ -68,11 +68,11 @@ int png_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 	struct mainprog_info_type wpng_info;
 	struct mainprog_info_type *graphic;
 
-	unsigned char outdata[image_width * 3];
+	uint8_t outdata[image_width * 3];
 	png_structp  png_ptr;
 	png_infop  info_ptr;
 	graphic = &wpng_info;
-	unsigned char *image_data;
+	uint8_t *image_data;
 	int i, row, column, errn;
 	int fgred, fggrn, fgblu, bgred, bggrn, bgblu;
 
@@ -90,8 +90,8 @@ int png_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 	}
 
 	/* sort out colour options */
-	to_upper((unsigned char*)symbol->fgcolour);
-	to_upper((unsigned char*)symbol->bgcolour);
+	to_upper((uint8_t*)symbol->fgcolour);
+	to_upper((uint8_t*)symbol->bgcolour);
 
 	if(strlen(symbol->fgcolour) != 6) {
 		strcpy(symbol->errtxt, "Malformed foreground colour target");
@@ -101,12 +101,12 @@ int png_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 		strcpy(symbol->errtxt, "Malformed background colour target");
 		return ZERROR_INVALID_OPTION;
 	}
-	errn = is_sane(SSET, (unsigned char*)symbol->fgcolour, strlen(symbol->fgcolour));
+	errn = is_sane(SSET, (uint8_t*)symbol->fgcolour, strlen(symbol->fgcolour));
 	if (errn == ZERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Malformed foreground colour target");
 		return ZERROR_INVALID_OPTION;
 	}
-	errn = is_sane(SSET, (unsigned char*)symbol->bgcolour, strlen(symbol->bgcolour));
+	errn = is_sane(SSET, (uint8_t*)symbol->bgcolour, strlen(symbol->bgcolour));
 	if (errn == ZERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Malformed background colour target");
 		return ZERROR_INVALID_OPTION;
@@ -311,8 +311,8 @@ int bmp_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 
 
 	/* sort out colour options */
-	to_upper((unsigned char*)symbol->fgcolour);
-	to_upper((unsigned char*)symbol->bgcolour);
+	to_upper((uint8_t*)symbol->fgcolour);
+	to_upper((uint8_t*)symbol->bgcolour);
 
 	if(strlen(symbol->fgcolour) != 6) {
 		strcpy(symbol->errtxt, "Malformed foreground colour target");
@@ -322,12 +322,12 @@ int bmp_pixel_plot(struct zint_symbol *symbol, int image_height, int image_width
 		strcpy(symbol->errtxt, "Malformed background colour target");
 		return ZERROR_INVALID_OPTION;
 	}
-	errn = is_sane(SSET, (unsigned char*)symbol->fgcolour, strlen(symbol->fgcolour));
+	errn = is_sane(SSET, (uint8_t*)symbol->fgcolour, strlen(symbol->fgcolour));
 	if (errn == ZERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Malformed foreground colour target");
 		return ZERROR_INVALID_OPTION;
 	}
-	errn = is_sane(SSET, (unsigned char*)symbol->bgcolour, strlen(symbol->fgcolour));
+	errn = is_sane(SSET, (uint8_t*)symbol->bgcolour, strlen(symbol->fgcolour));
 	if (errn == ZERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Malformed background colour target");
 		return ZERROR_INVALID_OPTION;
@@ -537,7 +537,7 @@ void draw_hexagon(char *pixelbuf, int image_width, int xposn, int yposn)
 	}
 }
 
-void draw_letter(char *pixelbuf, unsigned char letter, int xposn, int yposn, int smalltext, int image_width, int image_height)
+void draw_letter(char *pixelbuf, uint8_t letter, int xposn, int yposn, int smalltext, int image_width, int image_height)
 {
 	/* Put a letter into a position */
 	int skip, i, j, glyph_no, alphabet;
@@ -660,7 +660,7 @@ int maxi_png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 	return error_number;
 }
 
-void to_latin1(unsigned char source[], unsigned char preprocessed[])
+void to_latin1(uint8_t source[], uint8_t preprocessed[])
 {
 	int j, i, input_length;
 
@@ -704,7 +704,7 @@ int png_plot(struct zint_symbol *symbol, int rotate_angle, int data_type)
 	int error_number;
 	int default_text_posn;
 	int next_yposn;
-	unsigned char local_text[ustrlen(symbol->text) + 1];
+	uint8_t local_text[ustrlen(symbol->text) + 1];
 
 	if(symbol->show_hrt != 0) {
 		to_latin1(symbol->text, local_text);

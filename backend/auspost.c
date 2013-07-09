@@ -54,7 +54,7 @@ void rs_error(char data_pattern[])
 
 	int reader, triple_writer = 0;
 	char triple[31], inv_triple[31];
-	unsigned char result[5];
+	uint8_t result[5];
 
 	for(reader = 2; reader < strlen(data_pattern); reader += 3, triple_writer++) {
 		triple[triple_writer] = convert_pattern(data_pattern[reader], 4)
@@ -68,7 +68,7 @@ void rs_error(char data_pattern[])
 
 	rs_init_gf(0x43);
 	rs_init_code(4, 1);
-	rs_encode(triple_writer, (unsigned char*) inv_triple, result);
+	rs_encode(triple_writer, (uint8_t*) inv_triple, result);
 
 	for(reader = 4; reader > 0; reader--) {
 		concat(data_pattern, AusBarTable[(int)result[reader - 1]]);
@@ -76,7 +76,7 @@ void rs_error(char data_pattern[])
 	rs_free();
 }
 
-int australia_post(struct zint_symbol *symbol, unsigned char source[], int length)
+int australia_post(struct zint_symbol *symbol, uint8_t source[], int length)
 {
 	/* Handles Australia Posts's 4 State Codes */
 	/* Customer Standard Barcode, Barcode 2 or Barcode 3 system determined automatically
@@ -150,7 +150,7 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[], int lengt
 
 	concat(localstr, (char*)source);
 	h = strlen(localstr);
-	error_number = is_sane(GDSET, (unsigned char *)localstr, h);
+	error_number = is_sane(GDSET, (uint8_t *)localstr, h);
 	if(error_number == ZERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in data");
 		return error_number;
@@ -159,7 +159,7 @@ int australia_post(struct zint_symbol *symbol, unsigned char source[], int lengt
 	/* Verifiy that the first 8 characters are numbers */
 	memcpy(dpid, localstr, 8);
 	dpid[8] = '\0';
-	error_number = is_sane(NEON, (unsigned char *)dpid, strlen(dpid));
+	error_number = is_sane(NEON, (uint8_t *)dpid, strlen(dpid));
 	if(error_number == ZERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Invalid characters in DPID");
 		return error_number;

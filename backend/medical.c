@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include "common.h"
 
-extern int c39(struct zint_symbol *symbol, unsigned char source[], int length);
+extern int c39(struct zint_symbol *symbol, uint8_t source[], int length);
 /* Codabar table checked against EN 798:1995 */
 
 #define CALCIUM	"0123456789-$:/.+ABCD"
@@ -33,7 +33,7 @@ const char *CodaTable[20] = {"11111221", "11112211", "11121121", "22111111", "11
 	"12111121", "12112111", "12211111", "21121111", "11122111", "11221111", "21112121", "21211121",
 	"21212111", "11212121", "11221211", "12121121", "11121221", "11122211"};
 
-int pharma_one(struct zint_symbol *symbol, unsigned char source[], int length)
+int pharma_one(struct zint_symbol *symbol, uint8_t source[], int length)
 {
 	/* "Pharmacode can represent only a single integer from 3 to 131070. Unlike other
 	   commonly used one-dimensional barcode schemes, pharmacode does not store the data in a
@@ -98,7 +98,7 @@ int pharma_one(struct zint_symbol *symbol, unsigned char source[], int length)
 	return error_number;
 }
 
-int pharma_two_calc(struct zint_symbol *symbol, unsigned char source[], char dest[])
+int pharma_two_calc(struct zint_symbol *symbol, uint8_t source[], char dest[])
 {
 	/* This code uses the Two Track Pharamacode defined in the document at
 	   http://www.laetus.com/laetus.php?request=file&id=69 and using a modified
@@ -148,7 +148,7 @@ int pharma_two_calc(struct zint_symbol *symbol, unsigned char source[], char des
 	return error_number;
 }
 
-int pharma_two(struct zint_symbol *symbol, unsigned char source[], int length)
+int pharma_two(struct zint_symbol *symbol, uint8_t source[], int length)
 {
 	/* Draws the patterns for two track pharmacode */
 	char height_pattern[200];
@@ -192,7 +192,7 @@ int pharma_two(struct zint_symbol *symbol, unsigned char source[], int length)
 	return error_number;
 }
 
-int codabar(struct zint_symbol *symbol, unsigned char source[], int length)
+int codabar(struct zint_symbol *symbol, uint8_t source[], int length)
 { /* The Codabar system consisting of simple substitution */
 
 	int i, error_number;
@@ -235,7 +235,7 @@ int codabar(struct zint_symbol *symbol, unsigned char source[], int length)
 	return error_number;
 }
 
-int code32(struct zint_symbol *symbol, unsigned char source[], int length)
+int code32(struct zint_symbol *symbol, uint8_t source[], int length)
 { /* Italian Pharmacode */
 	int i, zeroes, error_number, checksum, checkpart, checkdigit;
 	char localstr[10], risultante[7];
@@ -297,12 +297,12 @@ int code32(struct zint_symbol *symbol, unsigned char source[], int length)
 	}
 	risultante[6] = '\0';
 	/* Plot the barcode using Code 39 */
-	error_number = c39(symbol, (unsigned char*)risultante, strlen(risultante));
+	error_number = c39(symbol, (uint8_t*)risultante, strlen(risultante));
 	if(error_number != 0) { return error_number; }
 
 	/* Override the normal text output with the Pharmacode number */
-	ustrcpy(symbol->text, (unsigned char*)"A");
-	uconcat(symbol->text, (unsigned char*)localstr);
+	ustrcpy(symbol->text, (uint8_t*)"A");
+	uconcat(symbol->text, (uint8_t*)localstr);
 
 	return error_number;
 }

@@ -52,7 +52,7 @@ void insert(char binary_string[], int posn, char newbit)
 /**
  * Encode input data into a binary string
  */
-int aztec_text_process(unsigned char source[], const unsigned int src_len, char binary_string[], int gs1)
+int aztec_text_process(uint8_t source[], const unsigned int src_len, char binary_string[], int gs1)
 {
 	int bytes;
 	int curtable, newtable, lasttable, chartype, maplength, blocks, debug;
@@ -630,18 +630,18 @@ int aztec_text_process(unsigned char source[], const unsigned int src_len, char 
 	return 0;
 }
 
-int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
+int aztec(struct zint_symbol *symbol, uint8_t source[], int length)
 {
 	int x, y, i, j, data_blocks, ecc_blocks, layers, total_bits;
 	char binary_string[20000], bit_pattern[20045], descriptor[42];
 	char adjusted_string[20000];
-	unsigned char desc_data[4], desc_ecc[6];
+	uint8_t desc_data[4], desc_ecc[6];
 	int err_code, ecc_level, compact, data_length, data_maxsize, codeword_size, adjusted_length;
 	int remainder, padbits, count, gs1, adjustment_size;
 	int debug = 0, reader = 0;
 	int comp_loop = 4;
 
-        unsigned char local_source[length + 1];
+        uint8_t local_source[length + 1];
 
 	memset(binary_string,0,20000);
 	memset(adjusted_string,0,20000);
@@ -1172,11 +1172,11 @@ int aztec(struct zint_symbol *symbol, unsigned char source[], int length)
 	return err_code;
 }
 
-int aztec_runes(struct zint_symbol *symbol, unsigned char source[], int length)
+int aztec_runes(struct zint_symbol *symbol, uint8_t source[], int length)
 {
 	int input_value = 0, error_number = 0;
 	char binary_string[28];
-	unsigned char data_codewords[3], ecc_codewords[6];
+	uint8_t data_codewords[3], ecc_codewords[6];
 
 	if(length > 3) {
 		strcpy(symbol->errtxt, "Input too large");

@@ -78,7 +78,7 @@ void spigot(struct zint_symbol *symbol, int row_no)
 	}
 }
 
-int isedi(unsigned char input)
+int isedi(uint8_t input)
 {
 	if (input == 13 || input == '*' || input == '>' || input == ' ' ||
 	    ((input >= '0') && (input <= '9')) || ((input >= 'A') && (input <= 'Z')))
@@ -87,7 +87,7 @@ int isedi(unsigned char input)
 	return 0;
 }
 
-int dq4bi(unsigned char source[], int sourcelen, int position)
+int dq4bi(uint8_t source[], int sourcelen, int position)
 {
 	int i;
 
@@ -105,7 +105,7 @@ int dq4bi(unsigned char source[], int sourcelen, int position)
 	return 0;
 }
 
-int c1_look_ahead_test(unsigned char source[], int sourcelen, int position, int current_mode, int gs1)
+int c1_look_ahead_test(uint8_t source[], int sourcelen, int position, int current_mode, int gs1)
 {
 	float ascii_count, c40_count, text_count, edi_count, byte_count;
 	char reduced_char;
@@ -261,7 +261,7 @@ int c1_look_ahead_test(unsigned char source[], int sourcelen, int position, int 
 	return best_scheme;
 }
 
-int c1_encode(struct zint_symbol *symbol, unsigned char source[], unsigned int target[], int length)
+int c1_encode(struct zint_symbol *symbol, uint8_t source[], unsigned int target[], int length)
 {
 	int current_mode, next_mode;
 	int sp, tp, gs1, latch;
@@ -996,7 +996,7 @@ void block_copy(struct zint_symbol *symbol, char grid[][120], int start_row, int
 	}
 }
 
-int code_one(struct zint_symbol *symbol, unsigned char source[], int length)
+int code_one(struct zint_symbol *symbol, uint8_t source[], int length)
 {
 	int size = 1, data_blocks;
 
@@ -1011,7 +1011,7 @@ int code_one(struct zint_symbol *symbol, unsigned char source[], int length)
 	if(symbol->option_2 == 9) {
 		/* Version S */
 		int codewords;
-		short int elreg[112];
+		int16_t elreg[112];
 		unsigned int data[15], ecc[15];
 		int stream[30];
 		int block_width;

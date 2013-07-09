@@ -87,7 +87,7 @@ void upca_draw(char source[], char dest[])
 	concat (dest, "111");
 }
 
-void upca(struct zint_symbol *symbol, unsigned char source[], char dest[])
+void upca(struct zint_symbol *symbol, uint8_t source[], char dest[])
 { /* Make a UPC A barcode when we haven't been given the check digit */
 	int length;
 	char gtin[15];
@@ -97,10 +97,10 @@ void upca(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	gtin[length] = upc_check(gtin);
 	gtin[length + 1] = '\0';
 	upca_draw(gtin, dest);
-	ustrcpy(symbol->text, (unsigned char*)gtin);
+	ustrcpy(symbol->text, (uint8_t*)gtin);
 }
 
-void upce(struct zint_symbol *symbol, unsigned char source[], char dest[])
+void upce(struct zint_symbol *symbol, uint8_t source[], char dest[])
 { /* UPC E is a zero-compressed version of UPC A */
 	unsigned int i, num_system;
 	char emode, equivalent[12], check_digit, parity[8], temp[8];
@@ -208,11 +208,11 @@ void upce(struct zint_symbol *symbol, unsigned char source[], char dest[])
 
 	hrt[7] = check_digit;
 	hrt[8] = '\0';
-	ustrcpy(symbol->text, (unsigned char*)hrt);
+	ustrcpy(symbol->text, (uint8_t*)hrt);
 }
 
 
-void add_on(unsigned char source[], char dest[], int mode)
+void add_on(uint8_t source[], char dest[], int mode)
 { /* EAN-2 and EAN-5 add-on codes */
 	char parity[6];
 	unsigned int i, code_type;
@@ -300,7 +300,7 @@ char ean_check(char source[])
 	return itoc(check_digit);
 }
 
-void ean13(struct zint_symbol *symbol, unsigned char source[], char dest[])
+void ean13(struct zint_symbol *symbol, uint8_t source[], char dest[])
 {
 	unsigned int length, i, half_way;
 	char parity[6];
@@ -345,10 +345,10 @@ void ean13(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	/* stop character */
 	concat (dest, "111");
 
-	ustrcpy(symbol->text, (unsigned char*)gtin);
+	ustrcpy(symbol->text, (uint8_t*)gtin);
 }
 
-void ean8(struct zint_symbol *symbol, unsigned char source[], char dest[])
+void ean8(struct zint_symbol *symbol, uint8_t source[], char dest[])
 { /* Make an EAN-8 barcode when we haven't been given the check digit */
   /* EAN-8 is basically the same as UPC-A but with fewer digits */
 	int length;
@@ -359,10 +359,10 @@ void ean8(struct zint_symbol *symbol, unsigned char source[], char dest[])
 	gtin[length] = upc_check(gtin);
 	gtin[length + 1] = '\0';
 	upca_draw(gtin, dest);
-	ustrcpy(symbol->text, (unsigned char*)gtin);
+	ustrcpy(symbol->text, (uint8_t*)gtin);
 }
 
-char isbn13_check(unsigned char source[]) /* For ISBN(13) only */
+char isbn13_check(uint8_t source[]) /* For ISBN(13) only */
 {
 	unsigned int i, weight, sum, check, h;
 
@@ -382,7 +382,7 @@ char isbn13_check(unsigned char source[]) /* For ISBN(13) only */
 	return itoc(check);
 }
 
-char isbn_check(unsigned char source[]) /* For ISBN(10) and SBN only */
+char isbn_check(uint8_t source[]) /* For ISBN(10) and SBN only */
 {
 	unsigned int i, weight, sum, check, h;
 	char check_char;
@@ -403,7 +403,7 @@ char isbn_check(unsigned char source[]) /* For ISBN(10) and SBN only */
 	return check_char;
 }
 
-int isbn(struct zint_symbol *symbol, unsigned char source[], const unsigned int src_len, char dest[]) /* Make an EAN-13 barcode from an SBN or ISBN */
+int isbn(struct zint_symbol *symbol, uint8_t source[], const unsigned int src_len, char dest[]) /* Make an EAN-13 barcode from an SBN or ISBN */
 {
 	int i, error_number;
 	char check_digit;
@@ -495,9 +495,9 @@ int isbn(struct zint_symbol *symbol, unsigned char source[], const unsigned int 
 	return 0;
 }
 
-void ean_leading_zeroes(struct zint_symbol *symbol, unsigned char source[], unsigned char local_source[]) {
+void ean_leading_zeroes(struct zint_symbol *symbol, uint8_t source[], uint8_t local_source[]) {
 	/* Add leading zeroes to EAN and UPC strings */
-	unsigned char first_part[20], second_part[20], zfirst_part[20], zsecond_part[20];
+	uint8_t first_part[20], second_part[20], zfirst_part[20], zsecond_part[20];
 	int with_addon = 0;
 	int first_len = 0, second_len = 0, zfirst_len = 0, zsecond_len = 0, i, h;
 
@@ -514,10 +514,10 @@ void ean_leading_zeroes(struct zint_symbol *symbol, unsigned char source[], unsi
 		}
 	}
 
-	ustrcpy(first_part, (unsigned char *)"");
-	ustrcpy(second_part, (unsigned char *)"");
-	ustrcpy(zfirst_part, (unsigned char *)"");
-	ustrcpy(zsecond_part, (unsigned char *)"");
+	ustrcpy(first_part, (uint8_t *)"");
+	ustrcpy(second_part, (uint8_t *)"");
+	ustrcpy(zfirst_part, (uint8_t *)"");
+	ustrcpy(zsecond_part, (uint8_t *)"");
 
 	/* Split input into two strings */
 	for(i = 0; i < first_len; i++) {
@@ -561,27 +561,27 @@ void ean_leading_zeroes(struct zint_symbol *symbol, unsigned char source[], unsi
 
 	/* Add leading zeroes */
 	for(i = 0; i < (zfirst_len - first_len); i++) {
-		uconcat(zfirst_part, (unsigned char *)"0");
+		uconcat(zfirst_part, (uint8_t *)"0");
 	}
 	uconcat(zfirst_part, first_part);
 	for(i = 0; i < (zsecond_len - second_len); i++) {
-		uconcat(zsecond_part, (unsigned char *)"0");
+		uconcat(zsecond_part, (uint8_t *)"0");
 	}
 	uconcat(zsecond_part, second_part);
 
 	/* Copy adjusted data back to local_source */
 	uconcat(local_source, zfirst_part);
 	if(zsecond_len != 0) {
-		uconcat(local_source, (unsigned char *)"+");
+		uconcat(local_source, (uint8_t *)"+");
 		uconcat(local_source, zsecond_part);
 	}
 }
 
-int eanx(struct zint_symbol *symbol, unsigned char source[], int src_len)
+int eanx(struct zint_symbol *symbol, uint8_t source[], int src_len)
 {
 	/* splits string to parts before and after '+' parts */
-	unsigned char first_part[20] = { 0 }, second_part[20] = { 0 }, dest[1000] = { 0 };
-	unsigned char local_source[20] = { 0 };
+	uint8_t first_part[20] = { 0 }, second_part[20] = { 0 }, dest[1000] = { 0 };
+	uint8_t local_source[20] = { 0 };
 	unsigned int latch, reader, writer, with_addon;
 	int error_number, i;
 
@@ -611,7 +611,7 @@ int eanx(struct zint_symbol *symbol, unsigned char source[], int src_len)
 
 
 	/* Add leading zeroes */
-	ustrcpy(local_source, (unsigned char *)"");
+	ustrcpy(local_source, (uint8_t *)"");
 	if(symbol->symbology == BARCODE_ISBNX) {
 		to_upper(local_source);
 	}
@@ -752,12 +752,12 @@ int eanx(struct zint_symbol *symbol, unsigned char source[], int src_len)
 		case 0: break;
 		case 2:
 			add_on(second_part, (char*)dest, 1);
-			uconcat(symbol->text, (unsigned char*)"+");
+			uconcat(symbol->text, (uint8_t*)"+");
 			uconcat(symbol->text, second_part);
 			break;
 		case 5:
 			add_on(second_part, (char*)dest, 1);
-			uconcat(symbol->text, (unsigned char*)"+");
+			uconcat(symbol->text, (uint8_t*)"+");
 			uconcat(symbol->text, second_part);
 			break;
 		default:

@@ -50,7 +50,7 @@ void itostr(char ai_string[], int ai_value)
 	concat(ai_string, ")");
 }
 
-int gs1_verify(struct zint_symbol *symbol, unsigned char source[], const unsigned int src_len, char reduced[])
+int gs1_verify(struct zint_symbol *symbol, uint8_t source[], const unsigned int src_len, char reduced[])
 {
 	int i, j, last_ai, ai_latch;
 	char ai_string[6];
@@ -286,7 +286,7 @@ int gs1_verify(struct zint_symbol *symbol, unsigned char source[], const unsigne
 	return 0;
 }
 
-int ugs1_verify(struct zint_symbol *symbol, unsigned char source[], const unsigned int src_len, unsigned char reduced[])
+int ugs1_verify(struct zint_symbol *symbol, uint8_t source[], const unsigned int src_len, uint8_t reduced[])
 {
 	/* Only to keep the compiler happy */
 	char temp[src_len + 5];
@@ -296,7 +296,7 @@ int ugs1_verify(struct zint_symbol *symbol, unsigned char source[], const unsign
 	if(error_number != 0) { return error_number; }
 
 	if (strlen(temp) < src_len + 5) {
-		ustrcpy(reduced, (unsigned char*)temp);
+		ustrcpy(reduced, (uint8_t*)temp);
 		return 0;
 	}
 	strcpy(symbol->errtxt, "ugs1_verify overflow");

@@ -24,7 +24,7 @@
 #include "common.h"
 #include "large.h"
 
-const short int BCD[40] = {
+const int16_t BCD[40] = {
 	0, 0, 0, 0,
 	1, 0, 0, 0,
 	0, 1, 0, 0,
@@ -37,7 +37,7 @@ const short int BCD[40] = {
 	1, 0, 0, 1
 };
 
-void binary_add(short int accumulator[], short int input_buffer[])
+void binary_add(int16_t accumulator[], int16_t input_buffer[])
 { /* Binary addition */
 	int i, carry, done;
 	carry = 0;
@@ -87,11 +87,11 @@ void binary_add(short int accumulator[], short int input_buffer[])
 	}
 }
 
-void binary_subtract(short int accumulator[], short int input_buffer[])
+void binary_subtract(int16_t accumulator[], int16_t input_buffer[])
 { 	/* 2's compliment subtraction */
 	/* take input_buffer from accumulator and put answer in accumulator */
 	int i;
-	short int sub_buffer[112];
+	int16_t sub_buffer[112];
 
 	for(i = 0; i < 112; i++) {
 		if(input_buffer[i] == 0) {
@@ -110,7 +110,7 @@ void binary_subtract(short int accumulator[], short int input_buffer[])
 	binary_add(accumulator, sub_buffer);
 }
 
-void shiftdown(short int buffer[])
+void shiftdown(int16_t buffer[])
 {
 	int i;
 
@@ -122,7 +122,7 @@ void shiftdown(short int buffer[])
 	}
 }
 
-void shiftup(short int buffer[])
+void shiftup(int16_t buffer[])
 {
 	int i;
 
@@ -133,7 +133,7 @@ void shiftup(short int buffer[])
 	buffer[0] = 0;
 }
 
-short int islarger(short int accum[], short int reg[])
+int16_t islarger(int16_t accum[], int16_t reg[])
 {
 	/* Returns 1 if accum[] is larger than reg[], else 0 */
 	int i, latch, larger;
@@ -156,10 +156,10 @@ short int islarger(short int accum[], short int reg[])
 	return larger;
 }
 
-void binary_load(short int reg[], char data[], const unsigned int src_len)
+void binary_load(int16_t reg[], char data[], const unsigned int src_len)
 {
 	int read, i;
-	short int temp[112] = { 0 };
+	int16_t temp[112] = { 0 };
 
 	for(i = 0; i < 112; i++) {
 		reg[i] = 0;
@@ -187,7 +187,7 @@ void binary_load(short int reg[], char data[], const unsigned int src_len)
 	}
 }
 
-void hex_dump(short int input_buffer[])
+void hex_dump(int16_t input_buffer[])
 {
 	int i, digit, byte_space;
 

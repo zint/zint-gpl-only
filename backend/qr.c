@@ -439,8 +439,8 @@ void add_ecc(int fullstream[], int datastream[], int version, int data_cw, int b
 	int i, j, length_this_block, posn, debug = 0;
 
 
-	unsigned char data_block[short_data_block_length + 2];
-	unsigned char ecc_block[ecc_block_length + 2];
+	uint8_t data_block[short_data_block_length + 2];
+	uint8_t ecc_block[ecc_block_length + 2];
 	int interleaved_data[data_cw + 2];
 	int interleaved_ecc[ecc_cw + 2];
 
@@ -454,7 +454,7 @@ void add_ecc(int fullstream[], int datastream[], int version, int data_cw, int b
 		}
 
 		for(j = 0; j < length_this_block; j++) {
-			data_block[j] = (unsigned char) datastream[posn + j];
+			data_block[j] = (uint8_t) datastream[posn + j];
 		}
 
 		rs_init_gf(0x11d);
@@ -508,7 +508,7 @@ void add_ecc(int fullstream[], int datastream[], int version, int data_cw, int b
 	}
 }
 
-void place_finder(unsigned char grid[], int size, int x, int y)
+void place_finder(uint8_t grid[], int size, int x, int y)
 {
 	int xp, yp;
 
@@ -533,7 +533,7 @@ void place_finder(unsigned char grid[], int size, int x, int y)
 	}
 }
 
-void place_align(unsigned char grid[], int size, int x, int y)
+void place_align(uint8_t grid[], int size, int x, int y)
 {
 	int xp, yp;
 
@@ -559,7 +559,7 @@ void place_align(unsigned char grid[], int size, int x, int y)
 	}
 }
 
-void setup_grid(unsigned char* grid, int size, int version)
+void setup_grid(uint8_t* grid, int size, int version)
 {
 	int toggle = 1;
 	int loopsize, x, y, xcoord, ycoord;
@@ -642,7 +642,7 @@ int cwbit(int* datastream, int i) {
 	return (datastream[word] >> bit) & 1;
 }
 
-void populate_grid(unsigned char* grid, int size, int* datastream, int cw)
+void populate_grid(uint8_t* grid, int size, int* datastream, int cw)
 {
 	int direction = 1; /* up */
 	int row = 0; /* right hand side */
@@ -693,7 +693,7 @@ void populate_grid(unsigned char* grid, int size, int* datastream, int cw)
 	} while (i < n);
 }
 
-int evaluate(unsigned char *grid, int size, int pattern)
+int evaluate(uint8_t *grid, int size, int pattern)
 {
 	int x, y, block;
 	int result = 0;
@@ -819,16 +819,16 @@ int evaluate(unsigned char *grid, int size, int pattern)
 }
 
 
-int apply_bitmask(unsigned char *grid, int size)
+int apply_bitmask(uint8_t *grid, int size)
 {
 	int x, y;
-	unsigned char p;
+	uint8_t p;
 	int pattern, penalty[8];
 	int best_val, best_pattern;
 	int bit;
 
-	unsigned char mask[size * size];
-	unsigned char eval[size * size];
+	uint8_t mask[size * size];
+	uint8_t eval[size * size];
 
 	/* Perform data masking */
 	for(x = 0; x < size; x++) {
@@ -898,7 +898,7 @@ int apply_bitmask(unsigned char *grid, int size)
 	return best_pattern;
 }
 
-void add_format_info(unsigned char *grid, int size, int ecc_level, int pattern)
+void add_format_info(uint8_t *grid, int size, int ecc_level, int pattern)
 {
 	/* Add format information to grid */
 
@@ -935,7 +935,7 @@ void add_format_info(unsigned char *grid, int size, int ecc_level, int pattern)
 	grid[(8 * size) + 7] += (seq >> 8) & 0x01;
 }
 
-void add_version_info(unsigned char *grid, int size, int version)
+void add_version_info(uint8_t *grid, int size, int version)
 {
 	/* Add version information */
 	int i;
@@ -951,7 +951,7 @@ void add_version_info(unsigned char *grid, int size, int version)
 	}
 }
 
-int qr_code(struct zint_symbol *symbol, unsigned char source[], int length)
+int qr_code(struct zint_symbol *symbol, uint8_t source[], int length)
 {
 	int error_number, glyph, est_binlen;
 	int ecc_level, autosize, version, max_cw, target_binlen, blocks, size;
@@ -1070,7 +1070,7 @@ int qr_code(struct zint_symbol *symbol, unsigned char source[], int length)
 	add_ecc(fullstream, datastream, version, target_binlen, blocks);
 
 	size = qr_sizes[version - 1];
-	unsigned char grid[size * size];
+	uint8_t grid[size * size];
 
 	for (int i = 0; i < size; i++) {
 		for(int j = 0; j < size; j++) {
@@ -1418,7 +1418,7 @@ void micro_qr_m1(char binary_data[])
 	int i, latch;
 	int bits_total, bits_left, remainder;
 	int data_codewords, ecc_codewords;
-	unsigned char data_blocks[4], ecc_blocks[3];
+	uint8_t data_blocks[4], ecc_blocks[3];
 
 	bits_total = 20;
 	latch = 0;
@@ -1502,7 +1502,7 @@ void micro_qr_m2(char binary_data[], int ecc_mode)
 	int i, latch;
 	int bits_total, bits_left, remainder;
 	int data_codewords, ecc_codewords;
-	unsigned char data_blocks[6], ecc_blocks[7];
+	uint8_t data_blocks[6], ecc_blocks[7];
 
 	latch = 0;
 
@@ -1571,7 +1571,7 @@ void micro_qr_m3(char binary_data[], int ecc_mode)
 	int i, latch;
 	int bits_total, bits_left, remainder;
 	int data_codewords, ecc_codewords;
-	unsigned char data_blocks[12], ecc_blocks[9];
+	uint8_t data_blocks[12], ecc_blocks[9];
 
 	latch = 0;
 
@@ -1670,7 +1670,7 @@ void micro_qr_m4(char binary_data[], int ecc_mode)
 	int i, latch;
 	int bits_total, bits_left, remainder;
 	int data_codewords, ecc_codewords;
-	unsigned char data_blocks[17], ecc_blocks[15];
+	uint8_t data_blocks[17], ecc_blocks[15];
 
 	latch = 0;
 
@@ -1734,7 +1734,7 @@ void micro_qr_m4(char binary_data[], int ecc_mode)
 	}
 }
 
-void micro_setup_grid(unsigned char* grid, int size)
+void micro_setup_grid(uint8_t* grid, int size)
 {
 	int i, toggle = 1;
 
@@ -1770,7 +1770,7 @@ void micro_setup_grid(unsigned char* grid, int size)
 	grid[(8 * size) + 8] += 20;
 }
 
-void micro_populate_grid(unsigned char* grid, int size, char full_stream[])
+void micro_populate_grid(uint8_t* grid, int size, char full_stream[])
 {
 	int direction = 1; /* up */
 	int row = 0; /* right hand side */
@@ -1819,7 +1819,7 @@ void micro_populate_grid(unsigned char* grid, int size, char full_stream[])
 	} while (i < n);
 }
 
-int micro_evaluate(unsigned char *grid, int size, int pattern)
+int micro_evaluate(uint8_t *grid, int size, int pattern)
 {
 	int sum1, sum2, i, filter = 0, retval;
 
@@ -1842,16 +1842,16 @@ int micro_evaluate(unsigned char *grid, int size, int pattern)
 	return retval;
 }
 
-int micro_apply_bitmask(unsigned char *grid, int size)
+int micro_apply_bitmask(uint8_t *grid, int size)
 {
 	int x, y;
-	unsigned char p;
+	uint8_t p;
 	int pattern, value[8];
 	int best_val, best_pattern;
 	int bit;
 
-	unsigned char mask[size * size];
-	unsigned char eval[size * size];
+	uint8_t mask[size * size];
+	uint8_t eval[size * size];
 
 	/* Perform data masking */
 	for(x = 0; x < size; x++) {
@@ -1924,7 +1924,7 @@ int micro_apply_bitmask(unsigned char *grid, int size)
 	return best_pattern;
 }
 
-int microqr(struct zint_symbol *symbol, unsigned char source[], int length)
+int microqr(struct zint_symbol *symbol, uint8_t source[], int length)
 {
 	int glyph, size;
 	char binary_stream[200];
@@ -2104,7 +2104,7 @@ int microqr(struct zint_symbol *symbol, unsigned char source[], int length)
 	}
 
 	size = micro_qr_sizes[version];
-	unsigned char grid[size * size];
+	uint8_t grid[size * size];
 
 	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size; j++) {

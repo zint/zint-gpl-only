@@ -58,7 +58,7 @@ const char *C128Table[107] = {"212222", "222122", "222221", "121223", "121322", 
 	"2331112"};
 /* Code 128 character encodation - Table 1 */
 
-int parunmodd(unsigned char llyth)
+int parunmodd(uint8_t llyth)
 {
 	int modd = SHIFTB;
 
@@ -185,7 +185,7 @@ void dxsmooth(int *indexliste)
  * Translate Code 128 Set A characters into barcodes.
  * This set handles all control characters NULL to US.
  */
-void c128_set_a(unsigned char source, char dest[], int values[], int *bar_chars)
+void c128_set_a(uint8_t source, char dest[], int values[], int *bar_chars)
 {
 	/* limit the range to 0-127 */
 	source &= 127;
@@ -204,7 +204,7 @@ void c128_set_a(unsigned char source, char dest[], int values[], int *bar_chars)
  * This set handles all characters which are not part of long numbers and not
  * control characters.
  */
-void c128_set_b(unsigned char source, char dest[], int values[], int *bar_chars)
+void c128_set_b(uint8_t source, char dest[], int values[], int *bar_chars)
 {
 	/* limit the range to 0-127 */
 	source &= 127;
@@ -218,7 +218,7 @@ void c128_set_b(unsigned char source, char dest[], int values[], int *bar_chars)
  * Translate Code 128 Set C characters into barcodes.
  * This set handles numbers in a compressed form.
  */
-void c128_set_c(unsigned char source_a, unsigned char source_b, char dest[], int values[], int *bar_chars)
+void c128_set_c(uint8_t source_a, uint8_t source_b, char dest[], int values[], int *bar_chars)
 {
 	int weight;
 
@@ -230,7 +230,7 @@ void c128_set_c(unsigned char source_a, unsigned char source_b, char dest[], int
 /**
  * Handle Code 128 and NVE-18.
  */
-int code_128(struct zint_symbol *symbol, unsigned char source[], int length)
+int code_128(struct zint_symbol *symbol, uint8_t source[], int length)
 {
 	int values[170] = { 0 }, bar_characters, read, total_sum;
 	int error_number, indexchaine, indexliste, sourcelen, f_state;
@@ -618,7 +618,7 @@ int code_128(struct zint_symbol *symbol, unsigned char source[], int length)
 	return error_number;
 }
 
-int ean_128(struct zint_symbol *symbol, unsigned char source[], int length)
+int ean_128(struct zint_symbol *symbol, uint8_t source[], int length)
 { /* Handle EAN-128 (Now known as GS1-128) */
 	int values[170], bar_characters, read, total_sum;
 	int error_number, indexchaine, indexliste;
@@ -934,11 +934,11 @@ int ean_128(struct zint_symbol *symbol, unsigned char source[], int length)
 	return error_number;
 }
 
-int nve_18(struct zint_symbol *symbol, unsigned char source[], int length)
+int nve_18(struct zint_symbol *symbol, uint8_t source[], int length)
 {
 	/* Add check digit if encoding an NVE18 symbol */
 	int error_number, zeroes, nve_check, total_sum, sourcelen;
-	unsigned char ean128_equiv[25];
+	uint8_t ean128_equiv[25];
 
 	memset(ean128_equiv, 0, 25);
 	sourcelen = length;
@@ -976,12 +976,12 @@ int nve_18(struct zint_symbol *symbol, unsigned char source[], int length)
 	return error_number;
 }
 
-int ean_14(struct zint_symbol *symbol, unsigned char source[], int length)
+int ean_14(struct zint_symbol *symbol, uint8_t source[], int length)
 {
 	/* EAN-14 - A version of EAN-128 */
 	int count, check_digit;
 	int error_number, zeroes;
-	unsigned char ean128_equiv[20];
+	uint8_t ean128_equiv[20];
 
 	if(length > 13) {
 		strcpy(symbol->errtxt, "Input wrong length");

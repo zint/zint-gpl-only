@@ -84,7 +84,7 @@ void NextB(int Chan, int i, int MaxB, int MaxS);
 
 /* *********************** CODE 11 ******************** */
 
-int code_11(struct zint_symbol *symbol, unsigned char source[], int length)
+int code_11(struct zint_symbol *symbol, uint8_t source[], int length)
 { /* Code 11 */
 
 	unsigned int i;
@@ -159,11 +159,11 @@ int code_11(struct zint_symbol *symbol, unsigned char source[], int length)
 	expand(symbol, dest);
 
 	ustrcpy(symbol->text, source);
-	uconcat(symbol->text, (unsigned char*)checkstr);
+	uconcat(symbol->text, (uint8_t*)checkstr);
 	return error_number;
 }
 
-int c39(struct zint_symbol *symbol, unsigned char source[], int length)
+int c39(struct zint_symbol *symbol, uint8_t source[], int length)
 { /* Code 39 */
 	unsigned int i;
 	unsigned int counter;
@@ -249,18 +249,18 @@ int c39(struct zint_symbol *symbol, unsigned char source[], int length)
 	expand(symbol, dest);
 
 	if(symbol->symbology == BARCODE_CODE39) {
-		ustrcpy(symbol->text, (unsigned char*)"*");
+		ustrcpy(symbol->text, (uint8_t*)"*");
 		uconcat(symbol->text, source);
-		uconcat(symbol->text, (unsigned char*)localstr);
-		uconcat(symbol->text, (unsigned char*)"*");
+		uconcat(symbol->text, (uint8_t*)localstr);
+		uconcat(symbol->text, (uint8_t*)"*");
 	} else {
 		ustrcpy(symbol->text, source);
-		uconcat(symbol->text, (unsigned char*)localstr);
+		uconcat(symbol->text, (uint8_t*)localstr);
 	}
 	return error_number;
 }
 
-int pharmazentral(struct zint_symbol *symbol, unsigned char source[], int length)
+int pharmazentral(struct zint_symbol *symbol, uint8_t source[], int length)
 { /* Pharmazentral Nummer (PZN) */
 
 	int i, error_number, zeroes;
@@ -298,19 +298,19 @@ int pharmazentral(struct zint_symbol *symbol, unsigned char source[], int length
 		strcpy(symbol->errtxt, "Invalid PZN Data");
 		return ZERROR_INVALID_DATA;
 	}
-	error_number = c39(symbol, (unsigned char *)localstr, strlen(localstr));
-	ustrcpy(symbol->text, (unsigned char *)"PZN");
-	uconcat(symbol->text, (unsigned char *)localstr);
+	error_number = c39(symbol, (uint8_t *)localstr, strlen(localstr));
+	ustrcpy(symbol->text, (uint8_t *)"PZN");
+	uconcat(symbol->text, (uint8_t *)localstr);
 	return error_number;
 }
 
 
 /* ************** EXTENDED CODE 39 *************** */
 
-int ec39(struct zint_symbol *symbol, unsigned char source[], int length)
+int ec39(struct zint_symbol *symbol, uint8_t source[], int length)
 { /* Extended Code 39 - ISO/IEC 16388:2007 Annex A */
 
-	unsigned char buffer[150] = { 0 };
+	uint8_t buffer[150] = { 0 };
 	unsigned int i;
 	int error_number;
 
@@ -343,7 +343,7 @@ int ec39(struct zint_symbol *symbol, unsigned char source[], int length)
 
 /* ******************** CODE 93 ******************* */
 
-int c93(struct zint_symbol *symbol, unsigned char source[], int length)
+int c93(struct zint_symbol *symbol, uint8_t source[], int length)
 { /* Code 93 is an advancement on Code 39 and the definition is a lot tighter */
 
   /* SILVER includes the extra characters a, b, c and d to represent Code 93 specific
@@ -483,7 +483,7 @@ void NextS(int Chan, int i, int MaxS, int MaxB) {
 	}
 }
 
-int channel_code(struct zint_symbol *symbol, unsigned char source[], int length) {
+int channel_code(struct zint_symbol *symbol, uint8_t source[], int length) {
 	/* Channel Code - According to ANSI/AIM BC12-1998 */
 
 	int channels, i;
@@ -533,7 +533,7 @@ int channel_code(struct zint_symbol *symbol, unsigned char source[], int length)
 	zeroes = channels - 1 - length;
 	memset(hrt, '0', zeroes);
 	strcpy(hrt + zeroes, (char *)source);
-	ustrcpy(symbol->text, (unsigned char *)hrt);
+	ustrcpy(symbol->text, (uint8_t *)hrt);
 
 	expand(symbol, pattern);
 

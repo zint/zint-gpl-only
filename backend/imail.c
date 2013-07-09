@@ -33,7 +33,7 @@
 
 /* The following lookup tables were generated using the code in Appendix C */
 
-const unsigned short AppxD_I[1287] = { /* Appendix D Table 1 - 5 of 13 characters */
+const uint16_t AppxD_I[1287] = { /* Appendix D Table 1 - 5 of 13 characters */
 	0x001F, 0x1F00, 0x002F, 0x1E80, 0x0037, 0x1D80, 0x003B, 0x1B80, 0x003D, 0x1780,
 	0x003E, 0x0F80, 0x004F, 0x1E40, 0x0057, 0x1D40, 0x005B, 0x1B40, 0x005D, 0x1740,
 	0x005E, 0x0F40, 0x0067, 0x1CC0, 0x006B, 0x1AC0, 0x006D, 0x16C0, 0x006E, 0x0EC0,
@@ -164,7 +164,7 @@ const unsigned short AppxD_I[1287] = { /* Appendix D Table 1 - 5 of 13 character
 	0x1823, 0x1883, 0x1843, 0x1445, 0x1249, 0x1151, 0x10E1, 0x0C46, 0x0A4A, 0x0952,
 	0x08E2, 0x064C, 0x0554, 0x04E4, 0x0358, 0x02E8, 0x01F0 };
 
-const unsigned short AppxD_II[78] = { /* Appendix D Table II - 2 of 13 characters */
+const uint16_t AppxD_II[78] = { /* Appendix D Table II - 2 of 13 characters */
 	0x0003, 0x1800, 0x0005, 0x1400, 0x0006, 0x0C00, 0x0009, 0x1200, 0x000A, 0x0A00,
 	0x000C, 0x0600, 0x0011, 0x1100, 0x0012, 0x0900, 0x0014, 0x0500, 0x0018, 0x0300,
 	0x0021, 0x1080, 0x0022, 0x0880, 0x0024, 0x0480, 0x0028, 0x0280, 0x0030, 0x0180,
@@ -191,15 +191,15 @@ const int AppxD_IV[130] = { /* Appendix D Table IV - Bar-to-Character Mapping (r
 	**   hold data and must be set to zero.
 	**
 	** Outputs:
-	**   return unsigned short - 11 bit Frame Check Sequence (right justified)
+	**   return uint16_t - 11 bit Frame Check Sequence (right justified)
 ***************************************************************************/
-extern unsigned short
-		USPS_MSB_Math_CRC11GenerateFrameCheckSequence( unsigned char *ByteArrayPtr )
+extern uint16_t
+		USPS_MSB_Math_CRC11GenerateFrameCheckSequence( uint8_t *ByteArrayPtr )
 
 {
-	unsigned short  GeneratorPolynomial = 0x0F35;
-	unsigned short  FrameCheckSequence  = 0x07FF;
-	unsigned short  Data;
+	uint16_t  GeneratorPolynomial = 0x0F35;
+	uint16_t  FrameCheckSequence  = 0x07FF;
+	uint16_t  Data;
 	int             ByteIndex, Bit;
 
 	/* Do most significant byte skipping the 2 most significant bits */
@@ -233,7 +233,7 @@ extern unsigned short
 	return FrameCheckSequence;
 }
 
-void breakup(short int fcs_bit[], unsigned short usps_crc)
+void breakup(int16_t fcs_bit[], uint16_t usps_crc)
 {
 	int i;
 
@@ -294,18 +294,18 @@ void breakup(short int fcs_bit[], unsigned short usps_crc)
 	}
 }
 
-int imail(struct zint_symbol *symbol, unsigned char source[], int length)
+int imail(struct zint_symbol *symbol, uint8_t source[], int length)
 {
 	char data_pattern[200];
 	int error_number;
         int i, j, read;
         char zip[35], tracker[35], zip_adder[11], temp[2];
-        short int accum[112], x_reg[112], y_reg[112];
-        unsigned char byte_array[13];
-        unsigned short usps_crc;
+        int16_t accum[112], x_reg[112], y_reg[112];
+        uint8_t byte_array[13];
+        uint16_t usps_crc;
         int codeword[10];
-        unsigned short characters[10];
-        short int bit_pattern[13], bar_map[130];
+        uint16_t characters[10];
+        int16_t bit_pattern[13], bar_map[130];
 
 	error_number = 0;
 

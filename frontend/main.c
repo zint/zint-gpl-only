@@ -116,11 +116,11 @@ int validator(char test_string[], char source[])
 	return 0;
 }
 
-int escape_char_process(struct zint_symbol *my_symbol, unsigned char input_string[], int length)
+int escape_char_process(struct zint_symbol *my_symbol, uint8_t input_string[], int length)
 {
 	int error_number;
 	int i, j;
-	unsigned char escaped_string[length + 1];
+	uint8_t escaped_string[length + 1];
 
 	i = 0;
 	j = 0;
@@ -177,8 +177,8 @@ void concat(char dest[], const char source[])
 int batch_process(struct zint_symbol *symbol, char *filename)
 {
 	FILE *file;
-	unsigned char buffer[7100];
-	unsigned char character;
+	uint8_t buffer[7100];
+	uint8_t character;
 	int posn = 0, error_number = 0, line_count = 1;
 	char output_file[127];
 	char number[12], reverse_number[12];
@@ -539,7 +539,7 @@ int main(int argc, char **argv)
 				
 			case 'd': /* we have some data! */
 				if(batch_mode == 0) {
-					error_number = escape_char_process(my_symbol, (unsigned char*)optarg, strlen(optarg));
+					error_number = escape_char_process(my_symbol, (uint8_t*)optarg, strlen(optarg));
 					if(error_number == 0) {
 						error_number = ZBarcode_Print(my_symbol, rotate_angle);
 					}

@@ -37,8 +37,8 @@ int maxi_codeword[144];
 void maxi_do_primary_check(  )
 {
 	/* Handles error correction of primary message */
-	unsigned char data[15];
-	unsigned char results[15];
+	uint8_t data[15];
+	uint8_t results[15];
 	int j;
 	int datalen = 10;
 	int ecclen = 10;
@@ -59,8 +59,8 @@ void maxi_do_primary_check(  )
 void maxi_do_secondary_chk_odd( int ecclen )
 {
 	/* Handles error correction of odd characters in secondary */
-	unsigned char data[100];
-	unsigned char results[30];
+	uint8_t data[100];
+	uint8_t results[30];
 	int j;
 	int datalen = 68;
 
@@ -84,8 +84,8 @@ void maxi_do_secondary_chk_odd( int ecclen )
 void maxi_do_secondary_chk_even(int ecclen )
 {
 	/* Handles error correction of even characters in secondary */
-	unsigned char data[100];
-	unsigned char results[30];
+	uint8_t data[100];
+	uint8_t results[30];
 	int j;
 	int datalen = 68;
 
@@ -118,7 +118,7 @@ void maxi_bump(int set[], int character[], int bump_posn)
 }
 
 static int
-maxi_text_process(int mode, unsigned char source[], int length)
+maxi_text_process(int mode, uint8_t source[], int length)
 {
 	/* Format text according to Appendix A */
 
@@ -501,7 +501,7 @@ void maxi_do_primary_3(char postcode[], int country, int service)
 	int i, h;
 
 	h = strlen(postcode);
-	to_upper((unsigned char*)postcode);
+	to_upper((uint8_t*)postcode);
 	for(i = 0; i < h; i++) {
 		if((postcode[i] >= 'A') && (postcode[i] <= 'Z')) {
 			/* (Capital) letters shifted to Code Set A values */
@@ -527,13 +527,13 @@ void maxi_do_primary_3(char postcode[], int country, int service)
 	maxi_codeword[9] = ((service & 0x3f0) >> 4);
 }
 
-int maxicode(struct zint_symbol *symbol, unsigned char source[], int length)
+int maxicode(struct zint_symbol *symbol, uint8_t source[], int length)
 {
 	int i, j, block, bit, mode, countrycode = 0, service = 0, lp = 0;
 	int bit_pattern[7], internal_error = 0, eclen, error_number;
 	char postcode[12], countrystr[4], servicestr[4];
 
-        unsigned char local_source[length + 1];
+        uint8_t local_source[length + 1];
 
 	mode = symbol->option_1;
 	strcpy(postcode, "");

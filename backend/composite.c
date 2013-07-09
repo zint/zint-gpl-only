@@ -47,16 +47,14 @@
 #include "pdf417.h"
 #include "gs1.h"
 
-#define UINT unsigned short
-
 extern int general_rules(char field[], char type[]);
-extern int eanx(struct zint_symbol *symbol, unsigned char source[], int length);
-extern int ean_128(struct zint_symbol *symbol, unsigned char source[], int length);
-extern int rss14(struct zint_symbol *symbol, unsigned char source[], int length);
-extern int rsslimited(struct zint_symbol *symbol, unsigned char source[], int length);
-extern int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int length);
+extern int eanx(struct zint_symbol *symbol, uint8_t source[], int length);
+extern int ean_128(struct zint_symbol *symbol, uint8_t source[], int length);
+extern int rss14(struct zint_symbol *symbol, uint8_t source[], int length);
+extern int rsslimited(struct zint_symbol *symbol, uint8_t source[], int length);
+extern int rssexpanded(struct zint_symbol *symbol, uint8_t source[], int length);
 
-static UINT pwr928[69][7];
+static uint16_t pwr928[69][7];
 
 int _min(int first, int second) {
 
@@ -67,7 +65,7 @@ int _min(int first, int second) {
 }
 
 /* gets bit in bitString at bitPos */
-int getBit(UINT *bitStr, int bitPos) {
+int getBit(uint16_t *bitStr, int bitPos) {
 	return !!(bitStr[bitPos >> 4] & (0x8000 >> (bitPos & 15)));
 }
 
@@ -92,7 +90,7 @@ void init928(void) {
 }
 
 /* converts bit string to base 928 values, codeWords[0] is highest order */
-int encode928(UINT bitString[], UINT codeWords[], int bitLng) {
+int encode928(uint16_t bitString[], uint16_t codeWords[], int bitLng) {
 	int i, j, b, bitCnt, cwNdx, cwCnt, cwLng;
 	for (cwNdx = cwLng = b = 0; b < bitLng; b += 69, cwNdx += 7) {
 		bitCnt = _min(bitLng-b, 69);
@@ -121,8 +119,8 @@ int cc_a(struct zint_symbol *symbol, char source[], int cc_width)
 	int LeftRAPStart, RightRAPStart, CentreRAPStart, StartCluster;
 	int LeftRAP, RightRAP, CentreRAP, Cluster, dummy[5];
 	int writer, flip, loop;
-	UINT codeWords[28];
-	UINT bitStr[13];
+	uint16_t codeWords[28];
+	uint16_t bitStr[13];
 	char codebarre[100], pattern[580];
 	char local_source[210]; /* A copy of source but with padding zeroes to make 208 bits */
 
@@ -333,7 +331,7 @@ int cc_a(struct zint_symbol *symbol, char source[], int cc_width)
 int cc_b(struct zint_symbol *symbol, char source[], int cc_width)
 { /* CC-B 2D component */
 	int length, i, binloc;
-	unsigned char data_string[(strlen(source) / 8) + 3];
+	uint8_t data_string[(strlen(source) / 8) + 3];
 	int chainemc[180], mclength;
 	int k, j, longueur, mccorrection[50], offset;
 	int total, dummy[5];
@@ -560,7 +558,7 @@ int cc_b(struct zint_symbol *symbol, char source[], int cc_width)
 int cc_c(struct zint_symbol *symbol, char source[], int cc_width, int ecc_level)
 { /* CC-C 2D component - byte compressed PDF417 */
 	int length, i, binloc;
-        unsigned char data_string[(strlen(source) / 8) + 4];
+        uint8_t data_string[(strlen(source) / 8) + 4];
 	int chainemc[1000], mclength, k;
 	int offset, longueur, loop, total, j, mccorrection[520];
 	int c1, c2, c3, dummy[35];
@@ -1714,7 +1712,7 @@ void add_leading_zeroes(struct zint_symbol *symbol)
 	symbol->primary[n] = '\0';
 }
 
-int composite(struct zint_symbol *symbol, unsigned char source[], int length)
+int composite(struct zint_symbol *symbol, uint8_t source[], int length)
 {
 	int error_number, cc_mode, cc_width, ecc_level;
 	int j, i, k;
@@ -1762,16 +1760,16 @@ int composite(struct zint_symbol *symbol, unsigned char source[], int length)
 	}
 
 	switch(symbol->symbology) {
-		case BARCODE_EANX_CC:		error_number = eanx(linear, (unsigned char *)symbol->primary, pri_len); break;
-		case BARCODE_EAN128_CC:		error_number = ean_128(linear, (unsigned char *)symbol->primary, pri_len); break;
-		case BARCODE_RSS14_CC:		error_number = rss14(linear, (unsigned char *)symbol->primary, pri_len); break;
-		case BARCODE_RSS_LTD_CC:	error_number = rsslimited(linear, (unsigned char *)symbol->primary, pri_len); break;
-		case BARCODE_RSS_EXP_CC:	error_number = rssexpanded(linear, (unsigned char *)symbol->primary, pri_len); break;
-		case BARCODE_UPCA_CC:		error_number = eanx(linear, (unsigned char *)symbol->primary, pri_len); break;
-		case BARCODE_UPCE_CC:		error_number = eanx(linear, (unsigned char *)symbol->primary, pri_len); break;
-		case BARCODE_RSS14STACK_CC:	error_number = rss14(linear, (unsigned char *)symbol->primary, pri_len); break;
-		case BARCODE_RSS14_OMNI_CC:	error_number = rss14(linear, (unsigned char *)symbol->primary, pri_len); break;
-		case BARCODE_RSS_EXPSTACK_CC:	error_number = rssexpanded(linear, (unsigned char *)symbol->primary, pri_len); break;
+		case BARCODE_EANX_CC:		error_number = eanx(linear, (uint8_t *)symbol->primary, pri_len); break;
+		case BARCODE_EAN128_CC:		error_number = ean_128(linear, (uint8_t *)symbol->primary, pri_len); break;
+		case BARCODE_RSS14_CC:		error_number = rss14(linear, (uint8_t *)symbol->primary, pri_len); break;
+		case BARCODE_RSS_LTD_CC:	error_number = rsslimited(linear, (uint8_t *)symbol->primary, pri_len); break;
+		case BARCODE_RSS_EXP_CC:	error_number = rssexpanded(linear, (uint8_t *)symbol->primary, pri_len); break;
+		case BARCODE_UPCA_CC:		error_number = eanx(linear, (uint8_t *)symbol->primary, pri_len); break;
+		case BARCODE_UPCE_CC:		error_number = eanx(linear, (uint8_t *)symbol->primary, pri_len); break;
+		case BARCODE_RSS14STACK_CC:	error_number = rss14(linear, (uint8_t *)symbol->primary, pri_len); break;
+		case BARCODE_RSS14_OMNI_CC:	error_number = rss14(linear, (uint8_t *)symbol->primary, pri_len); break;
+		case BARCODE_RSS_EXPSTACK_CC:	error_number = rssexpanded(linear, (uint8_t *)symbol->primary, pri_len); break;
 	}
 
 	if(error_number != 0) {
@@ -1920,7 +1918,7 @@ int composite(struct zint_symbol *symbol, unsigned char source[], int length)
 		symbol->width += top_shift;
 	}
 	symbol->rows += linear->rows;
-	ustrcpy(symbol->text, (unsigned char *)linear->text);
+	ustrcpy(symbol->text, (uint8_t *)linear->text);
 
 	ZBarcode_Delete(linear);
 

@@ -159,7 +159,7 @@ void dxsmooth16(int *indexliste)
 	grwp16(indexliste);
 }
 
-void c16k_set_a(unsigned char source, unsigned int values[], unsigned int *bar_chars)
+void c16k_set_a(uint8_t source, unsigned int values[], unsigned int *bar_chars)
 {
 	source &= 127; /* limit the range to 0-127 */
 	if(source < 32)
@@ -169,13 +169,13 @@ void c16k_set_a(unsigned char source, unsigned int values[], unsigned int *bar_c
 	values[(*bar_chars)++] = source;
 }
 
-void c16k_set_b(unsigned char source, unsigned int values[], unsigned int *bar_chars)
+void c16k_set_b(uint8_t source, unsigned int values[], unsigned int *bar_chars)
 {
 	source &= 127; /* limit the range to 0-127 */
 	values[(*bar_chars)++] = source - 32;
 }
 
-void c16k_set_c(unsigned char source_a, unsigned char source_b, unsigned int values[], unsigned int *bar_chars)
+void c16k_set_c(uint8_t source_a, uint8_t source_b, unsigned int values[], unsigned int *bar_chars)
 {
 	int weight;
 
@@ -183,7 +183,7 @@ void c16k_set_c(unsigned char source_a, unsigned char source_b, unsigned int val
 	values[(*bar_chars)++] = weight;
 }
 
-int code16k(struct zint_symbol *symbol, unsigned char source[], int length)
+int code16k(struct zint_symbol *symbol, uint8_t source[], int length)
 {
 	char width_pattern[100];
 	int current_row, rows_needed, flip_flop, looper, first_check, second_check;

@@ -141,10 +141,10 @@ void getRSSwidths(int val, int n, int elements, int maxWidth, int noNarrow)
 	return;
 }
 
-int rss14(struct zint_symbol *symbol, unsigned char source[], int src_len)
+int rss14(struct zint_symbol *symbol, uint8_t source[], int src_len)
 { /* GS1 DataBar-14 */
 	int error_number = 0, i, j, mask;
-	short int accum[112], left_reg[112], right_reg[112], x_reg[112], y_reg[112];
+	int16_t accum[112], left_reg[112], right_reg[112], x_reg[112], y_reg[112];
 	int data_character[4], data_group[4], v_odd[4], v_even[4];
 	int data_widths[8][4], checksum, c_left, c_right, total_widths[46], writer;
 	char latch, hrt[15], temp[32];
@@ -428,7 +428,7 @@ int rss14(struct zint_symbol *symbol, unsigned char source[], int src_len)
 		check_digit = 0;
 
 		/* Calculate check digit from Annex A and place human readable text */
-		ustrcpy(symbol->text, (unsigned char*)"(01)");
+		ustrcpy(symbol->text, (uint8_t*)"(01)");
 		for(i = 0; i < 14; i++) {
 			hrt[i] = '0';
 		}
@@ -449,7 +449,7 @@ int rss14(struct zint_symbol *symbol, unsigned char source[], int src_len)
 		if (check_digit == 10) { check_digit = 0; }
 		hrt[13] = itoc(check_digit);
 
-		uconcat(symbol->text, (unsigned char*)hrt);
+		uconcat(symbol->text, (uint8_t*)hrt);
 	}
 
 	if((symbol->symbology == BARCODE_RSS14STACK) || (symbol->symbology == BARCODE_RSS14STACK_CC)) {
@@ -646,10 +646,10 @@ int rss14(struct zint_symbol *symbol, unsigned char source[], int src_len)
 	return error_number;
 }
 
-int rsslimited(struct zint_symbol *symbol, unsigned char source[], int src_len)
+int rsslimited(struct zint_symbol *symbol, uint8_t source[], int src_len)
 { /* GS1 DataBar Limited */
 	int error_number = 0, i, mask;
-	short int accum[112], left_reg[112], right_reg[112], x_reg[112], y_reg[112];
+	int16_t accum[112], left_reg[112], right_reg[112], x_reg[112], y_reg[112];
 	int left_group, right_group, left_odd, left_even, right_odd, right_even;
 	int left_character, right_character, left_widths[14], right_widths[14];
 	int checksum, check_elements[14], total_widths[46], writer, j, check_digit, count;
@@ -911,7 +911,7 @@ int rsslimited(struct zint_symbol *symbol, unsigned char source[], int src_len)
 	check_digit = 0;
 	count = 0;
 
-	ustrcpy(symbol->text, (unsigned char*)"(01)");
+	ustrcpy(symbol->text, (uint8_t*)"(01)");
 	for(i = 0; i < 14; i++) {
 		hrt[i] = '0';
 	}
@@ -933,7 +933,7 @@ int rsslimited(struct zint_symbol *symbol, unsigned char source[], int src_len)
 	hrt[13] = itoc(check_digit);
 	hrt[14] = '\0';
 
-	uconcat(symbol->text, (unsigned char*)hrt);
+	uconcat(symbol->text, (uint8_t*)hrt);
 
 	return error_number;
 }
@@ -1841,7 +1841,7 @@ int rss_binary_string(struct zint_symbol *symbol, char source[], char binary_str
 	return 0;
 }
 
-int rssexpanded(struct zint_symbol *symbol, unsigned char source[], int src_len)
+int rssexpanded(struct zint_symbol *symbol, uint8_t source[], int src_len)
 { /* GS1 DataBar Expanded */
 	int i, j, k, l, data_chars, vs[21], group[21], v_odd[21], v_even[21];
 	char substring[21][14], latch;

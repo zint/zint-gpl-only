@@ -60,8 +60,8 @@ int svg_plot(struct zint_symbol *symbol)
 	}
 
 	/* sort out colour options */
-	to_upper((unsigned char*)symbol->fgcolour);
-	to_upper((unsigned char*)symbol->bgcolour);
+	to_upper((uint8_t*)symbol->fgcolour);
+	to_upper((uint8_t*)symbol->bgcolour);
 
 	if(strlen(symbol->fgcolour) != 6) {
 		strcpy(symbol->errtxt, "Malformed foreground colour target");
@@ -71,12 +71,12 @@ int svg_plot(struct zint_symbol *symbol)
 		strcpy(symbol->errtxt, "Malformed background colour target");
 		return ZERROR_INVALID_OPTION;
 	}
-	error_number = is_sane(SSET, (unsigned char*)symbol->fgcolour, strlen(symbol->fgcolour));
+	error_number = is_sane(SSET, (uint8_t*)symbol->fgcolour, strlen(symbol->fgcolour));
 	if (error_number == ZERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Malformed foreground colour target");
 		return ZERROR_INVALID_OPTION;
 	}
-	error_number = is_sane(SSET, (unsigned char*)symbol->bgcolour, strlen(symbol->bgcolour));
+	error_number = is_sane(SSET, (uint8_t*)symbol->bgcolour, strlen(symbol->bgcolour));
 	if (error_number == ZERROR_INVALID_DATA) {
 		strcpy(symbol->errtxt, "Malformed background colour target");
 		return ZERROR_INVALID_OPTION;

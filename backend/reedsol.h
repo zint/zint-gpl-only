@@ -22,6 +22,8 @@
 #ifndef __REEDSOL_H
 #define __REEDSOL_H
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -29,7 +31,7 @@ extern "C"
 
 extern void rs_init_gf(int poly);
 extern void rs_init_code(int nsym, int index);
-extern void rs_encode(int len, unsigned char *data, unsigned char *res);
+extern void rs_encode(int len, uint8_t *data, uint8_t *res);
 extern void rs_encode_long(int len, unsigned int *data, unsigned int *res);
 extern void rs_free(void);
 

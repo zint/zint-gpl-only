@@ -671,7 +671,7 @@ void gm_add_ecc(char binary[], int data_posn, int layers, int ecc_level, int wor
 	int n1, b1, n2, b2, e1, b3, e2;
 	int block_size, data_size, ecc_size;
 	int data[1320], block[130];
-	unsigned char data_block[115], ecc_block[70];
+	uint8_t data_block[115], ecc_block[70];
 
 	data_cw = gm_data_codewords[((layers - 1) * 5) + (ecc_level - 1)];
 
@@ -833,7 +833,7 @@ void place_layer_id(char* grid, int size, int layers, int modules, int ecc_level
 	}
 }
 
-int grid_matrix(struct zint_symbol *symbol, unsigned char source[], int length)
+int grid_matrix(struct zint_symbol *symbol, uint8_t source[], int length)
 {
 	int size, modules, dark, error_number;
 	int auto_layers, min_layers, layers, auto_ecc_level, min_ecc_level, ecc_level;

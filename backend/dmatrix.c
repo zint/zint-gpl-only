@@ -160,14 +160,14 @@ static void ecc200placement(int *array, int NR, int NC)
 }
 
 // calculate and append ecc code, and if necessary interleave
-static void ecc200(unsigned char *binary, int bytes, int datablock, int rsblock, int skew)
+static void ecc200(uint8_t *binary, int bytes, int datablock, int rsblock, int skew)
 {
 	int blocks = (bytes + 2) / datablock, b;
 	int n, p;
 	rs_init_gf(0x12d);
 	rs_init_code(rsblock, 1);
 	for (b = 0; b < blocks; b++) {
-		unsigned char buf[256], ecc[256];
+		uint8_t buf[256], ecc[256];
 		p = 0;
 		for (n = b; n < bytes; n += blocks)
 			buf[p++] = binary[n];
@@ -190,7 +190,7 @@ static void ecc200(unsigned char *binary, int bytes, int datablock, int rsblock,
 	rs_free();
 }
 
-int isx12(unsigned char source)
+int isx12(uint8_t source)
 {
 	if(source == 13) { return 1; }
 	if(source == 42) { return 1; }
@@ -213,7 +213,7 @@ void dminsert(char binary_string[], int posn, char newbit)
 	binary_string[posn] = newbit;
 }
 
-void insert_value(unsigned char binary_stream[], int posn, int streamlen, char newbit)
+void insert_value(uint8_t binary_stream[], int posn, int streamlen, char newbit)
 {
 	int i;
 
@@ -223,7 +223,7 @@ void insert_value(unsigned char binary_stream[], int posn, int streamlen, char n
 	binary_stream[posn] = newbit;
 }
 
-int look_ahead_test(unsigned char source[], int sourcelen, int position, int current_mode, int gs1)
+int look_ahead_test(uint8_t source[], int sourcelen, int position, int current_mode, int gs1)
 {
 	/* A custom version of the 'look ahead test' from Annex P */
 	/* This version is deliberately very reluctant to end a data stream with EDIFACT encoding */
@@ -324,7 +324,7 @@ int look_ahead_test(unsigned char source[], int sourcelen, int position, int cur
 	return best_scheme;
 }
 
-int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned char target[], int *last_mode, int length)
+int dm200encode(struct zint_symbol *symbol, uint8_t source[], uint8_t target[], int *last_mode, int length)
 {
 	/* Encodes data using ASCII, C40, Text, X12, EDIFACT or Base 256 modes as appropriate */
 	/* Supports encoding FNC1 in supporting systems */
@@ -738,7 +738,7 @@ int dm200encode(struct zint_symbol *symbol, unsigned char source[], unsigned cha
 	return tp;
 }
 
-void add_tail(unsigned char target[], int tp, int tail_length, int last_mode)
+void add_tail(uint8_t target[], int tp, int tail_length, int last_mode)
 {
 	/* adds unlatch and pad bits */
 	int i, prn, temp;
@@ -766,16 +766,16 @@ void add_tail(unsigned char target[], int tp, int tail_length, int last_mode)
 	}
 }
 
-int data_matrix_200(struct zint_symbol *symbol, unsigned char source[], int length)
+int data_matrix_200(struct zint_symbol *symbol, uint8_t source[], int length)
 {
 	int skew = 0;
-	unsigned char binary[2200];
+	uint8_t binary[2200];
 	int binlen;
 	int symbolsize, optionsize, calcsize;
 	int taillength, error_number = 0;
 	int H, W, FH, FW, datablock, bytes, rsblock;
 	int last_mode;
-	unsigned char *grid = 0;
+	uint8_t *grid = 0;
 
 	binlen = dm200encode(symbol, source, binary, &last_mode, length);
 
@@ -843,7 +843,7 @@ int data_matrix_200(struct zint_symbol *symbol, unsigned char source[], int leng
 		NR = H - 2 * (H / FH);
 		places = (int*)malloc(NC * NR * sizeof(int));
 		ecc200placement(places, NR, NC);
-		grid = (unsigned char*)malloc(W * H);
+		grid = (uint8_t*)malloc(W * H);
 		memset(grid, 0, W * H);
 		for (y = 0; y < H; y += FH) {
 			for (x = 0; x < W; x++)
@@ -885,7 +885,7 @@ int data_matrix_200(struct zint_symbol *symbol, unsigned char source[], int leng
 	return error_number;
 }
 
-int dmatrix(struct zint_symbol *symbol, unsigned char source[], int length)
+int dmatrix(struct zint_symbol *symbol, uint8_t source[], int length)
 {
 	int error_number;
 
