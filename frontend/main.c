@@ -187,7 +187,7 @@ int batch_process(struct zint_symbol *symbol, char *filename)
 	int format_len, i;
 	char adjusted[2];
 	
-	memset(buffer, 0, sizeof(unsigned char) * 7100);
+	memset(buffer, 0, 7100);
 	if(symbol->outfile[0] == '\0') {
 		strcpy(format_string, "~~~~~.png");
 	} else {
@@ -198,7 +198,7 @@ int batch_process(struct zint_symbol *symbol, char *filename)
 			return ZERROR_INVALID_DATA;
 		}
 	}
-	memset(adjusted, 0, sizeof(char) * 2);
+	memset(adjusted, 0, 2);
 	
 	if(!strcmp(filename, "-")) {
 		file = stdin;
@@ -220,10 +220,10 @@ int batch_process(struct zint_symbol *symbol, char *filename)
 			}
 			inpos = 0;
 			local_line_count = line_count;
-			memset(number, 0, sizeof(char) * 12);
-			memset(reverse_number, 0, sizeof(char) * 12);
-			memset(reversed_string, 0, sizeof(char) * 127);
-			memset(output_file, 0, sizeof(char) * 127);
+			memset(number, 0, 12);
+			memset(reverse_number, 0, 12);
+			memset(reversed_string, 0, 127);
+			memset(output_file, 0, 127);
 			do {
 				number[inpos] = itoc(local_line_count % 10);
 				local_line_count /= 10;
@@ -282,7 +282,7 @@ int batch_process(struct zint_symbol *symbol, char *filename)
 				fflush(stderr);
 			}
 			ZBarcode_Clear(symbol);
-			memset(buffer, 0, sizeof(unsigned char) * 7100);
+			memset(buffer, 0, 7100);
 			posn = 0;
 			line_count++;
 		} else {
