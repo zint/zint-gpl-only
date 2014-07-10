@@ -165,7 +165,7 @@ static int aztec_text_process(uint8_t source[], const unsigned int src_len, char
 		}
 
 		/* look for adjacent blocks which can use the same table (right to left search) */
-		for(int i = blocks - 1; i > 0; i--) {
+		for(int i = blocks - 1 - 1; i >= 0; i--) {
 			if(blockmap[0][i] & blockmap[0][i + 1]) {
 				blockmap[0][i] = (blockmap[0][i] & blockmap[0][i + 1]);
 			}
@@ -195,7 +195,7 @@ static int aztec_text_process(uint8_t source[], const unsigned int src_len, char
 			} else {
 				i++;
 			}
-		} while (i < blocks);
+		} while (i < (blocks - 1));
 	}
 
 	/* Put the adjusted block data back into typemap */
