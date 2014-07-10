@@ -130,8 +130,8 @@ extern int itf14(struct zint_symbol *symbol, uint8_t source[], int length); /* I
 extern int dpleit(struct zint_symbol *symbol, uint8_t source[], int length); /* Deutsche Post Leitcode */
 extern int dpident(struct zint_symbol *symbol, uint8_t source[], int length); /* Deutsche Post Identcode */
 extern int c93(struct zint_symbol *symbol, uint8_t source[], int length); /* Code 93 - a re-working of Code 39+, generates 2 check digits */
-extern int code_128(struct zint_symbol *symbol, uint8_t source[], int length); /* Code 128 and NVE-18 */
-extern int ean_128(struct zint_symbol *symbol, uint8_t source[], int length); /* EAN-128 (GS1-128) */
+extern int code_128(struct zint_symbol *symbol, const uint8_t source[], int length); /* Code 128 and NVE-18 */
+extern int ean_128(struct zint_symbol *symbol, const uint8_t source[], int length); /* EAN-128 (GS1-128) */
 extern int code_11(struct zint_symbol *symbol, uint8_t source[], int length); /* Code 11 */
 extern int msi_handle(struct zint_symbol *symbol, uint8_t source[], int length); /* MSI Plessey */
 extern int telepen(struct zint_symbol *symbol, uint8_t source[], int length); /* Telepen ASCII */
@@ -160,7 +160,7 @@ extern int kix_code(struct zint_symbol *symbol, uint8_t source[], int length); /
 extern int aztec(struct zint_symbol *symbol, uint8_t source[], int length); /* Aztec Code */
 extern int code32(struct zint_symbol *symbol, uint8_t source[], int length); /* Italian Pharmacode */
 extern int daft_code(struct zint_symbol *symbol, uint8_t source[], int length); /* DAFT Code */
-extern int ean_14(struct zint_symbol *symbol, uint8_t source[], int length); /* EAN-14 */
+extern int ean_14(struct zint_symbol *symbol, const uint8_t source[], int length); /* EAN-14 */
 extern int nve_18(struct zint_symbol *symbol, uint8_t source[], int length); /* NVE-18 */
 extern int microqr(struct zint_symbol *symbol, uint8_t source[], int length); /* Micro QR Code */
 extern int aztec_runes(struct zint_symbol *symbol, uint8_t source[], int length); /* Aztec Runes */

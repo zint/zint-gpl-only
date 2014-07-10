@@ -230,7 +230,7 @@ static void c128_set_c(uint8_t source_a, uint8_t source_b, char dest[], int valu
 /**
  * Handle Code 128 and NVE-18.
  */
-int code_128(struct zint_symbol *symbol, uint8_t source[], int length)
+int code_128(struct zint_symbol *symbol, const uint8_t source[], int length)
 {
 	int values[170] = { 0 }, bar_characters, read, total_sum;
 	int error_number, indexchaine, indexliste, sourcelen, f_state;
@@ -618,7 +618,7 @@ int code_128(struct zint_symbol *symbol, uint8_t source[], int length)
 	return error_number;
 }
 
-int ean_128(struct zint_symbol *symbol, uint8_t source[], int length)
+int ean_128(struct zint_symbol *symbol, const uint8_t source[], int length)
 { /* Handle EAN-128 (Now known as GS1-128) */
 	int values[170], bar_characters, read, total_sum;
 	int error_number, indexchaine, indexliste;
@@ -976,7 +976,7 @@ int nve_18(struct zint_symbol *symbol, uint8_t source[], int length)
 	return error_number;
 }
 
-int ean_14(struct zint_symbol *symbol, uint8_t source[], int length)
+int ean_14(struct zint_symbol *symbol, const uint8_t source[], int length)
 {
 	/* EAN-14 - A version of EAN-128 */
 	int count, check_digit;
