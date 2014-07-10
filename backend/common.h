@@ -73,6 +73,18 @@ static inline void bscan(char *binary, int data, int h)
 	}
 }
 
+/* Return true if module coords are within the allocated range.
+ * See module_is_set(), set_module(), unset_module() for naming and addressing convention.
+ */
+static inline int module_is_allocated(int y_coord, int x_coord)
+{
+	int x = x_coord / 7;
+	if ((0 <= y_coord) && (y_coord < ZINT_ROWS_MAX) && (0 <= x) && (x < ZINT_COLS_MAX)) {
+		return 1;
+	}
+	return 0;
+}
+
 #define nitems(a) (sizeof(a) / sizeof(a[0]))
 
 #ifdef __cplusplus
