@@ -29,7 +29,7 @@
    to be bulletproof, nor does it report very accurately what problem was found
    or where, but should prevent some of the more common encoding errors */
 
-void itostr(char ai_string[], int ai_value)
+static void itostr(char ai_string[], int ai_value)
 {
 	int thou, hund, ten, unit;
 	char temp[2];

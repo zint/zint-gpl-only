@@ -181,7 +181,7 @@ extern int bmp_handle(struct zint_symbol *symbol, int rotate_angle);
 extern int ps_plot(struct zint_symbol *symbol);
 extern int svg_plot(struct zint_symbol *symbol);
 
-void error_tag(char error_string[], int error_number)
+static void error_tag(char error_string[], int error_number)
 {
 	char error_buffer[100];
 
@@ -198,7 +198,7 @@ void error_tag(char error_string[], int error_number)
 	}
 }
 
-int dump_plot(struct zint_symbol *symbol)
+static int dump_plot(struct zint_symbol *symbol)
 {
 	FILE *f;
 	int i, r;
@@ -232,7 +232,7 @@ int dump_plot(struct zint_symbol *symbol)
 	return 0;
 }
 
-int hibc(struct zint_symbol *symbol, uint8_t source[], int length)
+static int hibc(struct zint_symbol *symbol, uint8_t source[], int length)
 {
 	int counter, error_number, i;
 	char to_process[40], temp[2], check_digit;
@@ -315,7 +315,7 @@ int hibc(struct zint_symbol *symbol, uint8_t source[], int length)
 	return error_number;
 }
 
-int gs1_compliant(int symbology)
+static int gs1_compliant(int symbology)
 {
 	/* Returns 1 if symbology supports GS1 data */
 
@@ -444,7 +444,7 @@ int ZBarcode_ValidID(int symbol_id)
 	return result;
 }
 
-int extended_charset(struct zint_symbol *symbol, uint8_t *source, int length)
+static int extended_charset(struct zint_symbol *symbol, uint8_t *source, int length)
 {
 	int error_number = 0;
 
@@ -458,7 +458,7 @@ int extended_charset(struct zint_symbol *symbol, uint8_t *source, int length)
 	return error_number;
 }
 
-int reduced_charset(struct zint_symbol *symbol, uint8_t *source, int length)
+static int reduced_charset(struct zint_symbol *symbol, uint8_t *source, int length)
 {
 	/* These are the "norm" standards which only support Latin-1 at most */
 	int error_number = 0;

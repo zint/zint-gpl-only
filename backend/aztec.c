@@ -29,16 +29,17 @@
 /**
  * Shorten the string by one character
  */
-void mapshorten(int *charmap, int *typemap, int start, int length)
+static void mapshorten(int *charmap, int *typemap, int start, int length)
 {
 	memmove(charmap + start + 1 , charmap + start + 2, (length - 1) * sizeof(int));
 	memmove(typemap + start + 1 , typemap + start + 2, (length - 1) * sizeof(int));
 }
 
+#if 0 /* unused */
 /**
  * Insert a character into the middle of a string at position posn
  */
-void insert(char binary_string[], int posn, char newbit)
+static void insert(char binary_string[], int posn, char newbit)
 {
 	int end;
 
@@ -48,11 +49,12 @@ void insert(char binary_string[], int posn, char newbit)
 	}
 	binary_string[posn] = newbit;
 }
+#endif
 
 /**
  * Encode input data into a binary string
  */
-int aztec_text_process(uint8_t source[], const unsigned int src_len, char binary_string[], int gs1)
+static int aztec_text_process(uint8_t source[], const unsigned int src_len, char binary_string[], int gs1)
 {
 	int bytes;
 	int curtable, newtable, lasttable, chartype, maplength, blocks, debug;
