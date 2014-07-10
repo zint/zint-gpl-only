@@ -187,7 +187,7 @@ static int aztec_text_process(uint8_t source[], const unsigned int src_len, char
 		do{
 			if(blockmap[0][i] == blockmap[0][i + 1]) {
 				blockmap[1][i] += blockmap[1][i + 1];
-				for(int j = i + 1; j < blocks; j++) {
+				for(int j = i + 1; j < blocks - 1; j++) {
 					blockmap[0][j] = blockmap[0][j + 1];
 					blockmap[1][j] = blockmap[1][j + 1];
 				}

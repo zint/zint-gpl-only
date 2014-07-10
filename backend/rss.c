@@ -964,10 +964,7 @@ int general_rules(char field[], char type[])
 
 	block_count++;
 
-	for(i = 0; i < block_count; i++) {
-	}
-
-	for(i = 0; i < block_count; i++) {
+	for(i = 0; i < block_count - 1; i++) {
 		current = block[1][i];
 		next = (block[1][i + 1] & 0xFF);
 
