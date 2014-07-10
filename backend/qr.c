@@ -1635,8 +1635,8 @@ static void micro_qr_m3(char binary_data[], int ecc_mode)
 		if(binary_data[(i * 8) + 7] == '1') { data_blocks[i] += 0x01; }
 	}
 
+	data_blocks[data_codewords - 1] = 0;
 	if(ecc_mode == LEVEL_L) {
-		data_blocks[11] = 0;
 		if(binary_data[80] == '1') { data_blocks[2] += 0x08; }
 		if(binary_data[81] == '1') { data_blocks[2] += 0x04; }
 		if(binary_data[82] == '1') { data_blocks[2] += 0x02; }
@@ -1644,7 +1644,6 @@ static void micro_qr_m3(char binary_data[], int ecc_mode)
 	}
 
 	if(ecc_mode == LEVEL_M) {
-		data_blocks[9] = 0;
 		if(binary_data[64] == '1') { data_blocks[2] += 0x08; }
 		if(binary_data[65] == '1') { data_blocks[2] += 0x04; }
 		if(binary_data[66] == '1') { data_blocks[2] += 0x02; }
