@@ -1,3 +1,9 @@
+**************************************************************************
+NOTE: This version of Zint is now archived and is not being actively
+developed. For the latest version of the code see the zint/zint repository
+or join us on SourceForge at https://www.sourceforge.net/projects/zint
+**************************************************************************
+
 Zint and libzint
 ----------------
 Zint is a suite of programs to allow easy encoding of data in any of the
